@@ -1,0 +1,310 @@
+<html>
+<head>
+</head>
+<HEAD>
+<TITLE>Haskell 98: ERRATA</title></head>
+</head>
+</head>
+</head>
+</head>
+</HEAD>
+<BODY>
+<div align=center>
+<img src="h98.gif" alt="Haskell 98">
+</div>
+
+<h1>Errata in the 
+<a href="http://haskell.cs.yale.edu/definition/">Haskell 98 Language Report</a></h1>
+
+<ul>
+<p><li> <strong>Title page</strong>.  Add the paragraph:
+<p>
+"Copyright (c) Simon Peyton Jones and John Hughes.
+<p>
+The authors intend this Report to belong to the entire Haskell 
+community, and so we grant permission to copy and
+distribute it for any purpose, provided that it is
+reproduced in its entireity, including this Notice.  Modified
+versions of this Report may also be copied and distributed for any purpose,
+provided that the modified version is clearly presented as such,
+and that it does not claim to be a definition of the language Haskell 98."
+
+<p><li> <strong>Page 10, Section 2.7, Layout.</strong>
+In the middle of the third paragraph, just before the sentence beginning
+"A close brace is also inserted...", add the following sentence:
+<p>
+"If the indentation of the non-brace lexeme immediately 
+following a <tt>where</tt>, <tt>let</tt>,
+<tt>do</tt> or <tt>of</tt> is less than or equal to the <em>current</em> indentation level,
+then instead of starting a layout, an empty list "<tt>{}</tt>" is inserted, and
+layout processing occurs for the current level (i.e. insert a semicolon or close brace)."
+
+<p><li> <strong>Page 11, Figures 1 and 2</strong>.  In both figures the signature for <tt>size</tt>
+should be
+<pre>
+  size :: Stack a -> Int
+</pre>
+
+<p><li> <strong>Page 14, Section 3.1, Errors.</strong>  In the first sentence of
+the section, after "indistinguishable" add "by a Haskell program".
+
+<p><li> <strong>Page 20, Section 3.10, Arithmetic sequences.</strong>
+In the second paragraph, in the sentence "For the type <tt>Integer</tt>,
+arithmetic sequences have the following meaning...", replace "<tt>Integer</tt>"
+with "<tt>Int</tt>".
+
+<p><li> <strong>Page 23, Section 3.14, Do Expressions; 
+and Page 128, Appendix B.4, Context Free Syntax.</strong>
+<ul>
+<li>
+Change the production for <em>stmts</em> to read:
+<pre>
+	stmts -> stmt1 ... stmtn exp [;]	(n>=0)
+</pre>
+<li> Add "<tt>;</tt>" to the end of each of the four productions for <em>stmt</em>.
+</ul>
+That is, every list of statements must end in an expression, optionally
+followed by a semicolon.
+
+<p><li> <strong>Page 40, Section 4.2.1, Algebraic Datatype Declarations.</strong>
+In the bottom paragraph on the page, before "The context in the data declaration
+has no other effect whatsoever" add the following:
+<p>
+"Pattern matching against <tt>ConsSet</tt> also gives rise to an <tt>Eq a</tt>
+constraint.  For example:
+<pre>
+  f (ConsSet a s) = a
+</pre>
+the function <tt>f</tt> has inferred type <tt>Eq a => Set a -> a</tt>."
+
+<p><li> <strong>Page 41, Section 4.2.1, subsection Labelled Fields.</strong>
+At the end of the subsection, add a new paragraph:
+<p>
+"The pattern "<tt>F {}</tt>" matches any value built with constructor <tt>F</tt>,
+<em>whether or not <tt>F</tt> was declared with record syntax</em>."
+
+<p><li> <strong>Page 49, Section 4.3.4, Ambiguous Types...</strong>
+In the third paragraph from the end of Section 4.3.4, replace "...an ambiguous 
+type variable is defaultable if at least one of its classes is a numeric class..."
+by "...an ambiguous type variable, v, is defaultable if v appears only in constraints
+of the form (C v), where C is a class, and if at least one of its classes is
+a numeric class...".
+<p>
+The new phrase is "if v appears only in constraints of the
+form (C v) where C is a class".  Without this condition the rest of the
+sentence does not make sense.
+
+<p><li><strong>Page 54, first translation scheme.</strong>
+The <em>xn</em> should be <em>xk</em> (suitably subscripted in both cases!),
+and all three <em>m</em> subscripts should be <em>n</em>.
+
+<p><li> <strong>Page 57, Section 4.5.3, Context reduction errors.</strong>
+The example
+<pre>
+      f :: (Monad m, Eq (m a)) => a -> m a -> Bool
+      f x y = x == return y
+</pre>
+is wrong; it should read
+<pre>
+      f x y = return x == y
+</pre>
+
+<p><li> <strong>Page 66, Section 5.3, Import Declarations, numbered item 2.</strong>
+Start a new paragraph before the sentence "The hiding clause only applies to unqualified
+names...".
+
+<p><li><strong>Page 67, Section 5.3.2, Local aliases</strong>.
+The the last example in the section should read:
+<pre>
+	import Foo as A(f)
+</pre>
+
+<p><li> <strong>Page 69, Section 5.5.2, Name clashes.</strong>
+At the very end of the section, add the following clarification:
+<p>
+"The name occurring in a type signature or fixity declarations is always
+unqualified, and unambiguously refers to another declaration in the
+same declaration list (except that the fixity declaration for a class method
+can occur at top level --- Section 4.4.2).  For example, the following 
+module is legal:
+<pre>	
+  module F where
+    sin :: Float -> Float
+    sin x = (x::Float)
+
+    f x = Prelude.sin (F.sin x)
+</pre>
+The local declaration for <tt>sin</tt> is legal, even though
+the <tt>Prelude</tt> function <tt>sin</tt> is implicitly in scope.
+The references to 
+<tt>Prelude.sin</tt> and <tt>F.sin</tt> must both be qualified to make
+it unambigous which <tt>sin</tt> is meant.
+However, the unqualified name "<tt>sin</tt>" in the type 
+signature in the first line of <tt>F</tt> unambiguously refers to the
+local declaration for <tt>sin</tt>."
+
+<p><li> <strong>Page 71, Section 5.6.2, Shadowing Prelude Names.</strong> 
+Replace the example at the beginning of the section, and the entire
+following paragraph, with the following
+<pre>
+  module A( null, nonNull ) where
+    import Prelude hiding( null ) 
+    null, nonNull :: Int -> Bool
+    null    x = x == 0
+    nonNull x = not (null x)
+</pre>
+Module <tt>A</tt> redefines <tt>null</tt>, and contains an unqualified reference
+to <tt>null</tt> on the right hand side of <tt>nonNull</tt>.
+The latter would be ambiguous without the "<tt>hiding(null)</tt>" on the 
+"<tt>import Prelude</tt>" statement.
+Every module that imports <tt>A</tt> unqualified, and then makes an unqualified
+reference to <tt>null</tt> must also resolve the ambiguous use of <tt>null</tt>
+just as <tt>A</tt> does.  Thus there is little danger of accidentally shadowing 
+Prelude names.
+
+
+<p><li> <strong>Page 76, Section 6.3, Standard Haskell classes.</strong>
+There is a formatting error in the example.  The sentence beginning "This declaration gives default
+method declarations..." should start on a new line.
+
+<p><li><strong>Page 80, Section 6.3.6, Class Monad.</strong>
+Right at the bottom of the page, after "However, for IO, the fail
+method invokes error." add the clarifying sentence "To raise
+a user exception in the IO monad, use <tt>ioError</tt> (see
+Section 7.3)."
+
+<p><li> <strong>Page 84, Section 6.4, Fig 7; and bottom of page 86, Section 6.4.6.</strong>
+<pre>
+    fromRealFrac :: (RealFrac a, Fractional b) => a -> b
+</pre>
+should be replaced by
+<pre>
+    realToFrac :: (Real a, Fractional b) => a -> b
+</pre>
+
+<p><li><strong>Page 90, Section 7.3, Exception handling in the IO monad.</strong>
+After the first paragraph give the following type signature:
+<pre>
+  userError :: String -> IOError
+</pre>
+Also add an index entry for <tt>userError</tt> on this page.
+(These changes are purely presentational.)
+
+<p><li><strong>Page 94, Appendix A, Standard Prelude, class <tt>Enum</tt>.</strong>
+After the default method for <tt>enumFromTo</tt> add
+<pre>
+  enumFromThen x y = map toEnum [fromEnum x, fromEnum y ..]
+</pre>
+
+<p><li><strong>Page 102, Appendix A, comments immediately before 
+<tt>instance Enum Float</tt>.</strong>
+Replace "<tt>1.0</tt>" by "<tt>0.95</tt>".
+
+<p><li><strong>Page 105, Appendix A.1, line 11.</strong>
+In the module header for <tt>PreludeList</tt> replace "<tt>Sum</tt>" by "<tt>sum</tt>".
+
+<p><li><strong>Page 106, definition of <tt>(!!)</tt>.</strong>
+Replace the definition of <tt>(!!)</tt> with the following:
+<pre>
+    -- List index (subscript) operator, 0-origin
+    (!!)                :: [a] -> Int -> a
+    xs     !! n | n < 0 =  error "Prelude.!!: negative index"
+    []     !! _         =  error "Prelude.!!: index too large"
+    (x:_)  !! 0         =  x
+    (_:xs) !! n         =  xs !! (n-1)
+</pre>
+(The original version had the property that <tt>([] !! -100)</tt>
+reported "index too large".)
+
+<p><li> <strong>Page 141, Bibliograpy</strong>. 
+The library report citation [8] is out of date.  It should read:
+"Simon Peyton Jones and John Hughes (editors), Standard Libraries for the
+Haskell 98 Programming Language, 1 February 1999".
+
+<p><li><strong>Page 147, Index</strong>.  Remove the entry for "monad comprehension".
+</ul>
+
+<hr>
+<h1>Errata in the 
+<a href="http://haskell.cs.yale.edu/definition/">Haskell 98 Library Report</a></h1>
+
+<ul>
+<p><li> <strong>Title page</strong>.  Add the paragraph:
+<p>
+"Copyright (c) Simon Peyton Jones and John Hughes.
+<p>
+The authors intend this Report to belong to the entire Haskell 
+community, and so we grant permission to copy and
+distribute it for any purpose, provided that it is
+reproduced in its entireity, including this Notice.  Modified
+versions of this Report may also be copied and distributed for any purpose,
+provided that the modified version is clearly presented as such,
+and that it does not claim to be a definition of the Haskell 98 libraries."
+
+<p><li> <strong>Page 17, Section 5, first text line</strong>.  Replace "continuous" by "contiguous".
+
+<p><li> <strong>Page 22, Section 6.3; and Page 23, Fig 3</strong>:
+Replace "<tt>map</tt>" by "<tt>fmap</tt>" (two occurrences in 6.3, one in Fig 3).
+
+<p><li> <strong>Page 29, Section 7.2</strong>.  Add a new bullet for <tt>nub</tt>.
+Add an index entry for <tt>nub</tt>.
+
+<p><li> <strong>Page 29, Section 7.2, second bullet</strong>.  
+Introduce a new bullet just before "<tt>union</tt> is list union".
+
+<p><li><strong>Page 54, Section 11</strong>.
+The signature for <tt>try</tt> should be
+<pre>
+  try :: IO a -> IO (Either IOError a)
+</pre>
+
+<p><li><strong>Page 62, Section 11.7.2</strong>.
+<ul>
+<li>Add a new section heading "<strong>11.7.4 Reading the entire input</strong>"
+just before the paragraph about <tt>hGetContents</tt>.  
+<li>
+Add a new section heading "<strong>11.7.5 Text output</strong>" before the
+paragraph about <tt>hPutChar</tt>.
+</ul>
+<p><li><strong>Page 63, definition of <tt>main</tt> in Section 11.8.1</strong>.
+Replace the definition of "<tt>readNum</tt>" with
+<pre>
+  where readNum :: IO Integer
+	-- Need a type signature for readLn to avoid ambiguity
+	readNum = readLn
+</pre>
+(This change merely advertises the generally useful function <tt>readLn</tt>.)
+
+
+<p><li><strong>Page 64, Section 12, Directory functions.</strong>
+(More an editor's blunder than a typo.)
+<ul>
+<li>
+Replace the abstract definition of <tt>Permissions</tt>, and the four instances
+of <tt>Permissions</tt> with
+<pre>
+  data Permissions 
+    = Permissions {
+        readable, writable, executable, searchable :: Bool
+      }
+      deriving ( Eq, Ord, Read, Show )
+</pre>
+<li> Remove <tt>readable, writable, executable, searchable</tt> both from
+the module header, and from the module body.
+<li> Change <tt>Permissions</tt> to <tt>Permissions(readable, writable, executable, searchable)</tt>
+in the module header.
+</ul>
+
+<p><li><strong>Page 81, Section 17.1, The <tt>RandomGen</tt> class</strong>.
+Bottom line on page 81: replace "<tt>show/Read</tt> instances" with
+"<tt>Show/Read</tt> instances" (i.e. capitalise <tt>Show</tt>).
+
+<p><li><strong>Page 83, Section 17.3, The global random number generator</strong>.
+In the first paragraph, replace "kernal" by "kernel".
+
+</ul>
+<hr>
+<address>Simon Peyton Jones, simonpj@microsoft.com</address>
+</body>
+</html>
+
