@@ -23,13 +23,6 @@
 \usepackage[fleqn]{amsmath}
 
 
-% TODO ========================================================================
-
-%  - Move all the GHC-specific info contained in the old FFI spec to the GHC
-%    users guide 
-
-% =============================================================================
-
 % version control
 %
 \includeversion{DRAFT}
@@ -42,7 +35,7 @@
     \\
     \textbf{--- DRAFT ---}\\[1ex]
     \ttfamily\scriptsize
-    $\relax$Id: ffi.tex,v 1.12 2001/08/23 15:48:04 malcolm Exp $\relax$%
+    $\relax$Id: ffi.tex,v 1.13 2001/08/30 16:03:50 chak Exp $\relax$%
     \ignorespaces}
   }
 \end{DRAFT}
@@ -340,6 +333,11 @@ between the Haskell and the external context as function arguments and results
 with the exception that values of type \code{ForeignPtr a} can only be passed
 from Haskell to the external context and not in the opposite direction.
 
+\begin{verbatim}
+FIXME: Remove ForeignPtr from the list of basic foreign types.
+  ** Will be removed in the next version unless their are complaints **
+\end{verbatim}
+
 Foreign types are produced according to the following grammar:
 %
 \begin{grammar}
@@ -496,6 +494,13 @@ Table~\ref{tab:callconv}.
 \subsection{Standard C Calls}
 \label{sec:ccall}
 
+The following defines the structure of external entities for foreign
+declarations under the \code{ccall} calling convention for both import and
+export declarations separately.  Afterwards additional constraints on the type
+of foreign functions are defined.
+
+\subsubsection{Import Declarations}
+
 For import declarations, the syntax for the specification of external entities
 under the \code{ccall} calling convention is
 %
@@ -546,6 +551,13 @@ converts C function pointers into Haskell functions; and conversely, in the
 case of \gterm{wrapper}, the stub converts Haskell thunks to C function
 pointers.
 
+If neither of the specifiers \code{static}, \code{dynamic}, and \code{wrapper}
+is given, \code{static} is assumed.  The specifier \code{static} is
+nevertheless needed so that we can import C routines that are named
+\code{dynamic} or \code{wrapper}.
+
+\subsubsection{Export Declarations}
+
 Moreover, external entities in \gnterm{ccall} export declarations are of the
 form
 %
@@ -558,16 +570,19 @@ The optional C identifier \gnterm{cid} defines the external name by which the
 exported Haskell variable is accessible in C.  If it is omitted, the external
 name defaults to the name of the exported Haskell variable.
 
-Depending on the kind of import declaration there are constraints regarding
-the admissible Haskell type that the variable defined in the import may have.
-These constraints are specified in the following.
+\subsubsection{Constraints on Foreign Function Types}
+
+In the case of import declaration, there are, depending on the kind of import
+declaration, constraints regarding the admissible Haskell type that the
+variable defined in the import may have.  These constraints are specified in
+the following.
 %
 \begin{description}
 \item[Static Functions.]  A static function can be of any foreign type; in
-  particular, the result type may or may not be in the IO monad.  If a function that
-  is not pure is not imported in the IO monad, the system behaviour is undefined.
-  Generally, no check for consistency with the C type of the imported label is
-  performed.
+  particular, the result type may or may not be in the IO monad.  If a
+  function that is not pure is not imported in the IO monad, the system
+  behaviour is undefined.  Generally, no check for consistency with the C type
+  of the imported label is performed.
 
 \item[Static addresses.]  The type of an imported address is constrained to be
   of the form \code{Ptr }\textit{a} or \code{FunPtr }\textit{a}, where
@@ -581,6 +596,10 @@ These constraints are specified in the following.
   form \textit{ft}\code{ -> }\code{IO (FunPtr }\textit{ft}\code), where
   \textit{ft} may be any foreign type.
 \end{description}
+
+\begin{verbatim}
+FIXME: Add one example for each item in the preceding description list.
+\end{verbatim}
 
 \subsection{Win32 API Calls}
 
@@ -694,6 +713,7 @@ NOTE: unsafePerformIO is essential to the FFI?  Export it from Foreign.
   availability.) (Maybe also unsafeInterleaveIO.)
 ** This note will disappear and `unsafePerformIO' being added to Foreign if
    there are no complaints **
+Malcolm: yes
 \end{verbatim}
 
 \subsection{\code{Bits}}
@@ -703,6 +723,7 @@ NOTE: Shouldn't Bits be part of the FFI?  If so, IntN and WordN must have
   an instance for Bits, too.
 ** This note will disappear and `Bits' being added if there are no 
    complaints **
+Malcolm: yes
 \end{verbatim}
 
 \subsection{\code{Int} and \code{Word}}
@@ -726,14 +747,9 @@ unsigned integral types of fixed size:
 For these integral types, the modules \code{Int} and \code{Word} export class
 instances for all types classes for which \code{Int} has an instance.  The
 constraints on the implementation of these instances are also the same as
-those outlined for \code{Int} in the Haskell Report.
-
-\begin{verbatim}
-NOTE: The modules currently in HSLibs assert that ``arithmetic is performed
-  modula 2^n''.  I think, we should not require this, as the standard doesn't
-  require it for Int.
-** Unless there are complains, this note will disappear in the next version. **
-\end{verbatim}
+those outlined for \code{Int} in the Haskell Report.  There is, however, the
+additional constraint that all arithmetic on the fixed-sized types is
+performed modula \(2^n\).
 
 \subsection{\code{Ptr}}
 \label{sec:Ptr}
@@ -763,10 +779,10 @@ The interface defining data pointers and associated operations is as follows:
 \item[plusPtr ::\ Ptr a -> Int -> Ptr b] Advances the given address by the
   given offset in bytes.
 \item[alignPtr ::\ Ptr a -> Int -> Ptr a] Given an arbitrary address and an
-  alignment constraint, \code{alignPtr} yields the next higher address that
-  fulfills the alignment constraint. An alignment constraint \code{x} is
-  fulfilled by any address divisible by \code{x}. This operation is
-  idempotent.
+  alignment constraint, \code{alignPtr} yields an address, the same or next
+  higher, that fulfills the alignment constraint. An alignment constraint
+  \code{x} is fulfilled by any address divisible by \code{x}. This operation
+  is idempotent.
 \item[minusPtr ::\ Ptr a -> Ptr b -> Int] Computes the offset required to get
   from the first to the second argument.  We have
   %
@@ -776,15 +792,10 @@ p2 == p1 `plusPtr` (p2 `minusPtr` p1)
 \end{verbatim}
   \end{quote}
 \end{codedesc}
-
-\begin{verbatim}
-FIXME: Using Int for pointer differences is *not* good after all.  Maybe we
-  should have
-
-    plusPtr :: Integral i => Ptr a -> i -> Ptr b
-
-  and reinstate `PtrDiff'?
-\end{verbatim}
+%
+It should be noted that the use of \code{Int} for pointer differences
+essentially forces any implementation to represent \code{Int} in as many bits
+as used in the representation of pointer values.
 
 \subsubsection{Function Pointers}
 
@@ -793,9 +804,9 @@ follows:
 %
 \begin{codedesc}
 \item[data FunPtr a] A value of type \code{FunPtr a} is a pointer to a piece
-  of code. It may be the pointer to a C function or to a Haskell function
-  created using foreign export dynamic. A foreign export dynamic should
-  normally be declared to produce a FunPtr of the correct type. For example,
+  of code.  It may be the pointer to a C function or to a Haskell function
+  created using wrapper stub as outlined in Section~\ref{sec:ccall}. For
+  example,
   %
   \begin{quote}
 \begin{verbatim}
@@ -877,8 +888,16 @@ the following signature and purpose:
   \code{IO} action is then executed. The foreign object is kept alive at least
   during the whole action, even if it is not used directly inside. Note that
   it is not safe to return the pointer from the action and use it after the
-  action completes. All uses of the pointer should be inside the
+  action completes.  All uses of the pointer should be inside the
   \code{withForeignPtr} bracket.
+
+  More precisely, the foreign pointer may be finalised after
+  \code{withForeignPtr} is finished if the first argument was the last
+  occurrence of that foreign pointer.  Finalisation of the foreign pointer
+  might render the pointer that is passed to the function useless.
+  Consequently, this pointer cannot be used safely anymore after the
+  \code{withForeignPtr} is finished, unless the function
+  \code{touchForeignPtr} is used to explicitly keep the foreign pointer alove.
   
   This function is normally used for marshalling data to or from the object
   pointed to by the \code{ForeignPtr}, using the operations from the
@@ -893,6 +912,12 @@ the following signature and purpose:
   the plain pointer just obtained.  Hence, \code{touchForeignPtr} must be used
   wherever it has to be guaranteed that the pointer lives on---i.e., has
   another usage occurrence.
+
+  It should be noticed that this function does not need to be monadic when
+  used in combination with \code{touchForeignPtr}.  Until the
+  \code{foreignPtrToPtr} is executed, the thunk representing the suspended
+  call keeps the foreign pointer alive.  Afterwards, the
+  \code{touchForeignPtr} keeps the pointer alive.
   
   To avoid subtle coding errors, hand written marshalling code should
   preferably use \code{withForeignPtr} rather than combinations of
@@ -921,6 +946,7 @@ the following signature and purpose:
 NOTE: Why do we only have Eq on ForeignPtr, but also Ord an Show on Ptr?
 ** This note will disappear and Ord and Show be added to ForeignPtr unless
    their are complaints **
+Malcolm: yes
 \end{verbatim}
 
 \subsection{\code{StablePtr}}
@@ -1054,13 +1080,6 @@ properly aligned addresses to function correctly.  Thus, portable code should
 ensure that when peeking or poking values of some type \code{a}, the alignment
 constraint for \code{a}, as given by the function \code{alignment} is
 fulfilled.
-
-\begin{verbatim}
-FIXME: Do we really need
-  \item[destruct ::\ Storable a => Ptr a -> IO ()]
-    Free any resources associated with the refereed object, except the pointed
-    to memory reference.
-\end{verbatim}
 
 A minimal complete definition of \code{Storable} needs to define
 \code{sizeOf}, \code{alignment}, one of \code{peek}, \code{peekElemOff}, or
@@ -1207,10 +1226,6 @@ The following functions are provided by the module:
   to an array by as many array elements (not bytes) as specified.
 \end{codedesc}
 
-\begin{verbatim}
-FIXME: destructArray & destructArray0: see corresponding FIXME in Storable
-\end{verbatim}
-
 \subsection{\code{MarshalError}}
 \label{sec:MarshalError}
 
@@ -1282,9 +1297,10 @@ routines.
   value of type \code{b}, lift it to producing a value of type \code{Maybe b}.
   If the pointer is \code{Ptr.nullPtr}, produce \code{Nothing}.
   
-\item[withMany ::\ (a -> (b -> res) -> res) -> {[a]} -> ({[b]} -> res) -> res]
-  Lift a marshalling function of the \code{with} family to operate on a list
-  of values.
+% Move to `Data.List.withMany' in new library spec.
+%\item[withMany ::\ (a -> (b -> res) -> res) -> {[a]} -> ({[b]} -> res) -> res]
+%  Lift a marshalling function of the \code{with} family to operate on a list
+%  of values.
 
 \item[copyBytes ::\ Ptr a -> Ptr a -> Int -> IO ()]
 \item[moveBytes ::\ Ptr a -> Ptr a -> Int -> IO ()]\combineitems These two
@@ -1296,13 +1312,6 @@ routines.
   reference to the source as their second argument---i.e., the argument order
   is as in an assignment.
 \end{codedesc}
-
-\begin{verbatim}
-FIXME: I am still not sure whether `withMany' isn't to esoteric to be part of
-  the standard library.  It happens to be useful for marshalling in some
-  situations, but it isn't really marshalling-specific, but is just another
-  list function.
-\end{verbatim}
 
 \newpage
 \section{C-Specific Marshalling}
@@ -1436,7 +1445,7 @@ C-specific marshalling support.  The modules are \code{CTypes},
       \code{HS\_FLOAT\_RADIX} & \code{floatRadix ::\ Float}
       & \\
       \hline
-      \code{HS\_FLOAT\_ROUNDS} & n/a
+      \code{HS\_FLOAT\_ROUND} & n/a
       & rounding style as per~\cite{C99}\\
       \hline
       \code{HS\_FLOAT\_EPSILON} & n/a
@@ -1534,18 +1543,20 @@ this case, the bounds \code{HS\_INT64\_MIN}, \code{HS\_INT64\_MAX}, and
 \code{HS\_WORD64\_MAX} are undefined.
 
 \begin{verbatim}
-FIXME: Should HsFFI.h include a function like GHC's startHaskellSystem()?
+FIXME: Include into HsFFI.h a function such as GHC's startupHaskell().  It is
+  called haskellInit().  What name do we choose?  I think, it should have a
+  "ffi_" or "hs_" prefix.  Arguments as with GHC?  (What arguments does the
+  NHC version have?)
 \end{verbatim}
 
-\subsection{\code{CTypes} and \code{CTypesISO}}
+\subsection{\code{CTypes}}
 \label{sec:CTypes}
 
-The modules \code{CTypes} and \code{CTypesISO} provide Haskell types that
-represent basic C types.  They are needed to accurately represent C function
-prototypes, and so, to access C library interfaces in Haskell.  The Haskell
-system is not required to represent those types exactly as C does, but the
-following guarantees are provided concerning a Haskell type \code{CT}
-representing a C type \code{t}:
+The modules \code{CTypes} provide Haskell types that represent basic C types.
+They are needed to accurately represent C function prototypes, and so, to
+access C library interfaces in Haskell.  The Haskell system is not required to
+represent those types exactly as C does, but the following guarantees are
+provided concerning a Haskell type \code{CT} representing a C type \code{t}:
 %
 \begin{itemize}
 \item If a C function prototype has \code{t} as an argument or result type,
@@ -1575,9 +1586,9 @@ representing a C type \code{t}:
   corresponding logical relation in C on \code{t}.
 \end{itemize}
 %
-It follows from these guarantees that all types exported by \code{CTypes} and
-\code{CTypesISO} are represented as type synonyms or \code{newtype}s of basic
-foreign types as defined in Section~\ref{sec:foreign-types}.
+It follows from these guarantees that all types exported by \code{CTypes} are
+represented as type synonyms or \code{newtype}s of basic foreign types as
+defined in Section~\ref{sec:foreign-types}.
 
 The module \code{CTypes} provides the following integral types, including
 instances for \code{Eq}, \code{Ord}, \code{Num}, \code{Read}, \code{Show},
@@ -1617,7 +1628,7 @@ for \code{Eq}, \code{Ord}, \code{Num}, \code{Read}, \code{Show}, \code{Enum},
   \end{tabular}
 \end{quote}
 
-The module \code{CTypesISO} provides the following integral types, including
+Moreover, the module provides the following integral types, including
 instances for \code{Eq}, \code{Ord}, \code{Num}, \code{Read}, \code{Show},
 \code{Enum}, \code{Storable}, \code{Bounded}, \code{Real}, \code{Integral},
 and \code{Bits}:
@@ -1658,10 +1669,6 @@ And finally, the following types, including instances for \code{Eq} and
     \code{CJmpBuf}   & \code{jmp\_buf}\\\hline
   \end{tabular}
 \end{quote}
-
-\begin{verbatim}
-FIXME: The name CTypesISO is not really accurate.
-\end{verbatim}
 
 \subsection{\code{CString}}
 \label{sec:CString}
@@ -1882,5 +1889,91 @@ section numbers.
 \bibliographystyle{plain}
 \bibliography{ffi}
 
+\begin{DRAFT}
+\section{FIXME}
+
+Malcolm writes,
+%
+\begin{verbatim}
+Standard C Calls
+~~~~~~~~~~~~~~~~
+The productions
+
+    fdecl  -> 'import' callconv [safety] entity var '::' ftype
+    entity -> " ['static'] [fname] ['&'] ['['lib']'] [cid] "
+
+suggest that the entity string must always be present, but could be
+"".  I was wondering if there is any real difficulty in permitting
+an empty entity string to be omitted altogether?  The idea would be
+to be able to write
+
+    foreign import ccall sin :: CFloat -> CFloat
+
+as at present rather than
+
+    foreign import ccall "" sin :: CFloat -> CFloat
+
+It isn't a big deal, and it might be worth enforcing the literal string
+quotes just for uniformity, but I thought I'd raise the issue anyway.
+\end{verbatim}
+%
+SimonPJ supports this.
+
+SimonM proposes to put provisions into place that make the FFI definition
+compatible with the forthcoming library spec.  (Maybe list the names of the
+FFI modules as they would be under the new library naming scheme in the
+appendix.)
+
+SimonM writes,
+%
+\begin{verbatim}
+IOError
+~~~~~~~
+
+One thing that bugs me about writing FFI code at the moment is that
+there isn't a portable way to generate an IOError except through
+CError.throwErrno and friends.  There's also no way to change the info
+(location, filename, handle) in an existing IOError.  This is the single
+cause of non-portability in a lot of the FFI code I've written recently.
+
+Also, we currently can't provide a portable version of CError.hs.
+
+I'd like to see something like this:
+
+---------
+data IOErrorType -- abstract
+mkIOError :: IOErrorType
+            -> String
+          -> Maybe FilePath
+          -> Maybe Handle
+            -> IOError
+
+alreadyExistsError :: IOErrorType
+alreadyInUseError  :: IOErrorType
+...
+
+addIOErrorLoc        :: String             -> IO a -> IO a
+addIOErrorLocAndPath :: String -> FilePath -> IO a -> IO a
+---------
+
+This doesn't require any more functionality than is already required by
+Haskell 98 (although perhaps the range of IOErrorType could be expanded
+somewhat), and it should sit just as well on top of Nhc's implementation
+of IOErrors as GHC's.  Furthermore it would let us provide a portable
+implementation of CError.hs.
+
+The addIOError functions are very useful.  Quite often an error is
+generated by throwErrno in a function which is a long way from the one
+which the consumer of a library initially called; for example when I get
+an error from Directory.renameFile I want the error message to say
+"Directory.renameFile" and contain the filename that I passed to
+renameFile.  So you'd implement renameFile as
+
+renameFile file1 file2 = 
+  addIOErrorLocAndPath "Directoy.renameFile" file1 $ do
+   ...
+\end{verbatim}%$
+
+\end{DRAFT}
 
 \end{document}
