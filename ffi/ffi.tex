@@ -13,6 +13,18 @@
 % does not claim to be a definition of the Haskell 98 Foreign Function
 % Interface. 
 
+% Changes since RC9:
+% * 1:     Mentioning interaction with foreign threads as an open problem.
+% * 2 & 3: Removed `threadsafe' again, as the proposal for thread support is
+%          still evolving and it is not yet clear whether a new safety level
+%          is required.
+% * 5.5:   Added the type synonym `FinalizerPtr' and rewrite the documentation
+%          of finalizers.
+% * 5.6:   Clarified the description of `StablePtr'
+% * 5.8:   Added `finalizerFree'
+% * 6.2:   All the types in CTypes must be newtypes that are exported
+%          abstractly. 
+%
 % Changes since RC8:
 % * 5.8: `MarshallAlloc.reallocBytes' is no longer permitted on memory
 %        allocated with `alloca' or `allocaBytes'. 
@@ -114,14 +126,14 @@
 \excludeversion{FUTURE}  % material for future extensions
 
 %\def\Version{\relax}
-\def\Version{\\(Release Candidate 9)}
+\def\Version{\\(Release Candidate 10)}
 \begin{DRAFT}%
 {
   \gdef\Version{%
     \\
     \textbf{--- DRAFT ---}\\[1ex]
     \ttfamily\scriptsize
-    $\relax$Id: ffi.tex,v 1.42 2003/05/21 12:19:17 chak Exp $\relax$%
+    $\relax$Id: ffi.tex,v 1.43 2003/05/22 09:38:09 chak Exp $\relax$%
     \ignorespaces}
   }
 \end{DRAFT}
@@ -252,7 +264,10 @@ convention.  However, the design of the FFI is such that it enables the
 modular extension of the present definition to include the calling conventions
 of other programming languages, such as C++ and Java.  A precise definition of
 the support for those languages is expected to be included in later versions
-of this report.
+of this report.  The second major omission from the present report is the
+definition of the interaction with multithreading in the foreign language and,
+in particular, the treatment of thread-local state.  Work on this problem is
+not sufficiently mature to be included into Version 1.0 of the report.
 
 \subsection{Embedding Into Haskell 98}
 
@@ -347,9 +362,9 @@ The following productions are added:
   \grule{reservedid}{%
     foreign}
   \grule{specialid}{%
-    export \galt\ import \galt\ safe \galt\ threadsafe \galt\ unsafe}
+    export \galt\ safe \galt\ unsafe \galt\ ccall}
   \gor{%
-    ccall \galt\ cplusplus \galt\ dotnet \galt\ jvm \galt\ stdcall}
+     cplusplus \galt\ dotnet \galt\ jvm \galt\ stdcall}
   \gor{%
     \gverbal{system-specific calling conventions}}
 \end{grammar}
@@ -404,7 +419,7 @@ nonterminal from the Haskell 98 Report.  All other nonterminals are new.
   \grule[exported entity]{expent}{%
     \gopt{\gnterm{string}}}
   \grule{safety}{%
-    unsafe \galt\ safe \galt\ threadsafe}
+    unsafe \galt\ safe}
 \end{grammar}
 %
 There are two flavours of foreign declarations: import and export
@@ -591,17 +606,6 @@ the Haskell system implies that a garbage collection might be triggered after
 an external entity was called, but before this call returns.  Consequently,
 objects other than stable pointers (cf.\ Section~\ref{sec:StablePtr}) may be
 moved or garbage collected by the storage manager.
-
-The safety level \code{threadsafe} is relevant only for Haskell systems that
-support concurrency in the form of non-Haskell threads that may preempt the
-Haskell runtime as well as preempt foreign calls.  On such systems, a foreign
-call marked as \code{threadsafe} must be executed by a separate non-Haskell
-thread, but otherwise behaves as a \code{safe} call.  This implies that even
-if that separate thread is blocked, the Haskell runtime can still make
-progress.  In contrast, when a \code{safe} or \code{unsafe} foreign call
-blocks, the Haskell runtime also blocks.  On Haskell systems that do not
-support the use of non-Haskell threads, \code{threadsafe} implies the same
-behaviour as \code{safe}.
 
 \subsection{Export Declarations}
 
@@ -1073,9 +1077,11 @@ infixl 8 `shift`, `rotate`
 \end{verbatim}
   \end{quote}
   %
-  The function \code{rotate} is undefined for types where \code{bitSize}
-  returns 0.
-  
+  For unbounded types (e.g., \code{Integer}), \code{rotate} is equivalent to
+  \code{shift}.  An instance can define either this unified \code{rotate} or
+  \code{rotateL} and \code{rotateR}, depending on which is more convenient for
+  the type in question.
+
 \item[bit ::\ Bits a => Int -> a] Obtain a value where only the $n$th bit
   is set.
   
@@ -1089,8 +1095,7 @@ infixl 8 `shift`, `rotate`
 \item[isSigned~::\ Bits a => a -> Bool]\combineitems Respectively, query the
   number of bits of values of type \code{a} and whether these values are
   signed.  These functions never evaluate their argument.  The function
-  \code{bitSize} is undefined for types that do not have a have a fixed
-  bitsize (e.g., \code{Integer}).
+  \code{bitSize} is undefined for unbounded types (e.g., \code{Integer}).
 
 \item[shiftL,~~shiftR~~::\ Bits a => a -> Int -> a]
 \item[rotateL,~rotateR~::\ Bits a => a -> Int -> a]\combineitems The functions
@@ -1131,11 +1136,12 @@ unsigned integral types of fixed size:
 \end{quote}
 %
 For these integral types, the modules \code{Int} and \code{Word} export class
-instances for all types classes for which \code{Int} has an instance; this
-includes the type class \code{Bits}.  The constraints on the implementation of
-these instances are also the same as those outlined for \code{Int} in the
-Haskell Report.  There is, however, the additional constraint that all
-arithmetic on the fixed-sized types is performed modulo \(2^n\).
+instances for the class \code{Bits} and all type classes for which \code{Int}
+has an instance in the Haskell 98 Prelude and standard libraries.  The
+constraints on the implementation of these instances are also the same as
+those outlined for \code{Int} in the Haskell Report.  There is, however, the
+additional constraint that all arithmetic on the fixed-sized types is
+performed modulo \(2^n\).
 
 \subsection{\code{Ptr}}
 \label{sec:Ptr}
@@ -1234,18 +1240,36 @@ using these functions.
 
 The type \code{ForeignPtr} represents references to objects that are
 maintained in a foreign language, i.e., objects that are not part of the data
-structures usually managed by the Haskell storage manager. The essential
-difference between \code{ForeignPtr}s and vanilla memory references of type
-\code{Ptr} is that the former may be associated with finalizers.  A finalizer
+structures usually managed by the Haskell storage manager.  The type
+\code{ForeignPtr} is parameterised in the same way as \code{Ptr} (cf.\ 
+Section~\ref{sec:Ptr}), but in contrast to vanilla memory references of type
+\code{Ptr}, \code{ForeignPtr}s may be associated with finalizers.  A finalizer
 is a routine that is invoked when the Haskell storage manager detects
 that---within the Haskell heap and stack---there are no more references left
-that are pointing to the \code{ForeignPtr}.  Typically, the finalizer will,
-then, invoke routines in the foreign language that free the resources bound by
-the foreign object.  
+that are pointing to the \code{ForeignPtr}.  Typically, the finalizer will
+free the resources bound by the foreign object.  Finalizers are generally
+implemented in the foreign language\footnote{Finalizers in Haskell cannot be
+  savely realised without requiring support for pre-emptive
+  concurrency~\cite{boehm:finalizers}.} and have the following Haskell type:
+%
+\begin{quote}
+\begin{verbatim}
+type FinalizerPtr a = FunPtr (Ptr a -> IO ())
+\end{verbatim}
+\end{quote}
+%
+A foreign finalizer is represented as a pointer to a C function of type
+\code{Ptr a -> IO ()}.  That is, a foreign finalizer attached to a finalized
+pointer \code{ForeignPtr a} gets the finalized pointer as a raw pointer of
+type \code{Ptr a} as an argument when it is invoked.  There is no guarantee on
+how soon the finalizer is executed after the last reference to the associated
+foreign pointer was dropped; this depends on the details of the Haskell
+storage manager.  The only guarantee is that the finalizer runs before the
+program terminates.  Whether a finaliser may call back into the Haskell system
+is system dependent.  Portable code may not rely on such callbacks.
 
-The type \code{ForeignPtr} is parameterised in the same way as \code{Ptr}
-(cf.\ Section~\ref{sec:Ptr}).  The data type and associated operations have
-the following signature and purpose:
+The data type \code{ForeignPtr} and associated operations have the following
+signature and purpose:
 %
 \begin{codedesc}
 \item[data ForeignPtr a] A value of type \code{ForeignPtr a} represents a
@@ -1259,20 +1283,11 @@ the following signature and purpose:
   the plain pointers that can be obtained with \code{foreignPtrToPtr} from
   those foreign pointers.
   
-\item[newForeignPtr ::\ Ptr a -> FunPtr (Ptr a -> IO ()) -> IO (ForeignPtr a)]
+\item[newForeignPtr ::\ Ptr a -> FinalizerPtr a -> IO (ForeignPtr a)]
   Turn a plain memory reference into a foreign pointer by associating a
-  finalizer with the reference.  The finalizer is represented by a pointer to
-  an external function, which will be executed after the last reference to the
-  foreign pointer is dropped.  On invocation, the finalizer the pointer from
-  which the foreign pointer was created as an argument.  Note that there is no
-  guarantee on how soon the finalizer is executed after the last reference was
-  dropped; this depends on the details of the Haskell storage manager. The
-  only guarantee is that the finalizer runs before the program terminates.
-
-  Whether a finaliser may call back into the Haskell system is system
-  dependent.  Portable code may not rely on such call backs.
+  finalizer with the reference.  
   
-\item[addForeignPtrFinalizer ::\ ForeignPtr a -> FunPtr (Ptr a -> IO ()) -> IO
+\item[addForeignPtrFinalizer ::\ ForeignPtr a -> FinalizerPtr a -> IO
   ()] Add another finalizer to the given foreign pointer.  All finalizers
   associated with a single foreign pointer are executed in the opposite order
   of their addition---i.e., the finalizer added last will be executed first.
@@ -1376,10 +1391,7 @@ purpose:
 %
 \begin{codedesc}
 \item[data StablePtr a] Values of this type represent a stable reference to a
-  Haskell value of type \code{a}.  Note that a stable pointer may not be
-  dereferenced with routines from the class \code{Storable} (in contrast to
-  \code{Ptr} and \code{ForeignPtr}).  Any attempt to do so will lead to
-  undefined behaviour.
+  Haskell value of type \code{a}.
   
 \item[newStablePtr ::\ a -> IO (StablePtr a)] Create a stable pointer
   referring to the given Haskell value.
@@ -1553,9 +1565,12 @@ storage space for such an array can be allocated by the following functions:
   \code{malloc}, \code{mallocBytes}, \code{realloc}, \code{reallocBytes}, or
   any of the allocation functions from \code{MarshalArray} (see
   Section~\ref{sec:MarshalArray}).
+
+\item[finalizerFree ::\ FinalizerPtr a] Foreign finalizer that performs the
+  same operation as \code{free}.
 \end{codedesc}
 %
-If any of allocation functions fails, a value of \code{Ptr.nullPtr} is
+If any of the allocation functions fails, a value of \code{Ptr.nullPtr} is
 produced.  If \code{free} or \code{reallocBytes} is applied to a memory area
 that has been allocated with \code{alloca} or \code{allocaBytes}, the
 behaviour is undefined.  Any further access to memory areas allocated with
@@ -1864,9 +1879,6 @@ C-specific marshalling support.  The modules are \code{CTypes},
       \code{HsFunPtr}   & \code{FunPtr a}
       & \code{(void (*)(void))}\\
      \hline
-      \code{HsForeignPtr}& \code{ForeignPtr a}
-      & \code{(void *)}\\
-     \hline
       \code{HsStablePtr}& \code{StablePtr a}
       & \code{(void *)}\\
      \hline
@@ -2093,6 +2105,7 @@ from a finalizer.
 Finally, \code{hs\_free\_stable\_ptr()} and \code{hs\_free\_fun\_ptr()} are
 the C counterparts of the Haskell functions \code{freeStablePtr} and
 \code{freeHaskellFunPtr}.
+
 \subsection{\code{CTypes}}
 \label{sec:CTypes}
 
@@ -2130,9 +2143,9 @@ provided concerning a Haskell type \code{CT} representing a C type \code{t}:
   corresponding bitwise operation in C on \code{t}.
 \end{itemize}
 %
-It follows from these guarantees that all types exported by \code{CTypes} are
-represented as type synonyms or \code{newtype}s of basic foreign types as
-defined in Section~\ref{sec:foreign-types}.
+All types exported by \code{CTypes} must be represented as \code{newtype}s of
+basic foreign types as defined in Section~\ref{sec:foreign-types} and the
+export must be abstract.
 
 The module \code{CTypes} provides the following integral types, including
 instances for \code{Eq}, \code{Ord}, \code{Num}, \code{Read}, \code{Show},
