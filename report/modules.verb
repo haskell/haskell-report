@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/modules.verb,v 1.6 2001/08/23 16:16:57 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/modules.verb,v 1.7 2001/08/23 16:19:27 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Modules</title>
 %*section 5
@@ -198,11 +198,10 @@ that are in scope (whether qualified or not).
 \end{itemize}
 
 \item
-The set of all entities brought into scope 
-from a
-module "m" by one or more unqualified @import@ declarations may be
-named by the form `"@module@ m"', which is equivalent to listing all of
-the entities imported from the module.  For example:
+The form `"@module@ M"' abbreviates the set of all entities whose
+names are brought into scope by one or more \emph{unqualified} @import@ declarations
+of the form `"@import@~M~[impspec]"' or `"@import@~A~@as@~M~[impspec]"'.  This set may be empty.
+For example:
 \bprog
 @
       module Queue( module Stack, enqueue, dequeue ) where
@@ -212,9 +211,8 @@ the entities imported from the module.  For example:
 \eprog
 Here the module @Queue@ uses the module name @Stack@ in its export
 list to abbreviate all the entities imported from @Stack@.  
-
 \item
-A module can name its own local definitions in its export
+Additionally, a module can name its own local definitions in its export
 list using its name in the `"@module@" m' syntax.  For example:
 \bprog
 @
@@ -227,6 +225,10 @@ Here module @Mod1@ exports all local definitions as well as those
 imported from @Mod2@ but not those imported from @Mod3@.  Note that
 @module M where@ is the same as using @module M(module M) where@.
 \end{enumerate}
+It is an error to use "@module@~M" in an export list unless $M$ is the
+module bearing the export list, or $M$ is imported
+by at least one @import@ declaration (qualified or unqualified).
+
 It makes no difference to an importing module how an entity was 
 exported.  For example, a field name @f@ from data type @T@ may be exported individually
 (@f@, item (1) above); or as an explicitly-named member of its data type (@T(f)@, item (2));
@@ -326,6 +328,9 @@ associated type.  Thus, in
 \eprog
 any constructor, class, or type named @C@ is excluded.  In contrast,
 using @C@ in an import list names only a class or type.  
+
+It is not an error to hide an entity that is not, in fact, exported by
+the imported module, although compilers are encouraged to flag a warning in this case.
 
 \item
 Finally, if "impspec" is omitted then 
