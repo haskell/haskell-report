@@ -16,6 +16,8 @@
 % Changes since RC5:
 % * Author list: changed Alastair Reid's institution
 % * 1.4:   Clarified the wording
+% * 4.1:   Explicitly stated that access to pre-processor symbols is not
+%          provided by the FFI
 % * 4.1.1: Removed [lib] from impent syntax and discussion
 % * 4.1.3: Added parentheses round FunPtr ft to make it easier to 
 %          understand a tolerably complex type.
@@ -28,6 +30,9 @@
 % * 6:     Specified that HsBool==int in table2
 %          Relabelled column 1 in table 3 (C symbol -> CPP symbol)
 %          Replaced 0 and 1 with HS_BOOL_FALSE/TRUE
+%
+% * 6.1:   Clarified that nullPtr (nullFunPtr) coincides with (HsPtr) NULL and
+%          (HsFunPtr) NULL, respectively.
 %
 % Changes since RC4:
 % * 5.6: Clarified documentation of `StablePtr's (RC 5)
@@ -49,13 +54,11 @@
 %   C bindings.
 
 % TODO:
-% * see pending emails in +todo [chak]
+% * add isNullPtr and isNullFunPtr? [query send to the FFI list]
 % * shift and rotate with positive arg shift left [pending approval by ffi
 %   list]
 % * proposal to amend hs_init() & friends [if no objections to message on ffi
 %   list]
-% * Explicitly say that `nullPtr' is NULL in C.  Add Ian Lynagh
-%   <igloo@earth.li> to ack list.
 % * Revise layout of the front page.
 % * Implement HTMLization.  (Malcolm suggests using
 %   <http://pauillac.inria.fr/~maranget/hevea/>)
@@ -90,7 +93,7 @@
     \\
     \textbf{--- DRAFT ---}\\[1ex]
     \ttfamily\scriptsize
-    $\relax$Id: ffi.tex,v 1.29 2002/09/10 12:23:04 chak Exp $\relax$%
+    $\relax$Id: ffi.tex,v 1.30 2002/09/10 13:49:05 chak Exp $\relax$%
     \ignorespaces}
   }
 \end{DRAFT}
@@ -201,8 +204,9 @@ that generate code following the present specification.
 We heartly thank the kind people who assisted us with their comments and
 suggestions on the \code{ffi@haskell.org} mailing list as well as all the
 users of previous versions of the FFI who helped to shape the development by
-their feedback.  We are grateful to Olaf Chitil, Martin D. Kealey, and George
-Russell for errata to this report.
+their feedback.  We are grateful to Olaf Chitil, Wolfram Kahl, Martin D.
+Kealey, Ian Lynagh, and George Russell for errata to previous versions of this
+report.
 
 
 \clearemptydoublepage
@@ -530,7 +534,7 @@ Optionally, an import declaration can specify, after the calling convention,
 the safety level that should be used when invoking an external entity.  A
 \code{safe} call is less efficient, but guarantees to leave the Haskell system
 in a state that allows callbacks from the external code.  In contrast, an
-\code{unsafe} call, while carrying less overhead, may not trigger a callback
+\code{unsafe} call, while carrying less overhead, must not trigger a callback
 into the Haskell system.  If it does, the system behaviour is undefined.  The
 default for an invocation is to be \code{safe}.  Note that a callback into
 the Haskell system implies that a garbage collection might be triggered after
@@ -539,15 +543,15 @@ objects other than stable pointers (cf.\ Section~\ref{sec:StablePtr}) may be
 moved or garbage collected by the storage manager.
 
 The safety level \code{threadsafe} is relevant only for Haskell systems that
-support concurrency including non-Haskell threads that may preempt the Haskell
-runtime as well as foreign calls.  On such systems, a foreign call marked as
-\code{threadsafe} must be executed by a separate non-Haskell thread, but
-otherwise behaves as a \code{safe} call.  This implies that even if that
-separate thread is blocked, the Haskell runtime can still make progress.  In
-contrast, when a \code{safe} or \code{unsafe} foreign call blocks, the Haskell
-runtime also blocks.  On Haskell systems that do not support the use of
-non-Haskell threads, \code{threadsafe} implies the same behaviour as
-\code{safe}.
+support concurrency in the form of non-Haskell threads that may preempt the
+Haskell runtime as well as preempt foreign calls.  On such systems, a foreign
+call marked as \code{threadsafe} must be executed by a separate non-Haskell
+thread, but otherwise behaves as a \code{safe} call.  This implies that even
+if that separate thread is blocked, the Haskell runtime can still make
+progress.  In contrast, when a \code{safe} or \code{unsafe} foreign call
+blocks, the Haskell runtime also blocks.  On Haskell systems that do not
+support the use of non-Haskell threads, \code{threadsafe} implies the same
+behaviour as \code{safe}.
 
 \subsection{Export Declarations}
 
@@ -628,6 +632,13 @@ The following defines the structure of external entities for foreign
 declarations under the \code{ccall} calling convention for both import and
 export declarations separately.  Afterwards additional constraints on the type
 of foreign functions are defined.
+
+The FFI covers only access to C functions and global variables.  There are no
+mechanisms to access other entities of C programs.  In particular, there is no
+support for accessing pre-processor symbols from Haskell, which includes
+\code{\#define}d constants.  Access from Haskell to such entities is the
+domain of language-specific tools, which provide added convenience over the
+plain FFI as defined in this report.
 
 \subsubsection{Import Declarations}
 
@@ -1068,7 +1079,7 @@ unsigned integral types of fixed size:
 \begin{quote}
   \begin{tabular}{|l|l|l|}
     \hline
-    Size in bits & Unsigned     & Signed\\\hline\hline
+    Size in bits & Signed       & Unsigned\\\hline\hline
     8            & \code{Int8}  & \code{Word8}\\
     16           & \code{Int16} & \code{Word16}\\
     32           & \code{Int32} & \code{Word32}\\
@@ -1924,7 +1935,10 @@ corresponding C function prototype.  Indeed, where the Haskell system
 translates Haskell to C code that invokes \code{foreign} \code{import}ed C
 routines, such prototypes need to be provided and included via the header that
 can be specified in external entity strings for foreign C functions (cf.\ 
-Section~\ref{sec:ccall}); otherwise, the system behaviour is undefined.
+Section~\ref{sec:ccall}); otherwise, the system behaviour is undefined.  It is
+guaranteed that the Haskell value \code{nullPtr} is mapped to \code{(HsPtr)
+  NULL} in C and \code{nullFunPtr} is mapped to \code{(HsFunPtr) NULL} and
+vice versa.
 
 Table~\ref{tab:c-haskell-values} contains symbols characterising the range and
 precision of the types from Table~\ref{tab:c-haskell-types}.  Where available,
