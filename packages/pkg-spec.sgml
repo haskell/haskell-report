@@ -529,15 +529,22 @@ check that no user has a user package depending on P.</para>
       exposed modules of exposed packages.  This can be overridden
       using the <option>-package</option> flag, which temporarily
       exposes a particular package, hiding any other packages of the
-      same name.</para> <note><para>Question: what does
-      <literal>-package hunit-1.2 -package hunit-1.3</literal> do?
-      Does the second override the first?  Or are they both in scope?
-      I think the former.</para> <para>Question: what if the -package
-      flag breaks the registration invariants?  For example, the
-      newly-exposed package might expose a module that clashes with an
-      existing one.  Maybe the second registration invariant should be
-      checked for each run of the compiler, rather than by
-      hc-pkg?</para></note>
+      same name.</para>
+
+      <para>Later options override earlier ones, so that for example
+      <literal>-package hunit-1.2 -package hunit-1.3</literal> will
+      result in <literal>hunit-1.3</literal> being exposed.</para>
+
+      <para>Additionally, compilers should provide a
+      <option>-hide-package</option> flag, which does the opposite of
+      <literal>-package</literal>: it temporarily hides a package for
+      this run of the compiler.</para>
+
+      <para>When all the <option>-package</option> and
+      <option>-hide-package</option> flags on the compiler's command
+      line have been processed, the resulting module namespace must
+      not contain any overlapping modules; the compiler should check
+      this and report any errors.</para>
     </sect2>
 
 <sect2><title>The interface to &hc-pkg;</title>
@@ -873,11 +880,21 @@ to construct a ready-to-zip tree of all the installed files, plus a file <filena
 that describes the installed package.  He arranges to deliver both these components to the target machine,
 and then feed <filename>installed-pkg-descr</filename> to &hc-pkg; on the target machine.
       </para>
-<para>
-The file <filename>installed-pkg-descr</filename> also contains information he needs for building
-his Debian distribution, namely the
-package name, version, and (exact) dependencies.
-      </para>
+
+	<para>The file <filename>installed-pkg-descr</filename> also
+        contains information he needs for building his Debian
+        distribution, namely the package name, version, and (exact)
+        dependencies.</para>
+
+	<para>We expect there to be additional tools to help System
+	Packagers to prepare the materials necessary to build their
+	packages from a source distribution.  For example, an RPM tool
+	could take a Haskell package source distribution and build an
+	initial <literal>.spec</literal> file with as many of the
+	fields as possible filled in automatically.  In most cases
+	some intervention by the System Packager will be necessary;
+	for example platform-specific dependencies may need to be
+	specified.</para>
       </sect3>
    </sect2>
 </sect1>
