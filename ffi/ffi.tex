@@ -13,7 +13,7 @@
 % does not claim to be a definition of the Haskell 98 Foreign Function
 % Interface. 
 
-% Changes since RC6:
+% Changes since RC7:
 % * Clarified the lexis of C identifiers and C header file names
 % * In `ForeignPtr', added `mallocForeignPtrArray' and `mallocForeignPtrArray0'
 % * Clarified spec of allocations functions adding constraints taken from the
@@ -26,10 +26,12 @@
 %   pointer are executed in the opposite order as they were added.
 % * `Storable': Require that the size is divisible by the alignment
 % * Added Ross Paterson to the list of acknowledged people
-% * Fixed typos
 % * Added hs_free_fun_ptr() and hs_free_stable_ptr()
 % * Changed order of arguments of `mkIOError' and `annotateIOError' to match
 %   with the current implementation in GHC's FFI libraries.
+%
+% Changes since RC6:
+% * Fixed typos
 %
 % Changes since RC5:
 % * Author list: changed Alastair Reid's institution
@@ -118,14 +120,14 @@
 \excludeversion{FUTURE}  % material for future extensions
 
 %\def\Version{\relax}
-\def\Version{\\(Release Candidate 7)}
+\def\Version{\\(Release Candidate 8)}
 \begin{DRAFT}%
 {
   \gdef\Version{%
     \\
     \textbf{--- DRAFT ---}\\[1ex]
     \ttfamily\scriptsize
-    $\relax$Id: ffi.tex,v 1.40 2003/01/22 08:48:26 chak Exp $\relax$%
+    $\relax$Id: ffi.tex,v 1.41 2003/01/22 09:01:59 chak Exp $\relax$%
     \ignorespaces}
   }
 \end{DRAFT}
