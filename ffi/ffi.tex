@@ -46,7 +46,7 @@
     \\
     \textbf{--- DRAFT ---}\\[1ex]
     \ttfamily\scriptsize
-    $\relax$Id: ffi.tex,v 1.8 2001/08/17 02:12:49 chak Exp $\relax$%
+    $\relax$Id: ffi.tex,v 1.9 2001/08/18 03:11:02 chak Exp $\relax$%
     \ignorespaces}
   }
 \end{DRAFT}
@@ -956,6 +956,7 @@ It is important to free stable pointers that are no longer required by using
 \code{freeStablePtr}.  Otherwise, the object referenced by the stable pointer
 will be retained in the heap.
 
+
 \subsection{\code{Storable}}
 \label{sec:Storable}
 
@@ -1049,7 +1050,7 @@ FIXME: This approach has been questioned:
   by the standard libraries may also be derivable.''
 \end{verbatim}
 
-\section{\code{MarshalAlloc}}
+\subsection{\code{MarshalAlloc}}
 \label{sec:MarshalAlloc}
 
 The module \code{MarshalAlloc} provides operations to allocate and deallocate
@@ -1094,7 +1095,7 @@ access to memory areas allocated with \code{alloca} or \code{allocaBytes},
 after the computation that was passed to the allocation function has
 terminated, leads to undefined behaviour.
 
-\section{\code{MarshalArray}}
+\subsection{\code{MarshalArray}}
 \label{sec:MarshalArray}
 
 The module \code{MarshalArray} provides operations for marshalling Haskell
@@ -1193,7 +1194,7 @@ The following functions are provided by the module:
 FIXME: destructArray & destructArray0: see corresponding FIXME in Storable
 \end{verbatim}
 
-\section{\code{MarshalError}}
+\subsection{\code{MarshalError}}
 \label{sec:MarshalError}
 
 The module \code{MarshalError} provides language independent routines for
@@ -1226,10 +1227,65 @@ exceptions.
   Discard the result of a computation.
 \end{codedesc}
 
-
-\section{\code{MarshalUtils}}
+\subsection{\code{MarshalUtils}}
 \label{sec:MarshalUtils}
 
+Finally, the module \code{MarshalUtils} provides a set of useful auxilliary
+routines. 
+%
+\begin{codedesc}
+\item[new ::\ Storable a => a -> IO (Ptr a)] This function first applies
+  \code{MarshalAlloc.malloc} (Section~\ref{sec:MarshalAlloc}) to its
+  argument, and then, stores the argument in the newly allocated memory area
+  using \code{Storable.poke} (Section~\ref{sec:Storable}).
+  
+\item[with ::\ Storable a => a -> (Ptr a -> IO b) -> IO b] This function is
+  like \code{new}, but uses \code{MarshalAlloc.alloca} instead of
+  \code{MarshalAlloc.malloc}.
+
+\item[fromBool~::\ Num a => Bool -> a]
+\item[toBool~~~::\ Num a => a -> Bool]\combineitems These two functions
+  implement conversions between Haskell Boolean values and numeric
+  representations of Boolean values, where \code{False} is represented by
+  \code{0} and \code{True} by any non-zero value.
+
+\item[maybeNew ::\ (a -> IO (Ptr a)) -> (Maybe a -> IO (Ptr a))]
+  Lift a function that marshals a value of type \code{a} to a function that
+  marshals a value of type \code{Maybe a}.  In case, where the latter is
+  \code{Nothing}, return \code{Ptr.nullPtr} (Section~\ref{sec:Ptr})
+
+\item[maybeWith ::\ (a -> (Ptr b -> IO c) -> IO c)%
+  -> (Maybe a -> (Ptr b -> IO c) -> IO c)] This function lifts a
+  \code{MarshalAlloc.alloca} based marhsalling function for \code{a} to
+  \code{Maybe a}.  It marshals values \code{Nothing} in the same way as
+  \code{maybeNew}. 
+  
+\item[maybePeek ::\ (Ptr a -> IO b) -> (Ptr a -> IO (Maybe b))] Given a
+  function that marshals a value stored in the referenced memory area to a
+  value of type \code{b}, lift it to producing a value of type \code{Maybe b}.
+  If the pointer is \code{Ptr.nullPtr}, produce \code{Nothing}.
+  
+\item[withMany ::\ (a -> (b -> res) -> res) -> {[a]} -> ({[b]} -> res) -> res]
+  Lift a marshalling function of the \code{with} family to operate on a list
+  of values.
+
+\item[copyBytes ::\ Ptr a -> Ptr a -> Int -> IO ()]
+\item[moveBytes ::\ Ptr a -> Ptr a -> Int -> IO ()]\combineitems These two
+  functions are Haskell variants of the standard C library routines
+  \code{memcpy()} and \code{memmove()}, respectively.  As with their C
+  counterparts, \code{moveBytes} allows the source and destination array to
+  overlap, whereas \code{copyBytes} does not allow overlapping areas.  Both
+  functions take a reference to the destination area as their first, and a
+  reference to the source as their second argument---i.e., the argument order
+  is as in an assignment.
+\end{codedesc}
+
+\begin{verbatim}
+FIXME: I am still not sure whether `withMany' isn't to esoteric to be part of
+  the standard library.  It happens to be useful for marhsalling in some
+  situations, but it isn't really marshalling-specific, but is just another
+  list function.
+\end{verbatim}
 
 \newpage
 \section{C-Specific Marshalling}
