@@ -186,13 +186,16 @@ a <emphasis>package description</emphasis>, which she puts in <filename>~/coll/<
 Name: angela-col
 Version: 0.1.1.1.1-foo-bar-bang
 License: LGPL
-Copyright: Copyright 2004, Angela Author
+Copyright: Copyright (c) 2004, Angela Author
+Exposed-Modules: A, B, B.C
 </programlisting>
-She also creates a three-line Haskell file <filename>~/coll/Setup.lhs</filename> as follows:
+She also creates a small Haskell file <filename>~/coll/Setup.lhs</filename> as follows:
 <programlisting>
   #! /usr/bin/env runhugs
 
-  > import Distribution.Simple( main )
+  > module Main where
+  > import Distribution.Simple( defaultMain )
+  > main = defaultMain
 </programlisting>
 
 This library implements the &hps; simple build infrastructure.</para>
@@ -218,7 +221,7 @@ where <command>runhaskell</command> is a symlink to
 <programlisting>
   ./Setup.lhs configure --ghc
   ./Setup.lhs build
-  ./Setup.lhs src-dist
+  ./Setup.lhs sdist
 </programlisting>
 The first line readies the system to build the &tool; using &ghc;; for example, it checks that &ghc; exists on the system.
 The second line checks that
@@ -1072,7 +1075,7 @@ linkend="pkg-desc">.</para>
         Extensions: OverlappingInstances, TypeSynonymInstances
         Extra-Libs: libfoo, bar, bang
         Include-Dirs: your/slightest, look/will
-        Includes: /easily/unclose, /me, \"funky, path\\\\name\"
+        Includes: /easily/unclose, /me, "funky, path\\name"
         Options-ghc: -fTH -fglasgow-exts
         Options-hugs: +TH
 
@@ -1173,7 +1176,7 @@ distributions.</para>
 
       <row><entry>include-dirs</entry>
            <entry>--PATH--</entry>
-           <entry>/foo/bar/bang</entry>
+           <entry>"/foo/bar/  ,bang"</entry>
            <entry>Not Yet Used</entry>
       </row>
 
@@ -1273,9 +1276,13 @@ distributions.</para>
 
    <listitem><para><emphasis>--PATH--</emphasis> Paths are written in
    the Unix style, with directories separated by slashes, optionally
-   ending in a filename.  You should assume that the paths are case
-   sensitive, though in practice this varies depending on the end
-   user's file system.</para></listitem>
+   ending in a filename.  There are two kinds of paths supported:
+   "Simple" and "Complex".  "Simple" paths are alpha-numeric values
+   separated by slashes (foo/bar/bang).  More "Complex" paths such as
+   those with spaces or non-alphanumeric characters must be put in
+   quotes ("foo, /bar \//bang").  You should assume that the paths are
+   case sensitive, though in practice this varies depending on the end
+   user's file system.  </para></listitem>
 
    <listitem><para><emphasis>--MODULE LIST--</emphasis> A module list
    is a standard Haskell module name, without any file suffixes (.lhs
@@ -1304,18 +1311,28 @@ system or programming environment to find the source files.  </para>
 
 <sect2 id="sbi-setup"><title><literal>Distribution.Simple</literal></title>
 
-<para>This section gives the command line interface supported by <literal>Distribution.Simple.main</literal>.
-It supports all the commands described in <xref linkend=setup-spec>, and in addition the following:
-     <table frame=all><title>Extra commands supported by the simple build infrastructure setup script</title>
+<para>This section gives the command line interface supported by
+<literal>Distribution.Simple.defaultMain</literal>.  It supports all the
+commands described in <xref linkend=setup-spec>, (except for "test" -
+FIX) and in addition the following: <table frame=all><title>Extra
+commands supported by the simple build infrastructure setup
+script</title>
 
      <tgroup cols=2 align=left colsep=1 rowsep=1>     <tbody>
 
-     <row><Entry><command>./Setup.lhs woggle </command></entry>
-         <Entry><para> Blurgh (FIX)</para></entry></row>
+     <row><Entry><command>./Setup.lhs sdist </command></entry>
+         <Entry><para> Create a source tarball</para></entry></row>
+     <row><Entry><command>... </command></entry>
+         <Entry><para>...</para></entry></row>
 
      </tbody></tgroup>
      </table>
     </para>
+
+<para>Distribution.Simple.defaultMain provides interactive command-line
+help.  For each command, a help string is available by typing
+"./Setup.lhs COMMAND --help".</para>
+
 </sect2>
 
 <sect2><title>The Makefile route</title>
@@ -1331,8 +1348,8 @@ simply parses the command line arguments and shells out into <literal>make</lite
   #! /usr/bin/env runhugs
 
   > module Main where
-  > import Distribution.Make (setup)
-  > main = setup
+  > import Distribution.Make (defaultMain)
+  > main = defaultMain
 </programlisting>
 All the package description information is assumed to be known to the makefile system, and so does not
 appear in the setup script.
@@ -1342,7 +1359,7 @@ Thus,
 </programlisting>
 invokes
 <programlisting>
-  ./configure --with-hc=ghc
+  ./configure --with-compiler=ghc
 </programlisting>
 Similarly
 <literal>./Setup.lhs build</literal>
