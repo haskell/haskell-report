@@ -42,7 +42,7 @@
     \\
     \textbf{--- DRAFT ---}\\[1ex]
     \ttfamily\scriptsize
-    $\relax$Id: ffi.tex,v 1.11 2001/08/19 10:10:12 chak Exp $\relax$%
+    $\relax$Id: ffi.tex,v 1.12 2001/08/23 15:48:04 malcolm Exp $\relax$%
     \ignorespaces}
   }
 \end{DRAFT}
@@ -115,7 +115,7 @@ twofold: It must be possible (1) to describe in Haskell the interface to
 foreign functionality and (2) to use from foreign code Haskell routines.  More
 precisely, the aim is to be able to implement programs in a mixture of Haskell
 and other languages such that the source code is portable across different
-implementations of Haskell and non-Haskell systems as well as and architecture
+implementations of Haskell and non-Haskell systems as well as architecture
 and operating system independent.
 
 Central in the design of this interface, which builds on experiences with a
@@ -153,15 +153,15 @@ while Java~\cite{gosling-etal:Java}, in general, requires a qualified name in
 conjunction with argument and result types to resolve possible overloading.
 Regarding the second point, note that many languages do not specify the exact
 representation of some basic types.  For example the type \code{int} in C may
-be 16, 32, or 64 bit wide.  Similarly, the Haskell report guarantees only that
+be 16, 32, or 64 bits wide.  Similarly, the Haskell report guarantees only that
 \code{Int} covers at least the range \([-2^{29}, 2^{29} - 1]\).  As a
 consequence, to reliably represent values of C's \code{int} in Haskell, we
 have to introduce a new type \code{CInt}, which is guaranteed to match the
 representation of \code{int}.
 
-The specification of external names in dependence on a calling convention is
+The specification of external names, dependent on a calling convention, is
 described in Section~\ref{sec:extent}, whereas the marshalling of the basic
-types in dependence on a foreign languages is described in
+types dependent on a foreign language is described in
 Section~\ref{sec:marshalling}.
 
 \subsection{Contexts}
@@ -186,7 +186,7 @@ convention.
 \newpage
 \section{Lexical Structure}
 
-The only additions to the lexical structure of Haskell 98 as defined
+The only addition to the lexical structure of Haskell 98 as defined
 in~\cite[Section~2]{haskell98} is a single new reserved identifier and a set
 of special identifiers.  The latter have a special meaning only within foreign
 declarations, but may be used as ordinary identifiers elsewhere.
@@ -365,11 +365,11 @@ context.  A foreign type generally has the form
 where \(n\geq0\).  It implies that the arity of the external entity is $n$.
 
 The argument types \(\textit{at}_i\) and result type \textit{rt} produced by
-\gnterm{fatype} must be \emph{marshalable foreign types}.  A marshalable
+\gnterm{fatype} must be \emph{marshallable foreign types}.  A marshallable
 foreign type is either (1) a basic foreign type or (2) a type synonym or
-renamed datatype of a marshalable foreign type.  Moreover, the result type
+renamed datatype of a marshallable foreign type.  Moreover, the result type
 \textit{rt} may also be a type matching \code{Prelude.IO }$t$, where $t$ is
-marshalable foreign type.
+a marshallable foreign type.
 
 External functions are generally strict in all arguments.
 
@@ -564,8 +564,8 @@ These constraints are specified in the following.
 %
 \begin{description}
 \item[Static Functions.]  A static function can be of any foreign type; in
-  particular, the result type may or may not be monadic.  If a function that
-  is not pure is not imported monadic, the system behaviour is undefined.
+  particular, the result type may or may not be in the IO monad.  If a function that
+  is not pure is not imported in the IO monad, the system behaviour is undefined.
   Generally, no check for consistency with the C type of the imported label is
   performed.
 
@@ -649,7 +649,7 @@ are good reasons for doing the marshalling in Haskell:
   marshalling in Haskell.
 \item Despite the fact that marshalling code in Haskell tends to look like C
   in Haskell syntax, the strong type system still catches many errors that
-  would otherwise lead to difficult to debug runtime faults.
+  would otherwise lead to difficult-to-debug runtime faults.
 \item Direct access to Haskell heap structures from a language like
   C---especially, when marshalling from C to Haskell, i.e., when Haskell
   structures are created---carries the risk of corrupting the heap, which
@@ -887,8 +887,8 @@ the following signature and purpose:
 \item[foreignPtrToPtr ::\ ForeignPtr a -> Ptr a]
   
   This function extracts the pointer component of a foreign pointer. This is a
-  potentially dangerous operations, as if the argument to
-  \code{foreignPtrToPtr} is the last usage occurence of the given foreign
+  potentially dangerous operation, as if the argument to
+  \code{foreignPtrToPtr} is the last usage occurrence of the given foreign
   pointer, then its finaliser(s) will be run, which potentially invalidates
   the plain pointer just obtained.  Hence, \code{touchForeignPtr} must be used
   wherever it has to be guaranteed that the pointer lives on---i.e., has
@@ -897,7 +897,7 @@ the following signature and purpose:
   To avoid subtle coding errors, hand written marshalling code should
   preferably use \code{withForeignPtr} rather than combinations of
   \code{foreignPtrToPtr} and \code{touchForeignPtr}. However, the later
-  routines are occasionally preferred in tool generated marshalling code.
+  routines are occasionally preferred in tool-generated marshalling code.
   
 \item[touchForeignPtr ::\ ForeignPtr a -> IO ()] This function ensures that
   the foreign object in question is alive at the given place in the sequence
@@ -944,7 +944,7 @@ purpose:
   undefined behaviour.
   
 \item[newStablePtr ::\ a -> IO (StablePtr a)] Creates a stable pointer
-  referring to the given Hasell value.
+  referring to the given Haskell value.
   
 \item[deRefStablePtr ::\ StablePtr a -> IO a] Obtains the Haskell value
   referenced by a stable pointer, i.e., the same value that was passed to the
@@ -990,7 +990,7 @@ will be retained in the heap.
 To code marshalling in Haskell, Haskell data structures need to be translated
 into the binary representation of a corresponding data structure of the
 foreign language and vice versa.  To this end, the module \code{Storable}
-provides routines that manipulate primtive data types stored in unstructured
+provides routines that manipulate primitive data types stored in unstructured
 memory blocks.  The class \code{Storable} is instantiated for all primitive
 types that can be stored in raw memory.  Reading and writing these types to
 arbitrary memory locations is implemented by the member functions of the
@@ -999,19 +999,19 @@ storage requirements and alignment restrictions of storable types.
 
 Memory addresses are represented as values of type \code{Ptr a}
 (Section~\ref{sec:Ptr}), where \code{a} is a storable type.  The type argument
-to \code{Ptr} provides some type safety in marhsalling code, as pointers to
+to \code{Ptr} provides some type safety in marshalling code, as pointers to
 different types cannot be mixed without an explicit cast.  Moreover, it
 assists in resolving overloading.
 
 The class \code{Storable} is instantiated for all standard basic types of
 Haskell, the fixed size integral types of the modules \code{Int} and
-\code{Word} (Section~\ref{sec:Int-Word}) , data and functions pointers
+\code{Word} (Section~\ref{sec:Int-Word}) , data and function pointers
 (Section~\ref{sec:Ptr}), and stable pointers (Section~\ref{sec:StablePtr}).
 There is no instance of \code{Storable} for foreign pointers.  The intention
 is to ensure that storing a foreign pointer requires an explicit cast to a
 plain \code{Ptr}, which makes it obvious that the finalisers of the foreign
 pointer may be invoked at this point if no other reference to the pointer
-exist anymore.
+exists anymore.
 
 The signatures and behaviour of the member functions of the class
 \code{Storable} are as follows:
@@ -1199,7 +1199,7 @@ The following functions are provided by the module:
   instead of the number of bytes to copy.
   
 \item[lengthArray0 ::\ (Storable a, Eq a) => a -> Ptr a -> IO Int] Determine
-  the length of an array whose end is marked by the first occurence of the
+  the length of an array whose end is marked by the first occurrence of the
   given terminator (first argument). The length is measured in array elements
   (not bytes) and does not include the terminator.
   
@@ -1721,7 +1721,7 @@ which has an instance for the type class \code{Eq}.  The implementation of
 \code{Errno} is disclosed on purpose.  Different operating systems and/or C
 libraries often support different values of \code{errno}.  This module defines
 the common values, but due to the open definition of \code{Errno} users may
-add definition, which are not predefined.  The predefined values are the
+add definitions which are not predefined.  The predefined values are the
 following:
 %
 \begin{quote}
@@ -1762,8 +1762,8 @@ The module \code{CError} provides the following functions:
 \item[errnoToIOError ::\ String -> Errno -> Maybe Handle -> Maybe String ->
   IOError] Throw an \code{IO} exception based on the given \code{Errno} value.
   The first argument to the function should specify the location where the
-  error occured and the third and fourth can be used to specify a file handle
-  and filename in the course of whose manipulation the error occured.  This is
+  error occurred and the third and fourth can be used to specify a file handle
+  and filename in the course of whose manipulation the error occurred.  This is
   optional information, which can be used to improve the accuracy of error
   messages.  
   
@@ -1806,7 +1806,7 @@ to the standard retry loop for interrupted POSIX system calls.
 \section{Rationale}
 
 The following includes a justification of design decisions whose virtue may
-not be appreciated without further explanation.  The contents is sorted by
+not be appreciated without further explanation.  The content is sorted by
 section numbers.
 %
 \begin{description}
@@ -1872,7 +1872,7 @@ section numbers.
   There are no facilities to specify link information, such as, for example,
   the name of a library archive.  Link information can be complex and is often
   system-dependent.  Again, comprehensive support would have made the design
-  significant more complex.  In contrast to include files, simple support that
+  significantly more complex.  In contrast to include files, simple support that
   offloads the complexity to standard C mechanisms seems not to be possible
   here.  Instead, we delegate the handling of link information to the package
   management system of the Haskell implementation.
