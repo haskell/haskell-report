@@ -50,7 +50,7 @@
     \\
     \textbf{--- DRAFT ---}\\[1ex]
     \ttfamily\scriptsize
-    $\relax$Id: ffi.tex,v 1.23 2002/02/04 08:52:40 chak Exp $\relax$%
+    $\relax$Id: ffi.tex,v 1.24 2002/02/04 09:37:12 chak Exp $\relax$%
     \ignorespaces}
   }
 \end{DRAFT}
@@ -158,10 +158,10 @@ that generate code following the present specification.
 
 \subsection*{Acknowledgements}
 
-We heartly thank the kind people who helped us with their comments and
+We heartly thank the kind people who assisted us with their comments and
 suggestions on the \code{ffi@haskell.org} mailing list as well as all the
 users of previous versions of the FFI who helped to shape the development by
-their feedback.
+their feedback.  We are grateful to Martin D. Kealey for errata to this report.
 
 
 \clearemptydoublepage
@@ -2088,12 +2088,12 @@ to the standard retry loop for interrupted POSIX system calls.
 \item[throwErrnoIfMinus1~~:: Num a => String -> IO a -> IO a]
 \item[throwErrnoIfMinus1\us~:: Num a => String -> IO a -> IO ()]\combineitems
   Instantiate \code{throwErrnoIf} and \code{throwErrnoIf\us} with the predicate
-  \code{(< -1)}.
+  \code{(== -1)}.
 
 \item[throwErrnoIfMinus1Retry~~:: Num a => String -> IO a -> IO a]
 \item[throwErrnoIfMinus1Retry\us~:: Num a => String -> IO a -> IO ()]%
   \combineitems Instantiate \code{throwErrnoIfRetry} and
-  \code{throwErrnoIfRetry\us} with the predicate \code{(< -1)}.
+  \code{throwErrnoIfRetry\us} with the predicate \code{(== -1)}.
 
 \item[throwErrnoIfNull~~~~~~:: String -> IO (Ptr a) -> IO (Ptr a)]
 \item[throwErrnoIfNullRetry~:: String -> IO (Ptr a) -> IO (Ptr a)]%
