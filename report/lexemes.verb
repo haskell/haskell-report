@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/lexemes.verb,v 1.3 2001/08/14 07:48:25 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/lexemes.verb,v 1.4 2001/08/23 16:16:57 simonpj Exp $
 %
 %*section 2
 %**<title>Haskell 98 Lexical Structure</title>
@@ -110,21 +110,21 @@ Comments\index{comment} are valid whitespace.
 
 An ordinary comment\index{comment!end-of-line} begins with a sequence of
 two or more consecutive dashes (e.g. @--@) and extends to the following newline.
-\emph{The sequence of dashes must not be the prefix of a legal lexeme.}
-For example, ``@-->@'' or ``@--|@'' do {\em not} begin
-a comment, because both of these are legal lexemes.
+\emph{The sequence of dashes must not form part of a legal lexeme.}
+For example, ``@-->@'' or ``@|--@'' do {\em not} begin
+a comment, because both of these are legal lexemes; however ``@--foo@''
+does start a commment.
 
 A nested comment\index{comment!nested} begins with ``@{-@'' 
 and ends with ``@-}@''.  No legal lexeme starts with ``@{-@''; 
 hence, for exmaple, ``@{---@'' starts a nested comment despite the trailing dashes.
 
 The comment itself is not lexically analysed.  Instead the first
-unmatched occurrence of the string ``@-}@'' terminates the nested comment.
-Nested comments may be
-nested to any depth: any occurrence of the string ``@{-@'' within the nested
-comment starts a new nested comment, terminated by ``@-}@''.  Within
-a nested comment, each ``@{-@'' is matched by a corresponding
-occurrence of ``@-}@''.
+unmatched occurrence of the string ``@-}@'' terminates the nested
+comment.  Nested comments may be nested to any depth: any occurrence
+of the string ``@{-@'' within the nested comment starts a new nested
+comment, terminated by ``@-}@''.  Within a nested comment, each
+``@{-@'' is matched by a corresponding occurrence of ``@-}@''.
 
 In an ordinary comment, the character
 sequences ``@{-@'' and ``@-}@'' have no special significance, and, in a
@@ -227,11 +227,11 @@ four do not.  Namespaces are also discussed in
 Section~\ref{namespaces}.
 
 \index{qualified name}
-External names may optionally be {\em qualified} in certain
+A name may optionally be {\em qualified} in certain
 circumstances by prepending them with a module identifier.  This
 applies to variable, constructor, type constructor and type class
 names, but not type variables or module names.  Qualified
-names are discussed in detail in Section~\ref{import}.
+names are discussed in detail in Section~\ref{modules}.
 @@@
 qvarid   -> [modid @.@] varid
 qconid   -> [modid @.@] conid
@@ -246,6 +246,23 @@ qconsym  -> [modid @.@] consym
 \indexsyn{qtycls}%
 \indexsyn{qvarsym}%
 \indexsyn{qconsym}%
+Since a qualified name is a lexeme, no spaces are
+allowed between the qualifier and the name.
+Sample lexical analyses are shown below.
+\[\bto{|l|l|}
+\hline
+This                       	    & Lexes as this                       \\
+\hline
+@f.g@                               & @f . g@ (three tokens)             \\
+@F.g@		                    & @F.g@ (qualified `g')            \\
+@f..@		                    & @f ..@ (two tokens)    \\
+@F..@	                            & @F..@ (qualified `.')	    \\
+@F.@                                & @F .@ (two tokens)                     \\
+\hline\eto\]
+The qualifier does not change the syntactic treatment of a name;
+for example, @Prelude.+@ is an infix operator with the same fixity as the 
+definition of @+@ in the Prelude (Section~\ref{fixity}).
+
 
 \subsection{Numeric Literals}\index{number!literal syntax}
 \label{lexemes-numeric}
@@ -353,7 +370,8 @@ String literals are actually abbreviations for lists of characters
 \subsection{Layout}\index{layout}
 \label{lexemes-layout}
 
-\Haskell{} permits the omission of the braces and semicolons by
+\Haskell{} permits the omission of the braces and semicolons used in several
+grammar productions, by
 using {\em layout} to convey the same information.  This allows both
 layout-sensitive and layout-insensitive styles of coding, which
 can be freely mixed within one program.  Because layout is

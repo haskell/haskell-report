@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/modules.verb,v 1.5 2001/08/20 07:57:53 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/modules.verb,v 1.6 2001/08/23 16:16:57 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Modules</title>
 %*section 5
@@ -459,20 +459,7 @@ declarations can have an empty export list.  For example
 \subsubsection{Qualified names}\index{qualified name}
 \label{qualifiers}
 
-A {\em qualified name} is written as "modid"@.@"name".
-Since qualifier names are part of the lexical syntax, no spaces are
-allowed between the qualifier and the name.
-Sample lexical analyses are shown below.
-\[\bto{|l|l|}
-\hline
-This                       	    & Lexes as this                       \\
-\hline
-@f.g@                               & @f . g@ (three tokens)             \\
-@F.g@		                    & @F.g@ (qualified `g')            \\
-@f..@		                    & @f ..@ (two tokens)    \\
-@F..@	                            & @F..@ (qualified `.')	    \\
-@F.@                                & @F .@ (two tokens)                     \\
-\hline\eto\]
+A {\em qualified name} is written as "modid"@.@"name" (Section~\ref{ids}).
 
 A qualified name is brought into scope:
 \begin{itemize}
@@ -486,22 +473,18 @@ the qualified name of the entity being defined.  Thus:
     g x = M.f x x
 @
 \eprog
-is legal.  The {\em defining} occurrence must mention the unqualified name; therefore, it is
+is legal.  The {\em defining} occurrence must mention the {\em unqualified} name; therefore, it is
 illegal to write
 \bprog
 @
   module M where
-    M.f x = ...
+    M.f x = ...			-- ILLEGAL
+    g x = let M.y = x+1 in ...	-- ILLEGAL
 @
 \eprog
 \item {\em By an @import@ declaration.}  An @import@ declaration, whether @qualified@ or not,
 always brings into scope the qualified name of the imported entity (Section~\ref{import}).
 \end{itemize}
-
-The qualifier does not change the syntactic treatment of a name;
-for example, @Prelude.+@ is an infix operator with the same fixity as the 
-definition of @+@ in the Prelude (Section~\ref{fixity}).
-
 Qualifiers may also be applied to
 names imported by an unqualified import; this allows a qualified
 import to be replaced with an unqualified one without forcing changes

@@ -16,10 +16,14 @@
 <h1>Errata in the 
 <a href="http://haskell.cs.yale.edu/definition/">Haskell 98 Language Report</a></h1>
 
+All references are to the original Haskell 98 Report, dated 1 Feburary 1999.
+
 <ul>
+<p><li> <strong>Title page</strong>.  Remove "[editor]" from after John Hughes.
+
 <p><li> <strong>Title page</strong>.  Add the paragraph:
 <p>
-"Copyright (c) Simon Peyton Jones and John Hughes.
+"Copyright (c) Simon Peyton Jones.
 <p>
 The authors intend this Report to belong to the entire Haskell 
 community, and so we grant permission to copy and
@@ -50,6 +54,26 @@ useful guidelines for implementors of the language."
 is a formally specified thing.)
 
 
+<p><li> <strong>Page 5, Section 2.2, Lexical program structure; and Appendix B.2, p120.</strong>
+<ul>
+<li> Add <em>return</em>, <em>linefeed</em>, and <em>uniWhite</em> to the production for <em>ANY</em>.
+<li> Replace the production for <em>lexeme</em> with:
+<pre>
+  lexeme -> qvarid | qconid | qop | literal | special | reservedop | reservedid
+</pre>
+</ul>
+(These changes, and the next one, justify the productions for <em>program</em> which claims that a program is
+a sequence of lexemes and white space.)
+
+<p><li> <strong>Page 7, Section 2.4, Identifiers and operators; and Appendix B.2, p121.</strong>
+Add <em>dashes</em> to <em>reservedop</em> in the exclusion set of the
+production for <em>varsym</em>.  (This ensures that "<tt>--</tt>" and
+"<tt>---</tt>" are not legal lexemes.
+
+<p><li> <strong>Page 9, Section 2.4, Identifiers and operators; and Page 68, Section 5.5.1, Qualified names.</strong>
+Move the first paragraph of 5.5.1, and the following table, and the paragraph starting "The qualifier does not change...",
+to the end of Section 2.4.  (These paragraphs deal with lexical matters, which do not belong in Chapter 5.)
+
 <p><li> <strong>Page 9, Section 2.6, Character and String Literals.</strong>
 In the production for "cntrl" replace "ASClarge" by "ascLarge".
 
@@ -69,10 +93,6 @@ should be
   size :: Stack a -> Int
 </pre>
 
-<p><li> [Aug 2001] <strong>Page 13, Section 3, Expressions.</strong>
-Remove Table 1, and the associated paragraph beginning "As an aid to
-understanding...".  (The table causes more confusion than it clears up.)
-
 <p><li> [July 2001] <strong>Page 12, Section 3, Expressions.</strong>  
 Replace the last two sentences of the first paragrah of the section by:
 <p>
@@ -85,8 +105,16 @@ comprehension is used."
 <p>
 (Clarification only.)
 
+<p><li> [Aug 2001] <strong>Page 13, Section 3, Expressions.</strong>
+Remove Table 1, and the associated paragraph beginning "As an aid to
+understanding...".  (The table causes more confusion than it clears up.)
+
 <p><li> [Apr 2001] <strong>Page 14, Section 3.1, Errors.</strong>  In the first sentence of
 the section, after "indistinguishable" add "by a Haskell program".
+
+<p><li> [Apr 2001] <strong>Page 15, Section 3.2, Variables, Constructors, Operators, and Literals.</strong>  
+Remove the paragraph starting "Qualified names may only ...", and the following example, and the
+concluding paragraph starting "incorrectly uses a qualifier". (This is all covered in 2.4 and 5.5.1.)
 
 <p><li> [July 2001] <strong>Page 20, Section 3.10, Arithmetic sequences.</strong>
 In the second paragraph, in the sentence "For the type <tt>Integer</tt>,
@@ -118,8 +146,25 @@ Change the production for <em>stmts</em> to read:
 That is, every list of statements must end in an expression, optionally
 followed by a semicolon.
 
-<p><li> [Aug 2001] <strong>Page ???, Section 3.15, Datatypes with Field Labels.</strong>.
+<p><li> [Aug 2001] <strong>Page 24, Section 3.15, Datatypes with Field Labels.</strong>.
 Add an example to illustrate the final point in para 2.
+
+<p><li> [Aug 2001] <strong>Page 26, Section 3.15.3, Updates Using Field Labels</strong>.
+In the translation box: 
+<ul>
+<li> replace the first un-subscripted "C" by "C1", and the second by "Cj".
+(The "1" and "j" should be subscripts of course!)
+<li> Change "b" to "bs" in the "where..." part.
+</ul>
+
+<p><li> [Aug 2001] <strong>Page 31, Section 3.17.2, Informal Semantics of Case Expressions.</strong>
+Replace the example at the foot of Page 31, following the paragraph "The guard semantics...",
+with the following:
+<pre>
+    f :: (Int,Int,Int) -> [Int] -> Int
+    f ~(x,y,z) [a] | (a == y) = 1
+</pre>
+(The previous example use boolean and, which is non-strict in its second argument!)
 
 <p><li> [Apr 2001] <strong>Page 31,33, Figures 3 and 4, Semantics of Case Expressions.</strong>
 Replace "completely new variable" by "new variable" in these two figures.  (Some clauses
@@ -128,7 +173,7 @@ said "new" and some "completely new" which is misleadingly inconsistent.)
 <p><li> [Apr 2001] <strong>Page 33, Figure 4, Semantics of Case Expressions Part 2.</strong>
 In clause (r) replace "e0" by "v" throughout.
 
-<p><li> [Aug 2001] <strong>Page ???, Section 3.17.1, Patterns.</strong>.
+<p><li> [Aug 2001] <strong>Page 28, Section 3.17.1, Patterns.</strong>.
 Give an example to illustrate an illegal non-linear pattern.
 
 <p><li> <strong>Page 40, Section 4.2.1, Algebraic Datatype Declarations.</strong>
@@ -163,7 +208,17 @@ The new phrase is "if v appears only in constraints of the
 form (C v) where C is a class".  Without this condition the rest of the
 sentence does not make sense.
 
-<p><li> [Apr 2001] <strong>Page 53, Section 4.3.3.</strong>  Replace "For example, these two function
+<p><li> [Aug 2001] <strong>Page 51, Section 4.4.2, Fixity Declarations.</strong>
+<ul>
+<li> In the prodution for <em>gendecl</em> change <em>digit</em> to <em>integer</em>.
+<li> Make the same change in the syntax at the start of Section 4 and in Appendix B.
+<li> After "A fixity declaration gives the fixity and binding
+precedence of one or more operators." add the sentence "The <em>integer</em> in a fixity declaration
+must be in the range 0 to 9."
+</ul>
+(Previously, "digit" was used, and it isn't a lexeme.)
+
+<p><li> [Apr 2001] <strong>Page 53, Section 4.4.3.</strong>  Replace "For example, these two function
 definitions are equivalent:", and the two lines of code that follow by:
 <br>
 "For example, these three function definitions are all equivalent:
@@ -174,15 +229,6 @@ definitions are equivalent:", and the two lines of code that follow by:
 </pre>"
 (This change makes explicit that an infix operator with more than two arguments
 can have all of them on the LHS.)
-
-<p><li> [Aug 2001] <strong>Page ???, Section 4.4.2, Fixity Declarations.</strong>
-<ul>
-<li> In the prodution for <em>gendecl</em> change <em>digit</em> to <em>integer</em>.
-<li> Make the same change in the syntax at the start of Section 4 and in Appendix B.
-<li> After "A fixity declaration gives the fixity and binding
-precedence of one or more operators." add the sentence "The <em>integer</em> in a fixity declaration
-must be in the range 0 to 9."
-</ul>
 
 <p><li> [Apr 2001] <strong>Page 54, Section 4.4.3, subsection Function Bindings.</strong>
 In the first translation scheme ("The general binding form for functions..."), 
@@ -257,6 +303,15 @@ The last example in the section should read:
 	import Foo as A(f)
 </pre>
 
+<p><li> <strong>Page 68, Section 5.5.1, Qualified names.</strong>
+Replace the second example in the first bullet by:
+<pre>
+  module M where
+    M.f x = ...			-- ILLEGAL
+    g x = let M.y = x+1 in ...	-- ILLEGAL
+</pre>
+(This just clarifies that qualifiers aren't legal in local decls either.)
+
 <p><li> <strong>Page 69, Section 5.5.2, Name clashes.</strong>
 At the very end of the section, add the following clarification:
 <p>
@@ -300,10 +355,10 @@ reference to <tt>null</tt> must also resolve the ambiguous use of <tt>null</tt>
 just as <tt>A</tt> does.  Thus there is little danger of accidentally shadowing 
 Prelude names."
 
-<p><li> [Aug 2001]  <strong>Page ???, Section 6.1.3, Lists.</strong>  In the last sentence,
+<p><li> [Aug 2001]  <strong>Page 74, Section 6.1.3, Lists.</strong>  In the last sentence,
 after "@Monad@" add ", @Functor@".  (The list type is an instance of @Functor@.)
 
-<p><li> [May 2001]  <strong>Page 74, Section 6.1.6, Tuples.</strong>
+<p><li> [May 2001]  <strong>Page 74, Section 6.1.4, Tuples.</strong>
 Replace the first paragraph of this section with:
 <p>
 "Tuples are algebraic datatypes with special syntax, as defined
@@ -323,7 +378,7 @@ of 7."
 <p><li> [Apr 2001]  <strong>Page 74, Section 6.1.6, Function Types.</strong>
 Delete the sentence "Functions are an instance of the <tt>Show</tt> class but not <tt>Read</tt>".
 
-<p><li> [Aug 2001]  <strong>Page ???, Section 6.1.7, The IO and IOError Types.</strong>
+<p><li> [Aug 2001]  <strong>Page 75, Section 6.1.7, The IO and IOError Types.</strong>
 In the second sentence, replace "<tt>Show</tt>" by "<tt>Functor</tt>".  
 (@IO@ is an instance of @Functor@, but not @Show@.)
 
@@ -399,6 +454,9 @@ After the default method for <tt>enumFromTo</tt> add
   enumFromThen x y = map toEnum [fromEnum x, fromEnum y ..]
 </pre>
 
+<p><li><strong>Page 95, Appendix A, Standard Prelude, class <tt>Floating</tt>.</strong>
+Add <tt>asin, acos, atan</tt> to the comment giving the list of minimal complete definitions.
+
 <p><li> [Apr 2001] <strong>Page 101, Appendix A, <tt>instance Monad IO</tt>.</strong>
 Replace the definition of <tt>fail</tt> in <tt>instance Monad IO</tt> by
 <pre>
@@ -409,7 +467,7 @@ Replace the definition of <tt>fail</tt> in <tt>instance Monad IO</tt> by
 <tt>instance Enum Float</tt>.</strong>
 Replace "<tt>1.0</tt>" by "<tt>0.95</tt>".
 
-<p><li> [Aug 2001] <strong>Page ???, Appendix A, instance of <tt>Monad IO</tt>.</strong>
+<p><li> [Aug 2001] <strong>Page 101, Appendix A, instance of <tt>Monad IO</tt>.</strong>
 Delete defintion for <tt> >> </tt>.  (The default definition will do.)
 
 <p> <li> [Apr 2001] <strong>Page 105, Appendix A.1, line 11.</strong>
@@ -489,7 +547,7 @@ Replace the instances for <tt>Show Int</tt> and <tt>Read Int</tt> with
 </pre>
 The previous definitions (which are simply specifications, remember) failed on minInt.
 
-<p><li> [Aug 2001]  <strong>Page ???, Appendix B.3, Layout</strong>. 
+<p><li> [Aug 2001]  <strong>Page 124, Appendix B.3, Layout</strong>. 
 Near the end of the sub-section, delete from "Another place where..." to the end of the 
 sub-section.  (Note 5 covers the top-level case.)
 
@@ -505,6 +563,23 @@ the empty string, resulting in the following:
   head (readsPrec d (showsPrec d x "")) == (x,"")
 </pre>
 (The old, stronger, equation is simply false.)
+
+<p><li> [Aug 2001]  <strong>Page 138, Appendix E, Compiler pragmas</strong>.
+<ul>
+<li> Change <tt>inline</tt> to <tt>INLINE</tt>.
+<li> Change <tt>notInline</tt> to <tt>NOINLINE</tt>.
+<li> Change <tt>specialize</tt> to <tt>SPECIALIZE</tt>.
+<li> Remove the optional digit from the <tt>INLINE</tt> pragma, and replace the first para of E.1 by:
+<p>
+"The <tt>INLINE</tt> pragma instructs the compiler to inline the specified variables
+at their use sites.
+Compilers will often automatically inline simple expressions.  This
+may be prevented by the <tt>NOINLINE</tt> pragma."
+<p> <li> Delete the whole of E.3.
+</ul>
+(These changes simplify the pramga story, and bring it into line with what
+is usually implemented.)
+
 
 <p><li>  [Apr 2001] <strong>Page 141, Bibliograpy</strong>. 
 Citation [4] should read "JR Hindley".
@@ -528,9 +603,11 @@ Haskell 98 Programming Language, 1 February 1999".
 <a href="http://haskell.cs.yale.edu/definition/">Haskell 98 Library Report</a></h1>
 
 <ul>
+<p><li> <strong>Title page</strong>.  Remove "[editor]" from after John Hughes.
+
 <p><li> <strong>Title page</strong>.  Add the paragraph:
 <p>
-"Copyright (c) Simon Peyton Jones and John Hughes.
+"Copyright (c) Simon Peyton Jones.
 <p>
 The authors intend this Report to belong to the entire Haskell 
 community, and so we grant permission to copy and

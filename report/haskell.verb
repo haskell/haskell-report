@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/haskell.verb,v 1.6 2001/08/20 07:57:53 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/haskell.verb,v 1.7 2001/08/23 16:16:57 simonpj Exp $
 %
 
 % NOTE:--------------------------------------------------------------
@@ -431,11 +431,11 @@
 \vspace{.15in}
 \begin{center} \large
 \begin{tabular}{l@@{\hspace{5mm}}l}
-Simon Peyton Jones$^8$ [editor] & John Hughes$^3$ [editor] \\
-Lennart Augustsson$^9$		& Dave Barton$^7$ \\
-Brian Boutel$^4$ 		& Warren Burton$^5$ \\
-Joseph Fasel$^6$ 		& Kevin Hammond$^2$ \\
-Ralf Hinze$^{12}$ 		& Paul Hudak$^1$ \\
+Simon Peyton Jones$^8$ [editor] & Lennart Augustsson$^9$ \\
+Dave Barton$^7$ 		& Brian Boutel$^4$ \\
+Warren Burton$^5$ 		& Joseph Fasel$^6$ \\
+Kevin Hammond$^2$		& Ralf Hinze$^{12}$  \\
+Paul Hudak$^1$ 			& John Hughes$^3$ \\
 Thomas Johnsson$^3$ 		& Mark Jones$^{14}$ \\
 John Launchbury$^{14}$ 		& Erik Meijer$^{10}$ \\
 John Peterson$^1$		& Alastair Reid$^{15}$ \\
@@ -465,7 +465,7 @@ Authors' affiliations:
 \vspace{.2in}
 
 \begin{center}
-Copyright (c) Simon Peyton Jones and John Hughes. 
+Copyright (c) Simon Peyton Jones. 
 \end{center}
 {\em The authors intend this Report to belong to the entire Haskell
 community, and so we grant permission to copy and distribute it for

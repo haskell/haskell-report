@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/exps.verb,v 1.5 2001/08/20 07:57:53 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/exps.verb,v 1.6 2001/08/23 16:16:57 simonpj Exp $
 %
 %*section 3
 %**<title>The Haskell 98 Report: Expressions</title>
@@ -78,6 +78,7 @@ aexp 	->  qvar				& (\tr{variable})
 \indexsyn{aexp}%
 \indexsyn{fexp}%
 
+%	Removed Aug 2001: more misleading than helpful. SLPJ
 % As an aid to understanding this grammar,
 % Table~\ref{syntax-precedences} shows the relative precedence of
 % expressions, patterns and definitions, plus an extended associativity.
@@ -255,17 +256,19 @@ or constructor by enclosing it in parentheses.  If "op" is an infix
 operator, then an expression or pattern of the form \mbox{"x op y"} is
 equivalent to {"@(@op@)@ x y"}.
 
-Qualified names may only be used to reference an imported variable or
-constructor (see Section~\ref{import})
-but not in the definition of a new variable or constructor.  Thus
-\bprog
-@
-let F.x = 1 in F.x   -- invalid
-@
-\eprog
-incorrectly uses a qualifier in the definition of @x@, regardless of
-the module containing this definition.  Qualification does not affect
-the nature of an operator: @F.+@ is an infix operator just as @+@ is.
+%	This para is covered by Section 2.4 and 5.5.1
+% A qualified name may only be used to refer to a variable or
+% constructor imported from another module (see Section~\ref{import}), or
+% defined at the top level, 
+% but not in the definition of a new variable or constructor.  Thus
+% \bprog
+% @
+% let F.x = 1 in F.x   -- invalid
+% @
+% \eprog
+% incorrectly uses a qualifier in the definition of @x@, regardless of
+% the module containing this definition.  Qualification does not affect
+% the nature of an operator: @F.+@ is an infix operator just as @+@ is.
 
 Special syntax is used to name some constructors for some of the
 built-in types, as found
@@ -855,15 +858,18 @@ have at least one body.  Each body must have the same type, and the
 type of the whole expression is that type.
 
 A case expression is evaluated by pattern matching the expression "e"
-against the individual alternatives.  The matches are tried sequentially,
-from top to bottom.  The first successful match causes evaluation of
-the corresponding alternative body, in the environment of the case
-expression extended by the bindings created during the matching of
-that alternative and by the "decls_i" associated with that
-alternative.  If no
-match succeeds, the result is "\bot".  Pattern matching is described
-in Section~\ref{pattern-matching}, with the formal semantics of case
-expressions in Section~\ref{case-semantics}.
+against the individual alternatives.  The alternatives are tried
+sequentially, from top to bottom.  If "e" matches the pattern in the
+alternative, the guards for that alternative are tried sequentially
+from top to bottom, in the environment of the case expression extended
+by the bindings created during the matching of the pattern and by the
+"decls_i" associated with that alternative.  If one of the guards
+evaluates to @True@, the corresponding right-hand side is evaluated.
+If all the guards evaluate to @False@, matching continues with the
+next alternative.  If no match succeeds, the result is "\bot".
+Pattern matching is described in Section~\ref{pattern-matching}, with
+the formal semantics of case expressions in
+Section~\ref{case-semantics}.
 
 \subsection{Do Expressions}
 \index{do expression}
@@ -1051,14 +1057,14 @@ Using the prior definition of "pick",
 \bt{lcl}
 \struthack{17pt}%
 "e" @{@ "bs" @}@ &=& @case@ "e" @of@\\
-&&@        @"C_1 v_1 ... v_{k_1}" @->@ "C (pick^{C_1}_1 bs v_1) ... (pick^{C_1}_{k_1} bs v_{k_1})"\\
+&&@        @"C_1 v_1 ... v_{k_1}" @->@ "C_1 (pick^{C_1}_1 bs v_1) ... (pick^{C_1}_{k_1} bs v_{k_1})"\\
 &&@            @ ... \\
-&&@        @"C_j v_1 ... v_{k_j}" @->@ "C (pick^{C_j}_1 bs v_1) ... (pick^{C_j}_{k_j} bs v_{k_j})"\\
+&&@        @"C_j v_1 ... v_{k_j}" @->@ "C_j (pick^{C_j}_1 bs v_1) ... (pick^{C_j}_{k_j} bs v_{k_j})"\\
 &&@        _ -> error "Update error"@\\
 \et
 \end{center}
 where "\{C_1,...,C_j\}" is the set of constructors containing all labels
-in "b", and "k_i" is the arity of "C_i".
+in "bs", and "k_i" is the arity of "C_i".
 }
 Here are some examples using labeled fields:
 \bprog
@@ -1414,7 +1420,8 @@ particular, an otherwise irrefutable pattern
 may be evaluated because of a guard.  For example, in
 \bprog
 @
-f ~(x,y,z) [a] | a && y = 1
+f :: (Int,Int,Int) -> [Int] -> Int
+f ~(x,y,z) [a] | (a == y) = 1
 @
 \eprog
 % \bprog

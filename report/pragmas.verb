@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/pragmas.verb,v 1.1 2001/03/28 14:13:42 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/pragmas.verb,v 1.2 2001/08/23 16:16:57 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Pragmas</title>
 %*section E
@@ -21,24 +21,26 @@ syntax is @{-#@ @#-}@.
 \subsection{Inlining}
 \index{inlining}
 @@@
-decl -> @{-#@ @inline@ [digit] qvars @#-}@
-decl -> @{-#@ @notInline@ qvars @#-}@
+decl -> @{-#@ @INLINE@ qvars @#-}@
+decl -> @{-#@ @NOINLINE@ qvars @#-}@
 @@@
-The optional digit represents the level of optimization at which the
-inlining is to occur.  If omitted, it is assumed to be 0.  A compiler
-may use a numeric optimization level setting in which increasing level
-numbers indicate increasing amounts of optimization.  Trivial
-inlinings that have no 
-impact on compilation time or code size should have an optimization
-level of 0; more complex inlinings that may lead to slow compilation
-or large executables should be associated with higher optimization levels.
+% The optional digit represents the level of optimization at which the
+% inlining is to occur.  If omitted, it is assumed to be 0.  A compiler
+% may use a numeric optimization level setting in which increasing level
+% numbers indicate increasing amounts of optimization.  Trivial
+% inlinings that have no 
+% impact on compilation time or code size should have an optimization
+% level of 0; more complex inlinings that may lead to slow compilation
+% or large executables should be associated with higher optimization levels.
 
+The @INLINE@ pragma instructs the compiler to inline the specified variables
+at their use sites.
 Compilers will often automatically inline simple expressions.  This
-may be prevented by the @notInline@ pragma.
+may be prevented by the @NOINLINE@ pragma.
 
 \subsection{Specialization}
 @@@
-decl -> @{-#@ @specialize@ spec_1 @,@ ... @,@ spec_k @#-}@ & (k>=1)
+decl -> @{-#@ @SPECIALIZE@ spec_1 @,@ ... @,@ spec_k @#-}@ & (k>=1)
 spec -> vars :: type
 @@@
 Specialization is used to avoid inefficiencies involved in dispatching
@@ -48,7 +50,7 @@ overloaded functions.  For example, in
 factorial :: Num a => a -> a
 factorial 0 = 0
 factorial n = n * factorial (n-1)
-{-# specialize factorial :: Int -> Int,
+{-# SPECIALIZE factorial :: Int -> Int,
                factorial :: Integer -> Integer #-}
 @
 \eprog
@@ -57,23 +59,23 @@ parameter is either @Int@ or @Integer@ will
 use specialized versions of @factorial@ which do not involve
 overloaded numeric operations.
 
-\subsection{Optimization}
-@@@
-decl -> optdecl
-exp^0  -> optdecl exp^0
-optdecl -> @{-#@ @optimize@ optd_1 @,@ ... @,@ optd_k @#-}@ & (k >= 1)
-optd  -> digit
-       | @speed@ digit
-       | @space@ digit 
-       | @compilationSpeed@ digit
-       | @debug@ digit
-@@@
-The @optimize@ pragma
-provides  explicit control over the optimization levels
-of the compiler.  If used as a declaration, this applies to all values
-defined in the declaration group (and recursively to any nested
-values).  Used as an expression, it applies only to the prefixed
-expression.  If no attribute is named, the @speed@ attribute is
-assumed.
+% \subsection{Optimization}
+% @@@
+% decl -> optdecl
+% exp^0  -> optdecl exp^0
+% optdecl -> @{-#@ @optimize@ optd_1 @,@ ... @,@ optd_k @#-}@ & (k >= 1)
+% optd  -> digit
+%        | @speed@ digit
+%        | @space@ digit 
+%        | @compilationSpeed@ digit
+%        | @debug@ digit
+% @@@
+% The @optimize@ pragma
+% provides  explicit control over the optimization levels
+% of the compiler.  If used as a declaration, this applies to all values
+% defined in the declaration group (and recursively to any nested
+% values).  Used as an expression, it applies only to the prefixed
+% expression.  If no attribute is named, the @speed@ attribute is
+% assumed.
 
 %**~footer

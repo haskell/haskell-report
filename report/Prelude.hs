@@ -169,6 +169,7 @@ class  (Fractional a) => Floating a  where
 
         -- Minimal complete definition:
         --      pi, exp, log, sin, cos, sinh, cosh
+	--	asin, acos, atan
         --      asinh, acosh, atanh
     x ** y           =  exp (log x * y)
     logBase x y      =  log y / log x

@@ -1,11 +1,11 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/syntax-lexical.verb,v 1.2 2001/08/14 07:48:25 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/syntax-lexical.verb,v 1.3 2001/08/23 16:16:57 simonpj Exp $
 % 
 
 @@@
 
 program		-> \{ lexeme | whitespace \}
-lexeme          -> varid | conid | varsym | consym | literal | special | reservedop | reservedid
+lexeme          -> qvarid | qconid | qop | literal | special | reservedop | reservedid
 literal		-> integer | float | char | string
 special		-> @(@ | @)@ | @,@ | @;@ | @[@ | @]@ | \bkq | @{@ | @}@
 
@@ -27,7 +27,7 @@ opencom		-> @{-@
 closecom	-> @-}@
 ncomment	-> opencom ANYseq \{ncomment ANYseq\} closecom
 ANYseq		-> \{ANY\}_{\langle{}\{ANY\} ( opencom | closecom ) \{ANY\}\rangle{}}
-ANY		-> any | newline | vertab | formfeed
+ANY		-> any | newline | vertab | formfeed | return | linefeed | uniWhite
 any		-> graphic | space | tab
 graphic		-> small | large | symbol | digit | special | @:@ | @"@ | @'@
 

@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/decls.verb,v 1.5 2001/08/20 07:57:53 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/decls.verb,v 1.6 2001/08/23 16:16:57 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Declarations</title>
 %*section 4
@@ -141,7 +141,7 @@ user-defined function.  The first declaration above may be read
 ``@Int@ is an instance of the class @Num@ as witnessed by these
 definitions (i.e.~class methods)\index{class method} for @(+)@ and @negate@.''
 
-More examples of type and constructor classes can be found in
+More examples of type classes can be found in
 the papers by Jones \cite{jones:cclasses} or Wadler and Blott
 \cite{wadler:classes}. 
 The term `type class' was used to describe the original \Haskell{} 1.0
@@ -499,8 +499,7 @@ expressions---normal constructor application has higher precedence
 than infix constructor application (thus @a : Foo a@ parses as 
 @a : (Foo a)@).
 
-An algebraic datatype declaration introduces a new type
-and constructors over that type and has the form:
+An algebraic datatype declaration has the form:
 \[
 "@data@ cx @=>@ T u_1 ... u_k @=@ K_1 t_{11} ... t_{1k_1} @|@ \cdots @|@ \
                                 K_n t_{n1} ... t_{nk_n}"
@@ -508,8 +507,12 @@ and constructors over that type and has the form:
 where "cx" is a context.
 %\index{context!in data declaration@@in {\tt data} declaration}
 This declaration
-introduces a new type constructor "T" with constituent data
-constructors "K_1, ..., K_n" whose types are given by:
+introduces a new \emph{type constructor} "T" with one or more constituent \emph{data
+constructors} "K_1, ..., K_n".
+\index{data constructor}\index{type constructor}
+In this Report, the unqualified term ``constructor'' always means ``data constructor''.
+
+The types of the data constructors are given by:
 \[
 "K_i :: \forall u_1 ... u_k.~ cx_i \Rightarrow t_{i1} \rightarrow \cdots \rightarrow t_{ik_i} \rightarrow (T u_1 ... u_k)"
 \]
