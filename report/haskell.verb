@@ -1,43 +1,13 @@
-%
-% $Header: /home/cvs/root/haskell-report/report/haskell.verb,v 1.13 2002/12/02 11:22:01 simonpj Exp $
-%
+% Formatting for double-sided
+\documentclass[twoside,11pt]{book}
 
-% NOTE:--------------------------------------------------------------
-% The formatting of this report and the ``new font selection scheme''
-% for LaTeX don't agree w/ each other.  Using an ``oldlfont'' style
-% option may help.
-% -------------------------------------------------------------------
-%
-
-% -------------------------------------------------------------------
-% formatting for ONE-SIDED printing:
-%  * De-comment the \documentstyle, etc., here; comment out the
-%    two-sided ones below.
-%  * Change the definition of \startnewstuff (below).
-%  * Copy the pre-built index file for one-sided printing:
-%   	cp haskell.ind.one-sided haskell.ind
-%  * Comment out the "twosidefix" stuff from Joe Fasel, just below.
-%  * If you don't have "makeindex", make the adjustments
-%    listed in the README file.
-%  * Run "make haskell.dvi" several times (three, at most) to be
-%    sure that cross-references stabilise.  [For the 1.1 report,
-%    one run should be enough.]
-%\documentstyle[11pt,makeidx]{article}
-%\oddsidemargin=.25in
-%\evensidemargin=.25in
-
-% formatting for double-sided
-\documentclass[titlepage,twoside,11pt]{article}
-
+\usepackage{times}
 \usepackage{makeidx}
 \usepackage{graphicx}
 
 \evensidemargin=0in
 \oddsidemargin=.5in
-
-% Inverted for SIGPLAN -- Page 1 is a LEFT page!!
-%\evensidemargin=.5in
-%\oddsidemargin=0in
+\sloppy
 
 %---------------------------------------------------------------------
 % Joe Fasel said this "twosidefix" is necessary if you really
@@ -51,9 +21,6 @@
    \if@@restonecol\twocolumn \else \newpage \fi}
 \makeatother
 %---------------------------------------------------------------------
-
-\sloppy
-
 
 % the major sections have \cleardoublepages between them
 % if you want those between EVERY section, change the
@@ -73,7 +40,8 @@
 \renewcommand{\bottomfraction}{1.0}
 
 % table of contents: show only down to subsections
-\setcounter{tocdepth}{2}
+\setcounter{tocdepth}{3}
+\setcounter{secnumdepth}{3}
 
 % general formatting
 \textheight=8.5in
@@ -99,7 +67,8 @@
 \newcommand{\bi}{\begin{itemize}}
 \newcommand{\ei}{\end{itemize}}
 \newcommand{\struthack}[1]{\rule{0pt}{#1}}
-\newcommand{\inputHS}{\input}
+\newcommand{\inputHS}[1]{{\small \input{#1}}}
+% Use smaller font 
 
 \newcommand{\ToDo}[1]{}
 %\newcommand{\ToDo}[1]{({\bf $\spadesuit$ ToDo:} {\em #1})}
@@ -119,6 +88,7 @@
 \newcommand{\indexdi}[1]{\index{#1@@{\tt #1} (class)!derived instance}}
 \newcommand{\indexnote}[1]{#1n}
 \newcommand{\emptystr}{[\,]}
+\newcommand{\ignorehtml}[1]{#1}
 
 \makeatletter
 \def\theindex{\@@restonecoltrue\if@@twocolumn\@@restonecolfalse\fi
@@ -133,27 +103,6 @@
 
 % outlined figures
 \newcommand{\ecaption}[1]{\vspace{-1 ex}\caption{#1}\vspace{1 ex}}
-% partain fiddled here...
-%   also had to change two lines in verbatim.lex from
-%<SYNTAX>{nl}"|"{sp}	{ printf ("$\\\\ \n$\\it "); 
-%			  printf ("$\\>\\makebox[3em]{$|$}$\\it "); }
-% to
-%
-%<SYNTAX>{nl}"|"{sp}	{ printf ("$\\\\ \n$\\it "); 
-%			  printf ("$\\>\\makebox[3.5em]{$|$}$\\it "); }
-% so things would still line up.  Oh what a hack.
-%
-%\newcommand{\outline}{\outlinewidth{1.0}}
-%\newcommand{\outlinewidth}[2]{
-%\begin{center}
-%\fbox{ \begin{minipage}{#1\textwidth}
-%\vspace{1 ex}
-%#2
-%\end{minipage} }
-%\vspace{1 ex}
-%\end{center}
-%}
-% 6.0in (\textwidth) - 15pt (overfullness) ~=~ 415pt
 \newcommand{\outline}[1]{%
 \begin{center}
 \fbox{ \begin{minipage}{415pt}
@@ -166,24 +115,13 @@
 
 \newcommand{\outlinec}{\outline}  % Centered outlines in html
 
-% haskell code
-% partain fiddled here...
-% \newcommand{\bprog}{\par \begin{tabular}{|l} 
-%                   \mbox \bgroup \begin{minipage} {\textwidth} }
-% 6.0in (\textwidth) - 17pt (\parindent) ~=~ 412pt
-%\newcommand{\bprog}{\par \begin{tabular}{@@{}l@@{}} 
-%                   \mbox \bgroup \begin{minipage} {412pt} }
-%\newcommand{\eprog}{\end{minipage} 
-%                    \egroup
-%                    \end{tabular}\\[\parskip]}
-% 17pt is \parindent
-% this method gives a 17pt indent in _all_ situations
 \newcommand{\bprog}{%
 \par\noindent\begin{tabular}{@@{\hspace*{17pt}}l@@{}}}
 \newcommand{\eprog}{%
 \end{tabular}\\[\parskip]}
 \newcommand{\eprogNoSkip}{%
 \end{tabular}}
+
 %
 % variants for stdprelude; don't indent, and skip a little more
 \newcommand{\bprogB}{%
@@ -314,25 +252,9 @@
 \newcommand{\unbindvar}[2]{\ti{unbindvar}\ \db{#1}\ #2}
 \newcommand{\unbindcon}[2]{\ti{unbindcon}\ \db{#1}\ #2}
 
-%
-% \newcommand{\bindnone}{\ab{[], []}}
-% \newcommand{\bindvar}[2]{\ab{[\,#1 \mapsto #2\,], []}}
-% \newcommand{\bindcon}[2]{\ab{[], [\,#1 \mapsto #2\,]}}
-% \newcommand{\bindconlarge}[4]{
-%  \langle [], [\,#1 \mapsto \langle \pile{#2 \\ #3 \rangle\,] #4 \rangle}}
-% \newcommand{\bindmod}[2]{[\,#1 \mapsto #2\,]}
-%
 % Haskell syntax macros: math mode assumed
 \newcommand{\system}[2]{#1@;;@\cdots@;;@#2}
 \newcommand{\module}[4]{module\ #1@:@\ #2\ #3\ #4}
-%%% \newcommand{\exportnone}{\,}
-%%% \newcommand{\export}[1]{@export@\ #1@;@}
-%%% \newcommand{\importnone}{\,}
-%%% \newcommand{\importcomb}[2]{#1\ #2}
-%%% \newcommand{\import}[1]{@import@\ #1@;@}
-%%% \newcommand{\importwith}[2]{@import@\ #1\ #2@;@}
-%%% \newcommand{\rename}[2]{#1@<-@#2}
-%%% \newcommand{\declcomb}[2]{#1\ @;;@\ #2}
 \newcommand{\exposing}[1]{@expose@\ #1}
 \newcommand{\hiding}[1]{@hide@\ #1}
 \newcommand{\importnone}{\;}
@@ -350,6 +272,7 @@
 \newcommand{\signature}[2]{#1\ @::@\ #2}
 \newcommand{\binding}[2]{#1\ @=@\ #2}
 \newcommand{\lamexpr}[2]{@\@ #1 @->@ #2}
+
 % While lambda defs. change...  if change, take care of preceding line MMG
 \newcommand{\lamb}{@\ @}
 \newcommand{\whereexpr}[2]{#1\ @where@\ @{@\ #2\ @}@}
@@ -387,11 +310,10 @@
 \newcommand{\prefix}[1]{\tr{prefix}\ #1}
 %
 \newcommand{\tl}[1]{{\sc #1}}
-%OLD: \newcommand{\Haskell}{{\sc Haskell}}
 \newcommand{\Haskell}{Haskell}
 
-%\newcommand{\subsubsubsection}[1]{\par\noindent{\it #1}}
 \newcommand{\subsubsubsection}{\subsubsection*}
+\newcommand{\subsubsubsubsection}{\subsubsubsection*}
 
 %\sloppy
 
@@ -415,6 +337,8 @@
 
 \setcounter{page}{0}
 
+% ------------------------- Title page -----------------------------------
+
 \begin{titlepage}
 
 \setcounter{page}{0}
@@ -422,98 +346,32 @@
 \outline{
 \vspace{.3in}
 \begin{center}
-{\LARGE\bf Report on the} \\[.1in]
-{\LARGE\bf Programming Language} \\[.3in]
-{\huge\bf Haskell 98} \\[.3in]
-{\Large\bf A Non-strict, Purely Functional Language} \\[.3in]
-{\large\bf Revised: Sept 2002}
+{\LARGE\bf Haskell 98 Language and Libraries} \\[.1in]
+{\LARGE\bf The Revised Report} \\[.3in]
 \end{center}
+\vspace{.3in}
+}
 \vspace{.15in}
 \begin{center} \large
-\begin{tabular}{l@@{\hspace{5mm}}l}
-Simon Peyton Jones$^8$ [editor] & John Hughes$^3$ [editor] \\
-Lennart Augustsson$^3$		& Dave Barton$^7$ \\
-Brian Boutel$^4$ 		& Warren Burton$^5$ \\
-Joseph Fasel$^6$ 		& Kevin Hammond$^2$ \\
-Ralf Hinze$^{12}$ 		& Paul Hudak$^1$ \\
-Thomas Johnsson$^3$ 		& Mark Jones$^9$ \\
-John Launchbury$^{14}$ 		& Erik Meijer$^{10}$ \\
-John Peterson$^1$		& Alastair Reid$^1$ \\
-Colin Runciman$^{13}$ 		& Philip Wadler$^{11}$
-\end{tabular}
+Simon Peyton Jones (editor)
 \end{center}
 \vspace{.15in}
 
-\begin{quotation} \noindent
-Authors' affiliations:
-(1)~Yale University
-(2)~University of St.~Andrews
-(3)~Chalmers University of Technology
-(4)~Victoria University of Wellington
-(5)~Simon Fraser University
-(6)~Los Alamos National Laboratory
-(7)~Intermetrics
-(8)~Microsoft Research, Cambridge
-(9)~University of Nottingham
-(10)~Utrecht University
-(11)~Bell Labs
-(12)~University of Bonn
-(13)~York University
-(14)~Oregon Graduate Institute
-\end{quotation}
-\vspace{.2in}
+\vspace{3in}
 
-\begin{center}
-Copyright (c) Simon Peyton Jones and John Hughes. 
-\end{center}
-{\em The authors intend this Report to belong to the entire Haskell
-community, and so we grant permission to copy and distribute it for
-any purpose, provided that it is reproduced in its entirety,
-including this Notice. Modified versions of this Report may also be
-copied and distributed for any purpose, provided that the modified
-version is clearly presented as such, and that it does not claim to be
-a definition of the language Haskell 98.}
-}
+\begin{center} \emph{Copyright notice.} \end{center}
 
-% \outline{
-% \vspace{.3in}
-% \begin{center}
-% {\LARGE\bf Report on the} \\[.1in]
-% {\LARGE\bf Programming Language} \\[.3in]
-% {\huge\bf Haskell} \\[.3in]
-% {\Large\bf A Non-strict, Purely Functional Language} \\[.3in]
-% {\Large\bf Version 1.3} \\[.1in]
-% {\large\bf 1st June 1995}
-% \end{center}
-% \vspace{.15in}
-% \begin{center} \large
-% Kevin Hammond$^1$ [editor] \\
-% Lennart Augustsson$^2$ \\
-% Brian Boutel$^3$ \\
-% Warren Burton$^4$ \\
-% Joseph Fasel$^5$ \\
-% Andy Gordon$^6$ \\
-% Mark Jones$^7$ \\
-% John Peterson$^8$  \\
-% Simon Peyton Jones$^1$ \\
-% \end{center}
-% \vspace{.15in}
-% 
-% \begin{quotation} \noindent
-% Authors' affiliations:
-% (1)~University of Glasgow,
-% (2)~Chalmers University of Technology,
-% (3)~Victoria University of Wellington,
-% (4)~Simon Fraser University,
-% (5)~Los Alamos National Laboratory,
-% (6)~Cambridge University,
-% (7)~Nottingham University,
-% (8)~Yale University.
-% \end{quotation}
-% \vspace{.2in}
-% }
-
+The authors and publisher intend this Report to belong to the entire Haskell
+community, and grants permission to copy and distribute it for any
+purpose, provided that it is reproduced in its
+entirety, including this Notice. Modified versions of this Report may
+also be copied and distributed for any 
+purpose,
+provided that the modified version is clearly presented as such, and
+that it does not claim to be a definition of the language Haskell 98.
 \end{titlepage}
+
+% ------------------------- Preface -----------------------------------
 
 \pagenumbering{roman}
 
@@ -525,18 +383,15 @@ a definition of the language Haskell 98.}
 \parskip=10pt plus2pt minus2pt
 \setlength{\parindent}{0cm}
 
-%\input{preface-10}
-%\startnewstuff
-%\input{preface-11}
-%\startnewstuff
-%\input{preface-12}
-%\startnewstuff
-%\pagestyle{myheadings}
-\input{preface-13}
-%\markboth{\rm \thepage\hfil \sl \leftmark}{{\sl \rightmark}\hfil \rm\thepage}
+\input{preface-jfp}
+
+% ------------------------- Part I: language report -----------------------------------
+
 \pagestyle{headings}
 \startnewstuff
 \pagenumbering{arabic}
+
+\part{The Haskell 98 Language}
 
 \input{intro}\startnewsection
 \input{lexemes}\startnewsection
@@ -544,25 +399,40 @@ a definition of the language Haskell 98.}
 \input{decls}\startnewsection
 \input{modules}\startnewsection
 \input{basic}\startnewsection
-%%\input{io}%
-%\setcounter{section}{6}
-\input{io-13}%
-%%
-%%\startnewstuff
-\startnewsection
-\appendix
-\input{standard-prelude}\startnewsection
-%\input{libraries}\startnewsection
-\input{syntax-iso}\startnewsection
+\input{io-13}\startnewsection
 
-% Literate stuff included in syntax-iso now
-% \input{literate}\startnewsection
-%% \input{short_semantics}\startnewsection
-%%\input{iosemant}\startnewsection
-%%\input{iooptions}\startnewsection
+% \appendix
+\input{standard-prelude}\startnewsection
+\input{syntax-iso}\startnewsection
 \input{derived}\startnewsection
 \input{pragmas}
 %%
+
+% ------------------------- Part II: libraries report -----------------------------------
+
+\part{The Haskell 98 Libraries}
+
+\input{ratio}\startnewsection
+\input{complex}\startnewsection
+\input{numeric}\startnewsection
+\input{ix}\startnewsection
+\input{array}\startnewsection
+\input{list}\startnewsection
+\input{maybe}\startnewsection
+\input{char}\startnewsection
+\input{monad}\startnewsection
+\input{io}\startnewsection
+\input{directory}\startnewsection
+\input{system}\startnewsection
+\input{time}\startnewsection
+\input{locale}\startnewsection
+\input{cputime}\startnewsection
+\input{random}\startnewsection
+
+
+
+% ------------------------- Index and references -----------------------------------
+
 \startnewstuff
 % insert the extra indexing things LAST
 \input{index-extra}
@@ -574,6 +444,7 @@ a definition of the language Haskell 98.}
 %
 \startnewstuff
 \printindex
+
 \end{document}
 
 % Local Variables: 

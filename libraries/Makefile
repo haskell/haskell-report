@@ -69,7 +69,7 @@ HEADERS =	headers/Ratio.tex headers/Complex.tex headers/Ix.tex \
                 headers/Maybe.tex headers/IO1.tex headers/Random.tex \
 		headers/Time.tex headers/Time1.tex headers/CPUTime.tex \
 		headers/Locale.tex 
-
+ 
 HEADERSV =	headers/Ratio.verb headers/Complex.verb headers/Ix.verb \
                 headers/Numeric.verb \
                 headers/Array.verb headers/IO.verb headers/Char.verb \

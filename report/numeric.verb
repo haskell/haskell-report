@@ -1,0 +1,100 @@
+%**<title>The Haskell 98 Library Report: Numerics</title>
+%**~header
+\section{Numeric}
+\label{lib-numeric}
+
+\outline{
+\inputHS{lib-hdrs/Numeric}
+}
+This library contains assorted numeric functions, many of which are
+used in the standard Prelude.  
+
+In what follows, recall the following type definitions from the @Prelude@:
+\bprog
+@ 
+  type ShowS = String -> String
+  type ReadS = String -> [(a,String)]
+@
+\eprog
+
+\subsection{Showing functions}
+
+\begin{itemize}
+\item @showSigned :: (Real a) => (a -> ShowS) -> Int -> a -> ShowS@ \\ converts a
+possibly-negative @Real@ value of type @a@ to a string.  In the call "(@showSigned@ ~show ~prec ~val)",
+"val" is the value to show, "prec" is the precedence of the enclosing context, and "show" is
+a function that can show unsigned values.
+
+\item @showIntAtBase :: Integral a => a -> (Int -> Char) -> a -> ShowS@ \\
+shows a {\em non-negative} @Integral@ number using the base specified by the first argument,
+and the character representation specified by the second.
+
+\item @showInt, showOct, showHex :: Integral a => a -> ShowS@ \\ 
+show {\em non-negative} @Integral@ numbers in base 10, 8, and 16 respectively.
+
+\item 
+@showFFloat, showEFloat, showGFloat@ \\
+@    :: (RealFloat a) => Maybe Int -> a -> ShowS@ \\
+These three functions all show signed @RealFloat@ values:
+\begin{itemize}
+\item @showFFloat@ uses standard decimal notation (e.g. @245000@, @0.0015@).
+\item @showEFloat@ uses scientific (exponential) notation (e.g. @2.45e2@, @1.5e-3@).
+\item @showGFloat@ uses standard decimal notation for arguments whose absolute value lies 
+between @0.1@ and @9,999,999@, and scientific notation otherwise.
+\end{itemize}
+In the call "(@showEFloat@ ~digs ~val)", if "digs" is @Nothing@, the value is shown to full
+precision; if "digs" is "@Just@~ d", then at most "d" digits after the decimal point are shown.
+Exactly the same applies to the "digs" argument of the other two functions.
+
+\item @floatToDigits  :: (RealFloat a) => Integer -> a -> ([Int], Int)@ \\
+converts a base and a value to the representation of the value in digits, plus
+an exponent.  More specifically, if
+$$
+@floatToDigits@~b~r = @([@d_1, d_2, ... d_n@], @e@)@
+$$
+then the following properties hold:
+\begin{itemize}
+\item $r =  0.d_1 d_2 ..., d_n ~*~ b^e$
+\item $n \geq 0$
+\item $d_1 \neq 0 ~ \mbox{(when $n > 0$)}$
+\item $0 \leq d_i \leq b-1$
+\end{itemize}
+\end{itemize}
+
+\subsection{Reading functions}
+
+\begin{itemize}
+\item @readSigned :: (Real a) => ReadS a -> ReadS a@ \\ 
+reads a {\em signed} @Real@ value,
+given a reader for an unsigned value.
+
+\item @readInt :: (Integral a) => a -> (Char->Bool) -> (Char->Int) -> ReadS a@ \\
+reads an {\em unsigned} @Integral@ value in an arbitrary base.  In the call "(@readInt@~ base ~isdig ~d2i)",
+"base" is the base, "isdig" is a predicate distinguishing valid digits in this base, and "d2i" converts
+a valid digit character to an @Int@.
+
+\item @readFloat :: (RealFrac a) => ReadS a@ \\ 
+reads an {\em unsigned} @RealFrac@ value, expressed in decimal scientific notation.
+
+\item @readDec, readOct, readHex :: (Integral a) => ReadS a@  \\
+each read an unsigned number, in decimal, octal, and hexadecimal notation respectively.
+In the hexadecimal case, both upper or lower case letters are allowed.
+
+\item @lexDigits :: ReadS String@ reads a non-empty string of decimal digits.
+\end{itemize}
+(NB: @readInt@ is the ``dual'' of @showIntAtBase@, and @readDec@ is the ``dual'' of @showInt@.
+The inconsistent naming is a historical accident.)
+
+\subsection{Miscellaneous}
+
+\begin{itemize}
+\item @fromRat :: (RealFloat a) => Rational -> a@ converts a @Rational@ value
+into any type in class @RealFloat@.
+\end{itemize}
+
+\subsection{Library {\tt Numeric}}
+\inputHS{lib-code/Numeric}
+
+%**~footer
+
+

@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/modules.verb,v 1.17 2002/12/02 11:22:02 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/modules.verb,v 1.18 2002/12/02 14:53:30 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Modules</title>
 %*section 5
@@ -383,6 +383,8 @@ entity was originally declared}.
 The ability to exclude the unqualified names allows full programmer control of
 the unqualified namespace: a locally defined entity can share the same
 name as a qualified import:
+\par
+{\small
 \bprog
 @
   module Ring where
@@ -395,7 +397,7 @@ name as a qualified import:
   succ = (Prelude.+ 1)
 @
 \eprog
-
+}
 
 \subsubsection{Local aliases}
 \label{as-clause}

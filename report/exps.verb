@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/exps.verb,v 1.16 2002/12/02 11:22:01 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/exps.verb,v 1.17 2002/12/02 14:53:27 simonpj Exp $
 %
 %*section 3
 %**<title>The Haskell 98 Report: Expressions</title>
@@ -342,7 +342,7 @@ it may legally be written as @\(x:xs)->x@.
 The set of patterns must be {\em linear}\index{linearity}%
 \index{linear pattern}---no variable may appear more than once in the set.
 
-\outline{
+\outline{\small
 \paragraph*{Translation:}
 The following identity holds:
 \begin{center}
@@ -773,7 +773,7 @@ let (x,y) = undefined in @"e"@
 \eprog
 does not cause an execution-time error until @x@ or @y@ is evaluated.
 
-\outline{
+\outline{\small
 \paragraph*{Translation:} The dynamic semantics of the expression 
 "@let {@ d_1 @;@ ...  @;@ d_n @} in@ e_0" are captured by this
 translation: After removing all type signatures, each
@@ -1507,7 +1507,7 @@ not expected that it will use them directly, since that
 would generate rather inefficient code.
   
 \begin{figure}[tb]
-\outlinec{
+\outlinec{\small
 \begin{tabular}{@@{}cl}
 (a)&@case @$e$@ of { @$alts$@ } @$=$@ (\@$v$@ -> case @$v$@ of { @$alts$@ }) @"e"\\
 &{\rm where $v$ is a new variable}\\
@@ -1546,7 +1546,7 @@ $x_1$@ })@ $\ldots$ @(case @$v$@ of { @$p$@ -> @$x_n$@})@\\
 \end{figure}
 
 \begin{figure}[tb]
-\outlinec{
+\outlinec{\small
 \begin{tabular}{@@{}cl}
 (g)&@case @$v$@ of { @$K\ p_1 \ldots p_n$@ -> @$e$@; _ -> @$e'$@ }@\\
 &$=$@ case @$v$@ of {@\\

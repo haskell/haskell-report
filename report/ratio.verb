@@ -1,0 +1,53 @@
+%**<title>The Haskell 98 Library Report: Rational Numbers</title>
+%**~header
+\section{Rational Numbers}
+\index{rational numbers}
+
+\outline{
+\inputHS{lib-hdrs/Ratio}
+}
+
+For each @Integral@ type $t$, there is
+a type @Ratio@\indextycon{Ratio} $t$ of rational pairs with components of
+type $t$.  The type name @Rational@\indexsynonym{Rational} is a synonym for
+@Ratio Integer@.  
+
+@Ratio@ is an instance of classes @Eq@, @Ord@, @Num@, @Real@, 
+@Fractional@, @RealFrac@, @Enum@, @Read@, and @Show@.  In each case,
+the instance for $@Ratio@~t$ simply ``lifts'' the corresponding operations
+over $t$.  If $t$ is a bounded type, the results may be unpredictable;
+for example @Ratio Int@ may give rise to integer overflow even for
+rational numbers of small absolute size.
+
+The operator @(%)@\index{%@@{\tt {\char'045}}} forms the ratio of two
+integral numbers, reducing the fraction to terms with no common factor
+and such that the denominator is positive.  The functions
+@numerator@\indextt{numerator}
+and @denominator@\indextt{denominator} extract the components of a
+ratio; these are in reduced form with a positive denominator.
+@Ratio@ is an abstract type.  For example, @12 % 8@ is reduced to 3/2
+and @12 % (-8)@ is reduced to (-3)/2.
+
+The @approxRational@ function, applied to two real fractional numbers
+@x@ and @epsilon@, returns the simplest rational number within the open
+interval "(@x@-@epsilon@, @x@+@epsilon@)".
+A rational number "n/d" in reduced form is said to
+be simpler than another "n'/d'" if "|n| \leq |n'|" and "d \leq d'".
+Note that it can be proved that any real interval contains a unique
+simplest rational.
+
+
+%% Deleted the following -- this is implementation detail -- KH/AD.
+% ; here, for simplicity, we assume a closed rational
+% interval.  If such an interval includes at least one whole number, then
+% the simplest rational is the absolutely least whole number.  Otherwise,
+% the bounds are of the form "q/1 + r/d" and "q/1 + r'/d'", where "|r| < d"
+% and "|r'| < d'", and the simplest rational is "q/1" + the reciprocal of
+% the simplest rational between "d'/r'" and "d/r".
+
+\clearpage
+\subsection{Library {\tt Ratio}}
+\label{Ratio}
+\inputHS{lib-code/Ratio}
+
+%**~footer

@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/decls.verb,v 1.15 2002/12/02 11:22:01 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/decls.verb,v 1.16 2002/12/02 14:53:27 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Declarations</title>
 %*section 4
@@ -112,6 +112,8 @@ class methods}---instantiated on the named type.
 For example, suppose we wish to overload the operations @(+)@ and
 @negate@ on types @Int@ and @Float@.  We introduce a new
 type class called @Num@:\nopagebreak[4]
+\par
+{\small
 \bprog
 @
   class Num a  where          -- simplified class declaration for Num
@@ -119,6 +121,7 @@ type class called @Num@:\nopagebreak[4]
     negate :: a -> a
 @
 \eprog
+}
 This declaration may be read ``a type @a@ is an instance of the class
 @Num@ if there are class methods @(+)@ and @negate@, of the
 given types, defined on it.''

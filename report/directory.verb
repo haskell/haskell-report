@@ -1,0 +1,165 @@
+%**<title>The Haskell 98 Library Report: Directory functions</title>
+%**~header
+
+%% Other useful functions from SML 96 include modification time
+%% and path-testing (is this a full path/real path).
+
+\section{Directory Functions}
+\index{directories}
+\index{the file system}
+
+\outline{
+\inputHS{lib-hdrs/Directory}
+}
+\indextt{createDirectory}\indextt{removeDirectory}\indextt{removeFile}
+\indextt{renameDirectory}\indextt{renameFile}
+\indextt{getDirectoryContents}\indextt{getCurrentDirectory}
+\indextt{setCurrentDirectory}
+
+These functions operate on directories in the file system.  
+
+Any @Directory@ operation could raise an @isIllegalOperation@, as
+described in Section~\ref{IOError}; all other permissible errors are
+described below.  Note that, in particular, if an implementation does
+not support an operation it should raise an @isIllegalOperation@.
+A directory contains a series of entries, each of which is a named
+reference to a file system object (file, directory etc.).  Some
+entries may be hidden, inaccessible, or have some administrative
+function (for instance, ``.'' or ``..'' under POSIX), but all such
+entries are considered to form part of the directory contents.
+Entries in sub-directories are not, however, considered to form part
+of the directory contents.  Although there may be
+file system objects other than files and directories, this library
+does not distinguish between physical files and other non-directory
+objects.  All such objects should therefore be treated as if they are files.
+
+Each file system object is referenced by a {\it path}\index{path}.  There is
+normally at least one absolute path to each file system object.  In
+some operating systems, it may also be possible to have paths which
+are relative to the current directory.
+
+Computation @createDirectory@~"dir" creates a new directory "dir" which is
+initially empty, or as near to empty as the operating system allows.
+\index{making directories}
+
+{\em Error~reporting}.
+The @createDirectory@ computation may fail with:
+@isPermissionError@ if the user is not permitted to create the directory;
+@isAlreadyExistsError@ if the directory already exists; or @isDoesNotExistError@ if
+the new directory's parent does not exist.
+
+Computation @removeDirectory@~"dir" removes an existing directory
+"dir"\index{deleting directories}\index{removing directories}.  The
+implementation may specify additional constraints which must be
+satisfied before a directory can be removed (for instance, the directory has to
+be empty, or may not be in use by other processes).  It is not legal
+for an implementation to partially remove a directory unless the
+entire directory is removed. A conformant implementation need not
+support directory removal in all situations (for instance, removal of the root
+directory).
+
+Computation @removeFile@~"file" removes the directory entry for an existing
+file "file", where "file" is not itself a directory\index{deleting
+files}\index{removing files}. The implementation may specify additional
+constraints which must be satisfied before a file can be removed (for instance, the
+file may not be in use by other processes).
+
+{\em Error~reporting}.
+The @removeDirectory@ and @removeFile@ computations may fail with:
+@isPermissionError@ if the user is not permitted to remove the file/directory;
+or @isDoesNotExistError@ if the file/directory does not exist.
+
+Computation @renameDirectory@~"old"~"new" changes the name of an existing
+directory from "old" to "new"\index{renaming directories}\index{moving
+directories}.  If the "new" directory already exists, it is atomically
+replaced by the "old" directory.  If the "new" directory is neither
+the "old" directory nor an alias of the "old" directory, it is removed
+as if by @removeDirectory@.  A conformant implementation need not
+support renaming directories in all situations (for instance, renaming to an
+existing directory, or across different physical devices), but the
+constraints must be documented.
+
+Computation @renameFile@~"old"~"new" changes the name of an existing file
+system object from "old" to "new"\index{renaming files}\index{moving files}.
+If the "new" object already exists, it is atomically replaced by the "old"
+object.  Neither path may refer to an existing directory.  A conformant
+implementation need not support renaming files in all situations
+(for instance, renaming across different physical devices), but the constraints must be
+documented.
+
+{\em Error~reporting}.
+The @renameDirectory@ and @renameFile@ computations may fail with:
+@isPermissionError@ if the user is not permitted to rename the file/directory,
+or if either argument to @renameFile@ is a directory;
+or @isDoesNotExistError@ if the file/directory does not exist.
+
+Computation @getDirectoryContents@~"dir" returns a list of {\em all} entries
+in "dir"\index{reading a directory}.
+Each entry in the returned list is named relative to the directory "dir", not as an absolute path.
+
+If the operating system has a notion of current directories,
+@getCurrentDirectory@ returns an absolute path to the
+current directory of the calling process\index{current directory}.
+
+{\em Error~reporting}.
+The @getDirectoryContents@ and @getCurrentDirectory@ computations may fail with:
+@isPermissionError@ if the user is not permitted to access the directory;
+or @isDoesNotExistError@ if the directory does not exist.
+
+If the operating system has a notion of current directories,
+@setCurrentDirectory@~"dir" changes the current directory of the
+calling process to "dir"\index{changing the directory}\index{setting the directory}.
+
+{\em Error~reporting}.
+@setCurrentDirectory@ may fail with:
+@isPermissionError@ if the user is not permitted to change directory
+to that specified;
+or @isDoesNotExistError@ if the directory does not exist.
+
+The @Permissions@ type is used to record whether certain operations are
+permissible on a file/directory.  @getPermissions@ and
+@setPermissions@ get and set these permissions, respectively.  
+Permissions apply both to files and directories.  For
+directories, the @executable@ field will be @False@, and for files the
+@searchable@ field will be @False@.  Note that directories may be
+searchable without being readable, if permission has been given to use
+them as part of a path, but not to examine the directory contents.
+
+Note that to change
+some, but not all permissions, a construct on the following lines must
+be used.  
+\bprog
+@
+makeReadable f = do
+		    p <- getPermissions f
+		    setPermissions f (p {readable = True})
+@
+\eprog
+The operation @doesDirectoryExist@ returns @True@ if the argument file
+exists and is a directory, and @False@ otherwise. The operation @doesFileExist@ returns @True@
+if the argument file exists and is not a directory, and @False@ otherwise.
+
+The @getModificationTime@ operation returns the
+clock time at which the file/directory was last modified.
+
+{\em Error~reporting}.
+@get(set)Permissions@,
+@doesFile(Directory)Exist@,
+and @getModificationTime@
+may fail with:
+@isPermissionError@ if the user is not permitted to access
+the appropriate information;
+or @isDoesNotExistError@ if the file/directory does not exist.
+The @setPermissions@
+computation may also fail with:
+@isPermissionError@ if the user is not permitted to change
+the permission for the specified file or directory;
+or @isDoesNotExistError@ if the file/directory does not exist.
+% Duplicates the first case above, and would require
+% extensive consistency checking throughout. KH
+% The @doesFileExist@ and @doesDirectoryExist@ computations
+% may also fail with @isPermissionError@ if some part of the path
+% to the file/directory cannot be searched.
+
+%**~footer
+

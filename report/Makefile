@@ -49,10 +49,32 @@ PARTS_NO_PREFACE = iso-chars.tex \
 		decls.tex  modules.tex  basic.tex  io-13.tex \
 		derived.tex \
 		index-extra.tex index-intro.tex layout.tex \
-		literate.tex pragmas.tex standard-prelude.tex
+		literate.tex pragmas.tex standard-prelude.tex \
+		ratio.tex complex.tex ix.tex \
+                numeric.tex \
+                array.tex io.tex char.tex monad.tex list.tex \
+                system.tex directory.tex \
+                maybe.tex time.tex cputime.tex random.tex \
+		locale.tex 
+
 SYNTAX =	syntax-lexical.tex syntax-iso.tex
-PRELUDE =	Prelude.tex PreludeList.tex \
-		PreludeText.tex PreludeIO.tex
+
+CODE =		lib-code/Ratio.tex lib-code/Complex.tex lib-code/Ix.tex \
+                lib-code/Numeric.tex \
+                lib-code/Array.tex lib-code/Char.tex lib-code/List.tex \
+                lib-code/Monad.tex lib-code/Maybe.tex lib-code/IO.tex \
+		lib-code/Time.tex lib-code/Locale.tex
+
+HEADERS =	lib-hdrs/Ratio.tex lib-hdrs/Complex.tex lib-hdrs/Ix.tex \
+                lib-hdrs/Numeric.tex \
+                lib-hdrs/Array.tex lib-hdrs/IO.tex lib-hdrs/Char.tex \
+		lib-hdrs/List.tex lib-hdrs/List1.tex \
+                lib-hdrs/Monad.tex lib-hdrs/System.tex lib-hdrs/Directory.tex \
+                lib-hdrs/Maybe.tex lib-hdrs/IO1.tex lib-hdrs/Random.tex \
+		lib-hdrs/Time.tex lib-hdrs/Time1.tex lib-hdrs/CPUTime.tex \
+		lib-hdrs/Locale.tex 
+
+PRELUDE =	Prelude.tex PreludeList.tex PreludeText.tex PreludeIO.tex
 
 LIBPARTS =	lib-array.tex lib-intro.tex lib-io.tex lib-num.tex lib-os.tex lib-text.tex \
 		lib-index-intro.tex lib-posix.tex
@@ -76,6 +98,79 @@ haskell.tex: haskell.verb
 
 haskell.dvi:  haskell.tex ${PARTS} $(SYNTAX) ${PRELUDE}
 
+# I have no idea why run_tex is run twice.  SLPJ
+html: index.html ${PARTS} ${SYNTAX} ${PRELUDE}
+	-mkdir haskell98-report-html
+	$(RUN_TEX)
+	$(RUN_TEX)
+	$(RUN_INDEX)
+	cp index.html *.gif haskell98-report-html
+
+haskell.dvi: haskell.tex haskell.ind ${PARTS} $(SYNTAX) ${PRELUDE}  ${CODE} ${HEADERS}
+
+
+# remove this rule if you don't have "makeindex"
+haskell.ind: haskell.idx
+	$(MAKEINDEX) -i -t haskell.ilg < haskell.idx > haskell.ind
+
+haskell.ps : haskell.dvi
+	dvips haskell.dvi -o haskell.ps
+
+release: haskell.ps html
+	ps2pdf haskell.ps
+	gzip < haskell.ps > $(RELEASE_DIR)/haskell.ps.gz
+	cp haskell.pdf $(RELEASE_DIR)/haskell.pdf.gz
+	cp -r haskell98-report-html $(RELEASE_DIR)
+	tar cvf - haskell98-report-html | gzip > $(RELEASE_DIR)/haskell98-report-html.tar.gz
+	cp h98-revised.html $(RELEASE_DIR)/index.html
+	cp haskell98-bugs.html h98.gif $(RELEASE_DIR)
+
+publish-pdf: report.pdf
+	gzip < report.pdf > y:Haskell/haskell98-report/report.pdf.gz
+
+
+#########################################
+#	Generic stuff
+#########################################
+
+veryclean: clean
+	$(RM) *~ 
+
+clean:
+	$(RM) *.dvi *.log *.aux *.ilg *.blg *.toc ${PARTS} $(SYNTAX) \
+		haskell.tex haskell.ps haskell.pdf *.o lex.yy.c haskell98-report-html/*
+	cp haskell.ind haskell.ind.two-sided
+	echo "Don't delete the Prelude*.tex files"
+	echo "Not everyone has \"perl\" to re-make them"
+
+
+#########################################
+#	Suffix rules
+#########################################
+
+.SUFFIXES:	.hi .hs .verb .tex .dvi
+
+.verb.tex:
+	$(EXPAND) < $< | $(VERBATIM) | ../tools/subsection >$@
+# The 'subsection' part changes section -> chapter for the book style
+
+.hs.verb:
+	$(EXPAND) < $< | $(SPLITPGM) >$@
+
+%.tex: %.hs
+	$(EXPAND) < $< | $(SPLITPGM) | $(VERBATIM) >$@
+
+.hi.tex:
+	$(EXPAND) < $< | $(SPLITPGM) | $(VERBATIM) >$@
+
+.tex.dvi:
+	$(LATEX) $<
+
+
+# -----------------------------------------------------------
+#			Out of date stuff
+# -----------------------------------------------------------
+
 # Report as formatted for SIGPLAN -- 2 sided, 2-up, odd pages on left.
 # This is a bit horrible.  But almost nobody should need to do this. KH
 sigplan_haskell.dvi: sigplan_haskell.verb sigplan_article.sty \
@@ -87,33 +182,23 @@ sigplan_haskell.dvi: sigplan_haskell.verb sigplan_article.sty \
 	cp plain_haskell.verb haskell.verb
 
 
-# I have no idea why run_tex is run twice.  SLPJ
-html: index.html ${PARTS} ${SYNTAX} ${PRELUDE}
-	-mkdir haskell98-report-html
-	$(RUN_TEX)
-	$(RUN_TEX)
-	$(RUN_INDEX)
-	cp index.html *.gif haskell98-report-html
-
-haskell.dvi: haskell.tex haskell.ind ${PARTS} $(SYNTAX) ${PRELUDE}
+sigplan_haskell-libraries.dvi:  sigplan_haskell-libraries.tex haskell-libraries.ind ${LIBPARTS} ${LIBS}
 
 haskell-libraries.dvi:  haskell-libraries.tex haskell-libraries.ind ${LIBPARTS} ${LIBS}
 
-sigplan_haskell-libraries.dvi:  sigplan_haskell-libraries.tex haskell-libraries.ind ${LIBPARTS} ${LIBS}
+# ----------------------- END OF OLD SIGPLAN STUFF -----------------------------------
 
-# remove this rule if you don't have "makeindex"
-haskell.ind: haskell.idx
-	$(MAKEINDEX) -i -t haskell.ilg < haskell.idx > haskell.ind
+jfp: h98-book.tex preface-jfp.tex ${PARTS_NO_PREFACE} $(SYNTAX) ${PRELUDE}
+	-mkdir $(JFP_DIR)
+	for n in h98-book.tex preface-jfp.tex \
+		${PARTS_NO_PREFACE} $(SYNTAX) ${PRELUDE} ; do  \
+		../tools/subsection < $$n >  $(JFP_DIR)/$$n ; done 
+	cp classes.eps $(JFP_DIR)
+	cp  haskell.bbl $(JFP_DIR)/h98-book.bbl
+	cp Makefile-jfp-book $(JFP_DIR)/Makefile
 
-veryclean: clean
-	$(RM) *~ 
 
-clean:
-	$(RM) *.dvi *.log *.aux *.ilg *.blg *.toc ${PARTS} $(SYNTAX) \
-		haskell.tex haskell.ps haskell.pdf *.o lex.yy.c haskell98-report-html/*
-	cp haskell.ind haskell.ind.two-sided
-	echo "Don't delete the Prelude*.tex files"
-	echo "Not everyone has \"perl\" to re-make them"
+
 
 # Stuff to make the "two-up" version for SIGPLAN Notices:
 # We take the A4 pages and double them up onto (virtual) A3 pages:
@@ -155,45 +240,4 @@ haskell-libraries-2up.dvi : haskell-librariesx.dvi
 
 haskell-librariesx.dvi : sigplan_haskell-libraries.dvi
 	dviselect =4: sigplan_haskell-libraries.dvi haskell-librariesx.dvi
-
-haskell.ps : haskell.dvi
-	dvips haskell.dvi -o haskell.ps
-
-release: haskell.ps html
-	gzip < haskell.ps > $(RELEASE_DIR)/haskell.ps.gz
-	cp -r haskell98-report-html $(RELEASE_DIR)
-	tar cvf - haskell98-report-html | gzip > $(RELEASE_DIR)/haskell98-report-html.tar.gz
-
-publish-pdf: report.pdf
-	gzip < report.pdf > y:Haskell/haskell98-report/report.pdf.gz
-
-jfp: h98-book.tex preface-jfp.tex ${PARTS_NO_PREFACE} $(SYNTAX) ${PRELUDE}
-	-mkdir $(JFP_DIR)
-	for n in h98-book.tex preface-jfp.tex \
-		${PARTS_NO_PREFACE} $(SYNTAX) ${PRELUDE} ; do  \
-		../tools/subsection < $$n >  $(JFP_DIR)/$$n ; done 
-	cp classes.eps $(JFP_DIR)
-	cp  haskell.bbl $(JFP_DIR)/h98-book.bbl
-	cp Makefile-jfp-book $(JFP_DIR)/Makefile
-
-#########################################
-#	Suffix rules
-#########################################
-
-.SUFFIXES:	.hi .hs .verb .tex .dvi
-
-.verb.tex:
-	$(EXPAND) < $< | $(VERBATIM) >$@
-
-.hs.verb:
-	$(EXPAND) < $< | $(SPLITPGM) >$@
-
-%.tex: %.hs
-	$(EXPAND) < $< | $(SPLITPGM) | $(VERBATIM) >$@
-
-.hi.tex:
-	$(EXPAND) < $< | $(SPLITPGM) | $(VERBATIM) >$@
-
-.tex.dvi:
-	$(LATEX) $<
 

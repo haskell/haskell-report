@@ -1,0 +1,49 @@
+%**<title>The Haskell 98 Library Report: Complex Numbers</title>
+%**~header
+\section{Complex Numbers}
+\label{lib-num}
+
+\outline{
+\inputHS{lib-hdrs/Complex}
+}
+
+Complex numbers are an algebraic type.
+The constructor @(:+)@\indextt{:+} forms a complex number from its
+real and imaginary rectangular components.  This constructor is
+strict: if either the real part or the imaginary part of the number is
+$\bot$, the entire number is $\bot$.  A complex number may also
+be formed from polar components of magnitude and phase by the function
+@mkPolar@\indextt{mkPolar}.  The function @cis@\indextt{polar}
+produces a complex number from an angle "t".
+Put another way, @cis@ "t" is a complex value with magnitude "1"
+and phase "t" (modulo "2\pi").
+
+The function @polar@\indextt{polar} takes a complex number and
+returns a (magnitude, phase) pair in canonical form: The magnitude is
+nonnegative, and the phase, in the range $(- \pi , \pi ]$; if the
+magnitude is zero, then so is the phase.  
+
+The functions @realPart@\indextt{realPart} and
+@imagPart@\indextt{imagPart} extract the rectangular components of a
+complex number and the functions @magnitude@\indextt{magnitude} and
+@phase@\indextt{phase} extract the polar components of a complex
+number.  The function @conjugate@\indextt{conjugate} computes the
+conjugate of a complex number in the usual way.
+
+The magnitude and sign of a complex number are defined as follows:
+\bprog
+@
+abs z		  =  magnitude z :+ 0
+signum 0	  =  0
+signum z@@(x:+y)   =  x/r :+ y/r  where r = magnitude z
+@
+\eprog
+That is, @abs@ $z$ is a number with the magnitude of $z$, but oriented
+in the positive real direction, whereas @signum@ $z$ has the phase of
+$z$, but unit magnitude.
+
+\subsection{Library {\tt Complex}}
+\inputHS{lib-code/Complex}
+
+%**~footer
+

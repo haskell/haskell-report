@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/basic.verb,v 1.12 2002/12/02 11:22:01 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/basic.verb,v 1.13 2002/12/02 14:53:27 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Basic Types and Classes</title>
 %*section 6
@@ -182,6 +182,7 @@ Report contains many more.
 \indextycon{IOError}
 
 \subsubsection{Other Types}
+{\small
 \bprog
 @
 data  Maybe a     =  Nothing | Just a  deriving (Eq, Ord, Read, Show)
@@ -202,6 +203,7 @@ data  Ordering    =  LT | EQ | GT deriving
 \indextt{maybe}
 \indextt{either}
 \eprog
+}
 The @Maybe@ type is an instance of classes @Functor@, @Monad@,
 and @MonadPlus@.  The @Ordering@ type is used by @compare@
 in the class @Ord@. The functions @maybe@ and @either@ are found in

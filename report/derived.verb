@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/derived.verb,v 1.9 2002/12/02 11:22:01 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/derived.verb,v 1.10 2002/12/02 14:53:27 simonpj Exp $
 %
 % The paragraph describing the formats of standard representations might
 % be deleted, since the info is already in the Prelude.  
@@ -8,7 +8,6 @@
 % isn't quite Haskell.  
 
 %**<title>The Haskell 98 Report: Derived Instances</title>
-%*section D
 %**~header
 
 \section{Specification of Derived Instances}
@@ -180,6 +179,8 @@ from the @Int@ type; @toEnum@ raises a runtime error if the @Int@ argument
 is not the index of one of the constructors.
 
 The definitions of the remaining methods are 
+\par
+{\small
 \bprog
 @
   enumFrom x           = enumFromTo x lastCon
@@ -191,6 +192,7 @@ The definitions of the remaining methods are
   enumFromThenTo x y z = map toEnum [fromEnum x, fromEnum y .. fromEnum z]
 @
 \eprog
+}
 where @firstCon@ and @lastCon@ are respectively the first and last
 constructors listed in the @data@ declaration.
 For example,
@@ -473,7 +475,7 @@ the class declaration shown in Figure~\ref{standard-classes}
 (page~\pageref{standard-classes}).
 
 \begin{figure}[tb]
-\outlinec{
+\outlinec{\small
 @
 infixr 5 :^:
 data Tree a =  Leaf a  |  Tree a :^: Tree a

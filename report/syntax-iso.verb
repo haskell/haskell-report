@@ -1,8 +1,7 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/syntax-iso.verb,v 1.9 2002/12/02 11:22:02 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/syntax-iso.verb,v 1.10 2002/12/02 14:53:30 simonpj Exp $
 %
 %**<title>Haskell 98 Syntax</title>
-%*section B
 %**~header
 \section{Syntax Reference}
 \label{syntax}
