@@ -21,6 +21,7 @@
 <!entity  dpkg        "<application>dpkg</application>">
 <!entity  rpm        "<application>rpm</application>">
 <!entity  hc-pkg     "<command>hc-pkg</command>">
+<!entity  pkg-desc     "<filename>Setup.description</filename>">
 ]>
  
 <!-- Look for items marked "FIX" -->
@@ -156,7 +157,7 @@ driven by their module name: <filename>~/coll/Data/Set.hs</filename>,
  <filename>~/coll/Data/Bag.hs</filename>,
  and <filename>~/coll/Angela/Internals.hs</filename>.
 Next, she writes
-a <emphasis>package description</emphasis>, which she puts in <filename>~/coll/pkg.desc</filename>:
+a <emphasis>package description</emphasis>, which she puts in <filename>~/coll/</filename>&pkg-desc;:
 <programlisting>
     name:     angela-coll
     version:  1
@@ -335,7 +336,7 @@ compiled before being installed.  The same source tarball may well be installabl
 Haskell implementations, OSs, and platforms.
 	    </para>
 <para>A source distribution may contain fewer files than appear in the developer's CVS repository; for example,
-tests and design notes may be omitted.  It may also contain some derived files, that do not appear in the
+design notes may be omitted.  It may also contain some derived files, that do not appear in the
 the developer's repository; for example, ones made by a somewhat exotic pre-processor where it
 seems simpler to ship the derived file than to ensure that all consumers have the pre-processor.</para></listitem>
 <listitem><para>
@@ -364,7 +365,7 @@ her consumers (Bob, Sam, Willie, etc) can conveniently use it?</para>
 <para>Answer: she provides a tree of files, with two specific files in the
 root directory of the tree:  
 <itemizedlist>
-<listitem><para><filename>pkg.desc</filename> contains a short description of the package:
+<listitem><para>&pkg-desc; contains a short description of the package:
 specifically, the package name, version, and dependencies.  It may also contain further information
 specific to the particular build system.  The syntax of the package description file
 is given in <xref linkend="pkg-desc">.
@@ -457,7 +458,7 @@ This section documents those requirements.</para>
 <itemizedlist>
 <listitem> <para>
  <emphasis>Compiling the source files</emphasis>, by invoking the compiler.  Even &hugs; may require 
-     some processing (e.g running cpp).
+     some processing (e.g running cpp or cpphs).
 </para></listitem>
 
 <listitem> <para>
@@ -506,7 +507,14 @@ User packages <emphasis>shadow</emphasis> global packages, in the following sens
 	same compiler version, unless they can guarantee that the
 	different installations are binary compatible, such as if they
 	were installed from identical binary distributions.</para>
-	</sect3>
+        
+        <para>For instance, lets say that Joe User mounts his home
+        directory on his Linux machine and on his Solaris machine.  He
+        also uses ghc-6.2 on both machines.  His user packages are
+        installed in ~/ghc-6.2-packages (or something) and are
+        compiled for Linux.  Now he had better not use these packages
+        with the Solaris compiler, because they are in a spot where
+        the Solaris compiler will find them!</para> </sect3>
 
 <sect3><title>Exposed packages and hidden packages</title>
 
@@ -671,7 +679,7 @@ as a global package and we register it as a user package?</para>
 
 <para>
 The sole requirement of an &hps; package is that it should contain,
-in the root of its file structure, (a) a package description file <filename>pkg.desc</filename>,
+in the root of its file structure, (a) a package description file &pkg-desc;,
 and (b) a setup script, <filename>Setup.lhs</filename>.
 This section
 specifies the syntax of the package description, and the command-line interface for the setup script.
@@ -770,7 +778,7 @@ is not specified, <literal>Setup.lhs</literal> will choose one; some packages wi
 </para>
 	  </listitem>
 <listitem><para><option>--prefix=</option><replaceable>path</replaceable>: specifies where the installed files
-for the package should be installed.  Typically on Unix this will be <filename>/usr/local</filename> and
+for the package should be installed (ie the location of the files themselves).  Typically on Unix this will be <filename>/usr/local</filename> and
 on Windows it will be <filename>Program Files</filename>.  The setup script will use a sensible default
 (often platform-specific) if the flag is not specified.
 	    </para>
@@ -804,18 +812,18 @@ on Windows it will be <filename>Program Files</filename>.  The setup script will
 
 	<itemizedlist>
 	  <listitem>
-	    <para><option>--install-prefix=</option><replaceable>path</replaceable>
-            has three effects.  First, it over-rides the
+
+	    <para><option>--install-prefix=</option><replaceable>path</replaceable>:
+            specifies where the installed files for the package should
+            be installed (ie the location of the files themselves).
+            It has three effects.  First, it over-rides the
             <option>--prefix</option> flag specified in the
-            <option>configure</option> step, providing an
-            alternative location.  Second, it does not call
-            &hc-pkg; to register the package.
-            Instead, third, it creates an installed package
-            description file,
+            <option>configure</option> step, providing an alternative
+            location.  Second, it does not call &hc-pkg; to register
+            the package.  Instead, third, it creates an installed
+            package description file,
             <filename>installed-pkg-descr</filename>, which can later
-            be fed to &hc-pkg;.
-	    </para>
-	  </listitem>
+            be fed to &hc-pkg;.  </para> </listitem>
 
 	  <listitem>
 	    <para><option>--user</option>: if present, this flag is
@@ -957,7 +965,7 @@ root of her tree:
 
   > import Distribution.Simple
 </programlisting>
-Second, she writes a package description <filename>pkg.desc</filename> in the syntax of <xref linkend="sbi-pkg-desc">,
+Second, she writes a package description &pkg-desc; in the syntax of <xref linkend="sbi-pkg-desc">,
 which describes the package and gives extra information to the simple build infrastructure.
 </para><para>
 Now Angela can build her package by saying
@@ -986,7 +994,7 @@ The full specification is in <xref linkend="sbi-setup">.
     </sect2>
 <sect2 id=sbi-pkg-desc><title>Package description in the simple build infrastructure</title>
 
-<para>When using the simple build infrastructure, the package description file <filename>pkg.desc</filename>
+<para>When using the simple build infrastructure, the package description file &pkg-desc;
 contains not only the name of the package, its version and dependencies, but also a collection of information 
 to explain to the simple build infrastructure how to build the package.  This section gives the syntax.</para>
 
