@@ -13,6 +13,10 @@
 % does not claim to be a definition of the Haskell 98 Foreign Function
 % Interface. 
 
+% Changes since RC14:
+% * 6.2: CWChar -> CWchar
+% * 6.3: CWChar -> CWchar
+%
 % Changes since RC13:
 % * 5.3: Fixed typo
 % * 5.7: Fixed a mistake in the type of `peekByteOff' and `pokeByteOff' (the
@@ -164,7 +168,7 @@
     \\
     \textbf{--- DRAFT ---}\\[1ex]
     \ttfamily\scriptsize
-    $\relax$Id: ffi.tex,v 1.49 2003/11/02 10:40:34 chak Exp $\relax$%
+    $\relax$Id: ffi.tex,v 1.50 2003/11/05 08:20:53 chak Exp $\relax$%
     \ignorespaces}
   }
 \end{DRAFT}
@@ -2298,7 +2302,7 @@ The module provides the following integral types, including instances for
     Haskell type     & Represented C type\\\hline\hline
     \code{CPtrdiff}  & \code{ptrdiff\_t}\\\hline
     \code{CSize}     & \code{size\_t}\\\hline
-    \code{CWChar}    & \code{wchar\_t}\\\hline
+    \code{CWchar}    & \code{wchar\_t}\\\hline
     \code{CSigAtomic}& \code{sig\_atomic\_t}\\\hline
   \end{tabular}
 \end{quote}
@@ -2400,7 +2404,7 @@ sets that cannot be encoded in byte strings, the module \code{CString} also
 exports a variant of the above string marshalling routines for wide characters.
 %
 \begin{codedesc}
-\item[type CWString~~~~= Ptr CWChar]
+\item[type CWString~~~~= Ptr CWchar]
 \item[type CWStringLen~= (CWString, Int)] \combineitems
   Wide character strings in a NUL-terminated version and a variant with
   explicit length information in number of wide characters.
