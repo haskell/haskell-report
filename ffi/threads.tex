@@ -35,18 +35,21 @@
 
 \section{Introduction}
 
-\emph{Insert the foreign-thread justification here.}
+Threads created using OS primitives (for example pthreads on POSIX systems) can
+have thread-local state. Several libraries make use of this thread-local state.
+Most Haskell systems use just one OS thread to execute all foreign code.
+With GHC's threaded RTS, this is not even necessarily the same OS thread all the
+time.
+Therefore it is not possible to use foreign libraries that depend on thread-local
+state reliably.
 
-Simon and I are confused by what it means. This is our attempt to specify it precisely.
-
-We do not claim that the system accurately describes either of the two proposals on
-the table, but we think that it can be adjusted until it is.  Our main goal is to
-provide a precise framework in which to discuss teh design tradeoffs.
+The following foreign libraries are known to be affected:
+\begin{itemize}
+\item OpenGL
+\item Carbon and Cocoa (Apple's GUI toolkits)
+\end{itemize}
 
 \section{Requirements}
-
-\emph{This list of requirements is simply cut-and-pasted from Wolfgang's recent
-message}.
 
 \begin{itemize}
 \item It should be possible for Haskell code to arrange that a sequence of
@@ -114,14 +117,14 @@ $$
 A native thread of form $N[S]$ has thread-id $N$, while $S$ is
 an abstraction of its call stack.  If $\hcall$ is on top of the stack,
 the thread is willing to execute a Haskell thread.
-\emph{What about referring to the $\hcall$ state as
+\emph{(What about referring to the $\hcall$ state as
 ``inside the Haskell runtime system''? It includes things like GC and other
 ``administrative tasks''. A native thread might be in the $\hcall$ state 
 without ever really executing Haskell code.)}
 If $\fcall{si}{h}$ is
 on top of the stack, the thread is in the process of dealing with a call
 to a foreign function, which will return its result to the Haskell thread
-$h$.  The safety-indicator $si$ is from teh FFI spec.
+$h$.  The safety-indicator $si$ is from the FFI spec.
 
 The syntax of a Haskell thread is this:
 $$
