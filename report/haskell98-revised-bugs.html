@@ -22,6 +22,28 @@ published by Cambridge University Press as a book, and also in the Journal of Fu
 All page references are to these texts, which may differ slightly from the online versions.
 
 <ul>
+<p><li> [May 2003] <strong>Page 89, Section 6.3.4, The Enum Class.</strong>
+Section 6.3.4 states: "For all four of these Prelude numeric types, all of the <tt>enumFrom</tt>
+family of functions are strict in all their arguments".
+<p>
+Alas, this contradicts the code for the Prelude in Chapter 8 for <tt>Float</tt> and <tt>Double</tt>.
+In particular, the instances for <tt>enumFrom</tt> and <tt>enumFromThen</tt> 
+for <tt>Float</tt> and <tt>Double</tt> are defined in terms of 
+<tt>numericEnumFrom</tt>, <tt>numericEnumFromThen</tt>, which are not strict (see p113).
+They both deliver an infinite list even if their argument is undefined.
+<p>
+The fix is presumably to add a <tt>seq</tt> to the instances for <tt>Float</tt> and <tt>Double</tt>.
+
+<p><li> [June 2003] <strong>Page 95, Section 6.4.6, Coercions and Component Extraction.</strong>
+The specification for <tt>properFraction</tt> does not deal properly 
+with the case where <em>x</em> is zero.  Here is a suggested rewording:
+<p>
+"The function <tt>properFraction</tt> takes a real fractional number x and returns
+a pair <em>(n,f)</em> such that <em>x = n+f</em>, and: <em>n</em> is an integral number; <em>f</em> is a
+fraction with the same type as <em>x</em> and with absolute value less than 1;
+either <em>n</em> is zero or <em>n</em> has the same sign as <em>x</em>; and either <em>f</em> is zero or <em>f</em>
+has the same sign as <em>x</em>."
+
 <p><li> [Feb 2003] <strong>Page 123, Section 8.2, PreludeText.</strong>
 In the defintion of <tt>lex</tt> make the following changes:
 <ul>
@@ -47,6 +69,15 @@ utilities.</strong>.  Replace "converts the to the character it
 encodes" by "converts the string to the character it encodes".
 
 
+<p><li> [July 2003] <strong>Index to the online version (only)</strong>.
+<ul>
+<li>The type for <tt>either</tt> is missing.
+<li>
+The type for <tt>print</tt> should be
+<pre>
+   print :: Show a => a -> IO ()
+</pre>
+</ul>
 </ul>
 <hr>
 <address>Simon Peyton Jones, simonpj@microsoft.com</address>
