@@ -1096,9 +1096,6 @@ libraries).  The system will chase down dependencies from those
 modules and include them in the library or source
 distributions.</para>
 
-<para>FIX/TODO: Provide BNF-type grammar, especially for field
-contents, remove below checklist and questions.</para>
-
 <para>The description file fields:
    <table frame=all><title>Description File Fields</title>
    <tgroup cols=4 align=left colsep=1 rowsep=1> <tbody>
@@ -1123,16 +1120,20 @@ contents, remove below checklist and questions.</para>
       <row><entry>license</entry>
            <entry>GPL | LGPL | BSD3 | BSD4 | PublicDomain | AllRightsReserved</entry>
            <entry>BSD3</entry>
+           <entry>If your license isn't on this list, use the
+           <emphasis>license-file</emphasis> field.</entry>
+
       </row>
 
       <row><entry>license-file</entry>
            <entry>--PATH--</entry>
-           <entry>/foo/bar/bang/myLicense.txt</entry>
+           <entry>doc/myLicense.txt</entry>
+           <entry>Specify the license you use as a relative path from the root of the source tree.</entry>
       </row>
 
       <row><entry>maintainer</entry>
            <entry>--FREE TEXT--</entry>
-           <entry>T.S. Elliot</entry>
+           <entry>T.S. Elliot &lt;elliot@email.com> </entry>
       </row>
 
       <row><entry>stability</entry>
@@ -1143,11 +1144,13 @@ contents, remove below checklist and questions.</para>
       <row><entry>executable</entry>
            <entry>--FREE TEXT--</entry>
            <entry>cpphs</entry>
+           <entry>For this Executable stanza, what is the name of the produced executable.</entry>
       </row>
 
       <row><entry>main-is</entry>
            <entry>--PATH--</entry>
            <entry>/foo/bar/bang/Baz.hs</entry>
+           <entry>The filename to look for the main module for this Executable stanza.</entry>
       </row>
 
       <row><entry>extra-libs</entry>
@@ -1165,35 +1168,44 @@ contents, remove below checklist and questions.</para>
       <row><entry>c-sources</entry>
            <entry>--PATH--</entry>
            <entry>/foo/bar/bang</entry>
+           <entry>C source files to build using the FFI.</entry>
       </row>
 
       <row><entry>include-dirs</entry>
            <entry>--PATH--</entry>
            <entry>/foo/bar/bang</entry>
+           <entry>Not Yet Used</entry>
       </row>
 
       <row><entry>includes</entry>
            <entry>--PATH--</entry>
            <entry>/foo/bar/bang</entry>
+           <entry>Not Yet Used</entry>
       </row>
 
       <row><entry>hs-source-dir</entry>
            <entry>--PATH--</entry>
-           <entry>/foo/bar/bang</entry>
+           <entry>src</entry>
+           <entry>A relative path from the root of your source tree.  Look here for the Haskell modules.</entry>
       </row>
 
       <row><entry>modules</entry>
            <entry>--MODULE LIST--</entry>
            <entry>Foo.Bar, Bang.Baz, Boo</entry>
+           <entry>May not be necessary in the future, since we'll
+           chase dependencies from exposed modules and main
+           module.</entry>
       </row>
 
       <row><entry>exposed-modules</entry>
            <entry>--MODULE LIST--</entry>
            <entry>Foo.Bar, Bang.Baz, Boo</entry>
+           <entry>For a library package, which modules should be
+           available for import by the end user?</entry>
       </row>
 
       <row><entry>extensions</entry>
-           <entry>	       OverlappingInstances
+           <entry>OverlappingInstances
                | RecursiveDo
                | ParallelListComp
                | MultiParamTypeClasses
@@ -1226,27 +1238,59 @@ contents, remove below checklist and questions.</para>
                | HereDocuments
                | UnsafeOverlappingInstances</entry>
            <entry>ForeignFunctionInterface, Arrows</entry>
+           <entry>Not all extensions are understood by all &impls;</entry>
       </row>
 
       <row><entry>options-ghc</entry>
            <entry>--OPTIONS--</entry>
            <entry>-fth -cpp</entry>
+           <entry>For command-line options not covered under
+           <emphasis>extensions</emphasis>, add them here, separated
+           by whitespace.</entry>
+
       </row>
 
       <row><entry>options-nhc</entry>
            <entry>--OPTIONS--</entry>
            <entry>-P -t</entry>
+           <entry>For command-line options not covered under
+           <emphasis>extensions</emphasis>, add them here, separated
+           by whitespace.</entry>
       </row>
 
       <row><entry>options-hugs</entry>
            <entry>--OPTIONS--</entry>
            <entry>-98 +g</entry>
+           <entry>For command-line options not covered under
+           <emphasis>extensions</emphasis>, add them here, separated
+           by whitespace.</entry>
       </row>
 
    </tbody></tgroup></table></para>
 
-<para>Shared parsers:
---path--, --module list--, --free text--
+<para>Further details on some fields:
+  <itemizedlist>
+
+   <listitem><para><emphasis>--PATH--</emphasis> Paths are written in
+   the Unix style, with directories separated by slashes, optionally
+   ending in a filename.  You should assume that the paths are case
+   sensitive, though in practice this varies depending on the end
+   user's file system.</para></listitem>
+
+   <listitem><para><emphasis>--MODULE LIST--</emphasis> A module list
+   is a standard Haskell module name, without any file suffixes (.lhs
+   or .hs).  Each module should be separated by a
+   comma.</para></listitem>
+
+   <listitem><para><emphasis>--FREE TEXT--</emphasis> You may put
+   anything in these fields.  For multi-line fields, start the
+   subsequent lines with whitespace.</para></listitem>
+
+   <listitem><para><emphasis>--OPTIONS--</emphasis>The exact syntax of
+   the options field is dependent on the compiler you're using.  Refer
+   to your compiler's man page for details.  Multiple options should
+   be separated by whitespace.</para></listitem> </itemizedlist>
+
 </para>
 
 <para>On hidden modules: Hidden modules form part of the
