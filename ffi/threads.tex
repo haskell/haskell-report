@@ -43,6 +43,39 @@ We do not claim that the system accurately describes either of the two proposals
 the table, but we think that it can be adjusted until it is.  Our main goal is to
 provide a precise framework in which to discuss teh design tradeoffs.
 
+\section{Requirements}
+
+\emph{This list of requirements is simply cut-and-pasted from Wolfgang's recent
+message}.
+
+\begin{itemize}
+\item It should be possible for Haskell code to arrange that a sequence of
+calls to a given library are performed by the same native thread and
+that if an external library calls into Haskell, then any outgoing calls
+from Haskell are performed by the same native thread.
+
+\item The specification should be implementable in a way that allows a lot
+of foreign calls to be made with no additional overhead with respect to
+GHC's current ``unsafe'' foreign calls.
+
+\item The good performance of the existing lightweight ``green'' threads in
+GHC should not be sacrificed. Performance should still OK when using
+the new features with only a few threads (i.e. not more than commonly
+used from multithreaded C programs).
+
+\item The specification shouldn't explicitly require lightweight ``green''
+threads to exist. The specification should be implementable in a simple
+and obvious way in haskell systems that always use a 1:1 correspondence
+between Haskell threads and OS threads.
+
+\item The specification shouldn't specify which particular OS thread
+should be used to execute Haskell code. It should be possible to
+implement it with e.g. a Haskell interpreter running in one OS thread
+that just uses other OS threads for foreign calls.
+
+\item There should be no unexpected blocking. Especially, threadsafe calls
+should never cause other threads to block.
+\end{itemize}
 
 
 \section{State}
