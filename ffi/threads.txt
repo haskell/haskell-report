@@ -9,6 +9,8 @@ a Haskell runtime system).
 Until such time as we are able to merge the proposals, we include both
 proposals as self-contained entities.
 
+At the end, we include an outstanding issue concerning the meaning of
+'threadsafe'.
 
 Proposal 1
 ==========
@@ -278,3 +280,43 @@ unbound Haskell thread.
 
 End of Proposal 2
 =================
+
+
+Query about meaning of threadsafe
+=================================
+
+Wolfgang Thaller writes:
+> I reread Section 3.3 of the FFI document (RC7), and now I think I
+> cannot clarify my specification in this respect without first asking
+> others to clarify the current specs - can someone explain the
+> distinction between unsafe, safe and threadsafe in the current FFI
+> to me? I think I know what it does in GHC, but what's the general
+> definition?
+
+My reading of the spec is that it means that execution of other
+runnable Haskell threads and of the foreign function can be
+interleaved.  That is, neither will be 'starved'.
+
+Operationally, this requires that the Haskell runtime and the foreign
+call operate in separate threads.
+
+I think it is a mistake for the ffi spec to say that single-threaded
+systems may safely ignore this spec.  Who would specify 'threadsafe'
+if they were not worried about starvation?  How could an
+implementation that allows starvation be considered correct?
+
+I think Haskell compilers that cannot implement 'threadsafe' as it is
+implemented in GHC should reject Haskell programs which use it.  I
+think the ffi spec should be amended to say this (the spec currently
+says that such compilers may treat 'threadsafe' as meaning 'safe').
+
+I suspect that 'threadsafety' is actually orthogonal to the
+'safe/unsafe' distinction.  I think it would be perfectly meaningful
+to make calls which must execute in a separate thread (i.e., are
+'threadsafe') but do not make callbacks into Haskell (i.e., could
+otherwise be 'unsafe').  We currently ignore this case because the
+overhead of a context switch is so much greater than the overhead of a
+safe call.
+
+End query about meaning of threadsafe
+=====================================
