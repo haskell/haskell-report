@@ -126,6 +126,7 @@ release: haskell.ps html
 	tar cvf - haskell98-report-html | gzip > $(RELEASE_DIR)/haskell98-report-html.tar.gz
 	cp h98-revised.html $(RELEASE_DIR)/index.html
 	cp haskell98-bugs.html h98.gif $(RELEASE_DIR)
+	cp haskell98-revised-bugs.html h98.gif $(RELEASE_DIR)
 
 publish-pdf: report.pdf
 	gzip < report.pdf > y:Haskell/haskell98-report/report.pdf.gz
