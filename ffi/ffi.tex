@@ -12,6 +12,20 @@
 % provided that the modified version is clearly presented as such, and that it
 % does not claim to be a definition of the Haskell 98 Foreign Function
 % Interface. 
+
+% TODO:
+
+%* Rationale: Point about no lib string: remove and explain
+%  why we have the [lib] prefix now
+%* IOError:
+%  - support for raising errors other than UserError and
+%    setting the attributes like file name etc
+%  - no extension of the set of "special" IO errors
+%* Version 1.0: remove (put in \begin/end{DRAFT}) the non-C
+%  language dependent bits and explain that all non-C calling
+%  conventions are experimental and impl dependent right now
+%* Clarify under which conditions two ForeignPtr are equal!
+
  
 \documentclass[a4paper,twosides]{article}
 
@@ -35,7 +49,7 @@
     \\
     \textbf{--- DRAFT ---}\\[1ex]
     \ttfamily\scriptsize
-    $\relax$Id: ffi.tex,v 1.14 2001/08/30 16:13:17 chak Exp $\relax$%
+    $\relax$Id: ffi.tex,v 1.15 2001/09/26 14:07:05 chak Exp $\relax$%
     \ignorespaces}
   }
 \end{DRAFT}
@@ -63,7 +77,7 @@
 
 \title{%
   The Haskell 98 Foreign Function Interface\\
-  An Addendum to the Definition of Haskell 98%
+  An Addendum to the Haskell 98 Report%
   \Version}
 \author{
   Manuel M. T. Chakravarty [editor], University of New South Wales\\
@@ -85,12 +99,6 @@
 
 \newpage
 \section*{Preface}
-
-\subsection*{Acknowledgements}
-
-
-\newpage
-\section{Introduction}
 
 The definition of Haskell 98~\cite{haskell98}, while being comprehensive with
 respect to the functional core language, does lack a range of features of more
@@ -121,6 +129,27 @@ Simplicity generally overruled maximal convience for the programmer as a
 design goal.  Thus, support for more convenient interface specifications is
 the domain of system-independent tools that generate code following the
 present specification.
+
+\subsection*{Acknowledgements}
+
+\begin{verbatim}
+FIXME: To be written
+\end{verbatim}
+
+
+\newpage
+\section{Introduction}
+
+The extension of Haskell 98 introduced in this report facilitates the use of
+non-Haskell code from Haskell and vice versa in a portable manner.  Intrusion
+into Haskell 98 has been kept to a minimum and the defined facilities have
+been extensively tested with large libraries.
+
+The present version of the FFI report does only fully specify the interaction
+between Haskell code with code that follows the C calling convention.
+However, the design of the FFI is such that it enables the modular extension
+of the present definition to include other programming languages, such as C++
+and Java.
 
 \subsection{Embedding Into Haskell 98}
 
@@ -190,8 +219,7 @@ The following productions are added:
   \grule{reservedid}{%
     foreign}
   \grule{specialid}{%
-    dynamic \galt\ export \galt\ safe \galt\ static \galt\
-    unsafe}
+    export \galt\ import \galt\ safe \galt\ unsafe}
   \gor{%
     ccall \galt\ stdcall \galt\ cplusplus \galt\ jvm \galt\ dotnet}
   \gor{%
