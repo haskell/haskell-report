@@ -1,17 +1,26 @@
-\documentclass{article}
+\documentclass[a4paper,twoside]{article}
+
+\usepackage{a4wide}
 
 \usepackage{proof}
 \usepackage{code}
+\usepackage{url}
+\usepackage{version}
 
-\sloppy
-\setlength{\parskip}{0.5\baselineskip plus 0.2\baselineskip minus 0.1\baselineskip}
-\setlength{\parsep}{\parskip}
-\setlength{\topsep}{0cm}
-\setlength{\parindent}{0cm}
-\renewcommand{\textfraction}{0}
-\renewcommand{\topfraction}{1}
-\renewcommand{\floatpagefraction}{0.8}
-\renewcommand{\dblfloatpagefraction}{0.8}
+%\sloppy
+%\setlength{\parskip}{0.5\baselineskip plus 0.2\baselineskip minus 0.1\baselineskip}
+%\setlength{\parsep}{\parskip}
+%\setlength{\topsep}{0cm}
+%\setlength{\parindent}{0cm}
+%\renewcommand{\textfraction}{0}
+%\renewcommand{\topfraction}{1}
+%\renewcommand{\floatpagefraction}{0.8}
+%\renewcommand{\dblfloatpagefraction}{0.8}
+
+\excludeversion{DRAFT}
+
+\newcommand{\clearemptydoublepage}{%
+  \newpage{\pagestyle{empty}\cleardoublepage}}
 
 
 \newcommand{\NS}{{\cal N}}
@@ -25,51 +34,151 @@
 \newcommand{\bound}[1]{B(#1)}
 \newcommand{\forkio}[1]{ForkIO(#1)}
 \begin{document}
+\pagestyle{headings}
 
+\title{%
+  The Concurrent Haskell Foreign Function Interface 1.0\\
+  An Addendum to the Haskell 98 FFI Report%
+}
 
-\title{A semantics for foreign threads}
-
-\author{The Haskell FFI team}
+\author{Wolfgang Thaller}
+\date{}
 \maketitle
+\par\vfill
+\noindent
+Copyright (c) 2003 Wolfgang Thaller
+\par\noindent
+\emph{The authors intend this Report to belong to the entire Haskell
+  community, and so we grant permission to copy and distribute it for any
+  purpose, provided that it is reproduced in its entirety, including this
+  Notice.  Modified versions of this Report may also be copied and distributed
+  for any purpose, provided that the modified version is clearly presented as
+  such, and that it does not claim to be a definition of the Concurrent Haskell
+  Foreign Function Interface.}
+\par\bigskip\noindent
+The master version of the Concurrent Haskell FFI Report is at \url{haskell.org}. Any
+corrections or changes in the report are found there.
+\thispagestyle{empty}
+
+
+\clearemptydoublepage
+\pagenumbering{roman}
+\tableofcontents
+
+\clearemptydoublepage
 
 \makeatactive
 
+%\section*{Preface}
+%
+
+\pagenumbering{arabic}
+
 \section{Introduction}
 
-Threads created using OS primitives (for example pthreads on POSIX systems) can
-have thread-local state. Several libraries make use of this thread-local state.
-Most Haskell systems use just one OS thread to execute all foreign code.
-With GHC's threaded RTS, this is not even necessarily the same OS thread all the
-time.
-Therefore it is not possible to use foreign libraries that depend on thread-local
-state reliably.
+This report intends to define the interaction of two extensions to Haskell 98, namely
+the Foreign Function Interface and Concurrent Haskell. It is therefore an addendum
+to both the Haskell 98 FFI report and the (yet unwritten) Concurrent Haskell report.
+Familiarity with Haskell 98 and both extensions is assumed.
 
-The following foreign libraries are known to be affected:
-\begin{itemize}
-\item OpenGL
-\item Carbon and Cocoa (Apple's GUI toolkits)
-\end{itemize}
+Concurrent Haskell itself does not require operating system thread primitives\footnote{for
+example @pthread\_create@ on POSIX systems or @CreateThread@ on Win32}
+to be used. Today's Concurrent Haskell implementations do in fact use their own
+scheduler loop and run all Concurrent Haskell threads in just one OS thread.
+
+This is significantly more efficient and sometimes also easier to implement than solutions
+based on the OS primitives. However, there are problems with interfacing such an
+implementation with libraries written in other languages.
+
+The functionality described in this addendum facilitates interoperation with foreign
+languages without sacrificing performance.
+
+\subsection{Definitions}
+
+Throughout this document, the term \emph{Haskell thread} will be used to refer to the
+entity that is visible to Haskell programs. Every Haskell IO action runs in a Haskell thread,
+and you can create new Haskell threads using @forkIO@.
+
+The term \emph{OS thread} will be used to refer to threads managed by the operating
+system. All code that is run (both Haskell and foreign code) runs in an OS thread. New
+OS threads are created using OS-specific primitives, like @pthread\_create@ on POSIX
+systems and @CreateThread@ on Win32.
+
+A Haskell run-time system is responsible for managing the relationship between OS threads
+and Haskell thread. Every Haskell thread has to be run by an OS thread to do anything at all.
+
+\section{Problems}
+ 
+This section outlines the problems with Haskell implementations that use a single OS thread
+for executing all Haskell threads.
+
+\subsection{Blocking foreign calls}
+If all Haskell scheduling is done in one OS thread, then there can be only one call to a
+foreign imported function in progress at any one time. While a foreign call is in progress,
+the Haskell run-time system is not in control, and therefore all other Haskell threads are
+blocked.
+ 
+This severely limits the usefulness of Concurrent Haskell when used together with the FFI.
+
+For some time now, there has been an optional extension to the Glasgow Haskell Compiler,
+the so-called ``Threaded RTS'', that allows non-blocking foreign calls to be made. However,
+this solution makes the problem described in the next section even worse.
+ 
+\subsection{Thread-local state}
+OS threads can be uniquely identified by their thread id and by their thread-local state.
+To libraries that make use of this, it does matter from which OS thread they are called from.
+
+Thread-local state is used mostly to allow libraries that use global state variables as part of
+their interface to be used from multiple (OS) threads concurrently. One important example of
+this is OpenGL. OpenGL manages a lot of state variables for each ``rendering context''.
+The ``current rendering context'' is not passed as a parameter to OpenGL functions; rather,
+it is stored in a thread-local state variable. It is therefore possible to use OpenGL from two
+separate OS threads to render into two separate contexts (two separate windows).
+
+When a Haskell implementation uses only one OS thread to schedule several Haskell
+threads, only one of these may access a library that uses thread-local state at any given
+time, as all Haskell threads will share the same OS-thread-local state.
+
+GHC's threaded RTS made the problem worse: it doesn't execute a (foreign exported)
+callback in the same OS thread as the (foreign) function that calls it, and it may move
+all Haskell threads to a different OS thread at any time. While this behaviour sounds
+far-fetched, it is a good way to preserve GHC's good multithreading performance.
+
+Foreign libraries that set a thread-local state variable to a particular value will not find
+the same value there when they are called from a different OS thread. For example,
+programs that use OpenGL segfault because OpenGL functions are called from an OS
+thread that does not have a current OpenGL context set. Similar problems arise with
+Microsoft's Win32, and Apple's Carbon and Cocoa libraries.
 
 \section{Requirements}
 
+The following requirements were used as guidelines for developing the solution to the
+above problems:
+
 \begin{itemize}
-\item It should be possible for Haskell code to arrange that a sequence of
-calls to a given library are performed by the same native thread and
-that if an external library calls into Haskell, then any outgoing calls
-from Haskell are performed by the same native thread.
+\item Safe Foreign calls (i.e. calls not marked as unsafe) should not cause
+other threads to block.
+
+\item Libraries that rely on thread-local state should be usable from Haskell.
 
 \item The specification should be implementable in a way that allows a lot
-of foreign calls to be made with no additional overhead with respect to
-GHC's current ``unsafe'' foreign calls.
+of ``unsafe'' foreign calls to be made with no additional overhead. Unsafe calls to
+libraries that rely on thread-local state must be possible.
 
-\item The good performance of the existing lightweight ``green'' threads in
-GHC should not be sacrificed. Performance should still OK when using
-the new features with only a few threads (i.e. not more than commonly
+Using a library like OpenGL from Haskell would not be practical otherwise.
+
+\item The excellent performance of ``lightweight'' threads, that is, of using one OS thread
+to execute all Haskell threads, should not be sacrificed. Performance should still
+OK when using the new features with only a few threads (i.e. not more than commonly
 used from multithreaded C programs).
 
-\item The specification shouldn't explicitly require lightweight ``green''
-threads to exist. The specification should be implementable in a simple
-and obvious way in haskell systems that always use a 1:1 correspondence
+This requirement is what makes this whole document necessary in the first place.
+Using exactly one OS thread for every Haskell thread solves the problems by sacrificing
+some performance.
+
+\item The specification shouldn't explicitly require lightweight threads to exist.
+The specification should be implementable in a simple
+and obvious way in Haskell systems that always use a 1:1 correspondence
 between Haskell threads and OS threads.
 
 \item The specification shouldn't specify which particular OS thread
@@ -77,8 +186,6 @@ should be used to execute Haskell code. It should be possible to
 implement it with e.g. a Haskell interpreter running in one OS thread
 that just uses other OS threads for foreign calls.
 
-\item There should be no unexpected blocking. Safe Foreign calls (i.e. calls not
-marked as unsafe) should not cause other threads to block.
 \end{itemize}
 
 \newpage
@@ -184,19 +291,26 @@ transition rules, of form
 $$
 \NS ; \HS ~\Rightarrow~ \NS' ; \HS'
 $$
-The structural rules are as before.
+The structural rules are these:
+$$
+\begin{array}{c}
+\infer{\NS \cup \{t\} ; \HS ~\Rightarrow~ \NS'  \cup \{t\}; \HS'}
+        {\NS ; \HS ~\Rightarrow~ \NS' ; \HS'}
+\qquad
+\infer{\NS ; \HS  \cup \{h\} ~\Rightarrow~ \NS'; \HS'   \cup \{h\}}
+        {\NS ; \HS ~\Rightarrow~ \NS' ; \HS'}
+\end{array}
+$$
+These standard rules allow us to write the interesting transitions with less clutter.
 $$
 \begin{array}{rcll}
 N[\hcall:S]; (\tau~@>>@~a)_{bt} 
         & \Rightarrow 
-        & N[\hcall:S]; (a)_{M} & (INT) \\
+        & N[\hcall:S]; (a)_{bt} & (INT) \\
 \\
 N[\hcall:S]; (@forkIO@~b~@>>@~a)_{bt} 
         & \Rightarrow 
         & N[\hcall:S]; (a)_{bt}, (b)_\epsilon & (FORKIO) \\
-N[\hcall:S]; (@forkOS@~b~@>>@~a)_{bt}
-        & \Rightarrow 
-        & N[\hcall:S], M[\hcall,\bullet]; (a)_{M}, (b)_{bt} & (FORKOS) \\
 \\
 N[\hcall:S]; (\fcall{si}{f}~@>>@~a)_N 
         & \Rightarrow 
@@ -204,7 +318,7 @@ N[\hcall:S]; (\fcall{si}{f}~@>>@~a)_N
 N[\hcall]; (\fcall{si}{f}~@>>@~a)_\epsilon 
         & \Rightarrow 
         & N[\fcall{si}{a_\epsilon}:\hcall:S];  & (FCALL2) \\
-g\\
+\\
 N[\fcall{si}{a_{bt}}:S];  
         & \Rightarrow 
         & N[S]; a_{bt} & (FRET) \\
@@ -221,6 +335,10 @@ N[\hcall : S]; (\ret{})_N
         & \Rightarrow 
         & N[S]; & (HRET) \\
 \\
+; (\ret{})_\epsilon
+        & \Rightarrow 
+        & ; & (HEND) \\
+\\
 (nothing)
         & \Rightarrow 
         & N[\hcall]; & (WKR) \\
@@ -230,13 +348,17 @@ N[\hcall : S]; (\ret{})_N
         & \Rightarrow 
         & N[\bullet]; & (EXT) \\
         & \multicolumn{2}{l}{\mbox{where $N$ is fresh}} \\
+ \\
+N[S];
+        & \Rightarrow 
+        & (nothing) & (NEND) \\
 \end{array}
 $$
 
 \begin{description}
-\item[FORKOS.]  Note that we spawn a new OS thread $M[H,\bullet]$.  The $\bullet$ prevents it
-participating in (FCALL2), which might block $M$ inside a foreign call; instead, $M$ must
-remain available to participate in (FCALL1), since no other OS thread can do so.
+%\item[FORKOS.]  Note that we spawn a new OS thread $M[H,\bullet]$.  The $\bullet$ prevents it
+%participating in (FCALL2), which might block $M$ inside a foreign call; instead, $M$ must
+%remain available to participate in (FCALL1), since no other OS thread can do so.
 
 \item[WKR.] This rule models the birth of new worker OS threads, in case they should
 all be blocked in a foreign call.
