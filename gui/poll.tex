@@ -576,6 +576,34 @@ Vincenzo welcomes comments on extending the GIO approach with standard
 IO functions that don't take the attribute list (in case default
 values apply for every attribute).
 
+Summing up the conversation about the set and get functions, I posted
+the following proposal.
+
+\begin{verbatim}
+-- An attribute is a property of a widget. It knows how to set the
+-- and how to read the value of this property.
+data WidgetClass w => Attr a w = <abstract>
+
+-- The assignment operator joins an attribute with its value.
+(=:) :: a -> Attr a w -> Setter w
+
+-- Set and get can be used on every widget.
+set :: WidgetClass w => w -> [Setter w] -> IO ()
+get :: WidgetClass w => w -> Attr a w -> IO a
+
+-- An example for a Button widget: The constructor has one
+-- mandatory argument.
+newButton :: Container -> [Setter Button] -> IO Button
+
+-- The Button has at least this attribute.
+label :: Attr String Button
+
+-- This is one callback the Button provides. Note that you cannot
+-- attach any function at construction time or with the set
+-- function. The returned action is the unregister function.
+onClicked :: ButtonClass b => b -> IO () -> IO (IO ())
+\end{verbatim}
+
 \subsubsection{\label{secParentAsParameter} Composition of Objects
   (Layout)}
 
