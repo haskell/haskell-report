@@ -133,6 +133,7 @@ class                             #TShow a       #S6.3.3
 #VdivMod           :: Integral a => a -> a -> (a, a) 
 #Vdrop             :: Int -> [a] -> [a] #&drop 2 "abcd" = "cd"
 #VdropWhile        :: (a -> Bool) -> [a] -> [a] #&dropWhile (>3) [5,3,5] = [3,5]
+#Veither           :: (a -> c) -> (b -> c) -> Either a b -> c
 #Velem             :: Eq a => a -> [a] -> Bool #&'a' `elem` "abc" = True
 #VencodeFloat      :: RealFloat a => Integer -> Int -> a 
 #VenumFrom         :: Enum a => a -> [a] #&[n..]
@@ -203,7 +204,7 @@ class                             #TShow a       #S6.3.3
 #Votherwise        :: Bool
 #Vpi               :: Floating a => a 
 #Vpred             :: Enum a => a -> a #&pred True = False
-#Vprint            :: Show a => IO () #&adds a newline
+#Vprint            :: Show a => a -> IO () #&adds a newline
 #Vproduct          :: Num a => [a] -> a
 #VproperFraction   :: (RealFrac a, Integral b) => a -> (b, a) 
 #VputChar          :: Char -> IO ()
