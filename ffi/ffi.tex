@@ -1,0 +1,708 @@
+% The Haskell 98 Foreign Function Interface
+% [An Addendum to the Definition of Haskell 98]
+%
+% Editor: Manuel M. T. Chakravarty
+%
+% Copyright 2001 Manuel M. T. Chakravarty
+%
+% The authors intend this Report to belong to the entire Haskell community, and
+% so we grant permission to copy and distribute it for any purpose, provided
+% that it is reproduced in its entirety, including this Notice.  Modified
+% versions of this Report may also be copied and distributed for any purpose,
+% provided that the modified version is clearly presented as such, and that it
+% does not claim to be a definition of the Haskell 98 Foreign Function
+% Interface. 
+ 
+\documentclass[a4paper,twosides]{article}
+
+\usepackage{a4wide}
+\usepackage{grammar}
+\usepackage{version}
+\usepackage{url}
+\usepackage[fleqn]{amsmath}
+
+
+% TODO ========================================================================
+
+%  - Add unsafePerformIO and unsafeInterleaveIO to Foreign?  The former can be
+%    implemented with the FII, so we could provide a default impl.  I am not
+%    sure about the latter.
+%  - Move all the GHC-specific info contained in the old FFI spec to the GHC
+%    users guide 
+%  - CTypesISO still have gaps in their spec and impl
+
+% =============================================================================
+
+% version control
+%
+\includeversion{DRAFT}
+%\excludeversion{DRAFT}
+
+\def\Version{\relax}
+\begin{DRAFT}%
+{
+  \gdef\Version{%
+    \\
+    \textbf{--- DRAFT ---}\\[1ex]
+    \ttfamily\scriptsize
+    $\relax$Id: ffi.tex,v 1.1 2001/06/09 12:52:14 chak Exp $\relax$%
+    \ignorespaces}
+  }
+\end{DRAFT}
+
+% setting of code
+%
+\newcommand{\code}[1]{\texttt{#1}}
+
+
+\begin{document}
+\pagestyle{headings}
+
+\title{%
+  The Haskell 98 Foreign Function Interface\\
+  An Addendum to the Definition of Haskell 98%
+  \Version}
+\author{
+  Manuel M. T. Chakravarty [editor], University of New South Wales\\
+  Sigbjorn Finne, ??FIXME??\\
+  Fergus Henderson, University of Melbourne\\
+  Marcin Kowalczyk, ??FIXME??\\
+  Daan Leijen, University of Utrecht\\
+  Simon Marlow, Microsoft Research\\
+  Erik Meijer, Microsoft\\
+  Sven Panne, BetaResearch\\
+  Simon Peyton Jones, Microsoft Research\\
+  Alastair Reid, University of Utah\\
+  Malcolm Wallace, University of York\\
+  Michael Weber, University of Aachen\\
+  \texttt{Please tell me if I forgot anybody!}
+  }
+\date{}
+\maketitle
+
+
+\newpage
+\section*{Preface}
+
+\subsection*{Acknowledgements}
+
+
+\newpage
+\section{Introduction}
+
+The definition of Haskell 98~\cite{haskell98}, while being comprehensive with
+respect to the functional core language, does lack a range of features of more
+operational flavour, such as a foreign language interface, concurrency
+support, and fully fledged exception handling.  As these features are of
+central importance to many real world applications of the language, there is a
+danger that different implementations become de facto incompatible for such
+applications due to system-specific extensions of the core language.  The
+present FFI specification is aimed at reducing this risk by defining a simple,
+yet comprehensive extension to Haskell 98 for the purpose of interfacing to
+program components implemented in a language other than Haskell.
+
+The goal behind this foreign function interface (FFI) specification is to make
+it possible to describe in Haskell 98 source code the interface to foreign
+functionality such that its semantics is independent of the Haskell system.
+It builds on experiences with a family of foreign function interfaces provided
+by the major implementations of Haskell 98.  Central in the design of this
+interface has been the goal to be comprehensive while being simple and
+minimising the change with respect to Haskell 98; the latter includes
+pollution of the name space with new keywords.  Consequently, as much as
+possible of the FFI functionality is realised in the form of libraries.  More
+convenient interface specifications are the domain of system-independent tools
+that generate code following the present specification.
+
+\subsection{Embedding Into Haskell 98}
+
+The present report is to be regarded as an addendum to the Haskell 98
+Report~\cite{haskell98}.  As such, syntactic and semantic definitions refer to
+names and definitions in the Haskell 98 Report where appropriate without
+further explanation.  Care has been taken to invalidate as few as possible
+legal Haskell 98 programs in the process of adding FFI support.  In
+particular, only a single addition to the set of reserved identifiers, namely
+\code{foreign}, has been made.
+
+Moreover, it is expected that the present FFI specification will be considered
+for inclusion into future revisions of the Haskell standard.
+
+\subsection{Language-Specific FFI Support}
+
+The core of the present specification is independent of the foreign language.
+However, there are two areas where FFI specifications must become language
+specific: (1) the specification of external names and (2) the marshalling of
+the basic types of a foreign language.  As an example of the former, consider
+that in C~\cite{C} a simple identifier is sufficient to identify an object,
+while Java~\cite{gosling-etal:Java}, in general, requires a qualified name in
+conjunction with argument and result types to resolve possible overloading.
+Regarding the second point, note that many languages do not specify the exact
+representation of some basic types.  For example the type \code{int} in C may
+be 16, 32, or 64 bit wide.  Similarly, the Haskell report guarantees only that
+\code{Int} covers at least the range \([-2^{29}, 2^{29} - 1]\).  As a
+consequence, to reliably represent values of C's \code{int} in Haskell, we
+have to introduce a new type \code{CInt}, which is guaranteed to match the
+representation of \code{int} on the same machine.
+
+The specification of external names in dependence on a calling convention is
+described in Section~\ref{sec:extent}, whereas the marshalling of the basic
+types in dependence on a foreign languages is described in
+Section~\ref{sec:marshalling}.
+
+\subsection{Contexts}
+
+For a given Haskell system, we define the \emph{Haskell context} to be the
+execution context of the abstract machine on which the Haskell system is
+based.  This includes the heap, stacks, and the registers of the abstract
+machine and their mapping onto a concrete architecture.  We call any other
+execution context an \emph{external context.}  Generally, we cannot assume any
+compatibility between the data formats and calling conventions between the
+Haskell context and a given external context, except where the Haskell 98
+report explicitly prescribes a specific data format.
+
+The principal goal of a foreign function interface is to provide a
+programmable interface between the Haskell context and external contexts.  As
+a result Haskell threads can access data in external contexts and invoke
+functions that are executed in an external context as well as vice versa.  In
+the rest of this report, external contexts are usually identified by a calling
+convention. 
+
+
+\newpage
+\section{Lexical Structure}
+
+The only additions to the lexical structure of Haskell 98 as defined
+in~\cite[Section~2]{haskell98} is a single new reserved identifier and a set
+of special identifiers.  The latter have a special meaning only within foreign
+declarations, but may be used as ordinary identifiers elsewhere.
+
+The following productions are added:
+%
+\begin{grammar}
+  \grule{reservedid}{%
+    foreign}
+  \grule{specialid}{%
+    dynamic \galt\ export \galt\ safe \galt\ static \galt\
+    unsafe}
+  \gor{%
+    ccall \galt\ stdcall \galt\ cplusplus \galt\ jvm \galt\ dotnet}
+  \gor{%
+    \gverbal{system-specific calling conventions}}
+\end{grammar}
+
+
+\newpage
+\section{Foreign Declarations}
+
+This section describes the extension of Haskell 98 by foreign declarations.
+%
+\begin{grammar}
+  \grule{topdecl}{%
+    foreign \gnterm{fdecl}}
+  \grule[define variable]{fdecl}{%
+    import \gnterm{callconv} \gopt{\gnterm{safety}} \gnterm{entity}
+    \gnterm{var} {::}\ \gnterm{ftype}}
+  \gor[expose variable]{%
+    export \gnterm{callconv} \gnterm{entity}
+    \gnterm{var} {::}\ \gnterm{ftype}}
+  \grule[calling convention]{callconv}{%
+    ccall \galt\ stdcall \galt\ cplusplus \galt\ jvm \galt\ dotnet}
+  \gor{%
+    \gverbal{system-specific calling conventions}}
+  \grule[external entity]{entity}{%
+    \gnterm{string}}
+  \grule{safety}{%
+    unsafe \galt\ safe}
+\end{grammar}
+%
+There are two flavours of foreign declarations: import and export
+declarations.  An import declaration makes an \emph{external entity,} i.e., a
+function or memory location defined in an external context, available in the
+Haskell context.  Conversely, an export declaration defines a function of the
+Haskell context as an external entity in an external context.  Consequently,
+the two types of declarations differ in that an import declaration defines a
+new variable, whereas an export declaration uses a variable that is defined
+in the same Haskell module.
+
+The external context that contains the external entity is determined by the
+calling convention specified in the foreign declaration.  Consequently, the
+exact form of the specification of the external entity is dependent on both
+the calling convention and on whether it appears in an import or export
+declaration.  To provide syntactic uniformity in the presence of different
+calling conventions, it is guaranteed that the description of an external
+entity lexically appears as a Haskell string lexeme.
+
+Note that the new keyword \code{foreign} is the only name taken away from the
+Haskell 98 name space.  All other special identifiers that may appear in
+foreign declarations do not have a special status outside of those
+declarations.
+
+\begin{verbatim}
+FIXME: modifiers for concurrency control?
+\end{verbatim}
+
+\subsection{Calling Conventions}
+\label{sec:call-conv}
+
+The calling convention determines the binary interface to an external entity
+on a given architecture.  It often depends on the programming language in
+which the external entity is implemented, but usually is more dependent on the
+system for which the external entity has been compiled.
+
+As an example of how the calling convention is dominated by the system rather
+than the programming language, consider that an entity compiled to byte code
+for the Java Abstract Machine (JVM)~\cite{lindholm-etal:JVM} needs to be
+invoked by the rules of the JVM rather than that of the language in which it
+is implemented (the entity might be implemented in Oberon, for example).
+
+Any implementation of the Haskell 98 FFI must at least implement the C calling
+convention denoted by \code{ccall}.  All other calling conventions are
+optional.  Generally, the set of calling conventions is open, i.e., individual
+implementations may elect to support additional calling conventions.  In
+addition to \code{ccall}, Table~\ref{tab:callconv} specifies a range of
+identifiers for common calling conventions.
+%
+\begin{table}[tbp]
+  \begin{center}
+    \begin{tabular}{|l|l|}
+      \hline
+      Identifier & Represented calling convention\\
+      \hline\hline
+      \code{ccall} 
+      & Calling convention of the standard C compiler on a system\\
+      \code{stdcall}
+      & Calling convention of the Win32 API (corresponding to Pascal)\\
+      \code{cplusplus}
+      & Calling convention of the standard C{+}{+} compiler on a system\\
+      \code{jvm} 
+      & Calling convention of the Java Abstract Machine\\
+      \code{dotnet}
+      & Calling convention of the \textsc{.net} platform\\
+      \hline
+    \end{tabular}
+    \caption{Calling conventions}
+    \label{tab:callconv}
+  \end{center}
+\end{table}
+%
+Implementations need not implement all of these conventions, but if any is
+implemented, it must use the listed name.  For any other calling convention,
+implementations are free to choose a suitable name.
+
+It should be noted that the code generated by a Haskell system to implement a
+particular calling convention may vary widely with the target code of that
+system.  For example, the calling convention \code{jvm} will be trivial to
+implement for a Haskell compiler generating Java code, whereas for a Haskell
+compiler generating C code, the Java Native Interface (JNI)~\cite{liang:JNI}
+has to be targeted.
+
+\begin{verbatim}
+FIXME: How many optional calling conventions should we specify here?
+  What is the policy regarding calling conventions introduced by
+  systems after this report is released?
+\end{verbatim}
+
+\subsection{Foreign Types}
+\label{sec:foreign-types}
+
+Foreign types are produced according to the following grammar:
+%
+\begin{grammar}
+  \grule{ftype}{%
+    \gnterm{frtype}}
+  \gor{%
+    \gnterm{fatype} -> \gnterm{ftype}}
+  \grule{frtype}{%
+    \gnterm{fatype}}
+  \gor{%
+    ()}
+  \grule[$k\geq0$]{fatype}{%
+    \gnterm{qtycon} \gnterm[1]{atype} \gellipse\ \gnterm[k]{atype}}
+\end{grammar}
+%
+A foreign type is the Haskell type of an external entity.  Only a subset of
+Haskell's types are permissible as foreign types, as only a restricted set of
+types can be reliably transferred between the Haskell context and an external
+context.  A foreign type generally has the form
+\[
+\textit{at}_1\code{ -> }\cdots\code{ -> }\textit{at}_n\code{ -> }\textit{rt}
+\]
+where \(n\geq0\).  It implies that the arity of the external entity is $n$.
+
+The following restrictions are placed on the argument types \(\textit{at}_i\)
+produced by \gnterm{fatype}:
+%
+\begin{itemize}
+\item The type must be an instance of \code{Storable}
+  (cf. Section~\ref{sec:Storable}).
+\item If it is part of an import declaration, \code{Storable.poke} must be
+  defined on this type.
+\item If it is part of an export declaration, \code{Storable.peek} must be
+  defined on this type.
+\end{itemize}
+%
+However, for the type \textit{rt} produced by \gnterm{frtype}, we define the
+following exception to these restrictions: Any type matching \code{Prelude.IO
+  }$t$, where $t$ is produced by \gnterm{frtype} is admissible.  This
+exception is not recursive.
+
+External functions are generally strict in all arguments.
+
+\subsection{Import Declarations}
+\label{sec:import}
+
+Generally, an import declaration has the form
+%
+\[
+\code{foreign}~\code{import}~c~e~v~\code{{::}}~t
+\]
+%
+which declares the variable $v$ of type $t$ to be defined externally.
+Moreover, it specifies that $v$ is evaluated by executing the external entity
+identified by the string $e$ using calling convention $c$.  The precise form
+of $e$ depends on the calling convention and is detailed in
+Section~\ref{sec:extent}.  If a variable $v$ is defined by an import
+declaration, no other top-level declaration for $v$ is allowed in the same
+module.  For example, the declaration
+%
+\begin{quote}
+\begin{verbatim}
+foreign import ccall "string.h strlen" cstrlen :: Ptr CChar -> IO CSize
+\end{verbatim}
+\end{quote}
+%
+introduces the function \code{cstrlen}, which invokes the external function
+\code{strlen} using the standard C calling convention.  Some external entities
+can be imported as pure functions; for example,
+%
+\begin{quote}
+\begin{verbatim}
+foreign import ccall "math.h sin" sin :: CDouble -> CDouble.
+\end{verbatim}
+\end{quote}
+%
+Whether a particular form of external entity places a constraint on the
+Haskell type with which it can be imported is defined in
+Section~\ref{sec:extent}.  Although, some forms of external entities restrict
+the set of Haskell types that are permissible, the system can generally not
+guarantee the consistency between the Haskell type given in an import
+declaration and the argument and result types of the external entity.  It is
+the responsibility of the programmer to ensure this consistency.
+
+Optionally, an import declaration can specify, after the calling convention,
+the safety level that should be used when invoking an external entity.  A
+\code{safe} call is less efficient, but guarantees to leave the Haskell system
+in a state that allows callbacks from the external code.  In contrast, an
+\code{unsafe} call, while carrying less overhead, may not trigger a callback
+into the Haskell system.  If it does, the system behaviour is undefined.  The
+default for an invocation is to be \code{safe}.  Note that a call back into
+the Haskell system implies that a garbage collection might be triggered after
+an external entity was called, but before this call returns.  Consequently,
+objects other than stable pointers (cf.\ Section~\ref{sec:stableptr}) may be
+moved by the storage manager.
+
+It is guaranteed that any argument passed to an external entity upon
+invocation is kept alive by the Haskell storage manager until the call to the
+external entity returns.  If an argument needs to be kept alive longer, a
+stable pointer has to be used.
+
+\subsection{Export Declarations}
+
+The general form of export declarations is
+%
+\[
+\code{foreign}~\code{export}~c~e~v~\code{{::}}~t
+\]
+%
+Such a declaration enables external access to the variable $v$, which must be
+defined by a top-level function or pattern-binding in the same module.
+Moreover, the Haskell system defines the external entity described by the
+string $e$, which may be used by external code using the calling convention
+$c$; an external invocation of the external entity $e$ is translated into
+evaluation of $v$.  The type $t$ must be an instance of the type of $v$.  For
+example, we may have
+%
+\begin{quote}
+\begin{verbatim}
+foreign export ccall "addInt"   (+) :: Int   -> Int   -> Int
+foreign export ccall "addFloat" (+) :: Float -> Float -> Float
+\end{verbatim}
+\end{quote}
+
+If an evaluation triggered by an external invocation of an exported Haskell
+value returns with an exception, the system behaviour is undefined.  Thus,
+Haskell exceptions have to be caught within Haskell and explicitly marshalled
+to the foreign code.
+
+\subsection{Specification of External Entities}
+\label{sec:extent}
+
+Each foreign declaration has to specify the external entity that is accessed
+or provided by that declaration.  The syntax and semantics of the notation
+that is required to uniquely determine an external entity depends heavily on
+the calling convention by which this entity is accessed.  For example, for the
+calling convention \code{ccall}, a global label is sufficient.  However, to
+uniquely identify a method in the calling convention \code{jvm}, type
+information has to be provided.  For the latter, there is a choice between the
+Java source-level syntax of types and the syntax expected by JNI---but,
+clearly, the syntax of the specification of an external entity depends on the
+calling convention and may be non-trivial.
+
+Consequently, the FFI does not fix a general syntax for denoting external
+entities, but requires \gnterm{entity} to appear as a Haskell \gnterm{string}
+literal.  The formation rules for the values of these strings depend on the
+calling convention and a Haskell system implementing a particular calling
+convention will have to parse these strings in accordance with the calling
+convention.
+
+Generally, for more complex calling conventions, there is a choice between the
+user-level syntax for identifying entities (e.g., Java or C{+}{+}) and the
+system-level syntax (e.g., the type syntax of JNI or mangled C{+}{+},
+respectively).  If such a choice exists, the user-level syntax is to be
+preferred.  Not only because it is more user friendly, but also because the
+system-level syntax may not be entirely independent of the particular
+implementation of the foreign language.
+
+The following defines the syntax for specifying external entities and their
+semantics for each of the standard calling conventions listed in
+Table~\ref{tab:callconv}.
+
+\subsubsection{Standard C Calls}
+\label{sec:ccall}
+
+For import declarations, the syntax for the specification of external entities
+under the \code{ccall} calling convention is
+%
+\begin{grammar}
+  \grule[static function or address]{entity}{%
+    " \gopt{static} \gopt{\gnterm{fname}} \gopt{\&} \gopt{\gnterm{cid}} "}
+  \gor[dynamically imports addresses]{%
+    " dynamic "}
+  \gor[dynamically exports thunks]{%
+    " wrapper "}
+  \grule{fname}{%
+    \gverbal{file name with suffix `\code{.h}'}}
+  \grule{cid}{%
+    \gverbal{C identifier}}
+\end{grammar}
+%
+The first alternative either imports a static function \gnterm{cid} or, if
+\gterm\& precedes the identifier, a static address.  If \gnterm{cid} is
+omitted, it defaults to the name of the imported Haskell variable.  The
+optional filename \gnterm{fname} specifies a C header file.  The range of
+lexemes that are admissible for \gnterm{fname} and \gnterm{cid} coincides with
+the range of lexemes for arguments to the \code{\#{}include} directive and C
+identifiers as defined in~\cite{C}, respectively.  The only exception is that
+the file name \gnterm{fname} must end in the suffix \code{.h}.  The intended
+meaning is that \gnterm{fname} has to be included to access \gnterm{cid}.  In
+particular, when the Haskell system compiles Haskell to C code, the directive
+%
+\begin{quote}
+  \gterm{\#include "\gnterm{fname}"}
+\end{quote}
+%
+will be placed into any generated C file that refers to the foreign entity
+before the first occurrence of that entity in the generated C file.
+
+The second and third alternative, identified by the keywords \gterm{dynamic}
+and \gterm{wrapper}, respectively, import stub functions that have to be
+generated by the Haskell system.  In the case of \gterm{dynamic}, the stub
+converts C function pointers into Haskell functions; and conversely, in the
+case of \gterm{wrapper}, the stub converts Haskell thunks to C function
+pointers.
+
+Moreover, external entities in \gnterm{ccall} export declarations are of the
+form
+%
+\begin{grammar}
+  \grule{entity}{%
+    " \gopt{\gnterm{cid}} "}
+\end{grammar}
+%
+The optional C identifier \gnterm{cid} defines the external name by which the
+exported Haskell variable is accessible in C.  If it is omitted, the external
+name defaults to the name of the exported Haskell variable.
+
+Depending on the kind of import declarations there are constraints regarding
+the admissible Haskell type that the variable defined in the import make
+have.  These constraints are specified in the following.
+
+\paragraph{Static Functions.}
+A static function can be of any foreign type; in particular, the result type
+may or may not be monadic.  If a function that is not pure is not imported
+monadic, the system behaviour is undefined.  Generally, no check for
+consistency with the C type of the imported label is performed.
+
+\paragraph{Static Addresses.}
+The type of an imported address is constrained to be of the form \code{Ptr
+  }\textit{a} or \code{FunPtr }\textit{a}, where \textit{a} can be any type.
+
+\paragraph{Dynamic Import.}
+The type of a \gnterm{dynamic} stub has to be of the form \code{FunPtr
+  }\textit{ft}\code{ -> }\textit{ft}, where \textit{ft} may be any foreign
+type.
+\begin{verbatim}
+FIXME: The old FFI spec restricted `ft' to `prim_args -> IO prim_result'.
+  Why didn't forbid thunks and pure functions?  Is this really necessary?
+\end{verbatim}
+
+\paragraph{Dynamic Wrapper.}
+The type of a \gnterm{wrapper} stub has to be of the form \textit{ft}\code{ ->
+  }\code{IO (FunPtr }\textit{ft}\code), where \textit{ft} may be any foreign
+type.
+
+\subsubsection{Win32 API Calls}
+
+The specification of external entities under the \code{stdcall} calling
+convention is identical to that for standard C calls.
+
+\subsubsection{C{+}{+} Calls}
+
+The syntax for the specification of external entities under the
+\code{cplusplus} calling convention is
+%
+\begin{verbatim}
+FIXME
+\end{verbatim}
+
+\subsubsection{JVM Calls}
+
+The syntax for the specification of external entities under the \code{jvm}
+calling convention is 
+%
+\begin{grammar}
+  \grule{entity}{%
+    "\gnterm{jtype} \gnterm{jqid}(\gnterm{jtypes})"}
+  \gor[constructor call]{%
+    "new \gnterm{jqid}(\gnterm{jtypes})"}
+  \grule[$n\geq0$]{jtypes}{%
+    \gnterm[1]{jtype},\gellipse,\gnterm[n]{jtype}}
+\end{grammar}
+%
+where \gnterm{jqid} is a qualified Java identifier and \gnterm{jtype} a Java
+types as defined in~\cite{gosling-etal:Java}.
+
+\begin{verbatim}
+FIXME: 
+- complete this
+- force the inclusion of the return type in case of "new"?
+\end{verbatim}
+
+\subsubsection{.NET Calls}
+
+The syntax for the specification of external entities under the \code{dotnet}
+calling convention is
+%
+\begin{verbatim}
+FIXME
+\end{verbatim}
+
+
+\newpage
+\section{Marshalling}
+\label{sec:marshalling}
+
+\subsection{??}
+
+\subsection{\code{Storable}}
+
+\code{Storable} is derivable.  It is only derivable for \code{newtype}s of
+types for which an instance of \code{Storable} exists.
+
+
+Note that the Haskell 98 report says in Section~4.3.3 says, ``Classes defined
+by the standard libraries may also be derivable.''
+
+\subsection{C-Specific Marshalling Support}
+
+\begin{verbatim}
+FIXME: Mention HsFFI.h and include the table of primitive types
+FIXME: Storable.peek for ForeignPtr doesn't make much sense, or does it?
+FIXME: It might be argued that Bits is needed for the FFI, too.
+\end{verbatim}
+
+\appendix
+\newpage
+\section{FFI Standard Libraries}
+
+
+\section{Rationale}
+
+The following includes a justification of design decisions whose virtue may
+not be appreciated without further explanation.  The contents is sorted by
+section numbers.
+%
+\begin{description}
+\item[\ref{sec:foreign-types}] 
+\item[\ref{sec:import}] It might appear as if it were feasible to
+  require an automatic consistency check between the Haskell type given in an
+  import declaration and the argument and result types of the imported
+  external entity.  Unfortunately, this is in general not possible with
+  reasonable effort.  For example, in the case of the C calling convention the
+  only feasible approach would be to generate a C prototype from the Haskell
+  type and leave it to the C compiler to match this prototype about the
+  prototype for the imported function specified in the C header file.
+  However, the Haskell type is lacking some information that would be required
+  to pursue this route.  In particular, the Haskell type does not contain any
+  information as to when \code{const} modifiers have to be emitted.
+\item[\ref{sec:extent}] A foreign declaration specifies all calling-convention
+  dependent information in a string.  The idea here is to separate out the
+  information that is needed to statically analyse the Haskell program from
+  information needed to generate the code interacting with the foreign
+  language.  This is, in particular, expected to be helpful for tools
+  processing Haskell source code.
+
+  The following information is provided outside of the
+  string specifying the external entity.  This information is sufficient for
+  the front-end of a Haskell compiler or other Haskell tools (like a
+  documentation tool) to infer identifier definition and use information as
+  well as type information.
+  %
+  \begin{itemize}
+  \item What Haskell function is being defined or used.
+  \item What the Haskell type of that function is.
+  \item Whether the function is being \emph{defined} (e.g., foreign import) or
+    \emph{used} (e.g., foreign export).
+  \item The calling convention.
+  \end{itemize}
+  %
+  All further information (i.e., the information contained in the string
+  specifying the external entity) is merely needed by a code generator
+  supporting the specified calling convention.
+  
+  Moreover, as variation of the supported calling convention determines the
+  exact syntax supported in the specification of the external entity, we
+  ensure that the first-level grammar is implementation independent.
+\item[\ref{sec:ccall}] C header files are always included by \gterm{\#include
+    "\gnterm{fname}"}.  There is no explicit support for \gterm{\#include
+    <\gnterm{fname}>} style inclusion.  The ISO C99~\cite{C99} standard
+  guarantees that any search path that would be used for a \gterm{\#include
+    <\gnterm{fname}>} is also used for \gterm{\#include "\gnterm{fname}"} and
+  it is guaranteed that these paths are searched after all paths that are
+  unique to \gterm{\#include "\gnterm{fname}"}.
+  
+  We require that \gnterm{fname} ends on \code{.h} to make parsing of the
+  specification of external entities unambiguous.
+
+  The specification of include files has been kept to a
+  minimum on purpose.  Libraries often require a multitude of include
+  directives, some of which may be system-dependent.  Any design that attempts
+  to cover all possible configurations would introduce significant complexity.
+  Moreover, using the simple design, a custom include file can be specified
+  that uses the standard C preprocessor features to include all relevant
+  headers.
+  
+  There are no facilities to specify link information, such as, for example,
+  the name of a library archive.  Link information can be complex and is often
+  system-dependent.  Again, comprehensive support would have made the design
+  significant more complex.  In contrast to include files, simple support that
+  offloads the complexity to standard C mechanisms seems not to be possible
+  here.  Instead, we delegate the handling of link information to the package
+  management system of the Haskell implementation.
+\end{description}
+
+
+\bibliographystyle{plain}
+\bibliography{ffi}
+
+
+\end{document}
