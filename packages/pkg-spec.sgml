@@ -792,9 +792,10 @@ on Windows it will be <filename>Program Files</filename>.  The setup script will
         command in the setup script.  While it would be easy enough to
         implement in the simple build infrastructure, we don't want to
         require make-based build systems to implement <literal>make
-        uninstall</literal>, which is fairly non-standard.  In the
-        majority of cases, we expect libraries to be installed via a
-        package manager, which will also provide uninstallation
+        uninstall</literal>, which is fairly non-standard and
+        difficult to get right.  In the majority of cases, we expect
+        libraries to be installed via a package manager (eg. RPM,
+        Debian apt), which already provide uninstallation
         services.</para>
       </sect3>
 
