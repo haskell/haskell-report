@@ -362,7 +362,13 @@ test, install, register, and unregister a package.  </para>
 	  </listitem>
 	</itemizedlist>
 
-The &hps; allows a package author to write the setup script in any way
+The Setup script is an <emphasis>interface</emphasis>.  It is meant to
+give a standard look-and-feel to packages for the sake of Joe User,
+Bob Builder, Sam Sysadmin, and Rowland RPM, as well as for layered
+software tools.  This interface provides an abstraction layer on top
+of any implementation that Angela or Marcus prefers.</para>
+
+<para>The &hps; allows a package author to write the setup script in any way
 she pleases, provided it conforms to the specification of <xref
 linkend="setup">.  However, many Haskell packages consist of little
 more than a bunch of Haskell modules, and for these the &hps; provides
