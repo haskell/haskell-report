@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/modules.verb,v 1.12 2001/09/24 14:40:48 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/modules.verb,v 1.13 2001/10/02 09:09:26 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Modules</title>
 %*section 5
@@ -235,7 +235,7 @@ It makes no difference to an importing module how an entity was
 exported.  For example, a field name @f@ from data type @T@ may be exported individually
 (@f@, item (1) above); or as an explicitly-named member of its data type (@T(f)@, item (2));
 or as an implicitly-named member (@T(..)@, item(2)); or by exporting an entire
-module (@module M@, item (5) or (6)).  
+module (@module M@, item (5)).  
 
 The {\em unqualified} names of the entities exported by a module must all be distinct
 (within their respective namespace).  For example

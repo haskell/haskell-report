@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/lexemes.verb,v 1.7 2001/09/11 13:04:27 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/lexemes.verb,v 1.8 2001/10/02 09:09:26 simonpj Exp $
 %
 %*section 2
 %**<title>Haskell 98 Lexical Structure</title>
@@ -341,8 +341,9 @@ control characters such as @\^X@, are also provided.
 Numeric escapes such as @\137@ are used to designate the character
 with decimal representation 137; octal
 (e.g.~@\o137@) and hexadecimal (e.g.~@\x37@) representations are also
-allowed.  Numeric escapes that are out-of-range of the Unicode standard
-(16 bits) are an error.
+allowed.  
+% Numeric escapes that are out-of-range of the Unicode standard
+% (16 bits) are an error.
 
 Consistent with the ``maximal munch'' rule,
 \index{maximal munch rule}

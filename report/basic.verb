@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/basic.verb,v 1.8 2001/08/20 07:57:52 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/basic.verb,v 1.9 2001/10/02 09:09:26 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Basic Types and Classes</title>
 %*section 6
@@ -51,8 +51,9 @@ more readable.
 \index{character}\index{string}
 
 The character type @Char@\indextycon{Char}
-is an enumeration and consists of 16 bit values, conforming to
-the Unicode standard~\cite{unicode}.
+is an enumeration whose values represent Unicode characters~\cite{unicode}.
+% and consists of 16 bit values, conforming to
+% the Unicode standard~\cite{unicode}.
 % of which the first 128
 % are the ASCII\index{ASCII character set} character set.  
 The lexical syntax for

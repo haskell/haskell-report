@@ -13,7 +13,7 @@ To generate the html library report you need Hugs 1.4 (probably any Haskell
 1.4 compiler will do).
 
 To chage the date on the report, you must change:
-	* haskell.verb (line 415-ish)
+	* library.verb (line 415-ish)
 	* index.html (line 8-ish)
 	* html.config (~foot item)
 	

@@ -96,6 +96,23 @@ to the end of Section 2.4.  (These paragraphs deal with lexical matters, which d
 <p><li> <strong>Page 9, Section 2.6, Character and String Literals.</strong>
 In the production for "cntrl" replace "ASClarge" by "ascLarge".
 
+<p><li> [Oct 2001]  <strong>Page 9, Section 2.6, Characters and String Literals; and 
+Page 73, Section 6.1.2, Characters and strings</strong>
+<ul>
+<li> In Section 2.6, delete the last sentence of the third paragraph "Numeric escapes
+that are out of range...".
+<p>
+<li> In Section 6.1.2, replace the first sentence of the section by
+<p>
+"The character type <tt>Char</tt>
+is an enumeration whose values represent Unicode characters [10]."
+</ul>
+<p>
+This change removes the commitment to 16-bit Unicode.  The result is that the Report
+is even vaguer than before about the range of Unicode that a compiler is obliged to
+accept, but this confusion is in large part Unicode's fault, and is not readily fixed 
+in a revision of this nature.
+
 <p><li> <strong>Page 10, Section 2.7, Layout.</strong>
 In the middle of the third paragraph, just before the sentence beginning
 "A close brace is also inserted...", add the following sentence:
@@ -135,7 +152,7 @@ the section, after "indistinguishable" add "by a Haskell program".
 Remove the paragraph starting "Qualified names may only ...", and the following example, and the
 concluding paragraph starting "incorrectly uses a qualifier". (This is all covered in 2.4 and 5.5.1.)
 
-<p><li> [Late Sept 2001] <strong>Page 18, Section 3.7, Lists.</strong>
+<p><li> [Oct 2001] <strong>Page 18, Section 3.7, Lists.</strong>
 After the sentence starting "The constructor ":" is reserved solely for list construction...", 
 add the new sentence:
 <p>
@@ -207,7 +224,7 @@ In clause (r) replace "e0" by "v" throughout.
 First paragraph, last sentence.  After "infix type constructors are not allowed",
 add "(other than <tt>(->)</tt>)".
 
-<p><li> [Late Sept 2001] <strong>Page 38, Section 4.1.2, Algebraic Datatype Declarations.</strong>
+<p><li> [Oct 2001] <strong>Page 38, Section 4.1.2, Algebraic Datatype Declarations.</strong>
 Replace the sentence
 "Although the tuple, list, and function types have special syntax, they
 are not different from user-defined types with equivalent
@@ -317,20 +334,37 @@ is affected by module boundaries."
 <p>
 This footnote qualifies the otherwise over-strong statement.
 
-<p><li> [Aug 2001] <strong>Page 64, Section 5.2, Export declarations, numbered item 5.</strong>
-Replace the first paragrah of this item with:
+<p><li> [Oct 2001] <strong>Page 64, Section 5.2, Export declarations, numbered items 5 and 6.</strong>
+Replace both items with the following:
 <p>
-"The form "<tt>module</tt> M" abbreviates the set of all entities whose
-names are brought into scope by one or more <em>unqualified</em> <tt>import</tt> declarations
-of the form "<tt>import</tt> M [impspec]" or "<tt>import</tt> A <tt>as</tt> M [impspec]".  This set may be empty.
-For example:"
+"The form `<tt>module M</tt>' abbreviates the set of all entities whose
+<em>unqualified</em> name, <em>e</em>, is in scope, and for which the <em>qualified</em> name
+<em>M.e</em> is also in scope and refers to the same entity as <em>e</em>.  This set
+may be empty.
+For example:
+<pre>
+  module Queue( module Stack, enqueue, dequeue ) where
+      import Stack
+      ...
+</pre>
+"Here the module <tt>Queue</tt> uses the module name <tt>Stack</tt> in its export
+list to abbreviate all the entities imported from <tt>Stack</tt>.  
+<P>
+"A module can name its own local definitions in its export
+list using its own name in the `<tt>module M</tt>'' syntax, because a local
+declaration brings into scope both a qualified and unqualified name. 
+For example:
+<pre>
+  module Mod1( module Mod1, module Mod2 ) where
+  import Mod2
+  import Mod3
+</pre>
+"Here module <tt>Mod1</tt> exports all local definitions as well as those
+imported from <tt>Mod2</tt> but not those imported from <tt>Mod3</tt>."
 
-<p><li> [Aug 2001] <strong>Page 64, Section 5.2, Export declarations.</strong>
-After the numbered items, add:
-<p>
-"It is an error to use "<tt>module</tt> M" in an export list unless M is the
-module bearing the export list, or M is imported
-by at least one <tt>import</tt> declaration (qualified or unqualified)."
+It is an error to use <tt>module M</tt> in an export list unless <tt>M</tt> is 
+the module bearing the export list, or <tt>M</tt> is imported by at 
+least one import declaration (qualified or unqualified).
 
 <p><li> [July 2001] <strong>Page 65, Section 5.2, Export declarations.</strong>
 Replace the two paragraphs and code fragment that the numbered list with the following:
@@ -339,7 +373,7 @@ Replace the two paragraphs and code fragment that the numbered list with the fol
 exported.  For example, a field name <tt>f</tt> from data type <tt>T</tt> may be exported individually
 (<tt>f</tt>, item (1) above); or as an explicitly-named member of its data type (<tt>T(f)</tt>, item (2));
 or as an implicitly-named member (<tt>T(..)</tt> item(2)); or by exporting an entire
-module (<tt>module M</tt>, item (5) or (6)).  
+module (<tt>module M</tt>, item (5)).  
 <p>
 Exports lists are cumulative: the set of entities exported by an export
 list is the union of the entities exported by the individual items of the list.
@@ -364,7 +398,7 @@ be imported...".
 Delete the two sentences "The hiding clause only applies to unqualified
 names...  A hiding clause has no effect....".
 
-<p><li> [Late Sept 2001] <strong>Page 66, Section 5.3, Import Declarations, numbered item 2.</strong>
+<p><li> [Oct 2001] <strong>Page 66, Section 5.3, Import Declarations, numbered item 2.</strong>
 Add "It is an error to hide an entity that is not, in fact, exported by
 the imported module."
 
@@ -530,7 +564,7 @@ After the above signature for <tt>userError</tt>, add the following:
     fail s = ioError (userError s)
 </pre>"
 
-<p><li> [Late Sept 2001] <strong>Page 93, Appendix A, Standard Prelude.</strong>
+<p><li> [Oct 2001] <strong>Page 93, Appendix A, Standard Prelude.</strong>
 Replace the fixity declaration for <tt>(:)</tt> by the following comments:
 <pre>
 -- The (:) operator is built-in syntax, and cannot legally be given
@@ -639,11 +673,16 @@ Replace the instances for <tt>Show Int</tt> and <tt>Read Int</tt> with
 </pre>
 The previous definitions (which are simply specifications, remember) failed on minInt.
 
+<p><li> [Oct 2001]  <strong>Page 123, Appendix B.3, Layout</strong>. 
+In the first line of the definition of L, replace "if parse-error(t)" by
+"if m /= 0 and parse-error(t)".  This checks that the implicitly-added close
+brace matches an implicit open brace.
+
 <p><li> [Aug 2001]  <strong>Page 124, Appendix B.3, Layout</strong>. 
 Near the end of the sub-section, delete from "Another place where..." to the end of the 
 sub-section.  (Note 5 covers the top-level case.)
 
-<p><li> [Late Sept 2001]  <strong>Page 130, Appendix C, Literate comments</strong>. 
+<p><li> [Oct 2001]  <strong>Page 130, Appendix C, Literate comments</strong>. 
 In paragraph 2, replace 
 "The program text is recovered
 by taking only those lines beginning with "<tt>&gt;</tt>", 
@@ -783,7 +822,7 @@ Add the following equation to the laws listed just before Section 5.1:
 </pre>
 This documents an invariant that was previously only implicit.
 
-<p><li> [Late Sept 2001] <strong>Page 17, Section 5, Indexing operations</strong>.
+<p><li> [Oct 2001] <strong>Page 17, Section 5, Indexing operations</strong>.
 This significant item makes <tt>rangeSize</tt> into a method of
 <tt>Ix</tt> rather than a free-standing declaration.  Though this
 change is visible to the programmer, all existing Haskell 98

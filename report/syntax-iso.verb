@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/syntax-iso.verb,v 1.4 2001/08/20 07:57:53 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/syntax-iso.verb,v 1.5 2001/10/02 09:09:27 simonpj Exp $
 %
 %**<title>Haskell 98 Syntax</title>
 %*section B
@@ -195,7 +195,8 @@ The definition of "L" is as follows, where we use ``":"'' as a stream
 construction operator, and ``"\emptystr"'' for the empty stream.
 \begin{center}
 \[\ba{lcll}
-     L~ (t:ts)~ (m:ms)       & = & @}@ ~:~ (L~ (t:ts)~ ms)           & \mbox{if}~ \mbox{parse-error}(t)~ (Note~ 1) \\
+     L~ (t:ts)~ (m:ms)       & = & @}@ ~:~ (L~ (t:ts)~ ms)           & \mbox{if}~ m /= 0 ~\mbox{and}~ \mbox{parse-error}(t) \\
+			    &&& (Note~ 1) \\
   \\
      L~ (<n>:ts)~ (m:ms)   & = & @;@ ~:~ (L~ ts~(m:ms))           &\mbox{if}~ m = n \\
                            & = & @}@ ~:~ (L~ (<n>:ts)~ ms)       & \mbox{if}~ n < m \\
@@ -217,8 +218,11 @@ construction operator, and ``"\emptystr"'' for the empty stream.
 \item[Note 1.] The side condition "\mbox{parse-error}(t)" is to be interpreted as follows: 
 if the tokens generated so far by "L" together with the next token "t" 
 represent an invalid prefix of the Haskell grammar, and the 
-tokens generated so far by "L" followed by the token @}@ 
+tokens generated so far by "L" followed by the token ``@}@''
 represent a valid prefix of the Haskell grammar, then "\mbox{parse-error}(t)" is true. 
+
+The test $m /= 0$ checks that an implicitly-added closing brace would match
+an implicit open brace.
 
 \item[Note 2.] By matching against 0 for the current layout context, 
 we ensure that an explicit close brace can only match an explicit open brace. 
