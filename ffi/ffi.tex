@@ -13,6 +13,9 @@
 % does not claim to be a definition of the Haskell 98 Foreign Function
 % Interface. 
 
+% Changes since RC11:
+% * 5.5: Swapped argument order of `newForeignPtr' and `addForeignPtrFinalizer'
+%
 % Changes since RC10:
 % * 3.3  : Clarified use of foreign functions of pure type
 % * 4.1.1: Clarified the meaning of foreign imports without a "&" that have a
@@ -136,14 +139,14 @@
 \excludeversion{FUTURE}  % material for future extensions
 
 %\def\Version{\relax}
-\def\Version{\\(Release Candidate 11)}
+\def\Version{\\(Release Candidate 12)}
 \begin{DRAFT}%
 {
   \gdef\Version{%
     \\
     \textbf{--- DRAFT ---}\\[1ex]
     \ttfamily\scriptsize
-    $\relax$Id: ffi.tex,v 1.45 2003/06/12 05:14:07 chak Exp $\relax$%
+    $\relax$Id: ffi.tex,v 1.46 2003/08/01 06:43:56 chak Exp $\relax$%
     \ignorespaces}
   }
 \end{DRAFT}
@@ -1330,21 +1333,21 @@ signature and purpose:
   Turn a plain memory reference into a foreign pointer that may be associated
   with finalizers by using \code{addForeignPtrFinalizer}.
   
-\item[newForeignPtr ::\ Ptr a -> FinalizerPtr a -> IO (ForeignPtr a)]
+\item[newForeignPtr ::\ FinalizerPtr a -> Ptr a -> IO (ForeignPtr a)]
   Convenience function that turns a plain memory reference into a foreign
   pointer and immediately adds a finalizer.  It is defined as
   %
   \begin{quote}
 \begin{verbatim}
-newForeignPtr ptr finalizer = 
+newForeignPtr finalizer ptr = 
   do
     fp <- newForeignPtr_ ptr
-    addForeignPtrFinalizer fp finalizer
+    addForeignPtrFinalizer finalizer fp
     return fp
 \end{verbatim}
   \end{quote}
    
-\item[addForeignPtrFinalizer ::\ ForeignPtr a -> FinalizerPtr a -> IO
+\item[addForeignPtrFinalizer ::\ FinalizerPtr a -> ForeignPtr a -> IO
   ()] Add another finalizer to the given foreign pointer.  All finalizers
   associated with a single foreign pointer are executed in the opposite order
   of their addition---i.e., the finalizer added last will be executed first.
