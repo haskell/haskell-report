@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/exps.verb,v 1.3 2001/06/18 09:52:43 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/exps.verb,v 1.4 2001/08/14 07:48:25 simonpj Exp $
 %
 %*section 3
 %**<title>The Haskell 98 Report: Expressions</title>
@@ -19,6 +19,13 @@ defined by the Prelude.  To avoid clutter,
 we use @True@ instead of
 @Prelude.True@ or @map@ instead of @Prelude.map@. (@Prelude.True@ is a
 "qualified name" as described in Section~\ref{import}.)
+
+Free variables and constructors used in these translations
+always refer to entities defined by the @Prelude@.
+For example, ``@concatMap@'' used in the translation of list comprehensions 
+(Section~\ref{list-comprehensions})
+means the @concatMap@ defined by the @Prelude@, regardless of what is in scope
+where the list comprehension is used.
 
 In the syntax that follows, there are some families of nonterminals
 indexed by precedence levels (written as a superscript).  Similarly, the
@@ -606,7 +613,7 @@ on the instance declaration for the type "t".  We give here the
 semantics for @Prelude@ types, and indications of the expected semantics
 for other, user-defined, types.
 
-For the type @Int@, arithmetic sequences have the following
+For the types @Int@ and @Integer@, arithmetic sequences have the following
 meaning:
 \begin{itemize}
 \item The sequence "@[@e_1@..]@" is the list "@[@e_1@,@e_1+1@,@e_1+2@,@...@]@".
@@ -627,7 +634,7 @@ If the increment is negative, the list terminates when the next element would
 be less than "e_3"; the list is empty if "e1 < e_3".
 \end{itemize}
 For other {\em discrete} @Prelude@ types "t" that 
-are instances of @Enum@, namely @()@, @Bool@, @Char@ and @Ordering@, and @Integer@,
+are instances of @Enum@, namely @()@, @Bool@, @Char@ and @Ordering@,
 the semantics is given by mapping the "e_i" to @Int@ using @fromEnum@,
 using the above rules, and then mapping back to "t" with @toEnum@.
 
@@ -706,14 +713,14 @@ used as a translation into the kernel:
 \begin{center}
 \bt{lcl}%
 \struthack{17pt}%
-"@[ @ e@ | True ]@" & = & @[@e@]@ \\
-"@[ @ e@ | @q@ ]@" & = & @[ @ e@ | @q@, True ]@ \\
+"@[ @ e@ | True ]@" & = & "@[@e@]@" \\
+"@[ @ e@ | @q@ ]@" & = & "@[@~ e~@|@~q@, True ]@" \\
 "@[ @ e@ | @b@,@~ Q ~@]@" & = &
 	"@if@~b~@then@~@[ @ e@ | @Q@ ]@~@else []@" \\
 "@[ @ e@ | @p @<-@ l@,@~ Q@ ]@" & = &
 	"@let ok@~p~@=@~@[ @ e@ | @Q@ ]@" \\
 &&       @    ok _ = []@ \\
-&&	@in concatMap ok l@ \\
+&&	"@in concatMap ok@~ l" \\
 "@[ @ e@ | let@~decls@,@~ Q@ ]@" & = &
 	"@let@~decls~@in@~@[ @ e@ | @Q@ ]@"
 \et

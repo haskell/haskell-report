@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/basic.verb,v 1.5 2001/06/18 09:52:43 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/basic.verb,v 1.6 2001/08/14 07:48:24 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Basic Types and Classes</title>
 %*section 6
@@ -116,13 +116,13 @@ respectively.  Lists are an instance of classes @Read@, @Show@, @Eq@, @Ord@,
 Tuples are algebraic datatypes with special syntax, as defined
 in Section~\ref{tuples}.  Each tuple type has a single constructor.
 All tuples are instances of @Eq@, @Ord@, @Bounded@, @Read@,
-@Show@, and @Ix@ (provided, of course, that all their component types are).
+and @Show@ (provided, of course, that all their component types are).
 
 There is no upper bound on the size of a tuple, but some \Haskell{}
 implementations may restrict the size of tuples, and limit the
 instances associated with larger tuples.  However, every Haskell
 implementation must support tuples up to size 15, together with the instances
-for @Eq@, @Ord@, @Bounded@, @Read@, @Show@, and @Ix@.  The Prelude and
+for @Eq@, @Ord@, @Bounded@, @Read@, and @Show@.  The Prelude and
 libraries define tuple functions such as @zip@ for tuples up to a size
 of 7.
 
@@ -330,21 +330,20 @@ constituents are also instances of @Eq@.
     (<), (<=), (>=), (>) :: a -> a -> Bool
     max, min		 :: a -> a -> a
 
-    compare x y
-	    | x == y    = EQ
-	    | x <= y    = LT
-	    | otherwise = GT
+    compare x y | x == y    = EQ
+	        | x <= y    = LT
+	        | otherwise = GT
 
-    x <= y              = compare x y /= GT
-    x <	 y		= compare x y == LT
-    x >= y		= compare x y /= LT
-    x >	 y		= compare x y == GT
+    x <= y  = compare x y /= GT
+    x <	 y  = compare x y == LT
+    x >= y  = compare x y /= LT
+    x >	 y  = compare x y == GT
 
-    -- note that (min x y, max x y) = (x,y) or (y,x)
-    max x y | x >= y	=  x
-	    | otherwise =  y
-    min x y | x <  y	=  x
-	    | otherwise =  y
+    -- Note that (min x y, max x y) = (x,y) or (y,x)
+    max x y | x <= y    =  y
+            | otherwise =  x
+    min x y | x <= y    =  x
+            | otherwise =  y
 @
 \eprog
 The @Ord@ class is used for totally ordered datatypes.  All basic
@@ -626,7 +625,7 @@ Prelude do not
 conform to current language independent arithmetic (LIA) standards.  These
 standards require considerably more complexity in the numeric
 structure and have thus been relegated to a library.  Some, but not
-all, aspects of the IEEE standard floating point standard have been
+all, aspects of the IEEE floating point standard have been
 accounted for in class @RealFloat@.
 
 The standard numeric types are listed in Table~\ref{standard-numeric-types}.
@@ -824,7 +823,7 @@ section~\ref{operators}) apply to all numbers.  The class methods
 @(/)@
 \indextt{/}
 applies only to fractional ones.  The @quot@, @rem@,
-@div@, and @mod@ class methods satisfy these laws:
+@div@, and @mod@ class methods satisfy these laws if @y@ is non-zero:
 \[\ba{c}
 @(x @\bkqB@quot@\bkqA@ y)*y + (x @\bkqB@rem@\bkqA@ y) == x@\\
 @(x @\bkqB@div@\bkqA@  y)*y + (x @\bkqB@mod@\bkqA@ y) == x@

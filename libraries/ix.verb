@@ -34,11 +34,15 @@ operations:
 \subsection{Deriving Instances of @Ix@}
 \index{Ix@@{\tt Ix}!derived instance}
 
-Derived instance declarations for the class @Ix@ are only possible
+It is possible to derive an instance of @Ix@ automatically, using
+a @deriving@ clause on a @data@ declaration (Section~4.3.3
+of the Language Report).
+Such derived instance declarations for the class @Ix@ are only possible
 for enumerations\index{enumeration} (i.e.~datatypes having
 only nullary constructors) and single-constructor datatypes,
-including arbitrarily large tuples, whose constituent types are
-instances of @Ix@.   
+whose constituent types are instances of @Ix@.   A Haskell implementation
+must provide @Ix@ instances for tuples up to at least size 15.
+
 \begin{itemize}
 \item
 For an {\em enumeration}, the nullary constructors are assumed to be

@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/modules.verb,v 1.3 2001/05/30 10:59:06 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/modules.verb,v 1.4 2001/08/14 07:48:25 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Modules</title>
 %*section 5
@@ -73,7 +73,7 @@ The name-space for modules themselves is flat, with each module being associated
 with a unique module name (which are \Haskell{} identifiers
 beginning with a capital letter; i.e.~"modid").  
 There is one distinguished module, @Prelude@, which is imported into
-all programs by default (see Section~\ref{standard-prelude}), plus a
+all modules by default (see Section~\ref{standard-prelude}), plus a
 set of standard library modules that may be imported as required
 (see the \Haskell{} Library Report\cite{libraries}).
 
@@ -110,8 +110,8 @@ list of @import@ declarations that specify modules to be imported,
 optionally restricting 
 the imported bindings.  This is
 followed by the module
-body.  The module body is simply a list of top-level declarations
-("topdecls"), as described in Section~\ref{declarations}.  
+body.  The module body is simply a list of import declarations ("impdecls", Section~\ref{import}) and
+top-level declarations ("topdecls", Section~\ref{declarations}).  
 
 An abbreviated form of module, consisting only 
 of\index{abbreviated module}
@@ -227,15 +227,17 @@ Here module @Mod1@ exports all local definitions as well as those
 imported from @Mod2@ but not those imported from @Mod3@.  Note that
 @module M where@ is the same as using @module M(module M) where@.
 \end{enumerate}
-The qualifier (see Section \ref{import}) on a name only identifies the
-module an entity is 
-imported from; this may be different from the module in which the
-entity is defined.  For example, if module A exports B.c, this is
-referenced as `@A.c@', not @`A.B.c@'.  In consequence, names in export
-lists must remain distinct after qualifiers are removed.  For example:
+It makes no difference to an importing module how an entity was 
+exported.  For example, a field name @f@ from data type @T@ may be exported individually
+(@f@, item (1) above); or as an explicitly-named member of its data type (@T(f)@, item (2));
+or as an implicitly-named member (@T(..)@, item(2)); or by exporting an entire
+module (@module M@, item (5) or (6)).  
+
+The {\em unqualified} names of the entities exported by a module must all be distinct
+(within their respective namespace).  For example
 \bprog
 @
-  module A ( B.f, C.f, g, B.g ) where   -- an invalid module
+  module A ( module B, C.f, g ) where   -- an invalid module
   import qualified B(f,g)
   import qualified C(f)
   g = True
@@ -283,12 +285,17 @@ and optionally specifies the entities to be imported.
 A single module may be imported by more than one @import@ declaration.  
 Imported names serve as top level declarations: they scope over
 the entire body of the module but may  be shadowed by local
-non-top-level bindings.  The effect of multiple @import@ declarations is
-cumulative: an entity is in scope if it is named by any of the @import@
-declarations in a module.  The ordering of imports is irrelevant.
+non-top-level bindings.  
+
+The effect of multiple @import@ declarations is strictly
+cumulative: an entity is in scope if it is imported by any of the @import@
+declarations in a module.  The ordering of import declarations is irrelevant.
+
+\subsubsection{What is imported}
+\label{whatisimported}
 
 Exactly which entities are to be imported can be specified in one
-of three ways:\nopagebreak[4]
+of the following three ways:\nopagebreak[4]
 \begin{enumerate}
 \item
 The imported entities can be specified explicitly
@@ -320,16 +327,6 @@ associated type.  Thus, in
 any constructor, class, or type named @C@ is excluded.  In contrast,
 using @C@ in an import list names only a class or type.  
 
-The hiding
-clause only applies to unqualified names.  In the previous example, 
-the name @M.C@ is brought into scope.  A hiding clause has no effect
-in an @import@ @qualified@ declaration.
-
-The effect of multiple @import@ declarations is strictly
-cumulative: hiding an entity on one import declaration does not
-prevent the same entity from being imported by another import from
-the same module.
-
 \item
 Finally, if "impspec" is omitted then 
 all the entities exported by the specified module are imported.
@@ -338,10 +335,13 @@ all the entities exported by the specified module are imported.
 \subsubsection{Qualified import}
 \index{qualified name}
 
-An import declaration that uses the @qualified@ keyword brings into scope
-only the {\em qualified names} of the imported entities (Section~\ref{qualifiers});
-if the @qualified@ keyword
-is omitted, both qualified and unqualified names are brought into scope.
+For each entity imported under the rules of Section~\ref{whatisimported},
+the top-level environment is extended.  If the import declaration used
+the @qualified@ keyword, only the {\em qualified name} of the entity is
+brought into scope.  If the @qualified@ keyword is omitted, then {\em both} the
+qualified {\em and} unqualified name of the entity is brought into scope.
+Section~\ref{qualifiers} describes qualified names in more detail.
+
 The qualifier on the imported name is either the name of the imported module,
 or the local alias given in the @as@ clause on the @import@ statement (Section~\ref{as-clause}).
 Hence, {\em the qualifier is not necessarily the name of the module in which the
@@ -400,7 +400,36 @@ An @as@ clause may also be used on an un-@qualified@ @import@ statement:
 This declaration brings into scope @f@ and @A.f@.
 
 
+\subsubsection{Examples}
+
+To clarify the above import rules, suppose the module @A@ exports @x@ and @y@.
+Then this table shows what names are brought into scope by the specified import statement:
+\begin{center}
+\begin{tabular}{|ll|}
+\hline
+Import declaration & Names brought into scope \\
+\hline
+  @import A@			& @x@, @y@, @A.x@, @A.y@ \\
+  @import A()@			& (nothing)	\\
+  @import A(x)@ 		& @x@, @A.x@ \\
+  @import qualified A@		& @A.x@, @A.y@ \\
+  @import qualified A()@	& (nothing) \\
+  @import qualified A(x)@	& @A.x@ \\
+  @import A hiding ()@		& @x@, @y@, @A.x@, @A.y@ \\
+  @import A hiding (x)@		& @y@, @A.y@ \\
+  @import qualified A hiding ()@	& @A.x@, @A.y@ \\
+  @import qualified A hiding (x)@	& @A.y@ \\
+  @import A as B@		& @x@, @y@, @B.x@, @B.y@ \\
+  @import A(x) as B@		& @B.x@ \\
+  @import qualified A as B@	& @B.x@, @B.y@ \\
+\hline
+\end{tabular}
+\end{center}
+In all cases, all instance declarations in scope in module @A@ are imported
+(Section~\ref{import-instances}).
+
 \subsection{Importing and Exporting Instance Declarations}
+\label{import-instances}
 \index{instance declaration!importing and exporting}
 
 Instance declarations cannot be explicitly named on import or export
@@ -465,7 +494,7 @@ illegal to write
 @
 \eprog
 \item {\em By an @import@ declaration.}  An @import@ declaration, whether @qualified@ or not,
-always brings into scope the qualified names of the imported entity (Section~\ref{import}).
+always brings into scope the qualified name of the imported entity (Section~\ref{import}).
 \end{itemize}
 
 The qualifier does not change the syntactic treatment of a name;
@@ -746,7 +775,7 @@ with lists:
   module Stack( StkType, push, pop, empty ) where
     newtype StkType a = Stk [a]
     push x (Stk s) = Stk (x:s)
-    pop (Stk (x:s)) = Stk s
+    pop (Stk (_:s)) = Stk s
     empty = Stk []
 @
 \eprogNoSkip

@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/derived.verb,v 1.5 2001/06/18 09:52:43 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/derived.verb,v 1.6 2001/08/14 07:48:24 simonpj Exp $
 %
 % The paragraph describing the formats of standard representations might
 % be deleted, since the info is already in the Prelude.  
@@ -265,7 +265,7 @@ If there is no successful parse, the returned list is empty.
 It should be the case that
 \bprog
 @
-  fst (head (readsPrec d (showsPrec d x ""))) == x
+  head (readsPrec d (showsPrec d x "")) == (x,"")
 @
 \eprog
 That is, @readsPrec@ should be able to parse the string produced

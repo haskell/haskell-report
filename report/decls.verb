@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/decls.verb,v 1.3 2001/06/18 09:52:43 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/decls.verb,v 1.4 2001/08/14 07:48:24 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Declarations</title>
 %*section 4
@@ -37,7 +37,7 @@ decl	-> gendecl
 
 cdecls	-> @{@ cdecl_1 @;@ ... @;@ cdecl_n @}@		& \qquad (n>=0)
 cdecl	-> gendecl
-	|  (funlhs | car) rhs
+	|  (funlhs | var) rhs
 
 idecls	-> @{@ idecl_1 @;@ ... @;@ idecl_n @}@		& \qquad (n>=0)
 idecl	-> (funlhs | qfunlhs | var | qvar) rhs
@@ -410,9 +410,10 @@ an instance of a class only via the presence of an
 @instance@ declaration or a @deriving@ clause).
 
 Types are related by a generalization order
-\index{generalization order}
+\index{generalization preorder}
 (specified below);
-the most general type that can be assigned to a particular
+the most general type, up to the equivalence induced by the generalisation preorder,
+that can be assigned to a particular
 expression (in a given environment) is called its {\em
 principal type}.
 \index{principal type}
@@ -679,7 +680,7 @@ is not. Similarly, @type Rec a = [Rec a]@ is not allowed.
 
 Type synonyms are a strictly syntactic mechanism to make type
 signatures more readable.  A synonym and its definition are completely
-interchangeable.
+interchangeable, except in the instance type of an @instance@ declaration (Section~\ref{instance-decls}).
 
 \subsubsection{Datatype Renamings}
 \index{newtype declaration@@{\tt newtype} declaration}
@@ -937,11 +938,13 @@ An {\em instance declaration} introduces an instance of a class.  Let
 be a @class@ declaration.  The general form of the corresponding
 instance declaration is:
 \[ "@instance@ cx' @=>@ C (T u_1 ... u_k) @where@ @{@ d @}@" \]
-where "k\geq0" and "T" is not a type synonym.
-\index{type synonym}
-The constructor being instanced, "(T u_1 ... u_k)", is
-a type constructor applied to simple type variables "u_1, ... u_k",
-which must be distinct.  This prohibits instance declarations
+where "k\geq0".
+The type "(T u_1 ... u_k)" must take the form of
+a type constructor "T" applied to simple type variables "u_1, ... u_k";
+furthermore, "T" must not be a type synonym\index{type synonym}, 
+and the "u_i" must all be distinct.
+
+This prohibits instance declarations
 such as:
 \bprog
 @

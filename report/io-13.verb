@@ -37,7 +37,7 @@ mentioned above.  Some operations are primitive actions,
 corresponding to conventional I/O operations.  Special operations
 (methods in the class @Monad@, see Section~\ref{monad-class})
 sequentially compose actions,
-corresponding to sequencing operators (such as the semi-colon) in imperative
+corresponding to sequencing operators (such as the semicolon) in imperative
 languages.
 
 \subsection{Standard I/O Functions}
@@ -101,8 +101,8 @@ readLn      :: Read a => IO a
 \indextt{getChar}%
 \indextt{getLine}%
 \indextt{getContents}%
-Both @getChar@ and @getLine@ raise an exception on end-of-file; the
-@IOError@ value associated with end-of-file is defined in a library.
+Both @getChar@ and @getLine@ raise an exception on end-of-file; a 
+predicate @isEOFError@ that identifies this exception is defined in the @IO@ library.
 The @getContents@ operation returns all user input as a single
 string, which is read lazily as it is needed.  The @interact@
 function takes a function of type 

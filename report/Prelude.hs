@@ -86,10 +86,10 @@ class  (Eq a) => Ord a  where
 
 -- note that (min x y, max x y) = (x,y) or (y,x)
     max x y 
-         | x >= y    =  x
-         | otherwise =  y
+         | x <= y    =  y
+         | otherwise =  x
     min x y
-         | x <  y    =  x
+         | x <= y    =  x
          | otherwise =  y
 
 -- Enumeration and Bounded classes

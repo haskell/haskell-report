@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/haskell.verb,v 1.4 2001/06/18 09:52:43 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/haskell.verb,v 1.5 2001/08/14 07:48:25 simonpj Exp $
 %
 
 % NOTE:--------------------------------------------------------------
@@ -426,7 +426,7 @@
 {\LARGE\bf Programming Language} \\[.3in]
 {\huge\bf Haskell 98} \\[.3in]
 {\Large\bf A Non-strict, Purely Functional Language} \\[.3in]
-{\large\bf Revised: June 2001}
+{\large\bf Revised: July 2001}
 \end{center}
 \vspace{.15in}
 \begin{center} \large
@@ -436,7 +436,7 @@ Lennart Augustsson$^9$		& Dave Barton$^7$ \\
 Brian Boutel$^4$ 		& Warren Burton$^5$ \\
 Joseph Fasel$^6$ 		& Kevin Hammond$^2$ \\
 Ralf Hinze$^{12}$ 		& Paul Hudak$^1$ \\
-Thomas Johnsson$^3$ 		& Mark Jones$^14$ \\
+Thomas Johnsson$^3$ 		& Mark Jones$^{14}$ \\
 John Launchbury$^{14}$ 		& Erik Meijer$^{10}$ \\
 John Peterson$^1$		& Alastair Reid$^{15}$ \\
 Colin Runciman$^{13}$ 		& Philip Wadler$^{11}$

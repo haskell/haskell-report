@@ -170,13 +170,8 @@ formatRealFloat fmt decs x = s
                           in d:'.':ds  ++ "e" ++ show (e-1+ei)
                 FFFixed ->
                     case decs of
-                    Nothing ->
-                        let f 0 s ds = mk0 s ++ "." ++ mk0 ds
-                            f n s "" = f (n-1) (s++"0") ""
-                            f n s (d:ds) = f (n-1) (s++[d]) ds
-                            mk0 "" = "0"
-                            mk0 s = s
-                        in  f e "" ds
+		       Nothing | e >= 0    -> take e (ds ++ repeat '0') ++ "." ++ mk0 (drop e ds)
+			       | otherwise -> "0." ++ replicate (-e) '0' ++ ds
                     Just dec ->
                         let dec' = max dec 0 in
                         if e >= 0 then

@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/syntax-lexical.verb,v 1.1 2001/03/28 14:13:42 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/syntax-lexical.verb,v 1.2 2001/08/14 07:48:25 simonpj Exp $
 % 
 
 @@@
@@ -20,7 +20,7 @@ vertab		-> \tr{a vertical tab}
 formfeed	-> \tr{a form feed}
 space		-> \tr{a space}
 tab		-> \tr{a horizontal tab}
-uniWhite        -> \tr{any UNIcode character defined as whitespace}
+uniWhite        -> \tr{any Unicode character defined as whitespace}
 comment		-> dashes \{any\} newline
 dashes		-> @--@ \{@-@\}
 opencom		-> @{-@

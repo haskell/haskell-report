@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/lexemes.verb,v 1.2 2001/05/29 15:40:00 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/lexemes.verb,v 1.3 2001/08/14 07:48:25 simonpj Exp $
 %
 %*section 2
 %**<title>Haskell 98 Lexical Structure</title>
@@ -108,19 +108,15 @@ in \Haskell{} programs and should result in a lexing error.
 
 Comments\index{comment} are valid whitespace.
 
-An ordinary
-comment\index{comment!end-of-line} begins with a lexeme consisting of
+An ordinary comment\index{comment!end-of-line} begins with a sequence of
 two or more consecutive dashes (e.g. @--@) and extends to the following newline.
-The comment must begin with a lexeme consisting entirely of dashes, {\em parsed according
-to the maximal-munch rule}.  For example, ``@-->@'' or ``@--|@'' do {\em not} begin
-a comment, because the lexeme does not consist entirely of dashes.
+\emph{The sequence of dashes must not be the prefix of a legal lexeme.}
+For example, ``@-->@'' or ``@--|@'' do {\em not} begin
+a comment, because both of these are legal lexemes.
 
-A nested comment\index{comment!nested} begins with the lexeme ``@{-@'' 
-and ends with the string ``@-}@''.  As in the case of
-ordinary comments, the maximal munch rule applies, but the longest
-legal lexeme starting with ``@{-@'' is ``@{-@''; hence the string
-``@{---@'', for example, has ``@{-@'' as its initial lexeme, and 
-does indeed start a nested comment.
+A nested comment\index{comment!nested} begins with ``@{-@'' 
+and ends with ``@-}@''.  No legal lexeme starts with ``@{-@''; 
+hence, for exmaple, ``@{---@'' starts a nested comment despite the trailing dashes.
 
 The comment itself is not lexically analysed.  Instead the first
 unmatched occurrence of the string ``@-}@'' terminates the nested comment.
@@ -174,7 +170,7 @@ identifiers beginning with underscore.  This allows programmers to use
 ``@_foo@'' for a parameter that they expect to be unused.
 
 @@@
-varsym		-> ( symbol \{symbol | @:@\} )_{\langle{}reservedop\rangle{}}
+varsym		-> ( symbol \{symbol | @:@\} )_{\langle{}reservedop | dashes \rangle{}}
 consym		-> (@:@ \{symbol | @:@\})_{\langle{}reservedop\rangle{}}
 reservedop	-> @..@ | @:@ | @::@ | @=@ | @\@ | @|@ | @<-@ | @->@ | \verb+@@+ | @~@ | @=>@
 specialop       -> @-@ | @!@
