@@ -2,6 +2,7 @@
 <!entity  ghc         "<application>GHC</application>">
 <!entity  nhc         "<application>Nhc98</application>">
 <!entity  hugs        "<application>Hugs</application>">
+<!entity  hps        "<application>HPS</application>">
 <!entity  autoconf    "<application>autoconf</application>">
 <!entity  impl        "Haskell Implementation">
 <!entity  impls       "Haskell Implementations">
@@ -21,7 +22,6 @@
 <!entity  hc-pkg     "<command>hc-pkg</command>">
 ]>
  
-<!-- You should search this document for 'foo' and delete it. -->
 <!-- Look for FIX too -->
 
 <!-- ToDo: -->
@@ -29,9 +29,9 @@
 <!-- Look at Package data types again and add the version information where -->
 <!-- necessary. -->
 
-<article id="lip">
+<article id="hps">
   <artHeader>
-    <date>2003-09-12</date>
+    <date>2004-04-24</date>
     <title>The Haskell Package System</title>
     <author>
       <firstname>Isaac</firstname>
@@ -56,21 +56,21 @@
       <para>The Haskell Library Infrastructure Project is an effort to provide
       a framework for developers to more effectively contribute their
       software to the Haskell community.  This document specifies
-      the <emphasis>Haskell Package System (HPS)</emphasis>, which contributes 
+      the <emphasis>Haskell Package System (&hps;)</emphasis>, which contributes 
 	to the goals of the Haskell Library Infrastructure Project.
       </para>
-      <para>Specifically, the HPS describes what a Haskell 
+      <para>Specifically, the &hps; describes what a Haskell 
 	package is, how these packages interact with the language,
 	and what Haskell implementations must to do to support packages.
-	The HPS also specifies some infrastructure (code) that makes
+	The &hps; also specifies some infrastructure (code) that makes
 	it easy for library authors to build and distribute conforming packages.
 	</para>
-      <para>The HPS is only one contribution to the Library Infrastructure project.
-	In particular, the HPS says nothing about more global issues such as
+      <para>The &hps; is only one contribution to the Library Infrastructure project.
+	In particular, the &hps; says nothing about more global issues such as
 	how authors decide where in the module name space their library should live;
 	how users can find a package they want; how orphan packages find new owners;
 	and so on.</para>
-      <para> The HPS has been discussed by the implementors of &ghc;, &nhc;, and &hugs;,
+      <para> The &hps; has been discussed by the implementors of &ghc;, &nhc;, and &hugs;,
 	all of whom are prepared to implement it.  The proposal is now open
 	for wider debate. Please contribute by emailing <email>libraries@haskell.org</email>.</para>
     </abstract>
@@ -81,12 +81,12 @@
 
 <sect1 id=hli-goals><title>The Haskell Package System: goals</title>
 
-<para>The Haskell Package System (HPS) has the following main goal:
+<para>The Haskell Package System (&hps;) has the following main goal:
 to specify a standard way in which a Haskell library can be packaged, so that it is
 easy for consumers to use it, or re-package it, 
 regardless of the Haskell implementation or installation platform.</para>  
 
-<para>The HPS also
+<para>The &hps; also
 supports library authors by providing an infrastructure that automates the
 process of building and packaging simple libraries.  It is not necessary to use
 this code&mdash;indeed complex libraries may exceed its abilities&mdash;but it should
@@ -94,7 +94,7 @@ handle many cases with no trouble.</para>
 
 <sect2><title>Dramatis personae</title>
 
-<para>The HPS serves a number of different people:
+<para>The &hps; serves a number of different people:
 <itemizedlist>
 <listitem><para>
  <emphasis>Joe User</emphasis> is simply a Haskell user.  He does not download new packages.  Nevertheless,
@@ -138,11 +138,11 @@ as package <emphasis>consumers</emphasis>.
 implement sets and bags; she wants to distribute them to Bob as a package called,
 say, <literal>angela-coll</literal>.  Let's say that the modules are
 <literal>Data.Set</literal>, <literal>Data.Bag</literal>, <literal>Angela.Internals</literal>.
-(The HPS says nothing about how Angela decides where in the name space to put her modules.)
+(The &hps; says nothing about how Angela decides where in the name space to put her modules.)
 Angela only wants to expose the first two to Bob; the <literal>Angela.Internals</literal> module is (as its
 name suggests) internal to the package.
 </para>
-<para>Angela decides to use the simple build infrastructure that the HPS provides.  She is working in
+<para>Angela decides to use the simple build infrastructure that the &hps; provides.  She is working in
 a directory <filename>~/coll</filename>.  In there she puts the modules, in sub-directories
 driven by their module name: <filename>~/coll/Data/Set.hs</filename>,
  <filename>~/coll/Data/Bag.hs</filename>,
@@ -161,7 +161,7 @@ She also creates a three-line Haskell file <filename>~/coll/Setup.lhs</filename>
 </programlisting>
 The first line arranges that when Angela executes <filename>Setup.lhs</filename> as a shell script,
 the shell will invoke <command>runhugs</command>, which will in turn run <literal>main</literal> imported
-from the library <literal>Distribution.Simple</literal>.  This library implements the HPS simple build infrastructure.
+from the library <literal>Distribution.Simple</literal>.  This library implements the &hps; simple build infrastructure.
 </para>
 <para> Now she is ready to go. She types:
 <programlisting>
@@ -203,7 +203,7 @@ instead.
 
 <sect2 id="package-descr"><title>Packages</title>
 
-<para>A <emphasis>package</emphasis> is the unit of distribution for the HPS.
+<para>A <emphasis>package</emphasis> is the unit of distribution for the &hps;.
 Its purpose in life, when installed, is to make available some Haskell modules for
 import by some other Haskell program.   However, a package may consist of 
 much more than a bunch of Haskell
@@ -267,7 +267,7 @@ implementations.  Hence a conservative starting point.</para>
 &hugs; isn't really a compiler, the term is less clumsy than ``Haskell implementation''.)</para>
 
 <para> The
-HPS requires that a conforming Haskell compiler is somewhat package aware.
+&hps; requires that a conforming Haskell compiler is somewhat package aware.
 In summary, the requirements are these:
 <itemizedlist>
 <listitem><para>Each compiler <command>hc</command> must provide an
@@ -302,10 +302,10 @@ linkend="ipd">.</para>
 
 <sect2><title>Package distributions</title>
 
-<para>A HPS package can be distributed in several forms:
+<para>A &hps; package can be distributed in several forms:
 <itemizedlist>
 <listitem><para>
-A <emphasis>HPS source distribution</emphasis> is a tree of files (tar-ball, zip file etc)
+A <emphasis>&hps; source distribution</emphasis> is a tree of files (tar-ball, zip file etc)
 containing the library sources, which may need to be
 compiled before being installed.  The same source tarball may well be installable for several
 Haskell implementations, OSs, and platforms.
@@ -315,7 +315,7 @@ tests and design notes may be omitted.  It may also contain some derived files, 
 the developer's repository; for example, ones made by a somewhat exotic pre-processor where it
 seems simpler to ship the derived file than to ensure that all consumers have the pre-processor.</para></listitem>
 <listitem><para>
-A <emphasis>HPS binary distribution</emphasis> is a tree of files that contains a pre-compiled library, ready
+A <emphasis>&hps; binary distribution</emphasis> is a tree of files that contains a pre-compiled library, ready
 for installation.  The pre-compilation means that the distribution will be Haskell-compiler-specific, and certain 
 "looser" dependencies (<literal>hunit > 2.3</literal>) will now be precisely fixed (<literal>hunit == 2.4</literal>).
 	    </para>
@@ -325,7 +325,7 @@ for installation.  The pre-compilation means that the distribution will be Haske
 The package may be wrapped up as an <emphasis>RPM</emphasis>, <emphasis>Debian</emphasis> distribution, 
 or <emphasis>Windows installer</emphasis> (this list is not exhaustive).
 In that case, the way it is installed is prescribed by the respective distribution mechanism;
-the only role of the HPS is to make it easy to construct such distributions. All three are
+the only role of the &hps; is to make it easy to construct such distributions. All three are
 compiler-specific (indeed compiler-version-specific) binary distributions.
 	    </para>
 	  </listitem>
@@ -334,7 +334,7 @@ compiler-specific (indeed compiler-version-specific) binary distributions.
 
 <sect2><title>The Setup script</title>
 
-<para>The key question is this: how should Angela Author present her HPS package so that 
+<para>The key question is this: how should Angela Author present her &hps; package so that 
 her consumers (Bob, Sam, Willie, etc) can conveniently use it?</para>
 
 <para>Answer: she provides a tree of files, with two specific files in the
@@ -353,9 +353,9 @@ In summary, though, <filename>Setup.lhs</filename> allows a consumer to configur
 test, install, register, and unregister a package.  </para>
 	  </listitem>
 	</itemizedlist>
-The HPS allows a package author to write the setup script in any way she pleases, provided
+The &hps; allows a package author to write the setup script in any way she pleases, provided
 it conforms to the specification of <xref linkend="setup">.  However, many Haskell packages consist
-of little more than a bunch of Haskell modules, and for these the HPS provides <emphasis>the simple
+of little more than a bunch of Haskell modules, and for these the &hps; provides <emphasis>the simple
 build infrastructure</emphasis>, a Haskell library that does
 all the work.  The simple build infrastructure, which was used for the example in 
 <xref linkend="example">, is described in <xref linkend="sbi">.</para>
@@ -406,7 +406,7 @@ Since it's a literate Haskell script (<literal>.lhs</literal> file), the Haskell
 this line.
 However, nothing stops a consumer from running the script interactively, or compiling it and running 
 the compiled binary.  Any implementation of Haskell should suffice to run the script, provided 
-the implementation has the HPS libraries installed.  
+the implementation has the &hps; libraries installed.  
 	</para>
       </sect2>
   </sect1>
@@ -415,7 +415,7 @@ the implementation has the HPS libraries installed.
 
 <sect1 id="compiler-reqts"><title>What the compilers must implement</title>
 
-<para>The HPS requires that the Haskell implementations be somewhat package-aware.
+<para>The &hps; requires that the Haskell implementations be somewhat package-aware.
 This section documents those requirements</para>
 
 <sect2><title>Building and registering a package</title>
@@ -550,7 +550,7 @@ check that no user has a user package depending on P.</para>
 <sect2><title>The interface to &hc-pkg;</title>
 
 <para>Registering a package with a compiler records the package information in some
-implementation-specific way; how it does so is not constrained by the HPS.
+implementation-specific way; how it does so is not constrained by the &hps;.
 Much of an IPD is independent of the compiler, but it may also include compiler-specific
 fields.</para>
 
@@ -634,7 +634,7 @@ as a global package and we register it as a user package?</para>
 <sect1 id=setup><title>The setup script</title>
 
 <para>
-The sole requirement of an HPS package is that it should contain,
+The sole requirement of an &hps; package is that it should contain,
 in the root of its file structure, (a) a package description file <filename>pkg.desc</filename>,
 and (b) a setup script, <filename>Setup.lhs</filename>.
 This section
@@ -651,7 +651,7 @@ specifies the syntax of the package description, and the command-line interface 
 </programlisting>
 The first two lines are compulsory. The dependencies are optional, assumed empty if omitted. 
 There can be more lines, all of the form <emphasis>name: stuff</emphasis>, specific to the particular
-setup script in use.  For the HPS-provided simple build infrastructure, the package description syntax
+setup script in use.  For the &hps;-provided simple build infrastructure, the package description syntax
 is given in <xref linkend="sbi-pkg-desc">.
 </para>
 <para>The exact syntax is still undecided.  Should we put everything in quotes?
@@ -852,7 +852,7 @@ on Windows it will be <filename>Program Files</filename>.  The setup script will
 <sect2><title>Examples</title>
 <sect3><title>Bob the Builder and Sam Sysadmin</title>
 
-<para>Bob the Builder can install a HPS source distribution thus.
+<para>Bob the Builder can install a &hps; source distribution thus.
 He downloads the source distribution and unpacks it into a temporary directory,
 <literal>cd</literal>'s to that directory, and says
 <programlisting>
@@ -899,11 +899,11 @@ and then feed <filename>installed-pkg-descr</filename> to &hc-pkg; on the target
    </sect2>
 </sect1>
 
-<sect1 id=sbi><title>The HPS simple build infrastructure</title>
+<sect1 id=sbi><title>The &hps; simple build infrastructure</title>
 
 <para>A package author must fulfil the specification of <xref linkend=setup>.
 In many cases, a Haskell package will consist of nothing more than a bunch of Haskell modules,
-with perhaps the odd C file.  In that case, the HPS provides a <emphasis>simple build infrastructure</emphasis> that
+with perhaps the odd C file.  In that case, the &hps; provides a <emphasis>simple build infrastructure</emphasis> that
 fulfils the specification of <xref linkend=setup>, and provides some modest further facilities besides.</para>
 <para>This simple build infrastructure is meant to automate the common case.
 (Think <command>hmake</command>.)  The emphasis is on ``simple'': 
@@ -933,14 +933,14 @@ She can even install it on her own machine by saying
 <programlisting>
   ./Setup.lhs install
 </programlisting>
-She can build a HPS source distribution:
+She can build a &hps; source distribution:
 <programlisting>
   ./Setup.lhs source-dist
 </programlisting>
 The full details are given in <xref linkend="sbi-setup">.  
 </para><para>
 It is no coincidence that the interface is very similar to that for the setup script
-for an HPS package distribution (<xref linkend="setup">).
+for an &hps; package distribution (<xref linkend="setup">).
 In fact, <literal>Distribution.Simple.defaultMain</literal> conforms to the specification of <xref linkend="setup-spec">, and when it builds
 a distribution, it includes <filename>./Setup.lhs</filename> in the tarball, ready to be run by Bob the Builder.
 However, <literal>Distribution.Simple.defaultMain</literal> of course implements a richer interface than that required by
@@ -997,7 +997,7 @@ It supports all the commands described in <xref linkend=setup-spec>, and in addi
 be re-used to make setup scripts that work quite differently.  At one extreme is a setup
 script that immediately shells out into <literal>make</literal>, which does all the work.</para>
 
-<para>To support this, HPS provides a trivial setup library <literal>Distribution.Make</literal>, which
+<para>To support this, &hps; provides a trivial setup library <literal>Distribution.Make</literal>, which
 simply parses the command line arguments and shells out into <literal>make</literal>.  Marcus uses the following
 <filename>Setup.lhs</filename>
 <programlisting>
