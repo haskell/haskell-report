@@ -1,4 +1,4 @@
-%**<title>The Haskell 98 Library Report: IO</title>
+%**<title>The Haskell 98 Library Report: Input/Output</title>
 %**~header
 \section{Input/Output}
 \label{IO}
@@ -164,7 +164,7 @@ puts a handle "hdl" into an intermediate
 state, {\em semi-closed}.  In this state, "hdl" is effectively closed,
 but items are read from "hdl" on demand and accumulated in a special
 list returned by @hGetContents@~"hdl".
- 
+
 Any operation that fails because a handle is
 closed, also fails if a handle is semi-closed. The only exception is @hClose@.
 A semi-closed handle becomes closed:
@@ -492,7 +492,7 @@ the file or channel managed by "hdl".
 Computation @hGetLine@~"hdl"\indextt{hGetLine} reads a line from the file or
 channel managed by "hdl". The Prelude's @getLine@ is a shorthand
 for @hGetLine stdin@.
- 
+
 {\em Error reporting}.
 The @hGetChar@ computation fails with
 @isEOFError@ if the end of file has been reached.
