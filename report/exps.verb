@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/exps.verb,v 1.6 2001/08/23 16:16:57 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/exps.verb,v 1.7 2001/08/31 16:03:08 simonpj Exp $
 %
 %*section 3
 %**<title>The Haskell 98 Report: Expressions</title>
@@ -348,7 +348,7 @@ pattern fails to match, then the result is "\bot".
              
 \subsection{Operator Applications}
 \index{operator application}
-%\index{operator application|seealso{application}}
+%\index{operator application|hseealso{application}}
 \label{operators}
 %
 @@@
@@ -399,7 +399,7 @@ The following identities hold:
 
 \subsection{Sections}
 \index{section}
-%\index{section|seealso{operator application}}
+%\index{section|hseealso{operator application}}
 \label{sections}
 %
 @@@

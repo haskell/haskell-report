@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/preface-13.verb,v 1.5 2001/08/20 07:57:53 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/preface-13.verb,v 1.6 2001/08/31 16:03:08 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Preface</title>
 %*section
@@ -304,8 +304,10 @@ Michael Marte,
 Jim Mattson,
 Sergey Mechveliani,
 Erik Meijer,
+Gary Memovich,
 Randy Michelsen, 
 Rick Mohr,
+Andy Moran,
 Arthur Norman,
 Nick North,
 Chris Okasaki,

@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/decls.verb,v 1.7 2001/08/23 16:41:41 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/decls.verb,v 1.8 2001/08/31 16:03:08 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Declarations</title>
 %*section 4
@@ -403,20 +403,18 @@ valid types:
 In the third type, the constraint @Eq (f a)@ cannot be made
 simpler because @f@ is universally quantified.
 
-The type of an expression "e"
-depends on a {\em type environment}
-\index{type environment}
-that gives types for the free variables in "e", and a
-{\em class environment}
-\index{class environment}
-that declares which types are instances of which classes (a type becomes
+The type of an expression "e" depends 
+on a {\em type environment}\index{type environment} that gives types 
+for the free variables in "e", and a
+{\em class environment}\index{class environment} that 
+declares which types are instances of which classes (a type becomes
 an instance of a class only via the presence of an
 @instance@ declaration or a @deriving@ clause).
 
-Types are related by a generalization order
+Types are related by a generalization preorder
 \index{generalization preorder}
 (specified below);
-the most general type, up to the equivalence induced by the generalisation preorder,
+the most general type, up to the equivalence induced by the generalization preorder,
 that can be assigned to a particular
 expression (in a given environment) is called its {\em
 principal type}.
@@ -431,8 +429,8 @@ are usually optional (see
 Sections~\ref{expression-type-sigs} and~\ref{type-signatures}).
 
 The type "\forall \overline{u}.~cx_1 \Rightarrow t_1" is
-{\em more general than}
-the type "\forall \overline{w}.~cx_2 \Rightarrow t_2" if and only if there is 
+{\em more general than} the 
+type "\forall \overline{w}.~cx_2 \Rightarrow t_2" if and only if there is 
 a substitution "S" whose domain is "\overline{u}" such that:
 \begin{itemize}
 \item "t_2" is identical to "S(t_1)".
@@ -1901,7 +1899,7 @@ an explicit type signature is given for every variable in the group
 that is bound by simple pattern binding.
 \end{description}
 The usual Hindley-Milner restriction on polymorphism is that
-only type variables free in the environment may be generalized.
+only type variables that do not occur free in the environment may be generalized.
 In addition, {\em the constrained type variables of
 a restricted declaration group may not be generalized}
 in the generalization step for that group.

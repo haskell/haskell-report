@@ -277,7 +277,9 @@ floatToDigits base x =
 
 readFloat     :: (RealFloat a) => ReadS a
 readFloat r    = [(fromRational ((n%1)*10^^(k-d)),t) | (n,d,s) <- readFix r,
-                                                       (k,t)   <- readExp s]
+                                                       (k,t)   <- readExp s] ++
+		 [ (0/0, t) | ("NaN",t)      <- lex r] ++
+		 [ (1/0, t) | ("Infinity",t) <- lex r]
                  where readFix r = [(read (ds++ds'), length ds', t)
                                         | (ds,d) <- lexDigits r,
                                           (ds',t) <- lexFrac d ]

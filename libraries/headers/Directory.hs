@@ -1,5 +1,5 @@
 module Directory ( 
-    Permissions( readable, writable, executable, searchable ), 
+    Permissions( Permissions, readable, writable, executable, searchable ), 
     createDirectory, removeDirectory, removeFile, 
     renameDirectory, renameFile, getDirectoryContents,
     getCurrentDirectory, setCurrentDirectory,

@@ -14,7 +14,7 @@ array       :: (Ix a) => (a,a) -> [(a,b)] -> Array a b
 array b ivs =
     if and [inRange b i | (i,_) <- ivs]
         then MkArray b
-                     (\j -> case [v | (i,v) <- ivs, i == j] of
+                     (\j -> case [v | (i,v) <- ivs, index b i == index b j] of
                             [v]   -> v
                             []    -> error "Array.!: \
                                            \undefined array element"
@@ -41,9 +41,12 @@ assocs                :: (Ix a) => Array a b -> [(a,b)]
 assocs a              =  [(i, a!i) | i <- indices a]
 
 (//)                  :: (Ix a) => Array a b -> [(a,b)] -> Array a b
-a // us               =  array (bounds a)
-                            ([(i,a!i) | i <- indices a \\ [i | (i,_) <- us]]
-                             ++ us)
+a // new_ivs          = array b (old_ivs ++ new_ivs)
+                      where
+	          	b       = bounds a
+                  	old_ivs = [(i,a!i) | i <- indices a,
+                  			     index b i `notElem` new_is]
+                  	new_is  = [index b j | (j,_) <- new_ivs]
 
 accum                 :: (Ix a) => (b -> c -> b) -> Array a b -> [(a,c)]
                                    -> Array a b

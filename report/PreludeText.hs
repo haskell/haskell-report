@@ -128,7 +128,7 @@ lex (c:s) | isSingle c = [([c],s)]
               lexExp s = [("",s)]
 
 instance  Show Int  where
-    showsPrec           = showsPrec . toInteger
+    showsPrec n = showsPrec n . toInteger
 	-- Converting to Integer avoids
 	-- possible difficulty with minInt
 
