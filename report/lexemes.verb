@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/lexemes.verb,v 1.8 2001/10/02 09:09:26 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/lexemes.verb,v 1.9 2001/11/01 13:43:43 simonpj Exp $
 %
 %*section 2
 %**<title>Haskell 98 Lexical Structure</title>
@@ -146,13 +146,10 @@ conid		-> large \{small | large | digit | @'@ \}
 reservedid -> @case@ | @class@ | @data@ | @default@ | @deriving@ | @do@ | @else@
 	| @if@ | @import@ | @in@ | @infix@ | @infixl@ | @infixr@ | @instance@
 	| @let@ | @module@ | @newtype@ | @of@ | @then@ | @type@ | @where@ | @_@
-specialid -> @as@ | @qualified@ | @hiding@
-
 @@@
 \indexsyn{varid}%
 \indexsyn{conid}%
 \indexsyn{reservedid}%
-\indexsyn{specialid}%
 
 An identifier consists of a letter followed by zero or more letters,
 digits, underscores, and single quotes.  Identifiers are lexically
@@ -173,11 +170,9 @@ identifiers beginning with underscore.  This allows programmers to use
 varsym		-> ( symbol \{symbol | @:@\} )_{\langle{}reservedop | dashes \rangle{}}
 consym		-> (@:@ \{symbol | @:@\})_{\langle{}reservedop\rangle{}}
 reservedop	-> @..@ | @:@ | @::@ | @=@ | @\@ | @|@ | @<-@ | @->@ | \verb+@@+ | @~@ | @=>@
-specialop       -> @-@ | @!@
 @@@
 \indexsyn{varsym}%
 \indexsyn{consym}%
-\indexsyn{specialop}%
 \indexsyn{reservedop}%
 
 {\em Operator symbols} \index{operator} 
@@ -198,13 +193,6 @@ section}\index{section} to yield partially applied operators (see
 Section~\ref{sections}).
 All of the standard infix operators are just
 predefined symbols and may be rebound.  
-
-A few identifiers and operators, here indicated by "specialid" and "specialop",
-have special meanings in certain contexts, but can be used as ordinary
-identifiers and operators.
-These are indicated by the `special' productions in the lexical syntax.
-Examples include @!@ (used only in @data@ declarations) and
-@hiding@ (used in @import@ declarations).
 
 In the remainder of the report six different kinds of 
 names\index{namespaces} will be used:
@@ -283,7 +271,12 @@ hexadecimal	-> hexit\{hexit\}
 integer		-> decimal
                 |  @0o@ octal | @0O@ octal
                 |  @0x@ hexadecimal | @0X@ hexadecimal
-float		-> decimal @.@ decimal[(@e@ | @E@)[@-@ | @+@]decimal]
+
+
+float		-> decimal @.@ decimal [exponent]
+	        |  decimal exponent
+
+exponent	-> (@e@ | @E@) [@+@ | @-@] decimal
 @@@
 \indexsyn{integer}%
 \indexsyn{float}%

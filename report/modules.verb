@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/modules.verb,v 1.14 2001/10/04 16:28:52 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/modules.verb,v 1.15 2001/11/01 13:43:43 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Modules</title>
 %*section 5
@@ -299,7 +299,7 @@ declarations in a module.  The ordering of import declarations is irrelevant.
 Lexically speaking, the terminal symbols ``@as@'', ``@qualified@'' and
 ``@hiding@'' are each a "varid" rather than a "reservedid".  They have
 special significance only in the context of an @import@ declaration;
-they may be used as variables.
+they may also be used as variables.
 
 \subsubsection{What is imported}
 \label{whatisimported}
@@ -655,15 +655,11 @@ of the Prelude.
 \indexmodule{Prelude}
 \index{Prelude!implicit import of}
 
-The @Prelude@ module is imported automatically into 
-all modules as if by the statement `@import Prelude@', if and
-only if it is not imported with an explicit @import@ declaration.
-This provision for explicit import allows values defined in the
-Prelude to be hidden from the unqualified name space.  The
-@Prelude@ module is always available as a qualified import: an
-implicit `@import qualified Prelude@' is part of every module and 
-names prefixed by `@Prelude.@' can always be used to refer to entities in the
-Prelude.
+The @Prelude@ module is imported automatically into all modules as if
+by the statement `@import Prelude@', if and only if it is not imported
+with an explicit @import@ declaration. This provision for explicit
+import allows entities defined in the Prelude to be selectively imported,
+just like those from any other module.
 
 The semantics of the entities in @Prelude@ is specified by a reference
 implementation of @Prelude@ written in \Haskell{}, given in

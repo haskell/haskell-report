@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/decls.verb,v 1.12 2001/10/04 16:28:52 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/decls.verb,v 1.13 2001/11/01 13:43:43 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Declarations</title>
 %*section 4
@@ -615,6 +615,10 @@ constructor is evaluated if and only if the corresponding type in the
 algebraic datatype declaration has a strictness flag, denoted by
 an exclamation point, ``@!@''.
 \indextt{!}
+Lexically, ``@!@'' is an ordinary varsym not a "reservedop"; 
+it has special significance only in the context of the argument types of 
+a data declaration.
+
 
 \outline{
 \paragraph*{Translation:}

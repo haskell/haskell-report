@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/syntax-iso.verb,v 1.6 2001/10/04 16:28:52 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/syntax-iso.verb,v 1.7 2001/11/01 13:43:43 simonpj Exp $
 %
 %**<title>Haskell 98 Syntax</title>
 %*section B
@@ -65,12 +65,10 @@ conid		-> large \{small | large | digit | @'@ \}
 reservedid -> @case@ | @class@ | @data@ | @default@ | @deriving@ | @do@ | @else@
 	| @if@ | @import@ | @in@ | @infix@ | @infixl@ | @infixr@ | @instance@
 	| @let@ | @module@ | @newtype@ | @of@ | @then@ | @type@ | @where@ | @_@
-specialid -> @as@ | @qualified@ | @hiding@
 
 varsym		-> ( symbol \{symbol | @:@\} )_{\langle{}reservedop | dashes\rangle{}}
 consym		-> (@:@ \{symbol | @:@\})_{\langle{}reservedop\rangle{}}
 reservedop	-> @..@ | @:@ | @::@ | @=@ | @\@ | @|@ | @<-@ | @->@ | {\tt @@} | @~@ | @=>@
-specialop       -> @-@ | @!@
 
 varid			&& (\tr{variables})
 conid			&& (\tr{constructors})
@@ -93,7 +91,9 @@ hexadecimal	-> hexit\{hexit\}
 integer		-> decimal
                 |  @0o@ octal | @0O@ octal
                 |  @0x@ hexadecimal | @0X@ hexadecimal
-float		-> decimal @.@ decimal[(@e@ | @E@)[@-@ | @+@]decimal]
+float		-> decimal @.@ decimal [exponent]
+	        |  decimal exponent
+exponent	-> (@e@ | @E@) [@+@ | @-@] decimal
 
 char    ->  @'@ (graphic_{\langle{}@'@ | @\@\rangle{}} | space | escape_{\langle{}@\&@\rangle{}}) @'@
 string  ->  @"@ \{graphic_{\langle{}@"@  | @\@\rangle{}} | space | escape | gap\} @"@
@@ -157,11 +157,13 @@ A stream of tokens as specified by the lexical syntax in the Haskell report,
 with the following additional tokens: 
 \begin{itemize}
 \item If the first token after a @let@, @where@, @do@, or @of@ keyword is not @{@, 
-it will be preceded by "\{n\}" where "n" is the indentation of the token. 
+it is preceded by "\{n\}" where "n" is the indentation of the token. 
 \item If the first token of a module is not @{@ or @module@, 
-then it will be preceded by "\{n\}" where "n" is the indentation of the token. 
-\item The first token on each line (not including tokens already 
-annotated) is preceded by "<n>" where "n" is the indentation of the token. 
+then it is preceded by "\{n\}" where "n" is the indentation of the token. 
+\item Where the start of a token does not follow any complete token on the
+   same line, this token is preceded by "<n>" where "n"
+   is the indentation of the token, provided that it is not,
+   as a consequence of the first two rules, preceded by "\{n\}".
 \end{itemize}
 
 \item A stack of ``layout contexts'', in which each element is either:
@@ -177,13 +179,17 @@ until either the enclosing context ends or a new context is pushed.
 The ``indentation'' of a lexeme is the column number
 of the first character of that lexeme; the indentation of a line is the
 indentation of its leftmost lexeme.  To determine the column number,
-assume a fixed-width font with this tab convention: tab stops
-are 8 characters apart, and a tab character causes the insertion of
+assume a fixed-width font with the following conventions:
+\begin{itemize}
+\item The characters "newline", "return", "linefeed", and "formfeed", all start a new line.
+\item The first column is designated column 1, not 0.
+\item Tab stops are 8 characters apart.
+\item A tab character causes the insertion of
 enough spaces to align the current position with the next tab stop.
+\end{itemize}
 For the purposes of the layout rule, Unicode characters in a source program
 are considered to be of the same, fixed, width as an ASCII character.
-The first column is designated column 1, not 0.
- 
+
 The application
 \[
 L~tokens~[0]
@@ -490,7 +496,7 @@ aexp 	->  qvar				& (\tr{variable})
 	|   @(@ exp^{i+1} qop^{(a,i)} @)@        & (\tr{left section})
         |   @(@ qop^{(a,i)} exp^{i+1} @)@        & (\tr{right section})
         |   qcon @{@ fbind_1 @,@ ... @,@ fbind_n @}@ & (\tr{labeled construction}, n>=0)
-        |   aexp_{\{qcon\}} @{@ fbind_1 @,@ ... @,@ fbind_n @}@ & (\tr{labeled update}, n >= 1)
+        |   aexp_{\langle{}qcon\rangle{}} @{@ fbind_1 @,@ ... @,@ fbind_n @}@ & (\tr{labeled update}, n >= 1)
 @@@
 \indexsyn{aexp}%
 

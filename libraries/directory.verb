@@ -1,4 +1,4 @@
-%**<title>The Haskell 98 Library Report: Directory functions</title>
+`%**<title>The Haskell 98 Library Report: Directory functions</title>
 %**~header
 
 %% Other useful functions from SML 96 include modification time

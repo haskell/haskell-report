@@ -6,9 +6,9 @@ module Prelude (
     Ordering(LT, EQ, GT),
     Char, String, Int, Integer, Float, Double, Rational, IO,
 
--- 	These built-in types are defined in the Prelude, but
---	are denoted by built-in syntax, and cannot legally
---	appear in an export list.
+--      These built-in types are defined in the Prelude, but
+--      are denoted by built-in syntax, and cannot legally
+--      appear in an export list.
 --  List type: []((:), [])
 --  Tuple types: (,), (,,), etc.
 --  Trivial type: ()
@@ -76,7 +76,7 @@ class  Eq a  where
     x == y           =  not (x /= y)
 
 class  (Eq a) => Ord a  where
-    compare    	         :: a -> a -> Ordering
+    compare              :: a -> a -> Ordering
     (<), (<=), (>=), (>) :: a -> a -> Bool
     max, min             :: a -> a -> a
 
@@ -178,7 +178,7 @@ class  (Fractional a) => Floating a  where
 
         -- Minimal complete definition:
         --      pi, exp, log, sin, cos, sinh, cosh
-	--	asin, acos, atan
+        --      asin, acos, atan
         --      asinh, acosh, atanh
     x ** y           =  exp (log x * y)
     logBase x y      =  log y / log x

@@ -89,6 +89,24 @@ Add <em>dashes</em> to <em>reservedop</em> in the exclusion set of the
 production for <em>varsym</em>.  (This ensures that "<tt>--</tt>" and
 "<tt>---</tt>" are not legal lexemes.
 
+<p><li> [Nov 2001] <strong>Page 7, Section 2.4, Identifiers and operators; and Appendix B.2, p121.</strong>
+<ul>
+<li> Remove the productions for <em>specialid</em> and <em>specialop</em>
+<li> Delete the paragraph about specialid and specialop near the bottom of page 7 
+("A few identifiers and operators..").
+</ul>
+
+<p><li> [Nov 2001] <strong>Page 8, Section 2.5, Numeric literals; and Appendix B.2, p121.</strong>
+Replace the production for "float" with:
+<pre>
+   float       -> decimal . decimal [exponent]
+               |  decimal exponent
+   exponent    -> (e | E) [+ | -] decimal
+</pre>
+(This change means that 20e3 is a floating-point literal.  There is a corresponding change
+to the lexer on p114.)
+
+
 <p><li> <strong>Page 9, Section 2.4, Identifiers and operators; and Page 68, Section 5.5.1, Qualified names.</strong>
 Move the first paragraph of 5.5.1, and the following table, and the paragraph starting "The qualifier does not change...",
 to the end of Section 2.4.  (These paragraphs deal with lexical matters, which do not belong in Chapter 5.)
@@ -144,6 +162,10 @@ comprehension is used."
 <p><li> [Aug 2001] <strong>Page 13, Section 3, Expressions.</strong>
 Remove Table 1, and the associated paragraph beginning "As an aid to
 understanding...".  (The table causes more confusion than it clears up.)
+
+<p><li> [Nov 2001] <strong>Page 13, Section 3 Expressions.</strong>
+Replace the curly braces by angle brackets, in the subscript of "aexp" in the last production of "aexp".
+Similarly, on Page 26, Section 3.15.3; and Page 128, Appendix B.4.
 
 <p><li> [Apr 2001] <strong>Page 14, Section 3.1, Errors.</strong>  In the first sentence of
 the section, after "indistinguishable" add "by a Haskell program".
@@ -259,6 +281,13 @@ At the end of the subsection, add a new paragraph:
 <p>
 "The pattern "<tt>F {}</tt>" matches any value built with constructor <tt>F</tt>,
 <em>whether or not <tt>F</tt> was declared with record syntax</em>."
+
+<p><li> [Nov 2001] <strong>Page 41, Section 4.2.1, subsection Strictness Flags.</strong>
+Add the following sentence at the end of the pargraph:
+<p>
+"Lexically, "<tt>!</tt>" is an ordinary varsym not a reservedop; 
+it has special significance only in the context of the argument types of 
+a data declaration."
 
 <p><li> [Apr 2001] <strong>Page 42, Section 4.2.1, subsection Labelled Fields.</strong>
 Change "occurance" to "occurrence" in the translation box at the very end of
@@ -391,6 +420,14 @@ between <tt>C.g</tt> and <tt>g</tt>,
 and between <tt>module B</tt> and <tt>C.f</tt> (assuming <tt>B.f</tt> and <tt>C.f</tt> are different entities), 
 even though there are no name clashes within module <tt>A</tt> itself.  
 
+<p><li> [Nov 2001] <strong>Page 65, Section 5.3, Import Declarations, last line.</strong>
+Before "Exactly which entities are to be imported..." add a new paragraph:
+<p>
+"Lexically speaking, the terminal symbols "<tt>as</tt>", "<tt>qualified</tt>" and
+"<tt>hiding</tt>" are each a "varid" rather than a "reservedid".  They have
+special significance only in the context of an <tt>import</tt> declaration;
+they may also be used as variables."
+
 <p><li> [July 2001] <strong>Page 65, Section 5.3, Import Declarations, last line.</strong>
 Start a new subsection "5.3.1  What is imported" before "Exactly which entities are to
 be imported...".
@@ -453,6 +490,15 @@ However, the unqualified name "<tt>sin</tt>" in the type
 signature in the first line of <tt>F</tt> unambiguously refers to the
 local declaration for <tt>sin</tt>."
 
+<p><li> [Nov 2001] <strong>Page 71, Section 5.6.1, The Prelude module.</strong> 
+Replace the entire first paragraph of the section with:
+<p>
+"The <tt>Prelude</tt> module is imported automatically into all modules as if
+by the statement `<tt>import Prelude</tt>', if and only if it is not imported
+with an explicit <tt>import</tt> declaration. This provision for explicit
+import allows entities defined in the Prelude to be selectively imported,
+just like those from any other module."
+
 <p><li> <strong>Page 71, Section 5.6.2, Shadowing Prelude Names.</strong> 
 Replace the example at the beginning of the section, and the entire
 following paragraph, with the following
@@ -471,6 +517,16 @@ Every module that imports <tt>A</tt> unqualified, and then makes an unqualified
 reference to <tt>null</tt> must also resolve the ambiguous use of <tt>null</tt>
 just as <tt>A</tt> does.  Thus there is little danger of accidentally shadowing 
 Prelude names."
+
+<p><li> [Nov 2001]  <strong>Page 73, Section 6.1.2, Characters and strings.</strong>
+Replace the first sentence to read:
+<p>
+"The character type <tt>Char</tt> is an enumeration whose values represent 
+Unicode characters."
+<p>
+(This change withdraws the specification that Chars are 16 bits.  According to the Unicode
+experts, the rest of the Report is gloriously vague wrt to Unicode, and fixing to 16 bits
+here is inappropriate precision.)
 
 <p><li> [Aug 2001]  <strong>Page 74, Section 6.1.3, Lists.</strong>  In the last sentence,
 after "<tt>Monad</tt>" add ", <tt>Functor</tt>".  (The list type is an instance of <tt>Functor</tt>.)
@@ -658,6 +714,17 @@ Replace the definitions of <tt>take</tt>, <tt>drop</tt>, and <tt>splitAt</tt> wi
 The effect is that all three functions are defined on negative arguments.  This
 is a semantic change.
 
+<p><li> [Nov 2001] <strong>Page 114, definition of lex</strong>. 
+Change the line that currently reads
+<pre>
+    lexFracExp s = [("",s)]
+</pre>
+to read instead
+<pre>
+    lexFracExp s = lexExp s
+</pre>
+(This change allows 10e3 to be a single lexeme; c.f. the lexical change on page 7.)
+
 <p><li> [May 2001; showsPrec corrected Sept 2001]  
 <strong>Page 115, instances <tt>Show Int</tt> and <tt>Read Int</tt></strong>. 
 Replace the instances for <tt>Show Int</tt> and <tt>Read Int</tt> with
@@ -673,6 +740,21 @@ Replace the instances for <tt>Show Int</tt> and <tt>Read Int</tt> with
 	    -- possible difficulty with minInt
 </pre>
 The previous definitions (which are simply specifications, remember) failed on minInt.
+
+<p><li> [Nov 2001]  <strong>Page 122, Appendix B.3, Layout</strong>. 
+Replace the third dashed item in the first bullet item by:
+<p>
+"Where the start of a token does not follow any complete token on the
+   same line, this token is preceded by "&lt;n&gt;" where "n"
+   is the indentation of the token, provided that it is not,
+   as a consequence of the first two rules, preceded by "{n}".
+<p>
+(This addresses the question of empty lines (no layout token) and string-gap tokens
+(no layout token in the middle of them).
+
+<p><li> [Nov 2001]  <strong>Page 122, Appendix B.3, Layout</strong>. 
+In the paragraph following the bullets, add the sentence:
+"The characters "newline", "return", "linefeed", and "formfeed", all start a new line."
 
 <p><li> [Oct 2001]  <strong>Page 123, Appendix B.3, Layout</strong>. 
 In the first line of the definition of L, replace "if parse-error(t)" by

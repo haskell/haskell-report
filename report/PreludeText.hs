@@ -119,7 +119,7 @@ lex (c:s) | isSingle c = [([c],s)]
               lexFracExp ('.':c:cs) | isDigit c
                             = [('.':ds++e,u) | (ds,t) <- lexDigits (c:cs),
                                                (e,u)  <- lexExp t]
-              lexFracExp s          = [("",s)]
+              lexFracExp s  = lexExp s
 
               lexExp (e:s) | e `elem` "eE"
                        = [(e:c:ds,u) | (c:t)  <- [s], c `elem` "+-",

@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/exps.verb,v 1.11 2001/09/24 16:29:41 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/exps.verb,v 1.12 2001/11/01 13:43:43 simonpj Exp $
 %
 %*section 3
 %**<title>The Haskell 98 Report: Expressions</title>
@@ -60,7 +60,7 @@ aexp 	->  qvar				& (\tr{variable})
 	|   @(@ exp^{i+1} qop^{(a,i)} @)@        & (\tr{left section})
         |   @(@ qop^{(a,i)} exp^{i+1} @)@        & (\tr{right section})
         |   qcon @{@ fbind_1 @,@ ... @,@ fbind_n @}@ & (\tr{labeled construction}, n>=0)
-        |   aexp_{\{qcon\}} @{@ fbind_1 @,@ ... @,@ fbind_n @}@ & (\tr{labeled update}, n >= 1)
+        |   aexp_{\langle{}qcon\rangle{}} @{@ fbind_1 @,@ ... @,@ fbind_n @}@ & (\tr{labeled update}, n >= 1)
 
 @@@
 \indexsyn{exp}%
@@ -1491,7 +1491,8 @@ $x_1$@ })@ $\ldots$ @(case @$v$@ of { @$p$@ -> @$x_n$@})@\\
 &@     _ -> @$e'$@ }@\\[2pt]
 &{\rm at least one of $p_1, \ldots, p_n$ is not a variable; $x_1, \ldots, x_n$ are new variables}\\[4pt]
 %\\
-(h)&@case @$v$@ of { @$k$@ -> @$e$@; _ -> @$e'$@ } @$=$@ if (@$v$@==@$k$@) then @$e$@ else @$e'$\\[4pt]
+(h)&@case @$v$@ of { @$k$@ -> @$e$@; _ -> @$e'$@ } @$=$@ if (@$v$@==@$k$@) then @$e$@ else @$e'$ \\
+&{\rm where $k$ is a character, string, or numeric literal.} \\[4pt]
 %\\
 (i)&@case @$v$@ of { @$x$@ -> @$e$@; _ -> @$e'$@ } @$=$@ case @$v$@ of { @$x$@ -> @$e$@ }@\\[4pt]
 %\\
@@ -1533,7 +1534,8 @@ $e'$ @ }@ \\
 %&$=$@ case @$e1$@ of { @$x_1$@ -> @$e$@ }@\\
 %&{\rm where $A$ is constructor defined by @newtype@}\\
 (r)&@case @$v$@ of { @$x$@+@$k$@ -> @$e$@; _ -> @$e'$@ }@\\
-&$=$@ if @$v$@ >= @$k$@ then let {@$x'$@ = @$v$@-@$k$@} in @$e[x'/x]$@ else @$e'$@ @($x'$ is a new variable)\\
+&$=$@ if @$v$@ >= @$k$@ then let {@$x'$@ = @$v$@-@$k$@} in @$e[x'/x]$@ else @$e'$\\
+&{\rm where $k$ is a numeric literal, and $x'$ is a new variable}\\
 \end{tabular}
 }
 %**<div align=center> <h4>Figure 4</h4> </div>
@@ -1547,9 +1549,7 @@ In Figures~\ref{simple-case-expr-1}--\ref{simple-case-expr-2}:
 "p" and "p_i" are patterns; 
 "v", "x", and "x_i" are variables; 
 "K" and "K'" are algebraic datatype (@data@) constructors (including
-tuple constructors);  "N" is a @newtype@ constructor; \index{newtype declaration@@{\tt newtype} declaration}
-and "k" is a character, string, or numeric literal.
-
+tuple constructors);  and "N" is a @newtype@ constructor\index{newtype declaration@@{\tt newtype} declaration}.
 % For clarity, several rules are expressed using
 % @let@ (used only in a non-recursive way); their usual purpose is to
 % prevent name capture

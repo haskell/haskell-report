@@ -170,7 +170,7 @@ formatRealFloat fmt decs x
                    []    -> "0.0e0"
                    [d]   -> d : ".0e" ++ show (e-1)
                    d:ds  -> d : '.' : ds ++ 'e':show (e-1)
-    	  
+          
               Just dec ->
                 let dec' = max dec 1 in
                 case is of
@@ -180,7 +180,7 @@ formatRealFloat fmt decs x
                         d:ds = map intToDigit
                                    (if ei > 0 then init is' else is')
                     in d:'.':ds  ++ "e" ++ show (e-1+ei)
-    	  
+          
           FFFixed ->
             case decs of
                Nothing 
@@ -239,8 +239,8 @@ floatToDigits base x =
 
         -- Haskell requires that f be adjusted so denormalized numbers
         -- will have an impossibly low exponent.  Adjust for this.
-	f :: Integer
-	e :: Int
+        f :: Integer
+        e :: Int
         (f, e) = let n = minExp - e0
                  in  if n > 0 then (f0 `div` (b^n), e0+n) else (f0, e0)
 
@@ -303,19 +303,20 @@ readFloat r    = [(fromRational ((n%1)*10^^(k-d)),t) | (n,d,s) <- readFix r,
                                                        (k,t)   <- readExp s] ++
                  [ (0/0, t) | ("NaN",t)      <- lex r] ++
                  [ (1/0, t) | ("Infinity",t) <- lex r]
-                 where readFix r = [(read (ds++ds'), length ds', t)
-                                        | (ds,d) <- lexDigits r,
-                                          (ds',t) <- lexFrac d ]
-
-                       lexFrac ('.':ds) = lexDigits ds
-                       lexFrac s        = [("",s)]        
-
-                       readExp (e:s) | e `elem` "eE" = readExp' s
-                       readExp s                     = [(0,s)]
-
-                       readExp' ('-':s) = [(-k,t) | (k,t) <- readDec s]
-                       readExp' ('+':s) = readDec s
-                       readExp' s       = readDec s
+               where 
+                 readFix r = [(read (ds++ds'), length ds', t)
+                             | (ds,d) <- lexDigits r,
+                               (ds',t) <- lexFrac d ]
+               
+                 lexFrac ('.':ds) = lexDigits ds
+                 lexFrac s        = [("",s)]        
+                 
+                 readExp (e:s) | e `elem` "eE" = readExp' s
+                 readExp s                     = [(0,s)]
+                 
+                 readExp' ('-':s) = [(-k,t) | (k,t) <- readDec s]
+                 readExp' ('+':s) = readDec s
+                 readExp' s       = readDec s
 
 lexDigits        :: ReadS String 
 lexDigits        =  nonnull isDigit
