@@ -113,7 +113,12 @@ $$
 $$
 A native thread of form $N[S]$ has thread-id $N$, while $S$ is
 an abstraction of its call stack.  If $\hcall$ is on top of the stack,
-the thread is willing to execute a Haskell thread.  If $\fcall{si}{h}$ is
+the thread is willing to execute a Haskell thread.
+\emph{What about referring to the $\hcall$ state as
+``inside the Haskell runtime system''? It includes things like GC and other
+``administrative tasks''. A native thread might be in the $\hcall$ state 
+without ever really executing Haskell code.)}
+If $\fcall{si}{h}$ is
 on top of the stack, the thread is in the process of dealing with a call
 to a foreign function, which will return its result to the Haskell thread
 $h$.  The safety-indicator $si$ is from teh FFI spec.
@@ -165,7 +170,7 @@ $$
 	{\NS ; \HS ~\Rightarrow~ \NS' ; \HS'}
 \end{array}
 $$
-These standard rules allow us to write the interesting transitions with less cluter.
+These standard rules allow us to write the interesting transitions with less clutter.
 $$
 \begin{array}{rcll}
 N[\hcall:S]; (\tau~@>>@~a)_{bt} 
@@ -174,8 +179,7 @@ N[\hcall:S]; (\tau~@>>@~a)_{bt}
 \\
 N[\hcall]; (\fcall{si}{f}~@>>@~a)_{\epsilon} 
 	& \Rightarrow 
-	& N[\fcall{si}{a_\epsilon},\hcall];  & (FCALL1) \\
-
+	& N[\fcall{si}{a_\epsilon}:\hcall];  & (FCALL1) \\
 \\
 N[\hcall:S]; (\fcall{si}{f}@>>@~a)_N 
 	& \Rightarrow 
