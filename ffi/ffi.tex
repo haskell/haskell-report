@@ -13,6 +13,9 @@
 % does not claim to be a definition of the Haskell 98 Foreign Function
 % Interface. 
 
+% Changes since RC6:
+% * fixed typos
+%
 % Changes since RC5:
 % * Author list: changed Alastair Reid's institution
 % * 1.4:   Clarified the wording
@@ -89,14 +92,14 @@
 \excludeversion{FUTURE}  % material for future extensions
 
 %\def\Version{\relax}
-\def\Version{\\(Release Candidate 6)}
+\def\Version{\\(Release Candidate 7)}
 \begin{DRAFT}%
 {
   \gdef\Version{%
     \\
     \textbf{--- DRAFT ---}\\[1ex]
     \ttfamily\scriptsize
-    $\relax$Id: ffi.tex,v 1.32 2002/09/12 06:16:23 chak Exp $\relax$%
+    $\relax$Id: ffi.tex,v 1.33 2002/09/13 02:09:28 chak Exp $\relax$%
     \ignorespaces}
   }
 \end{DRAFT}
@@ -2017,7 +2020,7 @@ call must precede the first invocation of \code{getProgName} and
 system other libraries that process command line arguments during
 initialisation are used.
 
-Finally, \code{hs\_perform\_gc()} advices the Haskell storage manager to
+Finally, \code{hs\_perform\_gc()} advises the Haskell storage manager to
 perform a garbage collection, where the storage manager makes an effort to
 releases all unreachable objects.  This function must not be invoked from C
 functions that are imported \code{unsafe} into Haskell code nor may it be used
