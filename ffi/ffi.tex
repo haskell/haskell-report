@@ -17,6 +17,11 @@
 %
 % * 5.8: Clarified documentation for `MarshalAlloc.free'.
 % * 5.8: Added `MarshalAlloc.realloc'.
+% * 3: Added the new safety level `threadsafe' with an explanation at the end
+%   of 3.3.
+% * 3: Replaced the nontermional `entity' by `impent' and `expent' to
+%   distinguish between import and export entities (as they are defined
+%   differently in later sections).
 % * 3.2: Clarified the description of foreign types; so far, `IO ()' was
 %   strictly speaking not included as a valid return type.  Currently,
 %   functions of type `a -> ()' are included.  Do we want this?  Their use
@@ -25,12 +30,6 @@
 %   C bindings.
 
 % TODO:
-% * Use `impent' and `extent' instead of just entity in Section 4; so that in
-%   Sections 4.1 and 4.2 we have too different non-terminals for the grammar.
-%   Be careful to make sure that all mention of just `entity' is replaced (eg,
-%   intro to Section 4) and include `impent -> [String]' as well as `extent ->
-%   [String]'.
-% * Add the `threadsafe' flag.
 % * Revise layout of the front page.
 % * Implement HTMLization.
 
@@ -57,14 +56,14 @@
 \excludeversion{FUTURE}  % material for future extensions
 
 %\def\Version{\relax}
-\def\Version{\\(Release Candidate 3)}
+\def\Version{\\(Release Candidate 4)}
 \begin{DRAFT}%
 {
   \gdef\Version{%
     \\
     \textbf{--- DRAFT ---}\\[1ex]
     \ttfamily\scriptsize
-    $\relax$Id: ffi.tex,v 1.25 2002/04/09 01:52:41 chak Exp $\relax$%
+    $\relax$Id: ffi.tex,v 1.26 2002/04/26 07:40:17 chak Exp $\relax$%
     \ignorespaces}
   }
 \end{DRAFT}
@@ -280,7 +279,7 @@ The following productions are added:
   \grule{reservedid}{%
     foreign}
   \grule{specialid}{%
-    export \galt\ import \galt\ safe \galt\ unsafe}
+    export \galt\ import \galt\ safe \galt\ threadsafe \galt\ unsafe}
   \gor{%
     ccall \galt\ cplusplus \galt\ dotnet \galt\ jvm \galt\ stdcall}
   \gor{%
@@ -304,19 +303,21 @@ nonterminal from the Haskell 98 Report.  All other nonterminals are new.
   \grule{topdecl}{%
     foreign \gnterm{fdecl}}
   \grule[define variable]{fdecl}{%
-    import \gnterm{callconv} \gopt{\gnterm{safety}} \gnterm{entity}
+    import \gnterm{callconv} \gopt{\gnterm{safety}} \gnterm{impent}
     \gnterm{var} {::}\ \gnterm{ftype}}
   \gor[expose variable]{%
-    export \gnterm{callconv} \gnterm{entity}
+    export \gnterm{callconv} \gnterm{expent}
     \gnterm{var} {::}\ \gnterm{ftype}}
   \grule[calling convention]{callconv}{%
     ccall \galt\ stdcall \galt\ cplusplus \galt\ jvm \galt\ dotnet}
   \gor{%
     \gverbal{system-specific calling conventions}}
-  \grule[external entity]{entity}{%
+  \grule[imported external entity]{impent}{%
+    \gopt{\gnterm{string}}}
+  \grule[exported entity]{expent}{%
     \gopt{\gnterm{string}}}
   \grule{safety}{%
-    unsafe \galt\ safe}
+    unsafe \galt\ safe \galt\ threadsafe}
 \end{grammar}
 %
 There are two flavours of foreign declarations: import and export
@@ -331,12 +332,13 @@ defined in the Haskell module.
 The external context that contains the external entity is determined by the
 calling convention given in the foreign declaration.  Consequently, the exact
 form of the specification of the external entity is dependent on both the
-calling convention and on whether it appears in an import or export
-declaration.  To provide syntactic uniformity in the presence of different
-calling conventions, it is guaranteed that the description of an external
-entity lexically appears as a Haskell string lexeme.  The only exception is
-where this string would be the empty string (i.e., be of the form \code{""});
-in this case, the string may be omitted in its entirety.
+calling convention and on whether it appears in an import declaration (as
+\gnterm{impent}) or in an export declaration (as \gnterm{expent}).  To provide
+syntactic uniformity in the presence of different calling conventions, it is
+guaranteed that the description of an external entity lexically appears as a
+Haskell string lexeme.  The only exception is where this string would be the
+empty string (i.e., be of the form \code{""}); in this case, the string may be
+omitted in its entirety.
 
 \subsection{Calling Conventions}
 \label{sec:call-conv}
@@ -503,6 +505,17 @@ an external entity was called, but before this call returns.  Consequently,
 objects other than stable pointers (cf.\ Section~\ref{sec:StablePtr}) may be
 moved or garbage collected by the storage manager.
 
+The safety level \code{threadsafe} is relevant only for Haskell systems that
+support concurrency including non-Haskell threads that may preempt the Haskell
+runtime as well as foreign calls.  On such systems, a foreign call marked as
+\code{threadsafe} must be executed by a separate non-Haskell thread, but
+otherwise behaves as a \code{safe} call.  This implies that even if that
+separate thread is blocked, the Haskell runtime can still make progress.  In
+contrast, when a \code{safe} or \code{unsafe} foreign call blocks, the Haskell
+runtime also blocks.  On Haskell systems that do not support the use of
+non-Haskell threads, \code{threadsafe} implies the same behaviour as
+\code{safe}.
+
 \subsection{Export Declarations}
 
 The general form of export declarations is
@@ -547,21 +560,20 @@ clearly, the syntax of the specification of an external entity depends on the
 calling convention and may be non-trivial.
 
 Consequently, the FFI does not fix a general syntax for denoting external
-entities, but requires \gnterm{entity} to take the form of a Haskell
-\gnterm{string} literal.  The formation rules for the values of these strings
-depend on the calling convention and a Haskell system implementing a
-particular calling convention will have to parse these strings in accordance
-with the calling convention.
+entities, but requires both \gnterm{impent} and \gnterm{expent} to take the
+form of a Haskell \gnterm{string} literal.  The formation rules for the values
+of these strings depend on the calling convention and a Haskell system
+implementing a particular calling convention will have to parse these strings
+in accordance with the calling convention.
 
-The separation of all formation rules that are dependent on the calling
-convention by requiring \gnterm{entity} to take the form of a \gnterm{string},
-implies that all information that is needed to statically analyse the Haskell
-program is separated from the information needed to generate the code
-interacting with the foreign language.  This is, in particular, helpful for
-tools processing Haskell source code.  When ignoring the information provided
-by \gnterm{entity}, foreign import and export declarations are still
-sufficient to infer identifier definition and use information as well as type
-information.
+Defining \gnterm{impent} and \gnterm{expent} to take the form of a
+\gnterm{string} implies that all information that is needed to statically
+analyse the Haskell program is separated from the information needed to
+generate the code interacting with the foreign language.  This is, in
+particular, helpful for tools processing Haskell source code.  When ignoring
+the entity information provided by \gnterm{impent} or \gnterm{expent}, foreign
+import and export declarations are still sufficient to infer identifier
+definition and use information as well as type information.
 
 For more complex calling conventions, there is a choice between the user-level
 syntax for identifying entities (e.g., Java or C{+}{+}) and the system-level
@@ -590,7 +602,7 @@ For import declarations, the syntax for the specification of external entities
 under the \code{ccall} calling convention is as follows:
 %
 \begin{grammar}
-  \grule[static function or address]{entity}{%
+  \grule[static function or address]{impent}{%
     " \gopt{static} \gopt{\gnterm{fname}} \gopt{\&} 
     \gopt{[ \gnterm{lib} ]} \gopt{\gnterm{cid}} "}
   \gor[stub factory importing addresses]{%
@@ -646,7 +658,7 @@ nevertheless needed so that we can import C routines that are named
 External entities in \gnterm{ccall} export declarations are of the form
 %
 \begin{grammar}
-  \grule{entity}{%
+  \grule{expent}{%
     " \gopt{\gnterm{cid}} "}
 \end{grammar}
 %
@@ -850,7 +862,7 @@ The syntax for the specification of external entities under the \code{jvm}
 calling convention is 
 %
 \begin{grammar}
-  \grule{entity}{%
+  \grule{impent}{%
     "\gnterm{jtype} \gnterm{jqid}(\gnterm{jtypes})"}
   \gor[constructor call]{%
     "new \gnterm{jqid}(\gnterm{jtypes})"}
