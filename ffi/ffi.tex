@@ -30,7 +30,8 @@
 %          the time).  `bitSize' on `Integer' etc is now undefined.
 % * 5.5:   Finalisers must be external functions to facilitate the
 %          implementation on Haskell systems that do not support pre-emptive
-%          concurrency
+%          concurrency.
+%          Added mallocForeignPtr and mallocForeignPtrBytes.
 % * 6:     Specified that HsBool==int in table2
 %          Relabelled column 1 in table 3 (C symbol -> CPP symbol)
 %          Replaced 0 and 1 with HS_BOOL_FALSE/TRUE
@@ -39,6 +40,7 @@
 %          Allowing multiple calls to hs_init() and clarified the constraints
 %          on the relative timing between hs_set_argv() and
 %          getProgName/getArgs. 
+%          Added hs_perform_gc().
 %
 % Changes since RC4:
 % * 5.6: Clarified documentation of `StablePtr's (RC 5)
@@ -60,7 +62,6 @@
 %   C bindings.
 
 % TODO:
-% * add isNullPtr and isNullFunPtr? [query send to the FFI list]
 % * Revise layout of the front page.
 % * Implement HTMLization.  (Malcolm suggests using
 %   <http://pauillac.inria.fr/~maranget/hevea/>)
@@ -95,7 +96,7 @@
     \\
     \textbf{--- DRAFT ---}\\[1ex]
     \ttfamily\scriptsize
-    $\relax$Id: ffi.tex,v 1.31 2002/09/11 07:31:30 chak Exp $\relax$%
+    $\relax$Id: ffi.tex,v 1.32 2002/09/12 06:16:23 chak Exp $\relax$%
     \ignorespaces}
   }
 \end{DRAFT}
@@ -1235,6 +1236,23 @@ the following signature and purpose:
 \item[addForeignPtrFinalizer ::\ ForeignPtr a -> FunPtr (Ptr a -> IO ()) -> IO
   ()] Add another finalizer to the given foreign object. No guarantees are
   made on the order in which multiple finalizers for a single object are run.
+  
+\item[mallocForeignPtr ::\ Storable a => IO (ForeignPtr a)] Allocate a block
+  of memory that is sufficient to hold values of type \code{a}.  The size of
+  the memory area is determined by the function \code{Storable.sizeOf}
+  (Section~\ref{sec:Storable}).  This corresponds to
+  \code{MarshalAlloc.malloc} (Section~\ref{sec:MarshalAlloc}), but
+  automatically attaches a finalizer that frees the block of memory as soon as
+  all references to that block of of memory have been dropped.  It is
+  \emph{not} guaranteed that the block of memory was allocated by
+  \code{MarshalAlloc.malloc}; so, \code{MarshalAlloc.realloc} must not be
+  applied to the resulting pointer.
+  
+\item[mallocForeignPtrBytes ::\ Int -> IO (ForeignPtr a)] Allocate a block of
+  memory of the given number of bytes with a finalizer attached that frees the
+  block of memory as soon as all references to that block of memory have
+  been dropped.  As for \code{mallocForeignPtr}, \code{MarshalAlloc.realloc}
+  must not be applied to the resulting pointer.
 
 \item[withForeignPtr ::\ ForeignPtr a -> (Ptr a -> IO b) -> IO b]
   This is a way to obtain the pointer living inside a foreign object. This
@@ -1964,6 +1982,8 @@ the following prototypes:
 hs_init     (int *argc, char **argv[]);
 hs_exit     ();
 hs_set_argv (int argc, char *argv[]);
+
+void hs_perform_gc (void);
 \end{verbatim}
 \end{quote}
 %
@@ -1996,6 +2016,12 @@ call must precede the first invocation of \code{getProgName} and
 \code{hs\_set\_argv()} is essential in cases where in addition to the Haskell
 system other libraries that process command line arguments during
 initialisation are used.
+
+Finally, \code{hs\_perform\_gc()} advices the Haskell storage manager to
+perform a garbage collection, where the storage manager makes an effort to
+releases all unreachable objects.  This function must not be invoked from C
+functions that are imported \code{unsafe} into Haskell code nor may it be used
+from a finalizer.
 
 \subsection{\code{CTypes}}
 \label{sec:CTypes}
