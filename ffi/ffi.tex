@@ -13,6 +13,13 @@
 % does not claim to be a definition of the Haskell 98 Foreign Function
 % Interface. 
 
+% Changes since RC13:
+% * 5.3: Fixed typo
+% * 5.7: Fixed a mistake in the type of `peekByteOff' and `pokeByteOff' (the
+%        type variable constrained by `Storable' must be different from the
+%        parameter of the `Ptr')
+% * 6.3: Improved documentation
+%
 % Changes since RC12:
 % * Acks : Added John Meacham
 % * 4.1.5: Bug fix courtesy of Wolfgang Thaller
@@ -150,14 +157,14 @@
 \excludeversion{FUTURE}  % material for future extensions
 
 %\def\Version{\relax}
-\def\Version{\\(Release Candidate 13)}
+\def\Version{\\(Release Candidate 14)}
 \begin{DRAFT}%
 {
   \gdef\Version{%
     \\
     \textbf{--- DRAFT ---}\\[1ex]
     \ttfamily\scriptsize
-    $\relax$Id: ffi.tex,v 1.48 2003/10/31 07:32:58 chak Exp $\relax$%
+    $\relax$Id: ffi.tex,v 1.49 2003/11/02 10:40:34 chak Exp $\relax$%
     \ignorespaces}
   }
 \end{DRAFT}
@@ -1189,7 +1196,7 @@ unsigned integral types of fixed size:
     8            & \code{Int8}  & \code{Word8}\\
     16           & \code{Int16} & \code{Word16}\\
     32           & \code{Int32} & \code{Word32}\\
-    64           & \code{Int64} & \code{Word34}\\
+    64           & \code{Int64} & \code{Word64}\\
     \hline
   \end{tabular}
 \end{quote}
@@ -1584,11 +1591,11 @@ The signatures and behaviour of the member functions of the class
   to a memory area regarded as an array of values of the same kind.  The first
   and second argument are as for \code{peekElemOff}.
   
-\item[peekByteOff ::\ Storable a => Ptr a -> Int -> IO a] Read a value from a
+\item[peekByteOff ::\ Storable a => Ptr b -> Int -> IO a] Read a value from a
   memory location given by a base address and byte offset from that base
   address.
   
-\item[pokeByteOff ::\ Storable a => Ptr a -> Int -> a -> IO ()] Write a value
+\item[pokeByteOff ::\ Storable a => Ptr b -> Int -> a -> IO ()] Write a value
   to a memory location given by a base address and offset from that base
   address.
   
@@ -2326,12 +2333,12 @@ And finally, the following types, including instances for \code{Eq} and
 \label{sec:CString}
 
 The module \code{CString} provides routines marshalling Haskell into C strings
-and vice versa.  The marshalling takes the current Unicode encoding on the
-Haskell side into account.  As a consequence, no guarantees can be made about
-the relative length of a Haskell string and its corresponding C string, and
-therefore, all routines provided by \code{CString} combine memory allocation
-and marshalling.  The default character marshalling occurs within the current
-locale.
+and vice versa.  The marshalling converts each Haskell character, representing
+a Unicode code point, to one or more bytes in a manner that, by default, is
+determined by the current locale.  As a consequence, no guarantees can be made
+about the relative length of a Haskell string and its corresponding C string,
+and therefore, all routines provided by \code{CString} combine memory
+allocation and marshalling.
 %
 \begin{codedesc}
 \item[type CString = Ptr CChar] A C string is a reference to an array of C
@@ -2339,7 +2346,7 @@ locale.
 
 \item[type CStringLen = (CString, Int)] In addition to NUL-terminated strings,
   the module \code{CString} also supports strings with explicit length
-  information. 
+  information in bytes. 
 
 \item[peekCString~~~~::\ CString~~~~-> IO String]
 \item[peekCStringLen~::\ CStringLen~-> IO String]\combineitems
@@ -2363,17 +2370,19 @@ locale.
 
 \end{codedesc}
 
-For efficiency reasons it is occasionally desirable to ignore the Unicode
-capabilities of Haskell and treat values of type \code{Char} as single byte
-characters.  Hence, the module \code{CString} provides a variant of the above
-marshalling routines that truncates character sets correspondingly.  These
-functions should be used with care, as a loss of information can occur.
+Some C libraries require to ignore the Unicode capabilities of Haskell and
+treat values of type \code{Char} as single byte characters.  Hence, the module
+\code{CString} provides a variant of the above marshalling routines that
+truncates character sets correspondingly.  These functions should be used with
+care, as a loss of information can occur; unrepresentable characters are
+converted to `?'.
 %
 \begin{codedesc}
 \item[castCharToCChar ::\ Char -> CChar]
 \item[castCCharToChar ::\ CChar -> Char] \combineitems These two functions cast
   Haskell characters to C characters and vice versa while ignoring the Unicode
-  encoding of the Haskell character.  
+  encoding of the Haskell character.  More precisely, only the first 256
+  character points are preserved.
 
 \item[peekCAString~~~~::\ CString~~~~-> IO String]
 \item[peekCAStringLen~::\ CStringLen~-> IO String]\combineitems
@@ -2381,8 +2390,9 @@ functions should be used with care, as a loss of information can occur.
 \item[newCAStringLen~~::\ String -> IO CStringLen] \combineitems
 \item[withCAString~~~~::\ String -> (CString~~~~-> IO a) -> IO a]\combineitems
 \item[withCAStringLen~::\ String -> (CStringLen~-> IO a) -> IO a]
-  \combineitems String marshalling that cast Haskell characters to C
-  characters ignoring the Unicode encoding of Haskell characters.
+  \combineitems These functions for whole-string marshalling cast Haskell
+  characters to C characters and vice versa while ignoring the Unicode
+  encoding of Haskell characters.
 \end{codedesc}
 
 To simplify bindings to C libraries that use \code{wchar\_t} for character
@@ -2393,7 +2403,7 @@ exports a variant of the above string marshalling routines for wide characters.
 \item[type CWString~~~~= Ptr CWChar]
 \item[type CWStringLen~= (CWString, Int)] \combineitems
   Wide character strings in a NUL-terminated version and a variant with
-  explicit length information.
+  explicit length information in number of wide characters.
 
 \item[peekCWString~~~~::\ CWString~~~~-> IO String]
 \item[peekCWStringLen~::\ CWStringLen~-> IO String]\combineitems
