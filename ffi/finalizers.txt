@@ -135,7 +135,7 @@ Rationale
     George Russell claimed to have an example where it is also
     necessary for the foreign GC to invoke Haskell finalizers, but 
     on closer examination it became clear that what is needed is the
-    ability to call hs_freeStablePtr and a richer interface to the 
+    ability to call hs_free_stable_ptr and a richer interface to the 
     garbage collector to deal with cycles that span both the Haskell and
     the foreign heap.  In the end, no need for Haskell finalizers was
     demonstrated.
