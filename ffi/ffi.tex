@@ -15,7 +15,10 @@
 
 % Changes since RC14:
 % * 6.2: CWChar -> CWchar
-% * 6.3: CWChar -> CWchar
+% * 6.3: - CWChar -> CWchar
+%        - Stated explicitly that memory allocated by `newCString' and friends
+%          can be deallocated by `MarshalAlloc.free'
+%        - Improved documentation
 %
 % Changes since RC13:
 % * 5.3: Fixed typo
@@ -168,7 +171,7 @@
     \\
     \textbf{--- DRAFT ---}\\[1ex]
     \ttfamily\scriptsize
-    $\relax$Id: ffi.tex,v 1.51 2003/11/05 08:24:56 chak Exp $\relax$%
+    $\relax$Id: ffi.tex,v 1.52 2003/11/12 04:58:11 chak Exp $\relax$%
     \ignorespaces}
   }
 \end{DRAFT}
@@ -2342,15 +2345,18 @@ a Unicode code point, to one or more bytes in a manner that, by default, is
 determined by the current locale.  As a consequence, no guarantees can be made
 about the relative length of a Haskell string and its corresponding C string,
 and therefore, all routines provided by \code{CString} combine memory
-allocation and marshalling.
+allocation and marshalling.  The translation between Unicode and the encoding
+of the current locale may be lossy.  The function \code{charIsRepresentable}
+identifies the characters that can be accurately translated; unrepresentable
+characters are converted to `?'.
 %
 \begin{codedesc}
 \item[type CString = Ptr CChar] A C string is a reference to an array of C
   characters terminated by NUL.
-
-\item[type CStringLen = (CString, Int)] In addition to NUL-terminated strings,
-  the module \code{CString} also supports strings with explicit length
-  information in bytes. 
+  
+\item[type CStringLen = (Ptr CChar, Int)] In addition to NUL-terminated
+  strings, the module \code{CString} also supports strings with explicit
+  length information in bytes.
 
 \item[peekCString~~~~::\ CString~~~~-> IO String]
 \item[peekCStringLen~::\ CStringLen~-> IO String]\combineitems
@@ -2361,7 +2367,8 @@ allocation and marshalling.
 \item[newCStringLen~::\ String -> IO CStringLen] \combineitems Allocate a
   memory area for a Haskell string and marshal the string into its C
   representation.  There are two variants of the routine, one for each
-  supported string representation.
+  supported string representation.  The memory area allocated by these
+  routines may be deallocated using \code{MarshalAlloc.free}.
 
 \item[withCString~~~~::\ String -> (CString~~~~-> IO a) -> IO a]
 \item[withCStringLen~::\ String -> (CStringLen~-> IO a) -> IO a] \combineitems
@@ -2378,8 +2385,7 @@ Some C libraries require to ignore the Unicode capabilities of Haskell and
 treat values of type \code{Char} as single byte characters.  Hence, the module
 \code{CString} provides a variant of the above marshalling routines that
 truncates character sets correspondingly.  These functions should be used with
-care, as a loss of information can occur; unrepresentable characters are
-converted to `?'.
+care, as a loss of information can occur.
 %
 \begin{codedesc}
 \item[castCharToCChar ::\ Char -> CChar]
@@ -2405,7 +2411,7 @@ exports a variant of the above string marshalling routines for wide characters.
 %
 \begin{codedesc}
 \item[type CWString~~~~= Ptr CWchar]
-\item[type CWStringLen~= (CWString, Int)] \combineitems
+\item[type CWStringLen~= (Ptr CWchar, Int)] \combineitems
   Wide character strings in a NUL-terminated version and a variant with
   explicit length information in number of wide characters.
 
