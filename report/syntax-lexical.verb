@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/syntax-lexical.verb,v 1.4 2001/09/11 13:04:28 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/syntax-lexical.verb,v 1.5 2001/09/11 16:19:17 simonpj Exp $
 % 
 
 @@@
@@ -45,7 +45,7 @@ ascSymbol     -> @!@ | @#@ | @$@ | @%@ | @&@ | @*@ | @+@ | @.@ | @/@ | @<@ | @=@
 uniSymbol       -> \tr{any Unicode symbol or punctuation}
 digit          -> ascDigit | uniDigit
 ascDigit	-> @0@ | @1@ | ... | @9@
-uniDigit        -> \tr{any Unicode numeric}
+uniDigit        -> \tr{any Unicode decimal digit}
 octit   -> @0@ | @1@ | ... | @7@
 hexit   -> digit | @A@ | ... | @F@ | @a@ | ... | @f@
 
