@@ -35,7 +35,7 @@
     \\
     \textbf{--- DRAFT ---}\\[1ex]
     \ttfamily\scriptsize
-    $\relax$Id: ffi.tex,v 1.13 2001/08/30 16:03:50 chak Exp $\relax$%
+    $\relax$Id: ffi.tex,v 1.14 2001/08/30 16:13:17 chak Exp $\relax$%
     \ignorespaces}
   }
 \end{DRAFT}
@@ -334,7 +334,7 @@ with the exception that values of type \code{ForeignPtr a} can only be passed
 from Haskell to the external context and not in the opposite direction.
 
 \begin{verbatim}
-FIXME: Remove ForeignPtr from the list of basic foreign types.
+NOTE: Remove ForeignPtr from the list of basic foreign types.
   ** Will be removed in the next version unless their are complaints **
 \end{verbatim}
 
@@ -707,23 +707,27 @@ language-independent marshalling support.  These modules are \code{Int},
 \code{MarshalAlloc}, \code{MarshalArray}, \code{MarshalError}, and
 \code{MarshalUtils}.
 
+Furthermore, \code{Foreign} provides the following function:
+%
+\begin{codedesc}
+\item[unsafePerformIO ::\ IO a -> a] Execute an \code{IO} action in place of a
+  pure computations.  For the behaviour to be predictable, the IO computation
+  should be free of side effects and independent of its environment.
+  
+  If the \code{IO} computation wrapped in \code{unsafePerformIO} performs side
+  effects, then the relative order in which those side effects take place
+  (relative to the main \code{IO} trunk, or other calls to
+  \code{unsafePerformIO}) is indeterminate.
+\end{codedesc}
+
 \begin{verbatim}
-NOTE: unsafePerformIO is essential to the FFI?  Export it from Foreign.
-  (May also be exported by IOExts, but we might want to guarantee its
-  availability.) (Maybe also unsafeInterleaveIO.)
-** This note will disappear and `unsafePerformIO' being added to Foreign if
-   there are no complaints **
-Malcolm: yes
+FIXME: Maybe add the explanation about the typing problem with unsafePerformIO.
 \end{verbatim}
 
 \subsection{\code{Bits}}
 
 \begin{verbatim}
-NOTE: Shouldn't Bits be part of the FFI?  If so, IntN and WordN must have
-  an instance for Bits, too.
-** This note will disappear and `Bits' being added if there are no 
-   complaints **
-Malcolm: yes
+Take `Bits' definition from library spec (resp HSLibs).
 \end{verbatim}
 
 \subsection{\code{Int} and \code{Word}}
@@ -745,11 +749,11 @@ unsigned integral types of fixed size:
 \end{quote}
 %
 For these integral types, the modules \code{Int} and \code{Word} export class
-instances for all types classes for which \code{Int} has an instance.  The
-constraints on the implementation of these instances are also the same as
-those outlined for \code{Int} in the Haskell Report.  There is, however, the
-additional constraint that all arithmetic on the fixed-sized types is
-performed modula \(2^n\).
+instances for all types classes for which \code{Int} has an instance; this
+includes the type class \code{Bits}.  The constraints on the implementation of
+these instances are also the same as those outlined for \code{Int} in the
+Haskell Report.  There is, however, the additional constraint that all
+arithmetic on the fixed-sized types is performed modula \(2^n\).
 
 \subsection{\code{Ptr}}
 \label{sec:Ptr}
@@ -866,7 +870,7 @@ the following signature and purpose:
   instance of class \code{Storable} (see Section~\ref{sec:Storable}), which
   provides the marshalling operations.
   
-  An instance for the class \code{Eq} is provided.
+  Instances for the classes \code{Eq}, code{Ord}, and \code{Show} is provided.
   
 \item[newForeignPtr ::\ Ptr a -> IO () -> IO (ForeignPtr a)] Turns a plain
   memory reference into a foreign object by associating a finaliser---given by
@@ -941,13 +945,6 @@ the following signature and purpose:
 \item[castForeignPtr ::\ ForeignPtr a -> ForeignPtr b] This function casts a
   \code{ForeignPtr} parameterised by one type into another type.
 \end{codedesc}
-
-\begin{verbatim}
-NOTE: Why do we only have Eq on ForeignPtr, but also Ord an Show on Ptr?
-** This note will disappear and Ord and Show be added to ForeignPtr unless
-   their are complaints **
-Malcolm: yes
-\end{verbatim}
 
 \subsection{\code{StablePtr}}
 \label{sec:StablePtr}
