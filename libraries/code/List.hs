@@ -55,14 +55,14 @@ nubBy eq (x:xs)         =  x : nubBy eq (filter (\y -> not (eq x y)) xs)
 delete                  :: Eq a => a -> [a] -> [a]
 delete                  =  deleteBy (==)
 
-deleteBy                :: (x -> a -> Bool) -> x -> [a] -> [a]
+deleteBy                :: (a -> a -> Bool) -> a -> [a] -> [a]
 deleteBy eq x []        = []
 deleteBy eq x (y:ys)    = if x `eq` y then ys else y : deleteBy eq x ys
 
 (\\)                    :: Eq a => [a] -> [a] -> [a]
 (\\)                    =  foldl (flip delete)
 
-deleteFirstsBy          :: (x -> a -> Bool) -> [a] -> [x] -> [a]
+deleteFirstsBy          :: (a -> a -> Bool) -> [a] -> [a] -> [a]
 deleteFirstsBy eq       =  foldl (flip (deleteBy eq))
 
 union                   :: Eq a => [a] -> [a] -> [a]

@@ -190,7 +190,7 @@ discarded.
 
 Implementations should enforce as far as possible, locally to the
 \Haskell{} process, multiple-reader single-writer locking on files.
-That is, \emph{there may either be many handles on the same file which manage
+That is, {\em there may either be many handles on the same file which manage
 input, or just one handle on the file which manages output}.  If any
 open or semi-closed handle is managing a file for output, no new
 handle can be allocated for that file.  If any open or semi-closed
@@ -301,7 +301,7 @@ except that it works only on @stdin@.
 
 Three kinds of buffering are supported: line-buffering, 
 block-buffering or no-buffering.  These modes have the following effects.
-For output, items are written out, or \emph{flushed}, from the internal buffer 
+For output, items are written out, or {\em flushed}, from the internal buffer 
 according to the buffer mode:
 \begin{itemize}
 \item
@@ -335,7 +335,7 @@ next block of data is read into the buffer.
 \item
 {\bf no-buffering:} 
 the next input item is read and returned.  The @hLookAhead@\indextt{hLookAhead} 
-operation (Section~\ref{hLookAhead})implies that
+operation (Section~\ref{hLookAhead}) implies that
 even a no-buffered handle may require a one-character buffer.
 \end{itemize}
 
@@ -491,7 +491,7 @@ the @hWaitForInput@, @hReady@ and @hGetChar@ computations may fail with:
 @isEOFError@ if the end of file has been reached.
 
 \subsubsection{Reading Ahead}
-\label{hLookahead}
+\label{hLookAhead}
 \index{lookahead}
 
 Computation @hLookAhead@~"hdl"\indextt{hLookAhead} returns the next character from handle

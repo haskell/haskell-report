@@ -222,7 +222,7 @@ All tuples are instances of <tt>Eq</tt>, <tt>Ord</tt>, <tt>Bounded</tt>, <tt>Rea
 There is no upper bound on the size of a tuple, but some Haskell
 implementations may restrict the size of tuples, and limit the
 instances associated with larger tuples.  However, every Haskell
-implementation must support tuples up to size 7, and their instances
+implementation must support tuples up to size 15, together with their instances
 for <tt>Eq</tt>, <tt>Ord</tt>, <tt>Bounded</tt>, <tt>Read</tt>, 
 <tt>Show</tt>, and <tt>Ix</tt>.  The Prelude and
 libraries define tuple functions such as <tt>zip</tt> for tuples up to a size
@@ -375,6 +375,14 @@ In numbered item 3, replace
 ``(all constructors must by nullary)'' with 
 ``(all constructors must be nullary)''.
 
+<p><li> [June 2001] <strong>Page 134, Appendix D.4, Derived instances of Read and Show</strong>.
+In the displayed equation starting <tt>fst (head (...)) == x</tt>, replace "<tt>r</tt>" by
+the empty string, resulting in the following:
+<pre>
+  fst (head (readsPrec d (showsPrec d x ""))) == x
+</pre>
+(The old, stronger, equation is simply false.)
+
 <p><li>  [Apr 2001] <strong>Page 141, Bibliograpy</strong>. 
 Citation [4] should read "JR Hindley".
 
@@ -498,18 +506,6 @@ example:
 In some cases, <tt>unfoldr</tt> can undo a <tt>foldr</tt> operation:"
 <p>
 (Followed by the existing displayed equation.)
-
-
-<p><li> [May 2001] <strong>Page 32, Section 7.8, Library List</strong>.
-<ul> <li> Add <tt>deleteFirstsBy</tt> to the export list.  (It has always
- been in the library, but the report failed to export it!)
-<li> Generalise the type signatures of <tt>deleteBy</tt> and <tt>deleteFirstsBy</tt> to:
-<pre>
-   deleteBy                :: (x -> a -> Bool) -> x -> [a] -> [a]
-   deleteFirstsBy          :: (x -> a -> Bool) -> [a] -> [x] -> [a]
-</pre>
-The definitions have these more general types, and they are occasionally useful.
-</ul>
 
 <p><li> [Apr 2001] <strong>Page 34, Section 7.8, Library List</strong>.
 Replace the definition of <tt>partition</tt> by
