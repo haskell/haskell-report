@@ -76,6 +76,13 @@ Rationale
     order): these can easily be composed in Haskell, but a separate C
     routine is required if the finalizer must be a foreign function.
     
+    Alastair Reid comments: this would be handled just fine by C
+    finalizers if addForeignPtrFinalizer guaranteed to execute
+    finalizers in reverse order of their addition.  This seems like a
+    reasonable thing to specify since addForeignPtrFinalizer is much
+    less useful if this guarantee doesn't hold and because it is easy
+    to implement.
+
     eg(2). we might want to free a composite object; say an array of
     strings.  In Haskell, we can write the finalizer as
     
@@ -111,6 +118,27 @@ Rationale
     (George Russell has an example where this seems important, but I
     haven't yet got my head around it properly.  George - please fill
     in the details).
+
+  Expressing liveness dependencies between ForeignPtrs
+  ----------------------------------------------------
+
+    The current FFI spec says, under the documentation for touchForeignPtr:
+
+      This function can be used to express liveness dependencies
+      between ForeignPtrs: For example, if the finalizer for one
+      ForeignPtr touches a second ForeignPtr, then it is ensured that
+      the second ForeignPtr will stay alive at least as long as the
+      first. This can be useful when you want to manipulate interior
+      pointers to a foreign structure: You can use touchForeignObj to
+      express the requirement that the exterior pointer must not be
+      finalized until the interior pointer is no longer referenced.
+
+    If finalizers are restricted to being C-only, then we need an
+    alternative mechanism to be able to express these dependencies.
+
+    (side note: we believe this technique doesn't work in GHC at the
+    moment, although you can achieve the desired effect using Weak
+    pointers).
 
   Other cleanups
   --------------
@@ -149,6 +177,11 @@ Rationale
        (although this is only true in Hugs and NHC where finalizers
        are run directly by the garbage collector).
 
+    3. If finalizers cannot modify mutable Haskell state (see later),
+       then they are significantly less uesful in a system that
+       supports mutable Haskell state, and we might prefer to avoid
+       the complexity on the grounds that the payoff isn't worth it.
+
     (any others?)
 
 
@@ -174,11 +207,11 @@ Implementations
     The effect is that the finalizer can "preempt" any running Haskell
     computation, and finalizers can even preempt each other.
 
-    There is some doubt over whether the patch is safe as it stands:
-    the safety of the patch depends on whether it is safe to use
-    unsafePerformIO to call C code which calls back into Haskell.  The
-    status of this in Hugs is currently unknown.  Whether the patch
-    can be made safe using other means remains to be seen.
+    The patch is not safe as it stands: the safety of the patch
+    depends on whether it is safe to use unsafePerformIO to call C
+    code which calls back into Haskell.  The status of this in Hugs is
+    believed to be unsafe.  Whether the patch can be made safe by
+    addressing this issue, or by other means, remains to be seen.
 
     An alternative implementation would be to piggyback on Hugs's
     cooperative concurrency and place finalizers into the "thread
@@ -284,6 +317,14 @@ Todo: flesh out.
 3. No change to the spec for the time being, but we all agree to
    implement an experimental extension to support Haskell finalizers
    and experiment with it.
+
+4. No change to the spec for the time being, while we evaluate the
+   need and cost of implementing Haskell finalizers in a range of
+   implementations.  Note that upgrading from C finalizers to
+   Haskell finalizers would only require that we say that finalizers
+   are invoked with the equivalent of a 'safe' ffi call instead of
+   an 'unsafe' ffi call and, no doubt, the addition of some
+   convenience functions.
 
 
 --
