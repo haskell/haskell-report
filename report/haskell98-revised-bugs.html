@@ -15,6 +15,25 @@ published by Cambridge University Press as a book, and also in the Journal of Fu
 All page references are to these texts, which may differ slightly from the online versions.
 
 <ul>
+<li> [July 2004] <strong>Page xx, Section 3.17.2, Informal Semantics of
+Pattern-Matching, case #6.</strong>
+Case 6 says: "Matching against a constructor using labeled fields is
+the same as matching ordinary constructor patterns except that the
+fields are matched in the order they are named in the field list. All
+fields listed must be declared by the constructor; fields may not
+be named more than once. Fields not named by the pattern are ignored
+(matched against _)."
+<p>
+You could interpret 'field list' to mean the order the fields appear
+in the pattern, OR, the order in which the fields were declared.
+The choice of interpretation affects termination behaviour.
+<p>
+The intention of the Report writers was to use the field order of the
+pattern, not the declaration.  Thus, the Report can be clarified by
+changing the end of the first sentence above to read "the order they
+are named in the pattern field list".
+
+
 <li> [May 2003] <strong>Page 89, Section 6.3.4, The Enum Class.</strong>
 Section 6.3.4 states: "For all four of these Prelude numeric types, all of the <tt>enumFrom</tt>
 family of functions are strict in all their arguments".
