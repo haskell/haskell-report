@@ -32,7 +32,7 @@ operations:
 % lies within the bounds of an array when accessing that array.
 
 \subsection{Deriving Instances of @Ix@}
-\index{Ix@@{\tt Ix}!derived instance}
+\indexdi{Ix}
 
 It is possible to derive an instance of @Ix@ automatically, using
 a @deriving@ clause on a @data@ declaration (Section~\ref{derived-decls}).
@@ -100,7 +100,7 @@ instance  (Ix a, Ix b)  => Ix (a,b) where
 }
 \ecaption{Derivation of Ix instances}
 \label{prelude-index}
-\indextt{Ix}                                                
+\indexclass{Ix}                                                
 \indextt{range}\indextt{index}\indextt{inRange}   
 \indextt{rangeSize}                                         
 \end{figure}

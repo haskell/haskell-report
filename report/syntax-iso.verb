@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/syntax-iso.verb,v 1.11 2002/12/10 11:51:11 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/syntax-iso.verb,v 1.12 2003/01/13 13:08:56 simonpj Exp $
 %
 %**<title>Haskell 98 Syntax</title>
 %**~header
@@ -639,7 +639,7 @@ qual	-> pat @<-@ exp 	& (\tr{generator})
          | @let@ decls		& (\tr{local declaration})
          | exp 			& (\tr{guard})
 
-alts	->  alt_1 @;@ ... @;@ alt_n 		&  (n>=0)
+alts	->  alt_1 @;@ ... @;@ alt_n 		&  (n>=1)
 alt	->  pat @->@ exp [@where@ decls]
 	|   pat gdpat [@where@ decls]
 	|					& (empty alternative)

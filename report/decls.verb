@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/decls.verb,v 1.18 2002/12/10 11:51:10 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/decls.verb,v 1.19 2003/01/13 13:08:55 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Declarations</title>
 %*section 4
@@ -590,7 +590,7 @@ constructor.  The arguments to the positional constructor occur in the
 same order as the labeled fields.  For example, the declaration
 \bprog
 @
-  data C = F { f1,f2 :: Int, f3 :: Bool}
+  data C = F { f1,f2 :: Int, f3 :: Bool }
 @
 \eprog
 defines a type and constructor identical to the one produced by
@@ -1546,7 +1546,7 @@ otherwise, the binding is called a {\em function
 binding}.  Either binding may appear at the top-level of a module or
 within a @where@ or @let@ construct.  
 
-\subsubsubsection{Function bindings.}
+\subsubsubsection{Function bindings}
 \index{function binding}
 A function binding binds a variable to a function value.  The general
 form of a function binding for variable "x" is:
@@ -1604,7 +1604,7 @@ equivalent to the equation (i.e.~simple pattern binding):
 where the "x_i" are new identifiers.
 }
 
-\subsubsubsection{Pattern bindings.}
+\subsubsubsection{Pattern bindings}
 \label{patbind}
 \index{pattern binding}
 

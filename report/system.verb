@@ -6,7 +6,7 @@
 \outline{
 \inputHS{lib-hdrs/System}
 }
-\indextt{ExitCode}\indextt{ExitSuccess}\indextt{ExitFailure}
+\indextycon{ExitCode}\indextt{ExitSuccess}\indextt{ExitFailure}
 \indextt{getArgs}\indextt{getProgName}\indextt{getEnv}
 \indextt{system}\indextt{exitWith}\indextt{exitFailure}
 

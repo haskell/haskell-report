@@ -160,7 +160,7 @@ is processed from right-to-left rather than left-to-right.
 
 \subsection{@unfoldr@}
 
-The @unfoldr@ function is a `dual' to @foldr@: while @foldr@ reduces a list
+The @unfoldr@ function is a ``dual'' to @foldr@: while @foldr@ reduces a list
 to a summary value, @unfoldr@ builds a list from a seed value.  For 
 example:
 \bprog

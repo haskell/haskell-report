@@ -30,7 +30,7 @@
 \indexentry{vertab@{\it  vertab}}{9}
 \indexentry{formfeed@{\it  formfeed}}{9}
 \indexentry{comment@{\it  comment}}{9}
-\indexentry{dashes1@{\it  dashes1}}{9}
+\indexentry{dashes@{\it  dashes}}{9}
 \indexentry{ncomment@{\it  ncomment}}{9}
 \indexentry{opencom@{\it  opencom}}{9}
 \indexentry{closecom@{\it  closecom}}{9}
@@ -506,6 +506,7 @@
 \indexentry{maybe@{\tt  maybe}}{81}
 \indexentry{either@{\tt  either}}{81}
 \indexentry{$"!@{\tt  {\char'044}{\char'041}}}{81}
+\indexentry{$@{\tt  {\char'044}}}{81}
 \indexentry{seq@{\tt  seq}}{81}
 \indexentry{strictness flags}{82}
 \indexentry{Eq@{\tt  Eq} (class)}{82}
@@ -1043,7 +1044,7 @@
 \indexentry{vertab@{\it  vertab}}{129}
 \indexentry{formfeed@{\it  formfeed}}{129}
 \indexentry{comment@{\it  comment}}{129}
-\indexentry{dashes1@{\it  dashes1}}{129}
+\indexentry{dashes@{\it  dashes}}{129}
 \indexentry{ncomment@{\it  ncomment}}{129}
 \indexentry{opencom@{\it  opencom}}{129}
 \indexentry{closecom@{\it  closecom}}{129}
@@ -1316,9 +1317,9 @@
 \indexentry{range@{\tt  range}}{169}
 \indexentry{index@{\tt  index}}{169}
 \indexentry{inRange@{\tt  inRange}}{169}
-\indexentry{Ix@{\tt Ix}!derived instance}{170}
+\indexentry{Ix@{\tt  Ix} (class)!derived instance}{170}
 \indexentry{enumeration}{170}
-\indexentry{Ix@{\tt  Ix}}{171}
+\indexentry{Ix@{\tt  Ix} (class)}{171}
 \indexentry{range@{\tt  range}}{171}
 \indexentry{index@{\tt  index}}{171}
 \indexentry{inRange@{\tt  inRange}}{171}
@@ -1704,7 +1705,7 @@
 \indexentry{bracket@{\tt  bracket}}{211}
 \indexentry{bracket{\char '137}@{\tt  bracket{\char '137}}}{211}
 \indexentry{I/O errors}{212}
-\indexentry{IOError@{\tt  IOError}}{212}
+\indexentry{IOError@{\tt  IOError} (datatype)}{212}
 \indexentry{isAlreadyExistsError@{\tt  isAlreadyExistsError}}{212}
 \indexentry{isDoesNotExistError@{\tt  isDoesNotExistError}}{212}
 \indexentry{isAlreadyInUseError@{\tt  isAlreadyInUseError}}{212}
@@ -1838,7 +1839,7 @@
 \indexentry{system@{\tt  system}}{229}
 \indexentry{exitWith@{\tt  exitWith}}{229}
 \indexentry{exitFailure@{\tt  exitFailure}}{229}
-\indexentry{ExitCode@{\tt  ExitCode}}{229}
+\indexentry{ExitCode@{\tt  ExitCode} (datatype)}{229}
 \indexentry{ExitSuccess@{\tt  ExitSuccess}}{229}
 \indexentry{ExitFailure@{\tt  ExitFailure}}{229}
 \indexentry{getArgs@{\tt  getArgs}}{229}
@@ -1954,9 +1955,9 @@
 \indexentry{split@{\tt  split}}{245}
 \indexentry{genRange@{\tt  genRange}}{245}
 \indexentry{RandomGen@{\tt  RandomGen}}{245}
-\indexentry{StdGen@{\tt  StdGen}}{246}
+\indexentry{StdGen@{\tt  StdGen} (datatype)}{246}
 \indexentry{mkStdGen@{\tt  mkStdGen}}{246}
-\indexentry{Random@{\tt  Random}}{247}
+\indexentry{Random@{\tt  Random} (class)}{247}
 \indexentry{random@{\tt  random}}{247}
 \indexentry{randomR@{\tt  randomR}}{247}
 \indexentry{randoms@{\tt  randoms}}{247}

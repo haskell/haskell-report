@@ -26,7 +26,7 @@ Some related operations on file systems are contained in the
 \label{IOError}
 Errors of type @IOError@ are used by the I/O monad.  This is an
 abstract type; the library provides functions to interrogate and
-construct values in @IOError@:\indextt{IOError}
+construct values in @IOError@:\indextycon{IOError}
 \begin{itemize}
 \item
 @isAlreadyExistsError@\indextt{isAlreadyExistsError}
@@ -271,7 +271,7 @@ handle will still fail as if "hdl" had been successfully closed.
 For a handle "hdl" which is attached to a physical file, @hFileSize@\indextt{hFileSize}
 "hdl" returns the size of that file in 8-bit bytes ("\geq" 0).
 
-\subsubsection{Detecting the End of Input}
+\subsection{Detecting the End of Input}
 \label{EOF}
 \index{end of file}
 
@@ -296,7 +296,7 @@ except that it works only on @stdin@.
 % The handle is not open for reading.
 % \end{itemize}
 
-\subsubsection{Buffering Operations}
+\subsection{Buffering Operations}
 \label{Buffering}
 \index{file buffering}
 

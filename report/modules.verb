@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/modules.verb,v 1.19 2002/12/10 11:51:11 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/modules.verb,v 1.20 2003/01/13 13:08:56 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Modules</title>
 %*section 5
@@ -148,7 +148,7 @@ A value, field name, or class method, whether declared in
 the module body or imported,
 may be named by giving the name of the value as a "qvarid", which must be in scope.
 Operators should be enclosed in parentheses to turn them into
-"qvarid"'s.  
+"qvarid"s.  
 
 \item
 An algebraic datatype "T"
@@ -517,11 +517,10 @@ illegal to write
 \eprog
 \item {\em By an @import@ declaration.}  An @import@ declaration, whether @qualified@ or not,
 always brings into scope the qualified name of the imported entity (Section~\ref{import}).
-\end{itemize}
-Qualifiers may also be applied to
-names imported by an unqualified import; this allows a qualified
+This allows a qualified
 import to be replaced with an unqualified one without forcing changes
 in the references to the imported names.  
+\end{itemize}
 
 
 \subsubsection{Name clashes}
@@ -655,8 +654,8 @@ functions, called the ``Standard Prelude.''  In
 \Haskell{}, the Prelude is contained in the
 module @Prelude@.\indexmodule{Prelude} There are also
 many predefined library modules, which provide less frequently used
-functions and types.  For example, arrays, 
-tables, and most of the input/output are all part of the standard
+functions and types.  For example, complex numberss, arrays, 
+and most of the input/output are all part of the standard
 libraries.    These are 
 defined in Part~\ref{libraries}
 Separating

@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/syntax-lexical.verb,v 1.9 2002/12/10 11:51:11 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/syntax-lexical.verb,v 1.10 2003/01/13 13:08:56 simonpj Exp $
 % 
 
 @@@
@@ -22,7 +22,7 @@ space		-> \tr{a space}
 tab		-> \tr{a horizontal tab}
 uniWhite        -> \tr{any Unicode character defined as whitespace}
 
-comment         -> dashes [ any_{\langle symbol\rangle}  \{any\} ] newline
+comment         -> dashes [ any_{\langle{}symbol\rangle}  \{any\} ] newline
 dashes		-> @--@ \{@-@\}
 opencom		-> @{-@
 closecom	-> @-}@
@@ -39,7 +39,7 @@ uniSmall        -> \tr{any Unicode lowercase letter}
 large		-> ascLarge | uniLarge
 ascLarge      -> @A@ | @B@ | ... | @Z@
 uniLarge        -> \tr{any uppercase or titlecase Unicode letter}
-symbol		-> ascSymbol | uniSymbol_{\langle{} special | @_@ | @:@ | @"@ | @'@ \rangle{}}
+symbol		-> ascSymbol | uniSymbol_{\langle{}special | @_@ | @:@ | @"@ | @'@\rangle{}}
 
 ascSymbol     -> @!@ | @#@ | @$@ | @%@ | @&@ | @*@ | @+@ | @.@ | @/@ | @<@ | @=@ | @>@ | @?@ | @@
                 |  @\@ | @^@ | @|@ | @-@ | @~@
@@ -66,7 +66,7 @@ hexit   -> digit | @A@ | ... | @F@ | @a@ | ... | @f@
 \indexsyn{vertab}%
 \indexsyn{formfeed}%
 \indexsyn{comment}%
-\indexsyn{dashes1}%
+\indexsyn{dashes}%
 \indexsyn{ncomment}%
 \indexsyn{opencom}%
 \indexsyn{closecom}%

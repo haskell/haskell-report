@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/exps.verb,v 1.19 2002/12/10 11:51:10 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/exps.verb,v 1.20 2003/01/13 13:08:55 simonpj Exp $
 %
 %*section 3
 %**<title>The Haskell 98 Report: Expressions</title>
@@ -812,7 +812,7 @@ Section~\ref{pattern-bindings}.
 %
 @@@
 exp	->  @case@ exp @of@ @{@ alts @}@
-alts	->  alt_1 @;@ ... @;@ alt_n 		& (n>=0)
+alts	->  alt_1 @;@ ... @;@ alt_n 		& (n>=1)
 alt	->  pat @->@ exp [@where@ decls]
 	|   pat gdpat [@where@ decls]
 	|					& (empty alternative)
@@ -875,7 +875,7 @@ Pattern matching is described in Section~\ref{pattern-matching}, with
 the formal semantics of case expressions in
 Section~\ref{case-semantics}.
 
-{\em A note about parsing}. The expression
+{\em A note about parsing.} The expression
 \bprog
 @
   case x of { (a,_) | let b = not a in b :: Bool -> a }

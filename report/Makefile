@@ -116,10 +116,12 @@ haskell.ind: haskell.idx
 haskell.ps : haskell.dvi
 	dvips haskell.dvi -o haskell.ps
 
+# Can't use pdflatex because of eps inclusion
+
 release: haskell.ps html
 	ps2pdf haskell.ps
 	gzip < haskell.ps > $(RELEASE_DIR)/haskell.ps.gz
-	cp haskell.pdf $(RELEASE_DIR)/haskell.pdf.gz
+	cp haskell.pdf $(RELEASE_DIR)/haskell.pdf
 	cp -r haskell98-report-html $(RELEASE_DIR)
 	tar cvf - haskell98-report-html | gzip > $(RELEASE_DIR)/haskell98-report-html.tar.gz
 	cp h98-revised.html $(RELEASE_DIR)/index.html

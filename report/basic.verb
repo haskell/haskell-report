@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/basic.verb,v 1.16 2002/12/10 11:51:05 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/basic.verb,v 1.17 2003/01/13 13:08:54 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Predefined Types and Classes</title>
 %*section 6
@@ -211,6 +211,7 @@ the Prelude.
 \subsection{Strict Evaluation}
 \label{strict-eval}
 \index{$""!@@{\tt  {\char'044}{\char'041}}}
+\index{$@@{\tt  {\char'044}}}
 \indextt{seq}
 Function application in Haskell is non-strict; that is, a function
 argument is evaluated only when required.  Sometimes it is desirable to
@@ -243,8 +244,8 @@ non-strict application.
 @
   infixr 0 $, $!
   ($), ($!) :: (a -> b) -> a -> b
-   f $  x   =          f x
-   f $! x   =  x `seq` f x
+  f $  x   =          f x
+  f $! x   =  x `seq` f x
 @
 \eprog
 The non-strict application operator @$@ may appear redundant, since 
@@ -515,7 +516,7 @@ the list of lowercase letters in alphabetical order.
 \item Numeric types: @Int@, @Integer@, @Float@, @Double@.  The semantics
 of these instances is given next.
 \end{itemize}
-For all four numeric types, @succ@ adds 1; and @pred@ subtracts 1.
+For all four numeric types, @succ@ adds 1, and @pred@ subtracts 1.
 The conversions @fromEnum@ and @toEnum@ convert between the type and @Int@.
 In the case of @Float@ and @Double@, the digits after the decimal point may be lost.
 It is implementation-dependent what @fromEnum@ returns when applied to 
@@ -695,7 +696,7 @@ conform to current language independent arithmetic (LIA) standards.  These
 standards require considerably more complexity in the numeric
 structure and have thus been relegated to a library.  Some, but not
 all, aspects of the IEEE floating point standard have been
-accounted for in Prelude class @RealFloat@.b
+accounted for in Prelude class @RealFloat@.
 
 The standard numeric types are listed in Table~\ref{standard-numeric-types}.
 The finite-precision integer type @Int@\indextycon{Int} covers at

@@ -130,9 +130,9 @@
 \end{tabular}\\[0.6\baselineskip]}
 
 %special characters
-\newcommand{\bkq}{\mbox{\it \char'022}} % (syntax) backquote char
-\newcommand{\bkqB}{\bkq} % (syntax) backquote char (Before)
-\newcommand{\bkqA}{\hspace{-.2em}\mbox{\it \char'022}}% (syntax) backquote char (After)
+\newcommand{\bkq}{\mbox{\tt \char'022}} % (syntax) backquote char
+\newcommand{\bkqB}{\bkq\hspace{-.2em}} % (syntax) backquote char (Before)
+\newcommand{\bkqA}{\hspace{-.2em}\bkq}% (syntax) backquote char (After)
 %\newcommand{\fwq}{\mbox{\it \char'023}} % (syntax) (forward) quote char
 % math formatting
 \newcommand{\ba}{\begin{array}}

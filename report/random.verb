@@ -82,7 +82,7 @@ type @StdGen@:
   mkStdGen :: Int -> StdGen
 @
 \eprog
-\indextt{StdGen}
+\indextycon{StdGen}
 \indextt{mkStdGen}
 The @StgGen@ instance of @RandomGen@ has a @genRange@ of at least 30 bits.
 
@@ -165,7 +165,7 @@ instance Random Bool    where ...
 instance Random Char    where ...
 @
 \eprog
-\indextt{Random}
+\indexclass{Random}
 \indextt{random}
 \indextt{randomR}
 \indextt{randoms}
@@ -262,8 +262,8 @@ For example, @rollDice@ gets a random integer between 1 and 6:
 \item[{[3]}] DG Carta, ``Two fast implementations of the minimal standard random number generator'',
 	Comm ACM, 33(1), Jan 1990, pp87-88.
 
-\item[{[4]}] P Hellekalek, ``Don't trust parallel Monte Carlo'', Department of Mathematics,
-University of Salzburg, @http://random.mat.sbg.ac.at/~peter/pads98.ps@, 1998.
+\item[{[4]}] P Hellekalek, ``Don't trust parallel Monte Carlo'', 
+ACM SIGSIM Simulation Digest 28(1), pp82-89, July 1998.
 \end{description}
 
 The Web site @http://random.mat.sbg.ac.at/@ is a great source of information.

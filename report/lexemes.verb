@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/lexemes.verb,v 1.13 2002/12/10 11:51:11 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/lexemes.verb,v 1.14 2003/01/13 13:08:55 simonpj Exp $
 %
 %*section 2
 %**<title>Haskell 98 Lexical Structure</title>
@@ -171,7 +171,7 @@ identifiers beginning with underscore.  This allows programmers to use
 ``@_foo@'' for a parameter that they expect to be unused.
 
 @@@
-varsym		-> ( symbol \{symbol | @:@\} )_{\langle{}reservedop | dashes \rangle{}}
+varsym		-> ( symbol \{symbol | @:@\} )_{\langle{}reservedop | dashes\rangle{}}
 consym		-> (@:@ \{symbol | @:@\})_{\langle{}reservedop\rangle{}}
 reservedop	-> @..@ | @:@ | @::@ | @=@ | @\@ | @|@ | @<-@ | @->@ | \verb+@@+ | @~@ | @=>@
 @@@
