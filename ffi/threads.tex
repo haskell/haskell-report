@@ -22,6 +22,7 @@
 \newcommand{\fcall}[2]{F^{#1}~#2}
 \newcommand{\ret}[1]{R~#1}
 
+\newcommand{\bound}[1]{B(#1)}
 
 \begin{document}
 
@@ -80,7 +81,7 @@ that just uses other OS threads for foreign calls.
 should never cause other threads to block.
 \end{itemize}
 
-
+\part{First Proposal}
 \section{Proposed design}
 
 The key extension is the ability to create a ``bound'' foreign export,
@@ -177,7 +178,7 @@ $$
 \mbox{Native thread} &  t & ::= & N[S] \\
 \\
 \mbox{Native thread stack} &  S & ::= & \epsilon & \mbox{Empty}\\
-	& & | & \hcall : S  & \mbox{Executing Haskel} \\
+	& & | & \hcall : S  & \mbox{Executing Haskell} \\
 	& & | & \fcall{si}{h} : S & \mbox{Executing foreign code}\\
 	& & | & \bullet & \mbox{Unknown}\\
 \\
@@ -361,6 +362,255 @@ the \texttt{main} action runs in should be bound to the main OS thread.
 \item In which module in the libraries should the \texttt{forkBoundThread}
 function go?
 
+\end{itemize}
+
+\part{Second Proposal}
+
+This proposal avoids introducing yet another language extension, and it allows
+foreign calls to be bound to the main thread (which is required to use Apple's
+libraries).
+
+The main idea is that Haskell threads are at first only ``associated'' with
+native threads. There is a combinator @threadbound :: IO() -> IO()@ (somebody
+\emph{please} think of a better name) that ``binds'' a Haskell thread to its
+associated native thread, or to a new native thread if there is no associated
+native thread.
+
+Foreign calls from inside the @threadbound@ combinator are guaranteed to be all
+executed in the same thread, which is guaranteed not to be used for other
+foreign calls from other Haskell threads.
+
+A Haskell thread created by calling-in from Foreign Land is automatically
+associated with the native thread that called the foreign exported function.
+There is no performance penalty if the @threadbound@ combinator is never used.
+
+\section{Operational semantics}
+
+\subsection{State}
+
+The state of the system is represented by a pair
+$$\NS ; \HS$$
+where 
+\begin{itemize}
+\item $\NS = \{t_1, \ldots ,t_n\}$ is a set of \emph{native threads}.
+A native thread is directly supported by the underlying operating
+system, and may have some thread-local state. It may therefore
+be important which native thread executes foreign
+(non-Haskell) code.
+
+\item $\HS = \{h_1, \ldots ,h_n\}$ is a set of \emph{Haskell threads}.
+Haskell threads are supposed to be extremely lightweight, and
+can be created very cheaply. A Haskell thread can only make progress
+if a native thread acts as its execution engine.
+\end{itemize}
+
+The syntax of a native thread is this:
+$$
+\begin{array}{lrcll}
+\mbox{Native thread} &  t & ::= & N[S] \\
+\\
+\mbox{Native thread stack} &  S & ::= & \epsilon & \mbox{Empty}\\
+	& & | & \hcall : S  & \mbox{Executing Haskell} \\
+	& & | & \fcall{si}{h} : S & \mbox{Executing foreign code}\\
+	& & | & \bullet & \mbox{Unknown}\\
+\\
+\mbox{Safety indicator} &  si & ::= & u & \mbox{Unsafe} \\
+	& & | & s & \mbox{Safe} \\
+	& & | & t & \mbox{Thread-safe} \\
+\end{array}
+$$
+A native thread of form $N[S]$ has thread-id $N$, while $S$ is
+an abstraction of its call stack.  If $\hcall$ is on top of the stack,
+the thread is ``inside the Haskell runtime system'' (that includes, but
+is not limited to, executing Haskell code).
+If $\fcall{si}{h}$ is
+on top of the stack, the thread is in the process of dealing with a call
+to a foreign function, which will return its result to the Haskell thread
+$h$.  The safety-indicator $si$ is from the FFI spec.
+
+
+The syntax of a Haskell thread is this:
+$$
+\begin{array}{lrcll}
+\mbox{Haskell thread} &  h & ::= & (a)_{at} \\
+\\
+\mbox{Haskell action} &  a & ::= & p ~@>>@~ a  & \mbox{Sequence} \\
+	& & | & \ret{N}  & \mbox{Return to native thread $N$} \\
+\\
+\mbox{Primitive action} &  p & ::= & \tau & \mbox{Internal action} \\
+	& & | & \fcall{si}{f} & \mbox{Foreign call} \\
+	& & | & \bound{a} & \mbox{``@threadbound@'' combinator} \\
+	& & | & \bound{a}_{bt} & \mbox{the same with specified native thread} \\
+\\
+\mbox{Associated thread id} & at & ::= & \epsilon & \mbox{Not associated} \\
+	& & | & N & \mbox{Associated with native thread N} \\
+\\
+\mbox{Bound thread id} & bt & ::= & N & \mbox{Bound to native thread N}
+
+\end{array}
+$$
+
+Note that $\bound{a}_{bt}$, the ``@threadbound@'' combinator with an explicitly
+specified native thread, is only an ``intermediate result'' of the rules below.
+There will be no way to directly specify this action in a Haskell program
+(or if there will be, it will be a separate extension to the FFI).
+
+\subsection{Initial State}
+
+A program starts with a single Haskell thread that is associated with the
+native thread that executes the C language @main()@ function. This Haskell
+thread executes the Haskell @main@ action.\footnote{This resolves the issue
+that some broken libraries initialize thread-local state for the main thread
+from places like C++ static initializers and therefore insist on other
+functions to be called from the main thread and not from any other thread.}
+
+A Haskell thread spawned using @forkIO@ is not associated with any native
+thread.
+
+\subsection{Evolution}
+
+$$
+\begin{array}{rcll}
+N[\hcall:S]; (\bound{a}~@>>@~b)_{N} 
+	& \Rightarrow 
+	& N[\hcall:S]; (\bound{a}_N~@>>@~b)_{N} & (BIND1) \\
+\\
+; (\bound{a}~@>>@~b)_{\epsilon} 
+	& \Rightarrow 
+	& N[\hcall]; (\bound{a}_N~@>>@~b)_{N} & (BIND2) \\
+\\
+N[\hcall:S]; (\bound{}_N~@>>@~b)_N 
+	& \Rightarrow 
+	& N[\hcall:S]; (b)_N & (END1) \\
+\\
+N[\hcall]; (\bound{}_N~@>>@~b)_{\epsilon} 
+	& \Rightarrow 
+	& ; (b)_{\epsilon} & (END2) \\
+\\
+N[\hcall:S]; (\bound{\bound{a}~@>>@~b}_{bt}~@>>@~c)_{at} 
+	& \Rightarrow 
+	& N[\hcall:S]; (\bound{a~@>>@~b}_{bt}~@>>@~c)_{at} & (NEST) \\
+\\
+; (\tau~@>>@~a)_{at} 
+	& \Rightarrow 
+	& ; (a)_{at} & (INT1) \\
+\\
+N[\hcall:S]; (\bound{\tau~@>>@~a}_{bt}~@>>@~b)_{at} 
+	& \Rightarrow 
+	& N[\hcall:S]; (\bound{a}_{bt}~@>>@~b)_{at} & (INT2) \\
+\\
+N[\hcall]; (\fcall{si}{f}~@>>@~a)_{\epsilon} 
+	& \Rightarrow 
+	& N[\fcall{si}{a_\epsilon}:\hcall];  & (FCALL1) \\
+\\
+N[\hcall:S]; (\fcall{si}{f}@>>@~a)_N 
+	& \Rightarrow 
+	& N[\fcall{si}{a_N}:\hcall:S];  & (FCALL2) \\
+\\
+M[\hcall]; (\fcall{si}{f}@>>@~a)_N
+	& \Rightarrow 
+	& M[\fcall{si}{a_N}:\hcall];  & (FCALL3) \\
+\\
+N[\hcall:S]; (\bound{\fcall{si}{f}@>>@~a}_N~@>>@~b)_at
+	& \Rightarrow 
+	& N[\fcall{si}{(\bound{a}_N~@>>@~b)_{at}}:\hcall:S];  & (FCALL4) \\
+\\
+N[\fcall{si}{a_{at}}:S];  
+	& \Rightarrow 
+	& N[S]; a_{at} & (FRET) \\
+\\
+N[\bullet];
+	& \Rightarrow 
+	& N[\hcall:\bullet];  (f ~@>>@~ \ret{N})_{N} & (HCALL1) \\
+	& \multicolumn{2}{l}{\mbox{where $f$ is a foreign export}} \\
+\\
+N[\fcall{si}{a_{at}} : S]; 
+	& \Rightarrow 
+	& N[\hcall : \fcall{si}{a_{at}} : S]; ~ (f ~@>>@~ \ret{N})_{N} & (HCALL2) \\
+	& \multicolumn{2}{l}{\mbox{where $f$ is a foreign export}} \\
+	& \multicolumn{2}{l}{\mbox{and}~si \in \{s,t\}} \\
+\\
+N[\hcall : S]; \ret{N} 
+	& \Rightarrow 
+	& N[S]; & (HRET) \\
+\\
+(nothing)
+	& \Rightarrow 
+	& N[\hcall]; & (WKR) \\
+	& \multicolumn{2}{l}{\mbox{where $N$ is fresh}} \\
+\\
+(nothing)
+	& \Rightarrow 
+	& N[\bullet]; & (EXT) \\
+	& \multicolumn{2}{l}{\mbox{where $N$ is fresh}} \\
+\end{array}
+$$
+
+Here is what the rules mean:
+\begin{itemize}
+\item (BIND1) states that a Haskell thread associated with a native thread $N$
+becomes bound to the thread $N$ when the @threadbound@ combinator is used (The
+@threadbound@ combinator is annotated with the thread id it binds to).
+
+\item (BIND2) states that an unassociated Haskell thread becomes bound to a new
+native thread when the @threadbound@ combinator is used.
+
+\item A Haskell thread becomes unbound again when
+the action inside the @threadbound@ combinator is finished (END1). If the
+Haskell thread is not associated with the native thread, the native thread,
+which was spawned by (BIND2), terminates (END2).
+
+\item (NEST) says that nested invocations of the @threadbound@ combinator are
+legal, but have no effect.
+
+\item Internal actions are simply executed. For the purposes of this proposal,
+it doesn't matter which native thread is used to execute them, so (INT1)
+doesn't mention any native thread. Internal actions inside a @threadbound@
+combinator are no different from other actions (INT2).
+
+\item (FCALL1) says that only a vanilla worker thread $N[H]$ (i.e. with
+nothing on its stack except $H$) can execute a foreign call from an
+unassociated, unbound thread.
+\item Foreign calls from a Haskell thread associated with a native thread $N$
+can either be executed by the native thread $N$ (FCALL2) or by any vanilla
+worker thread $M[H]$ (FCALL3).
+This is left to the discretion of the runtime system - the fact that a Haskell
+thread is associated with a native thread has no effect by itself.
+
+\item (FCALL4) says that a foreign call from a bound Haskell thread (i.e. from
+inside the @threadbound@ combinator) must be executed by the native thread that
+the Haskell thread is bound to.
+
+\item In all (FCALL) cases, the Haskell thread is removed from the pool, and
+captured in the native thread's stack.  The rule (FRET) reinstates the Haskell
+thread (bound or otherwise) when the native thread decides to return from the
+call.
+
+\item Rules (HCALL1) and (HCALL2) deal with foreign code calling Haskell.
+(HCALL1) starts with a native thread that comes ``out of the blue'' with an
+unknown stack $\bullet$. It just puts a new Haskell thread into the pool and
+associates it with the native thread.
+
+(HCALL2) is similar, except that we aren't allowed to make such a call if
+the native thread is in the middle of an unsafe foreign call.  The difference
+between (HCALL1) and (HCALL2) looks very unsavoury\footnote{Maybe we shouldn't
+be modeling the safety levels here at all --- after all, they are independent
+of the issue at hand.}.
+
+\item (HRET) deals with returning from a completed Haskell thread to the
+appropriate calling native thread.  Notice that even an unbound Haskell thread
+must return its result to the right calling native thread, hence the
+``return action'' $\ret{t}$ tacked onto the end of the Haskell thread.
+
+\item (WKR) and (EXT) allow new native threads to enter the system.
+
+\end{itemize}
+
+\section{Issues}
+
+\begin{itemize}
+\item @threadbound@ is a terrible name.
+\item In which library module should @threadbound@ go?
 \end{itemize}
 
 \end{document}
