@@ -19,7 +19,7 @@ over $t$.  If $t$ is a bounded type, the results may be unpredictable;
 for example @Ratio Int@ may give rise to integer overflow even for
 rational numbers of small absolute size.
 
-The operator @(%)@\index{%@@{\tt {\char'045}}} forms the ratio of two
+The operator @(%)@\index{%@@{\tt  {\char'045}}} forms the ratio of two
 integral numbers, reducing the fraction to terms with no common factor
 and such that the denominator is positive.  The functions
 @numerator@\indextt{numerator}

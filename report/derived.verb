@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/derived.verb,v 1.10 2002/12/02 14:53:27 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/derived.verb,v 1.11 2002/12/03 10:27:22 ross Exp $
 %
 % The paragraph describing the formats of standard representations might
 % be deleted, since the info is already in the Prelude.  
@@ -131,18 +131,18 @@ always refer to entities defined by the @Prelude@.
 \indexdi{Ord}
 The class methods automatically introduced by derived instances
 of @Eq@ and @Ord@ are @(==)@,
-\index{==@@{\tt ==}}
+\indextt{==}
 @(/=)@,
-\index{/=@@{\tt /=}}
+\indextt{/=}
 @compare@\indextt{compare},
 @(<)@,
-\index{<@@{\tt <}}
+\indextt{<}
 @(<=)@,
-\index{<=@@{\tt <=}}
+\indextt{<=}
 @(>)@,
-\index{>@@{\tt >}}
+\indextt{>}
 @(>=)@,
-\index{>=@@{\tt >=}}
+\indextt{>=}
 @max@\indextt{max}, and 
 @min@\indextt{min}.  The latter seven operators are defined so
 as to compare their arguments lexicographically with respect to

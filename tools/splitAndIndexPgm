@@ -1,7 +1,7 @@
 eval "exec perl -S $0 $*"
      if $running_under_some_random_shell;
 #
-# $Header: /home/cvs/root/haskell-report/tools/splitAndIndexPgm,v 1.2 2001/09/11 13:04:28 simonpj Exp $
+# $Header: /home/cvs/root/haskell-report/tools/splitAndIndexPgm,v 1.3 2002/12/03 10:27:22 ross Exp $
 #
 # This script reads a Haskell program and inserts LaTeX/verbatim
 #   magic to indicate where a page break may occur.
@@ -118,6 +118,7 @@ sub printIndexEntries { # also re-sets $indexentries, specialentries
 	    $raw =~ s/\|/""\|/g;
 	    $raw =~ s/!/""!/g;
 	    $raw =~ s/\@/""\@\@/g;
+	    $raw =~ s/\\/\\\\/g;
 
     	    print "\\index\{$raw\@\@$processed\}%\n";
 	} else {

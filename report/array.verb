@@ -77,7 +77,7 @@ inner v w = if b == bounds w
 \label{array-examples}
 \end{figure}
 
-The @(!)@\index{!@@{\tt {\char'041}}} operator denotes array subscripting.
+The @(!)@\index{""!@@{\tt  {\char'041}}} operator denotes array subscripting.
 % array subscripting -- if the index lies outside the bounds of the
 % array, the result is undefined.  
 The @bounds@\indextt{bounds} function

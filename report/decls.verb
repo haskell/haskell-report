@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/decls.verb,v 1.16 2002/12/02 14:53:27 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/decls.verb,v 1.17 2002/12/03 10:27:21 ross Exp $
 %
 %**<title>The Haskell 98 Report: Declarations</title>
 %*section 4
@@ -617,7 +617,7 @@ Whenever a data constructor is applied, each argument to the
 constructor is evaluated if and only if the corresponding type in the
 algebraic datatype declaration has a strictness flag, denoted by
 an exclamation point, ``@!@''.
-\indextt{!}
+\index{""!@@{\tt  {\char'041}}}
 Lexically, ``@!@'' is an ordinary varsym not a "reservedop"; 
 it has special significance only in the context of the argument types of 
 a data declaration.
@@ -1462,7 +1462,7 @@ edence & operators		& operators     	& operators \\ \hline\hline
 \indextt{>=}
 \indextt{elem}
 \indextt{notElem}
-\indextt{&&@@{\tt  \&\&}}
+\index{&&@@{\tt  \&\&}}
 \index{""|""|@@{\tt  {\char'174}{\char'174}}}
 \indextt{>>}
 \indextt{>>=}

@@ -56,7 +56,7 @@ e.g.,
 \eprog
 
 \item
-@(\\)@\indextt{(\\)} is list 
+@(\\)@\index{\\\\@@{\tt  {\char'134}{\char'134}}} is list
 difference (non-associative).  In the result of @xs \\ ys@,
 the first occurrence of each element of @ys@ in turn (if any)
 has been removed from @xs@.  Thus, @(xs ++ ys) \\ xs == ys@.
