@@ -15,10 +15,12 @@
 
 % Changes since RC10:
 % * 3.3  : Clarified use of foreign functions of pure type
-% * 4.1.1: Clarified the meaning of foreign imports without a & that have a
+% * 4.1.1: Clarified the meaning of foreign imports without a "&" that have a
 %          non-functional type in Haskell
 % * 5.1  : Clarified the scope of safe use of unsafePerformIO
-% * 5.5  : "pre-emptive" dropped in footnote regarding finalizers.
+% * 5.5  : "pre-emptive" dropped in footnote regarding finalizers; added
+%          `newForeignPointer_' and renamed `foreignPtrToPtr' to
+%          `unsafeForeignPtrToPtr'
 % * Typos throughout
 %
 % Changes since RC9:
@@ -108,7 +110,6 @@
 %   C bindings.
 
 % TODO:
-% * Add `newForeignPointer_' or similar
 % * Implement HTMLization.  (Malcolm suggests using
 %   <http://pauillac.inria.fr/~maranget/hevea/>)
 
@@ -142,7 +143,7 @@
     \\
     \textbf{--- DRAFT ---}\\[1ex]
     \ttfamily\scriptsize
-    $\relax$Id: ffi.tex,v 1.44 2003/06/09 14:57:53 chak Exp $\relax$%
+    $\relax$Id: ffi.tex,v 1.45 2003/06/12 05:14:07 chak Exp $\relax$%
     \ignorespaces}
   }
 \end{DRAFT}
@@ -1074,10 +1075,11 @@ primitive:
   performed several times or not at all, depending on lazy evaluation and
   whether the compiler unfolds an enclosing definition.
   
-  Great care should be exercised in the use of this function.  Not only
+  Great care should be exercised in the use of this primitive.  Not only
   because of the danger of introducing side effects, but also because
-  \code{unsafePerformIO} may compromise typing; in particular, the result of
-  \code{unsafePerformIO} should always have a monomorphic type.
+  \code{unsafePerformIO} may compromise typing; to avoid this, the programmer
+  should ensure that the result of \code{unsafePerformIO} has a monomorphic
+  type.
 \end{codedesc}
 
 \subsection{\code{Bits}}
@@ -1306,7 +1308,7 @@ type \code{Ptr a} as an argument when it is invoked.  There is no guarantee on
 how soon the finalizer is executed after the last reference to the associated
 foreign pointer was dropped; this depends on the details of the Haskell
 storage manager.  The only guarantee is that the finalizer runs before the
-program terminates.  Whether a finaliser may call back into the Haskell system
+program terminates.  Whether a finalizer may call back into the Haskell system
 is system dependent.  Portable code may not rely on such callbacks.
 
 The data type \code{ForeignPtr} and associated operations have the following
@@ -1321,13 +1323,27 @@ signature and purpose:
   
   Instances for the classes \code{Eq}, \code{Ord}, and \code{Show} are
   provided.  Equality and ordering of two foreign pointers are the same as for
-  the plain pointers that can be obtained with \code{foreignPtrToPtr} from
-  those foreign pointers.
+  the plain pointers obtained with \code{unsafeForeignPtrToPtr} from those
+  foreign pointers.
+  
+\item[newForeignPtr\_ ::\ Ptr a -> IO (ForeignPtr a)]
+  Turn a plain memory reference into a foreign pointer that may be associated
+  with finalizers by using \code{addForeignPtrFinalizer}.
   
 \item[newForeignPtr ::\ Ptr a -> FinalizerPtr a -> IO (ForeignPtr a)]
-  Turn a plain memory reference into a foreign pointer by associating a
-  finalizer with the reference.  
-  
+  Convenience function that turns a plain memory reference into a foreign
+  pointer and immediately adds a finalizer.  It is defined as
+  %
+  \begin{quote}
+\begin{verbatim}
+newForeignPtr ptr finalizer = 
+  do
+    fp <- newForeignPtr_ ptr
+    addForeignPtrFinalizer fp finalizer
+    return fp
+\end{verbatim}
+  \end{quote}
+   
 \item[addForeignPtrFinalizer ::\ ForeignPtr a -> FinalizerPtr a -> IO
   ()] Add another finalizer to the given foreign pointer.  All finalizers
   associated with a single foreign pointer are executed in the opposite order
@@ -1379,24 +1395,24 @@ signature and purpose:
   pointed to by the \code{ForeignPtr}, using the operations from the
   \code{Storable} class.
 
-\item[foreignPtrToPtr ::\ ForeignPtr a -> Ptr a]
+\item[unsafeForeignPtrToPtr ::\ ForeignPtr a -> Ptr a]
   
   Extract the pointer component of a foreign pointer. This is a potentially
-  dangerous operation.  If the argument to \code{foreignPtrToPtr} is the last
-  usage occurrence of the given foreign pointer, then its finalizer(s) will be
-  run, which potentially invalidates the plain pointer just obtained.  Hence,
-  \code{touchForeignPtr} must be used wherever it has to be guaranteed that
-  the pointer lives on---i.e., has another usage occurrence.
-
+  dangerous operation.  If the argument to \code{unsafeForeignPtrToPtr} is the
+  last usage occurrence of the given foreign pointer, then its finalizer(s)
+  will be run, which potentially invalidates the plain pointer just obtained.
+  Hence, \code{touchForeignPtr} must be used wherever it has to be guaranteed
+  that the pointer lives on---i.e., has another usage occurrence.
+  
   It should be noticed that this function does not need to be monadic when
   used in combination with \code{touchForeignPtr}.  Until the
-  \code{foreignPtrToPtr} is executed, the thunk representing the suspended
-  call keeps the foreign pointer alive.  Afterwards, the
+  \code{unsafeForeignPtrToPtr} is executed, the thunk representing the
+  suspended call keeps the foreign pointer alive.  Afterwards, the
   \code{touchForeignPtr} keeps the pointer alive.
   
   To avoid subtle coding errors, hand written marshalling code should
-  preferably use the function \code{withForeignPtr} rather than combinations
-  of \code{foreignPtrToPtr} and \code{touchForeignPtr}. However, the later
+  preferably use the function \code{withForeignPtr} rather than
+  \code{unsafeForeignPtrToPtr} and \code{touchForeignPtr}. However, the later
   routines are occasionally preferred in tool-generated marshalling code.
   
 \item[touchForeignPtr ::\ ForeignPtr a -> IO ()] Ensure that the foreign
@@ -2162,9 +2178,9 @@ provided concerning a Haskell type \code{CT} representing a C type \code{t}:
   permits the Haskell program to access the full range of values encoded by
   the C type; and conversely, any Haskell value for \code{CT} has a valid
   representation in C.
-\item \code{Storable.sizeOf (undefined ::\ T)} will yield the same value as
+\item \code{Storable.sizeOf (undefined ::\ CT)} will yield the same value as
   \code{sizeof (t)} in C.
-\item \code{Storable.alignment (undefined ::\ T)} matches the alignment
+\item \code{Storable.alignment (undefined ::\ CT)} matches the alignment
   constraint enforced by the C implementation for \code{t}.
 \item \code{Storable.peek} and \code{Storable.poke} map all values of
   \code{CT} to the corresponding value of \code{t} and vice versa.
