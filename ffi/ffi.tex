@@ -13,6 +13,12 @@
 % does not claim to be a definition of the Haskell 98 Foreign Function
 % Interface. 
 
+% Changes since RC8:
+% * 5.8: `MarshallAlloc.reallocBytes' is no longer permitted on memory
+%        allocated with `alloca' or `allocaBytes'. 
+% * 6.1: Deinitialisation of the RTS via `hs_exit()' followed by
+%        (re)initialisation with `hs_init()' must be supported.
+%
 % Changes since RC7:
 % * Clarified the lexis of C identifiers and C header file names
 % * In `ForeignPtr', added `mallocForeignPtrArray' and `mallocForeignPtrArray0'
@@ -82,18 +88,6 @@
 %   C bindings.
 
 % TODO:
-% * "Foreign Proxy" (add it, there don't seem to be objections)
-%   - Ross points out that Eq must generally be defined on the underlying type
-%     if we want that Eq ForeignPtr compares the Ptr encapsulated in the
-%     ForeignPtr.  I don't think that's quite right, we could just have
-%       instance Eq a => Eq (ForeignObj a) where
-%         x == y = foreignObjToObj x == foreignObjToObj y
-%     This means for all ForeignObjs that if Eq is defined, it is defined by
-%     the Eq of the base type.  An alternative would be to define Eq on
-%     ForeignObjs as identity and use newtype to define ForeignPtrs with a
-%     different Eq instance.
-% * reallocForeignPtrArray and related issues (waiting for replies)
-% * Revise layout of the front page.
 % * Implement HTMLization.  (Malcolm suggests using
 %   <http://pauillac.inria.fr/~maranget/hevea/>)
 
@@ -120,14 +114,14 @@
 \excludeversion{FUTURE}  % material for future extensions
 
 %\def\Version{\relax}
-\def\Version{\\(Release Candidate 8)}
+\def\Version{\\(Release Candidate 9)}
 \begin{DRAFT}%
 {
   \gdef\Version{%
     \\
     \textbf{--- DRAFT ---}\\[1ex]
     \ttfamily\scriptsize
-    $\relax$Id: ffi.tex,v 1.41 2003/01/22 09:01:59 chak Exp $\relax$%
+    $\relax$Id: ffi.tex,v 1.42 2003/05/21 12:19:17 chak Exp $\relax$%
     \ignorespaces}
   }
 \end{DRAFT}
@@ -1562,14 +1556,14 @@ storage space for such an array can be allocated by the following functions:
 \end{codedesc}
 %
 If any of allocation functions fails, a value of \code{Ptr.nullPtr} is
-produced.  If \code{free} is applied to a memory area that has been allocated
-with \code{alloca} or \code{allocaBytes}, the behaviour is undefined.
-However, \code{reallocBytes} may be used on such memory areas.  Any further
-access to memory areas allocated with \code{alloca} or \code{allocaBytes},
-after the computation that was passed to the allocation function has
-terminated, leads to undefined behaviour.  Any further access to the memory
-area referenced by a pointer passed to \code{realloc}, \code{reallocBytes}, or
-\code{free} entails undefined behaviour.
+produced.  If \code{free} or \code{reallocBytes} is applied to a memory area
+that has been allocated with \code{alloca} or \code{allocaBytes}, the
+behaviour is undefined.  Any further access to memory areas allocated with
+\code{alloca} or \code{allocaBytes}, after the computation that was passed to
+the allocation function has terminated, leads to undefined behaviour.  Any
+further access to the memory area referenced by a pointer passed to
+\code{realloc}, \code{reallocBytes}, or \code{free} entails undefined
+behaviour.
 
 \subsection{\code{MarshalArray}}
 \label{sec:MarshalArray}
@@ -2069,8 +2063,11 @@ Conversely, the Haskell system is deinitialised by a call to
 \code{hs\_exit()}.  Multiple invocations of \code{hs\_init()} are permitted,
 provided that they are followed by an equal number of calls to
 \code{hs\_exit()} and that the first call to \code{hs\_exit()} is after the
-last call to \code{hs\_init()}.  This ensures that repeated initialisation due
-to multiple libraries being implemented in Haskell is covered.
+last call to \code{hs\_init()}.  In addition to nested calls to
+\code{hs\_init()}, the Haskell system may be de-initialised with
+\code{hs\_exit()} and be re-initialised with \code{hs\_init()} at a later
+point in time.  This ensures that repeated initialisation due to multiple
+libraries being implemented in Haskell is covered.
 
 The Haskell system will ignore the command line arguments passed to the second
 and any following calls to \code{hs\_init()}.  Moreover, \code{hs\_init()} may

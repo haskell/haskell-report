@@ -1,0 +1,10 @@
+# This Makefile needs GNU Make
+
+.PHONY: default
+default: ffi.ps
+
+ffi.dvi: ffi.tex grammar.sty
+	latex $< && bibtex $(basename $<) && latex $< && latex $<
+
+ffi.ps: ffi.dvi
+	dvips $< -o $@
