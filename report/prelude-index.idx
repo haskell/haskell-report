@@ -161,7 +161,7 @@ class                             #TShow a       #S6.3.3
 #Vgcd              :: (Integral a) => a -> a -> a
 #VgetChar          :: IO Char #&eof generates an IOError
 #VgetContents      :: IO String
-#VgetLine          :: IO Char #&eof generates an IOError
+#VgetLine          :: IO String #&eof generates an IOError
 #Vhead             :: [a] -> a
 #Vid               :: a -> a
 #Vinit             :: [a] -> [a]#&init "abcd" = "abc"

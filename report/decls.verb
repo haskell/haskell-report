@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/decls.verb,v 1.8 2001/08/31 16:03:08 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/decls.verb,v 1.9 2001/09/10 08:31:58 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Declarations</title>
 %*section 4
@@ -168,7 +168,7 @@ a type of kind $\kappa_2$.
 Kind inference checks the validity of type expressions 
 in a similar way that type inference checks the validity of value expressions.  
 However, unlike types, kinds are entirely
-implicit and are not visible part of the language.  Kind inference is discussed
+implicit and are not a visible part of the language.  Kind inference is discussed
 in Section~\ref{kindinference}.
 
 \subsubsection{Syntax of Types}
@@ -206,7 +206,7 @@ is given above.  Just as data values are built using data
 constructors, type values are built from "type constructors".  As with
 data constructors, the names of type constructors start with uppercase
 letters.
-Unlike data constructors, infix type constructors are not allowed.
+Unlike data constructors, infix type constructors are not allowed (other than @(->)@).
 
 The main forms of type expression are as follows:\nopagebreak[4]
 \begin{enumerate}
