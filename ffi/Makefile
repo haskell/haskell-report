@@ -1,3 +1,3 @@
 threads.ps: threads.tex
-	latex threads.tex
+	TEXINPUTS=../styles: latex threads.tex
 	dvips -f < threads.dvi > threads.ps
