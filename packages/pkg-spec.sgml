@@ -163,14 +163,30 @@ a <emphasis>package description</emphasis>, which she puts in <filename>~/coll/p
 </programlisting>
 She also creates a three-line Haskell file <filename>~/coll/Setup.lhs</filename> as follows:
 <programlisting>
-  #! runhugs
+  #! /usr/bin/env runhugs
 
   > import Distribution.Simple( main )
 </programlisting>
-The first line arranges that when Angela executes <filename>Setup.lhs</filename> as a shell script,
-the shell will invoke <command>runhugs</command>, which will in turn run <literal>main</literal> imported
-from the library <literal>Distribution.Simple</literal>.  This library implements the &hps; simple build infrastructure.
-</para>
+
+This library implements the &hps; simple build infrastructure.</para>
+
+<para>The first line arranges that when Angela, (or Joe, or Sam, etc.)
+executes <filename>Setup.lhs</filename> as a shell script, the shell
+will invoke <command>runhugs</command>, which will in turn run
+<literal>main</literal> imported from the library
+<literal>Distribution.Simple</literal>.  </para>
+
+<para>It is not necessary that the script be run this way, it is just
+a convinient way to run it.  Sam or Joe may choose to compile the
+setup script into an executable with NHC or GHC and then run it
+directly (it is a literate Haskell script so that it can be compiled
+without the first line causing a syntax error).  Another option is for
+that first line to read <programlisting>!# /usr/bin/env runhaskell</programlisting>
+where <command>runhaskell</command> is a symlink to
+<command>runhugs</command>, <command>runghc</command>, or
+<command>runnhc</command>.</para>
+
+
 <para> Now she is ready to go. She types:
 <programlisting>
   ./Setup.lhs configure --ghc
@@ -417,8 +433,8 @@ It is convenient for consumers to execute <filename>Setup.lhs</filename> directl
 <programlisting>
   ./Setup.lhs ...
 </programlisting>
-This can be achieved by starting <filename>Setup.lhs</filename> with "<literal>#! runhugs</literal>"
-or "<literal>#! runghc</literal>" .
+This can be achieved by starting <filename>Setup.lhs</filename> with "<literal>#! /usr/bin/env runhugs</literal>"
+or "<literal>#! /usr/bin/env runghc</literal>" .
 Since it's a literate Haskell script (<literal>.lhs</literal> file), the Haskell compiler will ignore
 this line.
 However, nothing stops a consumer from running the script interactively, or compiling it and running 
@@ -433,7 +449,7 @@ the implementation has the &hps; libraries installed.
 <sect1 id="compiler-reqts"><title>What the compilers must implement</title>
 
 <para>The &hps; requires that the Haskell implementations be somewhat package-aware.
-This section documents those requirements</para>
+This section documents those requirements.</para>
 
 <sect2><title>Building and registering a package</title>
 
@@ -524,11 +540,14 @@ modules of an exposed package populate the module name space seen by a Haskell <
 Before registering a package P, check all the packages that P depends on are already registered.
 If P is being registered as a global package, P's dependencies must also be global packages.
 </para></listitem>
-<listitem> <para>
-Before registering an exposed user package P, check that the modules that are exposed by P do not have the same
-names (in the hierarchical module name space) as any other module in an exposed user package Q.  Similarly
-for system packages.  (However, a system package may expose a module with the same name as a user package.)
-</para></listitem>
+
+<listitem> <para> Before registering an exposed user package P, check
+that the modules that are exposed by P do not have the same names (in
+the hierarchical module name space) as any other module in an exposed
+user package Q.  Similarly for system packages.  (However, one may
+register a system package which exposes a module with the same name as
+a user package, and vice-versa.)  </para></listitem>
+
 <listitem> <para>
 Before un-registering a package P, check that no package that depends on P is registered.
 The exception is that when un-registering a global package, &hc-pkg; cannot
@@ -747,7 +766,7 @@ specifies which compiler to use.  At most one of the value of these flags may be
 The configure step checks
 that the compiler is available, in a sufficiently up-to-date form for the package, and that the package
 expects to work with that compiler.  If the compiler name
-is not specified, <literal>setup</literal> will choose one; some packages will come with one compiler baked in.
+is not specified, <literal>Setup.lhs</literal> will choose one; some packages will come with one compiler baked in.
 </para>
 	  </listitem>
 <listitem><para><option>--prefix=</option><replaceable>path</replaceable>: specifies where the installed files
@@ -811,7 +830,9 @@ on Windows it will be <filename>Program Files</filename>.  The setup script will
             passed to &hc-pkg; so that the package is registed
             globally (this is the default if neither
             <option>--user</option> or <option>--global</option> are
-            given).</para>
+            given). This flag has no effect if
+            <option>--install-prefix</option> is used, because in
+            that case &hc-pkg; is not called.</para>
 	  </listitem>
 	</itemizedlist>
 
@@ -932,7 +953,7 @@ The simple build infrastructure works as follows.  First, Angela puts the follow
 file <filename>Setup.lhs</filename> in the
 root of her tree:
 <programlisting>
-  #! runghc
+  #! /usr/bin/env runghc
 
   > import Distribution.Simple
 </programlisting>
@@ -1018,7 +1039,7 @@ script that immediately shells out into <literal>make</literal>, which does all 
 simply parses the command line arguments and shells out into <literal>make</literal>.  Marcus uses the following
 <filename>Setup.lhs</filename>
 <programlisting>
-  #!runhugs
+  #! /usr/bin/env runhugs
 
   > module Main where
   > import Distribution.Make (setup)
@@ -1028,14 +1049,14 @@ All the package description information is assumed to be known to the makefile s
 appear in the setup script.
 Thus, 
 <programlisting>
-  setup configure --ghc
+  ./Setup.lhs configure --ghc
 </programlisting>
 invokes
 <programlisting>
   ./configure --with-hc=ghc
 </programlisting>
 Similarly
-<literal>setup build</literal>
+<literal>./Setup.lhs build</literal>
 invokes
 <literal>make all</literal> And so on.</para>
 
