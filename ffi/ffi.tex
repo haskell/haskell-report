@@ -24,15 +24,21 @@
 % * 4.1.4: Removed all mention of library objects; clarified that header files
 %          do not impact the semantics of foreign calls, but may be required
 %          for correct code generation by some systems
+% * 5.2:   Clarified that all operations in Bits are member functions of the
+%          type class.  Reverse the meaning of the sign of the second argument
+%          for `rotate' and `shift' (this makes it the same as GHC used all
+%          the time).  `bitSize' on `Integer' etc is now undefined.
 % * 5.5:   Finalisers must be external functions to facilitate the
 %          implementation on Haskell systems that do not support pre-emptive
 %          concurrency
 % * 6:     Specified that HsBool==int in table2
 %          Relabelled column 1 in table 3 (C symbol -> CPP symbol)
 %          Replaced 0 and 1 with HS_BOOL_FALSE/TRUE
-%
 % * 6.1:   Clarified that nullPtr (nullFunPtr) coincides with (HsPtr) NULL and
 %          (HsFunPtr) NULL, respectively.
+%          Allowing multiple calls to hs_init() and clarified the constraints
+%          on the relative timing between hs_set_argv() and
+%          getProgName/getArgs. 
 %
 % Changes since RC4:
 % * 5.6: Clarified documentation of `StablePtr's (RC 5)
@@ -55,10 +61,6 @@
 
 % TODO:
 % * add isNullPtr and isNullFunPtr? [query send to the FFI list]
-% * shift and rotate with positive arg shift left [pending approval by ffi
-%   list]
-% * proposal to amend hs_init() & friends [if no objections to message on ffi
-%   list]
 % * Revise layout of the front page.
 % * Implement HTMLization.  (Malcolm suggests using
 %   <http://pauillac.inria.fr/~maranget/hevea/>)
@@ -93,7 +95,7 @@
     \\
     \textbf{--- DRAFT ---}\\[1ex]
     \ttfamily\scriptsize
-    $\relax$Id: ffi.tex,v 1.30 2002/09/10 13:49:05 chak Exp $\relax$%
+    $\relax$Id: ffi.tex,v 1.31 2002/09/11 07:31:30 chak Exp $\relax$%
     \ignorespaces}
   }
 \end{DRAFT}
@@ -999,8 +1001,8 @@ This module provides functions implementing typical bit operations overloaded
 for the standard integral types \code{Int} and \code{Integer} as well as the
 types provided by the modules \code{Int} and \code{Word} in
 Section~\ref{sec:Int-Word}.  The overloading is implemented via a new type
-class \code{Bits}, which is a subclass of \code{Num}, and the supported
-operations are the following:
+class \code{Bits}, which is a subclass of \code{Num} and has the following
+member functions:
 %
 \begin{codedesc}
 \item[(.\&.), (.|.), xor ::\ Bits a => a -> a -> a]  Implement bitwise
@@ -1019,7 +1021,7 @@ infixl 5 .|.
   argument.
   
 \item[shift, rotate ::\ Bits a => a -> Int -> a] Shift or rotate the bit
-  pattern to the right for a positive second argument and to the left for a
+  pattern to the left for a positive second argument and to the right for a
   negative argument.  The function \code{shift} performs sign extension on
   signed number types; i.e., right shifts fill the top bits with 1 if the
   number is negative and with 0 otherwise.  These operators have the following
@@ -1047,8 +1049,8 @@ infixl 8 `shift`, `rotate`
 \item[isSigned~::\ Bits a => a -> Bool]\combineitems Respectively, query the
   number of bits of values of type \code{a} and whether these values are
   signed.  These functions never evaluate their argument.  The function
-  \code{bitSize} returns 0 for types that don't have a have a fixed bitsize
-  (e.g., \code{Integer}).
+  \code{bitSize} is undefined for types that do not have a have a fixed
+  bitsize (e.g., \code{Integer}).
 
 \item[shiftL,~~shiftR~~::\ Bits a => a -> Int -> a]
 \item[rotateL,~rotateR~::\ Bits a => a -> Int -> a]\combineitems The functions
@@ -1968,21 +1970,29 @@ hs_set_argv (int argc, char *argv[]);
 These routines are useful for mixed language programs, where the main
 application is implemented in a foreign language that accesses routines
 implemented in Haskell.  The function \code{hs\_init()} initialises the
-Haskell system, passing it the available command line arguments.  Upon return,
-the arguments intended for the Haskell runtime system are removed.  This
-function must be called during program startup exactly once and before any
-Haskell function is invoked.  If a Haskell function is invoked earlier or
-\code{hs\_init()} called multiple times, the system behaviour is undefined.
+Haskell system and provides it with the available command line arguments.
+Upon return, the arguments solely intended for the Haskell runtime system are
+removed (i.e., the values that \code{argc} and \code{argv} point to may have
+changed).  This function must be called during program startup before any
+Haskell function is invoked; otherwise, the system behaviour is undefined.
+Conversely, the Haskell system is deinitialised by a call to
+\code{hs\_exit()}.  Multiple invocations of \code{hs\_init()} are permitted,
+provided that they are followed by an equal number of calls to
+\code{hs\_exit()} and that the first call to \code{hs\_exit()} is after the
+last call to \code{hs\_init()}.  This ensures that repeated initialisation due
+to multiple libraries being implemented in Haskell is covered.
 
-The Haskell system is deinitialised by a call to \code{hs\_exit()}.  The
-behaviour of calls to Haskell functions after \code{hs\_exit()} has been
-invoked is undefined, as is the system behaviour after multiple calls to
-\code{hs\_exit()}. 
+The Haskell system will ignore the command line arguments passed to the second
+and any following calls to \code{hs\_init()}.  Moreover, \code{hs\_init()} may
+be called with \code{NULL} for both \code{argc} and \code{argv}, signalling
+the absence of command line arguments.
 
 The function \code{hs\_set\_argv()} sets the values returned by the functions
 \code{getProgName} and \code{getArgs} of the module \code{System} defined in
 the Haskell 98 Library Report.  This function may only be invoked after
-\code{hs\_init()}.  Note that the separation of \code{hs\_init()} and
+\code{hs\_init()}.  Moreover, if \code{hs\_set\_argv()} is called at all, this
+call must precede the first invocation of \code{getProgName} and
+\code{getArgs}.  Note that the separation of \code{hs\_init()} and
 \code{hs\_set\_argv()} is essential in cases where in addition to the Haskell
 system other libraries that process command line arguments during
 initialisation are used.
