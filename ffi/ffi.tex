@@ -49,7 +49,7 @@
     \\
     \textbf{--- DRAFT ---}\\[1ex]
     \ttfamily\scriptsize
-    $\relax$Id: ffi.tex,v 1.19 2001/10/30 10:19:20 chak Exp $\relax$%
+    $\relax$Id: ffi.tex,v 1.20 2001/10/30 18:20:45 malcolm Exp $\relax$%
     \ignorespaces}
   }
 \end{DRAFT}
@@ -320,7 +320,7 @@ declaration.  To provide syntactic uniformity in the presence of different
 calling conventions, it is guaranteed that the description of an external
 entity lexically appears as a Haskell string lexeme.  The only exception is
 where this string would be the empty string (i.e., be of the form \code{""});
-in this case, the string may be omitted in is entirety.
+in this case, the string may be omitted in its entirety.
 
 Note that the new keyword \code{foreign} is the only name taken away from the
 Haskell 98 name space.  All other special identifiers that may appear in
@@ -396,7 +396,7 @@ The following types constitute the set of \emph{basic foreign types}:
 \item \code{Char}, \code{Int}, \code{Double}, \code{Float}, and \code{Bool} as
   exported by the Haskell 98 \code{Prelude} as well as
 \item \code{Int8}, \code{Int16}, \code{Int32}, \code{Int64}, \code{Word8},
-  \code{Word16}, \code{Word32}, \code{Int64}, \code{Ptr a}, \code{FunPtr a},
+  \code{Word16}, \code{Word32}, \code{Word64}, \code{Ptr a}, \code{FunPtr a},
   and \code{StablePtr a}, for any type \code{a}, as exported by \code{Foreign}
   (Section~\ref{sec:Foreign}).
 \end{itemize}
@@ -926,8 +926,8 @@ infixl 8 `shift`, `rotate`
 
 \item[shiftL,~~shiftR~~::\ Bits a => a -> Int -> a]
 \item[rotateL,~rotateR~::\ Bits a => a -> Int -> a]\combineitems The functions
-  \code{shiftL} and \code{rotateL} are synonyms for \code{shift} and
-  \code{rotate}; \code{shiftR} and \code{rotateR} negate the second argument.
+  \code{shiftR} and \code{rotateR} are synonyms for \code{shift} and
+  \code{rotate}; \code{shiftL} and \code{rotateL} negate the second argument.
 
 \end{codedesc}
 %
@@ -1195,7 +1195,7 @@ purpose:
 \item[castStablePtrToPtr ::\ StablePtr a -> Ptr ()] Coerce a stable pointer to
   an address. No guarantees are made about the resulting value, except that
   the original stable pointer can be recovered by \code{castPtrToStablePtr}.
-  In particular, the address may not refer to a accessible memory location and
+  In particular, the address may not refer to an accessible memory location and
   any attempt to pass it to the member functions of the class \code{Storable}
   (Section~\ref{sec:Storable}) leads to undefined behaviour.
   
