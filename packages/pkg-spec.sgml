@@ -34,7 +34,8 @@
 <article id="hps">
   <artHeader>
     <date>2004-04-24</date>
-    <title>A Common Architecture for Building Applications and Tools</title>
+    <title>The Haskell Cabal</title>
+    <subtitle>A Common Architecture for Building Applications and Tools</subtitle>
     <author>
       <firstname>Isaac</firstname>
       <surname>Jones</surname>
@@ -715,16 +716,15 @@ specifies the syntax of the package description, and the command-line interface 
 <para>Here is a sample package description file:
 <programlisting>-- Required
 Name: Cabal
-Version: 0.1.1.1.1-foo-bar-bang
-License: AllRightsReserved
+Version: 0.1.1.1.1-rain
+License: LGPL
 Copyright: Free Text String
 -- Optional - may be in source?
 Stability: Free Text String
-Build-Depends: haskell-src, HUnit>=1.0.0-foo
-Modules: Distribution.Package, Distribution.Version, Distribution.Simple.GHCPackageConfig
-         Distribution.Make
-Main-Modules: Distribution.Main
-</programlisting>
+Build-Depends: haskell-src, HUnit>=1.0.0-rain
+Modules: Distribution.Package, Distribution.Version,
+         Distribution.Simple.GHCPackageConfig
+...</programlisting>
 
 The Name, Version, License, and Copyright are compulsory.</para>
 
@@ -1055,31 +1055,33 @@ fields.  For the general syntax of the file, please see <xref
 linkend="pkg-desc">.</para>
 
 <para>Here is a sample package description file with all the fields understood by the simple build infrastructure:
-<programlisting>-- Required
-Name: Cabal
-Version: 0.1.1.1.1-rain
-License: LGPL
-Copyright: Free Text String
--- Optional - may be in source?
-Stability: Free Text String
-Build-Depends: haskell-src, HUnit>=1.0.0-rain
-Modules: Distribution.Package, Distribution.Version, Distribution.Simple.GHCPackageConfig
-C-Sources: not/even/rain.c, such/small/hands
-HS-Source-Dir: src
-Exposed-Modules: Distribution.Void, Foo.Bar
-Extensions: OverlappingInstances, TypeSynonymInstances
-Extra-Libs: libfoo, bar, bang
-Include-Dirs: your/slightest, look/will
-Includes: /easily/unclose, /me, \"funky, path\\\\name\"
-Options-ghc: -fTH
-Options-hugs: +TH
+<programlisting>
+        -- Required
+        Name: Cabal
+        Version: 0.1.1.1.1-rain
+        License: LGPL
+        Copyright: Free Text String
+        -- Optional - may be in source?
+        Stability: Free Text String
+        Build-Depends: haskell-src, HUnit>=1.0.0-rain
+        Modules: Distribution.Package, Distribution.Version,
+                 Distribution.Simple.GHCPackageConfig
+        C-Sources: not/even/rain.c, such/small/hands
+        HS-Source-Dir: src
+        Exposed-Modules: Distribution.Void, Foo.Bar
+        Extensions: OverlappingInstances, TypeSynonymInstances
+        Extra-Libs: libfoo, bar, bang
+        Include-Dirs: your/slightest, look/will
+        Includes: /easily/unclose, /me, \"funky, path\\\\name\"
+        Options-ghc: -fTH -fglasgow-exts
+        Options-hugs: +TH
 
--- Next is an executable
-Executable: somescript
-Main-is: SomeFile.hs
-Modules: Foo1, Util, Main
-HS-Source-Dir: scripts
-Extensions: OverlappingInstance</programlisting>
+        -- Next is an executable
+        Executable: somescript
+        Main-is: SomeFile.hs
+        Modules: Foo1, Util, Main
+        HS-Source-Dir: scripts
+        Extensions: OverlappingInstances</programlisting>
 The Name, Version, License, and Copyright are compulsory.</para>
 
 <para>All other fields, such as dependency-related fields, will be
@@ -1097,27 +1099,163 @@ distributions.</para>
 <para>FIX/TODO: Provide BNF-type grammar, especially for field
 contents, remove below checklist and questions.</para>
 
-<para>For now, we just have a checklist of what must be there
-<itemizedlist>
-<listitem><para><literal>exposed:</literal> Exposed modules</para>
-	    </listitem>
-<listitem><para><literal>hidden:</literal> Hidden (or internal) modules</para>
-	    </listitem>
-<listitem><para><literal>main modules:</literal> Which modules should be built into an executable</para></listitem>
-<listitem><para><literal>ghc-flags:</literal>,<literal>hugs-flags:</literal>,<literal>nhc-flags:</literal>  
-		Extra compiler flags for &ghc;, &hugs;, &nhc;.</para>
-	    </listitem>
+<para>The description file fields:
+   <table frame=all><title>Description File Fields</title>
+   <tgroup cols=4 align=left colsep=1 rowsep=1> <tbody>
+      <row><entry>Field Name</entry>
+           <entry>Description</entry>
+           <entry>Example</entry>
+           <entry>Notes</entry>
+      </row>
 
-<listitem><para> <emphasis>What else?</emphasis></para>
-	  </listitem></itemizedlist></para>
+      <row><entry>name</entry>
+           <entry>[a-zA-Z][-a-zA-Z0-9]*</entry>
+           <entry>haskell-cabal12345</entry></row>
+      <row><entry>version</entry>
+           <entry>[0-9.]+(-?)[-a-zA-Z]*: branch numbers, separated by dots, and optional tags separated by dashes.</entry>
+           <entry>1.2.3.4.5-foo-bar-bang</entry>
+      </row>
+      <row><entry>copyright</entry>
+           <entry>--FREE TEXT--</entry>
+           <entry>(c) 2004 Isaac Jones</entry>
+      </row>
 
-<para>Why must we list hidden modules? 
-These modules form part of the implementation of the package, but not its interface: a
-client of the package cannot import an internal module.  They must nevertheless be listed
-explicitly for two reasons: (a) to allow the global program invariant to be 
-checked (see <xref linkend="packages-and-haskell">)
-and (b) to enable a build system or programming environment to find the source files.
-	</para>
+      <row><entry>license</entry>
+           <entry>GPL | LGPL | BSD3 | BSD4 | PublicDomain | AllRightsReserved</entry>
+           <entry>BSD3</entry>
+      </row>
+
+      <row><entry>license-file</entry>
+           <entry>--PATH--</entry>
+           <entry>/foo/bar/bang/myLicense.txt</entry>
+      </row>
+
+      <row><entry>maintainer</entry>
+           <entry>--FREE TEXT--</entry>
+           <entry>T.S. Elliot</entry>
+      </row>
+
+      <row><entry>stability</entry>
+           <entry>--FREE TEXT--</entry>
+           <entry>Don't hook this up to your coffee machine</entry>
+      </row>
+
+      <row><entry>executable</entry>
+           <entry>--FREE TEXT--</entry>
+           <entry>cpphs</entry>
+      </row>
+
+      <row><entry>main-is</entry>
+           <entry>--PATH--</entry>
+           <entry>/foo/bar/bang/Baz.hs</entry>
+      </row>
+
+      <row><entry>extra-libs</entry>
+           <entry>comma list of --FREE TEXT-- and spaces</entry>
+           <entry>libfoo, libbar  ,   libbang</entry>
+           <entry>for non-haskell libraries that this package needs to link to</entry>
+      </row>
+
+      <row><entry>build-depends</entry>
+           <entry>package name (== | < | > | <= | >=) version</entry>
+           <entry>foo > 1.2, bar < 3.3.5, bang</entry>
+           <entry>If the version isn't listed, it's assumed any version is OK.</entry>
+      </row>
+
+      <row><entry>c-sources</entry>
+           <entry>--PATH--</entry>
+           <entry>/foo/bar/bang</entry>
+      </row>
+
+      <row><entry>include-dirs</entry>
+           <entry>--PATH--</entry>
+           <entry>/foo/bar/bang</entry>
+      </row>
+
+      <row><entry>includes</entry>
+           <entry>--PATH--</entry>
+           <entry>/foo/bar/bang</entry>
+      </row>
+
+      <row><entry>hs-source-dir</entry>
+           <entry>--PATH--</entry>
+           <entry>/foo/bar/bang</entry>
+      </row>
+
+      <row><entry>modules</entry>
+           <entry>--MODULE LIST--</entry>
+           <entry>Foo.Bar, Bang.Baz, Boo</entry>
+      </row>
+
+      <row><entry>exposed-modules</entry>
+           <entry>--MODULE LIST--</entry>
+           <entry>Foo.Bar, Bang.Baz, Boo</entry>
+      </row>
+
+      <row><entry>extensions</entry>
+           <entry>	       OverlappingInstances
+               | RecursiveDo
+               | ParallelListComp
+               | MultiParamTypeClasses
+               | NoMonomorphismRestriction
+               | FunctionalDependencies
+               | RankNTypes
+               | PolymorphicComponents
+               | ExistentialQuantification
+               | ScopedTypeVariables
+               | ImplicitParams
+               | FlexibleContexts
+               | FlexibleInstances
+               | EmptyDataDecls
+
+	       | TypeSynonymInstances
+	       | TemplateHaskell
+               | ForeignFunctionInterface
+               | AllowOverlappingInstances
+               | AllowUndecidableInstances
+               | AllowIncoherentInstances
+               | InlinePhase
+               | ContextStack
+               | Arrows
+               | Generics
+               | NoImplicitPrelude
+               | NamedFieldPuns
+
+               | ExtensibleRecords
+               | RestrictedTypeSynonyms
+               | HereDocuments
+               | UnsafeOverlappingInstances</entry>
+           <entry>ForeignFunctionInterface, Arrows</entry>
+      </row>
+
+      <row><entry>options-ghc</entry>
+           <entry>--OPTIONS--</entry>
+           <entry>-fth -cpp</entry>
+      </row>
+
+      <row><entry>options-nhc</entry>
+           <entry>--OPTIONS--</entry>
+           <entry>-P -t</entry>
+      </row>
+
+      <row><entry>options-hugs</entry>
+           <entry>--OPTIONS--</entry>
+           <entry>-98 +g</entry>
+      </row>
+
+   </tbody></tgroup></table></para>
+
+<para>Shared parsers:
+--path--, --module list--, --free text--
+</para>
+
+<para>On hidden modules: Hidden modules form part of the
+implementation of the package, but not its interface: a client of the
+package cannot import an internal module.  The system still must
+derive their existence, or they must be listed explicity for two
+reasons: (a) to allow the global program invariant to be checked (see
+<xref linkend="packages-and-haskell">) and (b) to enable a build
+system or programming environment to find the source files.  </para>
 </sect2>
 
 <sect2 id="sbi-setup"><title><literal>Distribution.Simple</literal></title>
