@@ -486,7 +486,7 @@ N[\hcall:S]; (\bound{a}~@>>@~b)_{N}
 \\
 ; (\bound{a}~@>>@~b)_{\epsilon} 
 	& \Rightarrow 
-	& N[\hcall]; (\bound{a}_N~@>>@~b)_{N} & (BIND2) \\
+	& N[\hcall]; (\bound{a}_N~@>>@~b)_{\epsilon} & (BIND2) \\
 \\
 N[\hcall:S]; (\bound{\epsilon}_N~@>>@~b)_N 
 	& \Rightarrow 
@@ -645,6 +645,31 @@ point of view:
 \begin{itemize}
 \item @threadbound@ is a terrible name.
 \item In which library module should @threadbound@ go?
+\item Shound the threadbound combinator, when used from an unassociated Haskell thread,
+always create a fresh native thread, or may the native thread be reused?
+
+Rule (BIND2) implies that it is a new native thread, and rule (UNBIND2) says that the
+native thread dies after being used. An alternative might be to allow pooling of
+the threads by replacing rules (BIND2), (UNBIND1) and (UNBIND2) by:
+$$
+\begin{array}{rcll}
+N[\hcall]; (\bound{a}~@>>@~b)_{\epsilon} 
+	& \Rightarrow 
+	& N[\hcall]; (\bound{a}_N~@>>@~b)_{\epsilon} & (BIND2') \\
+\\
+; (\bound{\epsilon}_N~@>>@~b)_{at}
+	& \Rightarrow 
+	& ; (b)_{at} & (UNBIND') \\
+\end{array}
+$$
+
+The obvious advantage of pooling is, of course, a possible performance gain;
+However, a "fresh" thread has well-defined thread-local state, but for a 
+reused (pooled) thread, thread-local state is unknown. There shouldn't be
+any libraries that rely on threads being ``fresh''\footnote{but of course,
+you can never know what strange ideas people can come up with}, but having old
+thread-local state lying around could make bugs harder to reproduce.
+
 \end{itemize}
 
 \end{document}
