@@ -236,7 +236,7 @@ Haskell function is still running.
 \item On the other hand, (FCALL1) says that only a vanilla worker thread $N[H]$ (i.e. with
 nothing on its stack except $H$) can execute an unbound foreign call.  Similarly (FCALL2) says
 that only native thread $N$ can execute a foreign call from a Haskell thread bound to $N$.
-(This is under the proposal that foriegn imports are not labelled bound/unbound.)
+(This is under the proposal that foreign imports are not labelled bound/unbound.)
 
 \item In either (FCALL) case, the Haskell thread is removed from the pool, and captured in the
 native thread's stack.  The rule (FRET) reinstates the Haskell thread (bound or otherwise)
@@ -260,5 +260,92 @@ the end of the Haskell thread.
 
 \end{itemize}
 
+\section{Extension to the FFI Syntax}
+
+A bound foreign export is declared by adding the specialid \texttt{bound}
+after the calling convention (before the exported entity string).
+
+The bound attribute can also apply to thunks created by foreign imported
+"wrapper" functions. These stub factories are the only situation where the
+\texttt{bound} attribute applies. 
+
+Example:
+\begin{quote}
+\begin{verbatim}
+foreign export ccall bound "CFoo" haskellFoo
+    :: IO ()
+foreign import ccall bound "wrapper" wrapHaskellFoo
+    :: IO () -> IO (FunPtr (IO ())) 
+\end{verbatim}
+\end{quote}
+
+The \texttt{bound} attribute should only be valid for exported entities
+that are in the IO monad.
+
+\section{Library Addition}
+
+A function named \texttt{forkBoundThread} should be added to the library
+(somewhere in \texttt{Foreign} or \texttt{Concurrent}).
+A possible implementation for POSIX systems is given below.
+
+\begin{quote}
+\begin{verbatim}
+forkBoundThread :: IO () -> IO ()
+
+-- pthread_create(thread, attr, start_routine, arg)
+foreign import ccall pthread_create
+    :: Ptr (Ptr ())
+    -> Ptr ()
+    -> FunPtr (Ptr () -> IO (Ptr ()))
+    -> Ptr ()
+    -> IO CInt
+
+foreign export ccall bound "wrapper" wrapHaskell
+    :: (Ptr () -> IO (Ptr ()))
+    -> IO (FunPtr (Ptr () -> IO (Ptr ())))
+    
+forkBoundThread action =
+    wrapHaskell (\ptr -> do
+            freeHaskellFunPtr thunk
+            action
+            return nullPtr
+        )
+    >>= \thunk -> alloca
+    >>= \thread -> pthread_create thread nullPtr thunk nullPtr
+    >> return ()
+
+\end{verbatim}
+\end{quote}
+
+\section{Issues}
+
+\begin{itemize}
+
+\item Somebody suggested labelling foreign imports as bound or unbound,
+and allowing the RTS to choose any thread it wants for executing unbound
+foreign imports.
+
+However, we need top performance for \emph{all} foreign imports, not just
+unbound ones. HOpenGL applications make hundreds and thousands of unsafe calls,
+all of which have to be bound to a specific native thread.
+Now if bound foreign imports need to be as fast as unbound foreign imports
+\footnote{This will be the case in GHC}, we don't need the additional
+complexity.
+
+\item The meaning of "\texttt{bound}" in the FFI declarations is probably
+rather unobvious to people who haven't been following this discussion. Can
+somebody think of something that is more meaningful?
+
+\item Some very broken libraries (Apple's GUI libraries) seem to have
+initialization routines (that run prior to main) which initialize thread local
+state for the "main thread" (the OS thread that the C language \texttt{main()}
+function runs in). Some routines can then only be run in that main thread. Some
+way is needed to allow the programmer to specify that the haskell thread that
+the \texttt{main} action runs in should be bound to the main OS thread.
+
+\item In which module in the libraries should the \texttt{forkBoundThread}
+function go?
+
+\end{itemize}
 
 \end{document}
