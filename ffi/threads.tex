@@ -242,4 +242,85 @@ remain available to participate in (FCALL1), since no other OS thread can do so.
 all be blocked in a foreign call.
 \end{description}
 
+\section{Primitives}
+
+\subsection{forkIO and forkOS}
+
+\begin{quote}
+\begin{verbatim}
+forkIO :: IO () -> IO ThreadId
+forkOS :: IO () -> IO ThreadId
+\end{verbatim}
+\end{quote}
+
+As described in the formal semantics above.
+
+This document does not specify the meaning of the @ThreadId@ return value. The
+definition of what constitutes one Haskell thread used for the return value
+need not agree with the definition used for describing the formal semantics.
+Questions like ``are thread ids preserved across foreign calls and call-backs''
+are outside the scope of this document.
+
+\subsection{isCurrentThreadBound}
+
+\begin{quote}
+\begin{verbatim}
+isCurrentThreadBound :: IO Bool
+\end{verbatim}
+\end{quote}
+
+... should return @True@ if and only if it is safe to use foreign calls that
+rely on thread-local state. That means it will return True when executed from a
+bound Haskell thread. It may also return @True@ for threads that are not bound
+according to the above semantics if the run time system is implemented in such
+a way that thread-local-state can be used from all threads, e.g. using a 1-1
+relationship between Haskell threads and OS threads.
+
+This primitive is intended to make use of forkOS unnecessary when a bound
+thread is already available; consider the following utility function:
+
+\begin{quote}
+\begin{verbatim}
+runInBoundThread :: IO a -> IO a
+
+runInBoundThread action = do
+    bound <- isCurrentThreadBound
+    if bound
+        then action
+        else do
+            mv <- newEmptyMVar
+            forkOS (action >>= putMVar mv)
+            takeMVar mv
+\end{verbatim}
+\end{quote}
+
+\subsection{forkProcess}
+
+\begin{quote}
+\begin{verbatim}
+forkProcess :: IO (Maybe ProcessID)
+\end{verbatim}
+\end{quote}
+
+The primitive @forkProcess@ is available in the module @System.Posix.Process@
+on Posix platforms only.
+It's semantics are anologous to POSIX @fork@; it returns a process
+id to the parent, and @Nothing@ to the child. Only the Haskell thread that
+@forkProcess@ was called from is duplicated in the child process; it
+will be the only thread in the child process.
+
+If @forkProcess@ is called from a bound Haskell thread, the duplicated Haskell
+thread in the child process will again be bound and all the thread-local
+state will be preserved.
+
+If @forkProcess@ is called from an unbound Haskell thread, the duplicated
+Haskell thread in the child process will be unbound.
+
+\paragraph{Issues:}
+\begin{itemize}
+\item Under what circumstances should the forked process terminate?
+\item The action @forkProcessAll@ from the same module should be removed, as
+      it seems to be unimplementable in the presence of multiple OS threads.
+\end{itemize}
+
 \end{document}
