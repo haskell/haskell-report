@@ -13,6 +13,16 @@
 % does not claim to be a definition of the Haskell 98 Foreign Function
 % Interface. 
 
+% Changes since RC5:
+% * Author list: changed Alastair Reid's institution
+% * 4.1.1: Removed [lib] from impent syntax and discussion
+% * 4.1.3: Added parentheses round FunPtr ft to make it easier to 
+%          understand a tolerably complex type.
+% * 4.1.4: Removed all mention of library objects
+% * 6:     Specified that HsBool==int in table2
+%          Relabelled column 1 in table 3 (C symbol -> CPP symbol)
+%          Replaced 0 and 1 with HS_BOOL_FALSE/TRUE
+
 % Changes since RC4:
 % * 5.6: Clarified documentation of `StablePtr's
 %
@@ -59,14 +69,14 @@
 \excludeversion{FUTURE}  % material for future extensions
 
 %\def\Version{\relax}
-\def\Version{\\(Release Candidate 4)}
+\def\Version{\\(Release Candidate 6)}
 \begin{DRAFT}%
 {
   \gdef\Version{%
     \\
     \textbf{--- DRAFT ---}\\[1ex]
     \ttfamily\scriptsize
-    $\relax$Id: ffi.tex,v 1.27 2002/06/14 08:38:02 chak Exp $\relax$%
+    $\relax$Id: ffi.tex,v 1.28 2002/08/09 11:32:44 reid Exp $\relax$%
     \ignorespaces}
   }
 \end{DRAFT}
@@ -112,7 +122,7 @@
   Erik Meijer, Microsoft Corporation\\
   Sven Panne, BetaResearch GmbH\\
   Simon Peyton Jones, Microsoft Research, Cambridge\\
-  Alastair Reid, University of Utah\\
+  Alastair Reid, Reid Consulting (UK) Ltd.\\
   Malcolm Wallace, University of York\\
   Michael Weber, University of Aachen
   }
@@ -607,15 +617,13 @@ under the \code{ccall} calling convention is as follows:
 \begin{grammar}
   \grule[static function or address]{impent}{%
     " \gopt{static} \gopt{\gnterm{fname}} \gopt{\&} 
-    \gopt{[ \gnterm{lib} ]} \gopt{\gnterm{cid}} "}
+    \gopt{\gnterm{cid}} "}
   \gor[stub factory importing addresses]{%
     " dynamic "}
   \gor[stub factory exporting thunks]{%
     " wrapper "}
   \grule{fname}{%
     \gverbal{file name with suffix `\code{.h}'}}
-  \grule{lib}{%
-    \gverbal{name of library archive}}
   \grule{cid}{%
     \gverbal{C identifier}}
 \end{grammar}
@@ -623,9 +631,8 @@ under the \code{ccall} calling convention is as follows:
 The first alternative either imports a static function \gnterm{cid} or, if
 \gterm\& precedes the identifier, a static address.  If \gnterm{cid} is
 omitted, it defaults to the name of the imported Haskell variable.  The
-optional filename \gnterm{fname} specifies a C header file and the optional
-name \gnterm{lib}, which needs to be enclosed in square brackets, specifies a
-library archive.  The range of lexemes that are admissible for \gnterm{fname}
+optional filename \gnterm{fname} specifies a C header file.
+The range of lexemes that are admissible for \gnterm{fname}
 and \gnterm{cid} coincides with the range of lexemes for arguments to the
 \code{\#{}include} directive and C identifiers, respectively, as defined
 in~\cite{C}.  The only exception is that the file name \gnterm{fname} must end
@@ -638,11 +645,7 @@ compiles Haskell to C code, the directive
 \end{quote}
 %
 will be placed into any generated C file that refers to the foreign entity
-before the first occurrence of that entity in the generated C file.  The
-library name \gnterm{lib}, if provided, constitutes a hint as to which library
-archive contains the code of the imported function at runtime.  The mapping of
-the library name to a system-specific library archive is implementation
-dependent.
+before the first occurrence of that entity in the generated C file.
 
 The second and third alternative, identified by the keywords \gterm{dynamic}
 and \gterm{wrapper}, respectively, import stub functions that have to be
@@ -710,7 +713,7 @@ foreign import ccall "errno.h &errno" errno :: Ptr CInt
   \code{int}.
 
 \item[Dynamic import.]  The type of a \gnterm{dynamic} stub has to be of the
-  form \code{FunPtr }\textit{ft}\code{ -> }\textit{ft}, where \textit{ft} may
+  form \code{(FunPtr }\textit{ft}\code{) -> }\textit{ft}, where \textit{ft} may
   be any foreign type.
 
   As an example, consider
@@ -746,7 +749,7 @@ foreign import ccall "wrapper"
 
 \end{description}
 
-\subsubsection{Specification of Header Files and Library Objects}
+\subsubsection{Specification of Header Files}
 
 A C header specified in an import declaration is always included by
 \gterm{\#include "\gnterm{fname}"}.  There is no explicit support for
@@ -765,16 +768,6 @@ configurations would introduce significant complexity.  Moreover, using the
 simple design, a custom include file can be specified that uses the standard C
 preprocessor features to include all relevant headers.
   
-Similarly, there is only minimal support for link information (such as, for
-example, the name of a library archive), as comprehensive support would have
-made the design significantly more complex.  In fact, as in contrast to
-include files, simple support that offloads the complexity to standard C
-mechanisms seems not to be possible here, it would have been reasonable to
-delegate the handling of link information to the package management system of
-the Haskell implementation entirely if it had not been for multi-language
-intermediate forms, such as ILX of .NET, which requires simple link
-information.  The option to associate the name of a library archive with an
-external function simplifies the generation of such intermediate code.
 
 \subsubsection{C Argument Promotion}
 
@@ -1743,7 +1736,7 @@ C-specific marshalling support.  The modules are \code{CTypes},
       & floating point type\\
      \hline
       \code{HsBool}     & \code{Bool}
-      & integral type\\
+      & \code{int}\\
      \hline
       \code{HsPtr}      & \code{Ptr a}
       & \code{(void *)}\\
@@ -1768,7 +1761,7 @@ C-specific marshalling support.  The modules are \code{CTypes},
 %    \begin{tabular}{|l|l|l|}
     \begin{tabular}{|l|l|p{30ex}|}
       \hline
-      C symbol           & Haskell value & Description\\
+      CPP symbol           & Haskell value & Description\\
       \hline\hline
       \code{HS\_CHAR\_MIN} & \code{minBound ::\ Char}
       & \\
@@ -1879,10 +1872,10 @@ C-specific marshalling support.  The modules are \code{CTypes},
       \code{HS\_DOUBLE\_MAX\_10\_EXP} & n/a
       & (as above)\\
       \hline
-      \code{0} & \code{False}
+      \code{HS\_BOOL\_FALSE} & False
       & \\
       \hline
-      \code{1} & \code{True}
+      \code{HS\_BOOL\_TRUE} & True
       & \\
       \hline
     \end{tabular}
