@@ -46,7 +46,7 @@
     \\
     \textbf{--- DRAFT ---}\\[1ex]
     \ttfamily\scriptsize
-    $\relax$Id: ffi.tex,v 1.7 2001/08/14 08:55:40 chak Exp $\relax$%
+    $\relax$Id: ffi.tex,v 1.8 2001/08/17 02:12:49 chak Exp $\relax$%
     \ignorespaces}
   }
 \end{DRAFT}
@@ -56,18 +56,17 @@
 \newcommand{\code}[1]{\texttt{#1}}      % inline code fragment
 \makeatletter
 \newenvironment{codedesc}{%             % description of code pieces
-  \list{}{\labelwidth\z@ %\itemindent-\leftmargin
+  \list{}{\labelwidth\z@
     \let\makelabel\codedesclabel}
   }{%
   \endlist
   }
-%\newcommand*{\codedesclabel}[1]{\hspace\labelsep\normalfont\code{#1}}
 \newcommand*{\codedesclabel}[1]{%
-%  \hspace\labelsep
   \hspace{-\leftmargin}
   \parbox[b]{\labelwidth}{\makebox[0pt][l]{\code{#1}}\\}\hfil\relax
   }
 \makeatother
+\newcommand{\combineitems}{\vspace*{-\itemsep}\vspace*{-\parsep}\vspace*{-1em}}
 
 
 \begin{document}
@@ -683,6 +682,7 @@ FIXME: Shouldn't Bits be part of the FFI?  If so, IntN and WordN must have
 \end{verbatim}
 
 \subsection{\code{Int} and \code{Word}}
+\label{sec:Int-Word}
 
 The two modules \code{Int} and \code{Word} provide the following signed and
 unsigned integral types of fixed size:
@@ -890,7 +890,6 @@ the following signature and purpose:
     
 \item[castForeignPtr ::\ ForeignPtr a -> ForeignPtr b] This function casts a
   \code{ForeignPtr} parameterised by one type into another type.
-
 \end{codedesc}
 
 \begin{verbatim}
@@ -953,20 +952,283 @@ sp == castPtrToStablePtr (castStablePtrToPtr sp)
   executed yet.
 \end{codedesc}
 
-It is important to free stable pointers that are no longer required using the
-function \code{freeStablePtr}.  Otherwise the object referenced by the stable
-pointer will be retained in the heap and the runtime system's internal stable
-pointer table will grow, which imposes an overhead on garbage collection.
+It is important to free stable pointers that are no longer required by using
+\code{freeStablePtr}.  Otherwise, the object referenced by the stable pointer
+will be retained in the heap.
 
 \subsection{\code{Storable}}
 \label{sec:Storable}
 
-\code{Storable} is derivable.  It is only derivable for \code{newtype}s of
-types for which an instance of \code{Storable} exists.
+To code marshalling in Haskell, Haskell data structures need to be translated
+into the binary representation of a corresponding data structure of the
+foreign language and vice versa.  To this end, the module \code{Storable}
+provides routines that manipulate primtive data types stored in unstructured
+memory blocks.  The class \code{Storable} is instantiated for all primitive
+types that can be stored in raw memory.  Reading and writing these types to
+arbitrary memory locations is implemented by the member functions of the
+class.  The member functions, furthermore, encompass support for computing the
+storage requirements and alignment restrictions of storable types.
+
+Memory addresses are represented as values of type \code{Ptr a}
+(Section~\ref{sec:Ptr}), where \code{a} is a storable type.  The type argument
+to \code{Ptr} provides some type safety in marhsalling code, as pointers to
+different types cannot be mixed without an explicit cast.  Moreover, it
+assists in resolving overloading.
+
+The class \code{Storable} is instantiated for all standard basic types of
+Haskell, the fixed size integral types of the modules \code{Int} and
+\code{Word} (Section~\ref{sec:Int-Word}) , data and functions pointers
+(Section~\ref{sec:Ptr}), and stable pointers (Section~\ref{sec:StablePtr}).
+There is no instance of \code{Storable} for foreign pointers.  The intention
+is to ensure that storing a foreign pointer requires an explicit cast to a
+plain \code{Ptr}, which makes it obvious that the finalisers of the foreign
+pointer may be invoked at this point if no other reference to the pointer
+exist anymore.
+
+The signatures and behaviour of the member functions of the class
+\code{Storable} are as follows:
+%
+\begin{codedesc}
+\item[sizeOf~~~~::\ Storable a => a -> Int]
+\item[alignment~::\ Storable a => a -> Int]\combineitems The function
+  \code{sizeOf} computes the storage requirements (in bytes) of the argument,
+  and alignment computes the alignment constraint of the argument.  An
+  alignment constraint \code{x} is fulfilled by any address divisible by
+  \code{x}. Both functions do not evaluate their argument, but compute the
+  result on the basis of the type of the argument alone.
+
+\item[peekElemOff ::\ Storable a => Ptr a -> Int -> IO a] Read a value from a
+  memory area regarded as an array of values of the same kind. The first
+  argument specifies the start address of the array and the second the index
+  into the array (the first element of the array has index 0).
+  
+\item[pokeElemOff ::\ Storable a => Ptr a -> Int -> a -> IO ()] Write a value
+  to a memory area regarded as an array of values of the same kind.  The first
+  and second argument are as for \code{peekElemOff}.
+  
+\item[peekByteOff ::\ Storable a => Ptr a -> Int -> IO a] Read a value from a
+  memory location given by a base address and byte offset from that base
+  address.
+  
+\item[pokeByteOff ::\ Storable a => Ptr a -> Int -> a -> IO ()] Write a value
+  to a memory location given by a base address and offset from that base
+  address.
+  
+\item[peek ::\ Storable a => Ptr a -> IO a] Read a value from the given memory
+  location.
+  
+\item[poke ::\ Storable a => Ptr a -> a -> IO ()] Write the given value to the
+  given memory location.
+\end{codedesc}
+%
+On some architectures, the \code{peek} and \code{poke} functions might require
+properly aligned addresses to function correctly.  Thus, portable code should
+ensure that when peeking or poking values of some type \code{a}, the alignment
+constraint for \code{a}, as given by the function \code{alignment} is
+fulfilled.
+
+\begin{verbatim}
+FIXME: Do we really need
+  \item[destruct ::\ Storable a => Ptr a -> IO ()]
+    Free any resources associated with the refereed object, except the pointed
+    to memory reference.
+\end{verbatim}
+
+A minimal complete definition of \code{Storable} needs to define
+\code{sizeOf}, \code{alignment}, one of \code{peek}, \code{peekElemOff}, or
+\code{peekByteOff}, and one of \code{poke}, \code{pokeElemOff}, and
+\code{pokeByteOff}.
 
 
-Note that the Haskell 98 report says in Section~4.3.3 says, ``Classes defined
-by the standard libraries may also be derivable.''
+\begin{verbatim}
+FIXME: This approach has been questioned:
+  \code{Storable} is derivable.  It is only derivable for \code{newtype}s of
+  types for which an instance of \code{Storable} exists.
+
+  Note that the Haskell 98 report says in Section~4.3.3 says, ``Classes defined
+  by the standard libraries may also be derivable.''
+\end{verbatim}
+
+\section{\code{MarshalAlloc}}
+\label{sec:MarshalAlloc}
+
+The module \code{MarshalAlloc} provides operations to allocate and deallocate
+blocks of raw memory (i.e., unstructured chunks of memory outside of the area
+maintained by the Haskell storage manager).  These memory blocks are commonly
+used to pass compound data structures to foreign functions or to provide space
+in which compound result values are obtained from foreign functions.  For
+example, Haskell lists are typically passed as C arrays to C functions; the
+storage space for such an array can be allocated by the following functions:
+%
+\begin{codedesc}
+\item[malloc ::\ Storable a => IO (Ptr a)] Allocate a block of memory that is
+  sufficient to hold values of type \code{a}.  The size of the memory area is
+  determined by the function \code{Storable.sizeOf}
+  (Section~\ref{sec:Storable}).
+
+\item[mallocBytes ::\ Int -> IO (Ptr a)] Allocate a block of memory of the
+  given number of bytes.
+  
+\item[alloca ::\ Storable a => (Ptr a -> IO b) -> IO b] Allocate a block of
+  memory of the same size as \code{malloc}, but the reference is passed to a
+  computation instead of being returned.  When the computation terminates,
+  free the memory area again.  The operation is exception-safe; i.e.,
+  allocated memory is freed if an exception is thrown in the marshalling
+  computation.
+
+\item[allocaBytes ::\ Int -> (Ptr a -> IO b) -> IO b] As \code{alloca}, but
+  allocates a memory area of the given size.
+  
+\item[reallocBytes ::\ Ptr a -> Int -> IO (Ptr a)] Resize a memory area that
+  was allocated with \code{malloc} or \code{mallocBytes} to the given size.
+
+\item[free ::\ Ptr a -> IO ()] Free a block of memory that was allocated with
+  \code{malloc} or \code{mallocBytes}.
+\end{codedesc}
+%
+If any of allocation functions fails, a value of \code{Ptr.nullPtr} is
+produced.  If \code{free} is applied to a memory area that has been allocated
+with \code{alloca} or \code{allocaBytes}, the behaviour is undefined.
+However, \code{reallocBytes} may be used on such memory areas.  Any further
+access to memory areas allocated with \code{alloca} or \code{allocaBytes},
+after the computation that was passed to the allocation function has
+terminated, leads to undefined behaviour.
+
+\section{\code{MarshalArray}}
+\label{sec:MarshalArray}
+
+The module \code{MarshalArray} provides operations for marshalling Haskell
+lists into monolithic arrays and vice versa.  Most functions come in two
+flavours: one for arrays terminated by a special termination element and one
+where an explicit length parameter is used to determine the extent of an
+array.  The typical example for the former case are C's NUL terminated
+strings.  However, please note that C strings should usually be marshalled
+using the functions provided by \code{CString} (Section~\ref{sec:CString}) as
+the Unicode encoding has to be taken into account.  All functions specifically
+operating on arrays that are terminated by a special termination element have
+a name ending on \code{0}---e.g., \code{mallocArray} allocates space for an
+array of the given size, whereas \code{mallocArray0} allocates space for one
+more element to ensure that there is room for the terminator.
+
+The following functions are provided by the module:
+%
+\begin{codedesc}
+\item[mallocArray~~::\ Storable a => Int -> IO (Ptr a)]
+\item[allocaArray~~::\ Storable a => Int -> (Ptr a -> IO b) -> IO b]
+  \combineitems
+\item[reallocArray~::\ Storable a => Ptr a -> Int -> IO (Ptr a)]\combineitems
+  The functions behave like the functions \code{malloc}, \code{alloca}, and
+  \code{realloc} provided by the module \code{MarshalAlloc}
+  (Section~\ref{sec:MarshalAlloc}), respectively, except that they allocate a
+  memory area that can hold an array of elements of the given length, instead
+  of storage for just a single element.  
+
+\item[mallocArray0~~::\ Storable a => Int -> IO (Ptr a)]
+\item[allocaArray0~~::\ Storable a => Int -> (Ptr a -> IO b) -> IO b]\combineitems
+\item[reallocArray0~::\ Storable a => Ptr a -> Int -> IO (Ptr a)]\combineitems
+  These functions are like the previous three functions, but reserve storage
+  space for one additional array element to allow for a termination indicator.
+  
+\item[peekArray ::\ Storable a => Int -> Ptr a -> IO {[a]}] Marshal an array of
+  the given length and starting at the address indicated by the pointer
+  argument into a Haskell list using \code{Storable.peekElemOff} to obtain the
+  individual elements.  The order of elements in the list matches the order in
+  the array.
+  
+\item[pokeArray ::\ Storable a => Ptr a -> {[a]} -> IO ()] Marshal the elements
+  of the given list into an array whose start address is determined by the
+  first argument using \code{Storable.pokeElemOff} to write the individual
+  elements.  The order of elements in the array matches that in the list.
+  
+\item[peekArray0 ::\ (Storable a, Eq a) => a -> Ptr a -> IO {[a]}] Marshal an
+  array like \code{peekArray}, but instead of the length of the array a
+  terminator element is specified by the first argument.  All elements of the
+  array, starting with the first element, up to, but excluding the first
+  occurrence of an element that is equal (as determined by \code{==}) to the
+  terminator are marshalled.
+
+\item[pokeArray0 ::\ Storable a => a -> Ptr a -> {[a]} -> IO ()]
+  Marshal an array like \code{pokeArray}, but write a terminator value
+  (determined by the first argument) after the last element of the list.  Note
+  that the terminator must not occur in the marshalled list if it should be
+  possible to extract the list with \code{peekArray0}.
+
+\item[newArray~~::\ Storable a => {[a]} -> IO (Ptr a)]
+\item[withArray~::\ Storable a => {[a]} -> (Ptr a -> IO b) -> IO b]\combineitems
+  These two functions combine \code{mallocArray} and \code{allocaArray},
+  respectively, with \code{pokeArray}; i.e., they allocate a memory area for
+  an array whose length matches that of the list, and then, marshal the list
+  into that memory area.
+
+\item[newArray0~~::\ Storable a => a -> {[a]} -> IO (Ptr a)]
+\item[withArray0~::\ Storable a => a -> {[a]} -> (Ptr a -> IO b) -> IO b]\combineitems
+  These two functions combine \code{mallocArray0} and \code{allocaArray0},
+  respectively, with \code{pokeArray0}; i.e., they allocate a memory area for
+  an array whose length matches that of the list, and then, marshal the list
+  into that memory area.  The first argument determines the terminator.
+
+\item[copyArray ::\ Storable a => Ptr a -> Ptr a -> Int -> IO ()]
+\item[moveArray ::\ Storable a => Ptr a -> Ptr a -> Int -> IO ()]\combineitems
+  These two functions copy entire arrays and behave like the routines
+  \code{MarshalUtils.copyBytes} and \code{MarshalUtils.moveBytes},
+  respectively (Section~\ref{sec:MarshalUtils}).  In particular,
+  \code{moveArray} allows the source and destination array to overlap, whereas
+  \code{copyArray} does not allow overlapping arrays.  Both functions take a
+  reference to the destination array as their first, and a reference to the
+  source as their second argument.  However, in contrast to the routines from
+  \code{MarshalUtils} the third argument here specifies the number of array
+  elements (whose type is specified by the parametrised pointer arguments)
+  instead of the number of bytes to copy.
+  
+\item[lengthArray0 ::\ (Storable a, Eq a) => a -> Ptr a -> IO Int] Determine
+  the length of an array whose end is marked by the first occurence of the
+  given terminator (first argument). The length is measured in array elements
+  (not bytes) and does not include the terminator.
+  
+\item[advancePtr ::\ Storable a => Ptr a -> Int -> Ptr a] Advance a reference
+  to an array by as many array elements (not bytes) as specified.
+\end{codedesc}
+
+\begin{verbatim}
+FIXME: destructArray & destructArray0: see corresponding FIXME in Storable
+\end{verbatim}
+
+\section{\code{MarshalError}}
+\label{sec:MarshalError}
+
+The module \code{MarshalError} provides language independent routines for
+converting error conditions of external functions into Haskell IO monad
+exceptions.
+%
+\begin{codedesc}
+\item[throwIf ::\ (a -> Bool) -> (a -> String) -> IO a -> IO a] Execute the
+  computation determined by the third argument.  If the predicate provided in
+  the first argument yields \code{True} when applied to the result of that
+  computation, raise an \code{IO} exception that includes an error message
+  obtained by applying the second argument to the result of the computation.
+  If no exception is raised, the result of the computation is the result of
+  the whole operation.
+
+\item[throwIf\_ ::\ (a -> Bool) -> (a -> String) -> IO a -> IO ()]
+  Operate as \code{throwIf} does, but discard the result of the computation
+  in any case.
+
+\item[throwIfNeg~~::\ (Ord a, Num a) => (a -> String) -> IO a -> IO a]
+\item[throwIfNeg\_~::\ (Ord a, Num a) => (a -> String) -> IO a -> IO ()]\combineitems
+  These two functions are instances of \code{throwIf} and \code{throwIf\_},
+  respectively, where the predicate is \code{(< 0)}.
+  
+\item[throwIfNull ::\ String -> IO (Ptr a) -> IO (Ptr a)] This is an instance
+  of \code{throwIf}, where the predicate is \code{(== Ptr.nullPtr)} and the
+  error message is constant.
+
+\item[void ::\ IO a -> IO ()]
+  Discard the result of a computation.
+\end{codedesc}
+
+
+\section{\code{MarshalUtils}}
+\label{sec:MarshalUtils}
 
 
 \newpage
@@ -979,6 +1241,8 @@ by the standard libraries may also be derivable.''
 FIXME: Mention HsFFI.h and include the table of primitive types
 FIXME: Storable.peek for ForeignPtr doesn't make much sense, or does it?
 FIXME: It might be argued that Bits is needed for the FFI, too.
+
+FIXME: CTypes and CTypesISO instantiate all types for Storable
 \end{verbatim}
 
 \begin{quote}
