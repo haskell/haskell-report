@@ -3,7 +3,7 @@
 %
 % Editor: Manuel M T Chakravarty
 %
-% Copyright 2001 Manuel M T Chakravarty
+% Copyright 2002 Manuel M T Chakravarty
 %
 % The authors intend this Report to belong to the entire Haskell community, and
 % so we grant permission to copy and distribute it for any purpose, provided
@@ -16,8 +16,6 @@
 % TODO:
 % * Revise layout of the front page.
 % * Implement HTMLization.
-% * Should we have an appendix with the module names under the new library
-%   naming scheme?  I'd say, no.  (Rather have it in the Libraries Addendum.)
 
 % TODO after Version 1.0:
 %
@@ -38,18 +36,19 @@
 
 % version control
 %
-\includeversion{DRAFT}
-%\excludeversion{DRAFT}
+%\includeversion{DRAFT}
+\excludeversion{DRAFT}
 \excludeversion{FUTURE}  % material for future extensions
 
-\def\Version{\relax}
+%\def\Version{\relax}
+\def\Version{\\(Release Candidate 1)}
 \begin{DRAFT}%
 {
   \gdef\Version{%
     \\
     \textbf{--- DRAFT ---}\\[1ex]
     \ttfamily\scriptsize
-    $\relax$Id: ffi.tex,v 1.20 2001/10/30 18:20:45 malcolm Exp $\relax$%
+    $\relax$Id: ffi.tex,v 1.21 2002/01/10 10:16:21 chak Exp $\relax$%
     \ignorespaces}
   }
 \end{DRAFT}
@@ -86,7 +85,7 @@
   An Addendum to the Haskell 98 Report%
   \Version}
 \author{
-  Manuel M. T. Chakravarty [editor], University of New South Wales\\
+  Manuel Chakravarty [editor], University of New South Wales\\
   Sigbjorn Finne, Galois Connections, Inc.\\
   Fergus Henderson, University of Melbourne\\
   Marcin Kowalczyk, Warsaw University\\
@@ -103,7 +102,7 @@
 \maketitle
 \par\vfill
 \noindent
-Copyright (c) 2001 Manuel M. T. Chakravarty
+Copyright (c) 2002 Manuel M. T. Chakravarty
 \par\noindent
 \emph{The authors intend this Report to belong to the entire Haskell
   community, and so we grant permission to copy and distribute it for any
@@ -157,11 +156,10 @@ that generate code following the present specification.
 
 \subsection*{Acknowledgements}
 
-\begin{verbatim}
-FIXME: To be written
-\end{verbatim}
-% We should get some people to acknowledge here as soon as the spec is
-% published with a call for comments on the main list.
+We heartly thank the kind people who helped us with their comments and
+suggestions on the \code{ffi@haskell.org} mailing list as well as all the
+users of previous versions of the FFI who helped to shape the development by
+their feedback.
 
 
 \clearemptydoublepage
@@ -254,9 +252,10 @@ information as to when \code{const} modifiers have to be emitted.
 \section{Lexical Structure}
 
 The only addition to the lexical structure of Haskell 98 as defined
-in~\cite[Section~2]{haskell98} is a single new reserved identifier and a set
-of special identifiers.  The latter have a special meaning only within foreign
-declarations, but may be used as ordinary identifiers elsewhere.
+in~\cite[Section~2]{haskell98} is a single new reserved identifier (namely,
+\code{foreign}) and a set of special identifiers.  The latter have a special
+meaning only within foreign declarations, but may be used as ordinary
+identifiers elsewhere.
 
 The following productions are added:
 %
@@ -321,11 +320,6 @@ calling conventions, it is guaranteed that the description of an external
 entity lexically appears as a Haskell string lexeme.  The only exception is
 where this string would be the empty string (i.e., be of the form \code{""});
 in this case, the string may be omitted in its entirety.
-
-Note that the new keyword \code{foreign} is the only name taken away from the
-Haskell 98 name space.  All other special identifiers that may appear in
-foreign declarations do not have a special status outside of those
-declarations.
 
 \subsection{Calling Conventions}
 \label{sec:call-conv}
@@ -707,7 +701,8 @@ foreign import ccall "dynamic"
   %
   \begin{quote}
 \begin{verbatim}
-foreign import ccall "wrapper" mkCallback :: IO () -> FunPtr (IO ())
+foreign import ccall "wrapper" 
+  mkCallback :: IO () -> IO (FunPtr (IO ()))
 \end{verbatim}
   \end{quote}
   %
@@ -896,7 +891,7 @@ infixl 5 .|.
   pattern to the right for a positive second argument and to the left for a
   negative argument.  The function \code{shift} performs sign extension on
   signed number types; i.e., right shifts fill the top bits with 1 if the
-  number is negative and with 0 otherwise.  The operators have the following
+  number is negative and with 0 otherwise.  These operators have the following
   precedences as infix operators:
   %
   \begin{quote}
@@ -928,6 +923,13 @@ infixl 8 `shift`, `rotate`
 \item[rotateL,~rotateR~::\ Bits a => a -> Int -> a]\combineitems The functions
   \code{shiftR} and \code{rotateR} are synonyms for \code{shift} and
   \code{rotate}; \code{shiftL} and \code{rotateL} negate the second argument.
+  These operators have the following precedences as infix operators:
+  %
+  \begin{quote}
+\begin{verbatim}
+infixl 8 `shiftL`, `shiftR`, `rotateL`, `rotateR`
+\end{verbatim}
+  \end{quote}
 
 \end{codedesc}
 %
@@ -1022,7 +1024,8 @@ follows:
   \begin{quote}
 \begin{verbatim}
 type Compare = Int -> Int -> Bool
-foreign export dynamic mkCompare :: Compare -> IO (FunPtr Compare)
+foreign import ccall "wrapper" 
+  mkCompare :: Compare -> IO (FunPtr Compare)
 \end{verbatim}
   \end{quote}
   
@@ -1060,10 +1063,10 @@ The type \code{ForeignPtr} represents references to objects that are
 maintained in a foreign language, i.e., objects that are not part of the data
 structures usually managed by the Haskell storage manager. The essential
 difference between \code{ForeignPtr}s and vanilla memory references of type
-\code{Ptr} is that the former may be associated with finalisers.  A finaliser
+\code{Ptr} is that the former may be associated with finalizers.  A finalizer
 is a routine that is invoked when the Haskell storage manager detects
 that---within the Haskell heap and stack---there are no more references left
-that are pointing to the \code{ForeignPtr}.  Typically, the finaliser will,
+that are pointing to the \code{ForeignPtr}.  Typically, the finalizer will,
 then, invoke routines in the foreign language that free the resources bound by
 the foreign object.  
 
@@ -1084,17 +1087,17 @@ the following signature and purpose:
   those foreign pointers.
   
 \item[newForeignPtr ::\ Ptr a -> IO () -> IO (ForeignPtr a)] Turn a plain
-  memory reference into a foreign object by associating a finaliser---given by
-  the monadic operation---with the reference. The finaliser will be executed
+  memory reference into a foreign object by associating a finalizer---given by
+  the monadic operation---with the reference. The finalizer will be executed
   after the last reference to the foreign object is dropped. Note that there
-  is no guarantee on how soon the finaliser is executed after the last
+  is no guarantee on how soon the finalizer is executed after the last
   reference was dropped; this depends on the details of the Haskell storage
-  manager. The only guarantee is that the finaliser runs before the program
+  manager. The only guarantee is that the finalizer runs before the program
   terminates.  
   
 \item[addForeignPtrFinalizer ::\ ForeignPtr a -> IO () -> IO ()] Add another
-  finaliser to the given foreign object. No guarantees are made on the order
-  in which multiple finalisers for a single object are run.
+  finalizer to the given foreign object. No guarantees are made on the order
+  in which multiple finalizers for a single object are run.
 
 \item[withForeignPtr ::\ ForeignPtr a -> (Ptr a -> IO b) -> IO b]
   
@@ -1106,7 +1109,7 @@ the following signature and purpose:
   action completes.  All uses of the pointer should be inside the
   \code{withForeignPtr} bracket.
 
-  More precisely, the foreign pointer may be finalised after
+  More precisely, the foreign pointer may be finalized after
   \code{withForeignPtr} is finished if the first argument was the last
   occurrence of that foreign pointer.  Finalisation of the foreign pointer
   might render the pointer that is passed to the function useless.
@@ -1122,7 +1125,7 @@ the following signature and purpose:
   
   Extract the pointer component of a foreign pointer. This is a potentially
   dangerous operation.  If the argument to \code{foreignPtrToPtr} is the last
-  usage occurrence of the given foreign pointer, then its finaliser(s) will be
+  usage occurrence of the given foreign pointer, then its finalizer(s) will be
   run, which potentially invalidates the plain pointer just obtained.  Hence,
   \code{touchForeignPtr} must be used wherever it has to be guaranteed that
   the pointer lives on---i.e., has another usage occurrence.
@@ -1144,12 +1147,12 @@ the following signature and purpose:
   after it executes the user action.
   
   This function can be used to express liveness dependencies between
-  \code{ForeignPtr}s: For example, if the finaliser for one \code{ForeignPtr}
+  \code{ForeignPtr}s: For example, if the finalizer for one \code{ForeignPtr}
   touches a second \code{ForeignPtr}, then it is ensured that the second
   \code{ForeignPtr} will stay alive at least as long as the first. This can be
   useful when you want to manipulate interior pointers to a foreign structure:
   You can use \code{touchForeignObj} to express the requirement that the
-  exterior pointer must not be finalised until the interior pointer is no
+  exterior pointer must not be finalized until the interior pointer is no
   longer referenced.
     
 \item[castForeignPtr ::\ ForeignPtr a -> ForeignPtr b] Cast a
@@ -1242,7 +1245,7 @@ Haskell, the fixed size integral types of the modules \code{Int} and
 (Section~\ref{sec:Ptr}), and stable pointers (Section~\ref{sec:StablePtr}).
 There is no instance of \code{Storable} for foreign pointers.  The intention
 is to ensure that storing a foreign pointer requires an explicit cast to a
-plain \code{Ptr}, which makes it obvious that the finalisers of the foreign
+plain \code{Ptr}, which makes it obvious that the finalizers of the foreign
 pointer may be invoked at this point if no other reference to the pointer
 exists anymore.
 
