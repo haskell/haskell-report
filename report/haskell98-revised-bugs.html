@@ -1,20 +1,13 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
-<head>
-</head>
-<HEAD>
-<TITLE>Haskell 98 (Revised Report): ERRATA</title></head>
-</head>
-</head>
-</head>
-</head>
-</HEAD>
+<head><title>Haskell 98 (Revised Report): ERRATA</title></head>
 <BODY>
 <div align=center>
 <img src="h98.gif" alt="Haskell 98">
 </div>
 
 <h2>Errata in the 
-<a href="http://haskell.cs.yale.edu/definition/">Revised Haskell 98 Language Report (2003)</a></h2>
+<a href="http://haskell.org/definition/">Revised Haskell 98 Language Report (2003)</a></h2>
 
 The list below gives all known errors in "Haskell 98 Language and Libraries: the Revised Report",
 published by Cambridge University Press as a book, and also in the Journal of Functional Programming
@@ -22,7 +15,7 @@ published by Cambridge University Press as a book, and also in the Journal of Fu
 All page references are to these texts, which may differ slightly from the online versions.
 
 <ul>
-<p><li> [May 2003] <strong>Page 89, Section 6.3.4, The Enum Class.</strong>
+<li> [May 2003] <strong>Page 89, Section 6.3.4, The Enum Class.</strong>
 Section 6.3.4 states: "For all four of these Prelude numeric types, all of the <tt>enumFrom</tt>
 family of functions are strict in all their arguments".
 <p>
@@ -75,12 +68,14 @@ encodes" by "converts the string to the character it encodes".
 <li>
 The type for <tt>print</tt> should be
 <pre>
-   print :: Show a => a -> IO ()
+   print :: Show a =&gt; a -&gt; IO ()
 </pre>
 </ul>
 </ul>
 <hr>
-<address>Simon Peyton Jones, simonpj@microsoft.com</address>
+<address>Malcolm Wallace,
+         <a href="mailto:Malcolm.Wallace@cs.york.ac.uk">
+         Malcolm.Wallace@cs.york.ac.uk</a></address>
 </body>
 </html>
 
