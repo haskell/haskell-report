@@ -14,6 +14,12 @@
 % Interface. 
 
 % Changes since RC6:
+% * Removed typos in the description of the module `ForeignPtr'
+% * Added Peter Gammie to the list of acknowledged people
+% * `addForeignPtrFinalizer' guarantees that finalizers for a single foreign
+%   pointer are executed in the opposite order as they were added.
+% * Added the constraint "sizeOf x `mod` alignment x = 0" to `Storable'
+% * Added Ross Paterson to the list of acknowledged people
 % * Fixed typos
 % * Added hs_free_fun_ptr() and hs_free_stable_ptr()
 % * Changed order of arguments of `mkIOError' and `annotateIOError' to match
@@ -102,7 +108,7 @@
     \\
     \textbf{--- DRAFT ---}\\[1ex]
     \ttfamily\scriptsize
-    $\relax$Id: ffi.tex,v 1.35 2002/12/09 05:52:08 chak Exp $\relax$%
+    $\relax$Id: ffi.tex,v 1.36 2003/01/13 14:16:28 chak Exp $\relax$%
     \ignorespaces}
   }
 \end{DRAFT}
@@ -213,9 +219,9 @@ that generate code following the present specification.
 We heartly thank the kind people who assisted us with their comments and
 suggestions on the \code{ffi@haskell.org} mailing list as well as all the
 users of previous versions of the FFI who helped to shape the development by
-their feedback.  We are grateful to Olaf Chitil, Wolfram Kahl, Martin D.
-Kealey, Ian Lynagh, and George Russell for errata to previous versions of this
-report.
+their feedback.  We thank Olaf Chitil, Peter Gammie, Wolfram Kahl, Martin D.
+Kealey, Ian Lynagh, Ross Paterson, and George Russell for errata to previous
+versions of this report.
 
 
 \clearemptydoublepage
@@ -1227,11 +1233,11 @@ the following signature and purpose:
   those foreign pointers.
   
 \item[newForeignPtr ::\ Ptr a -> FunPtr (Ptr a -> IO ()) -> IO (ForeignPtr a)]
-  Turn a plain memory reference into a foreign object by associating a
+  Turn a plain memory reference into a foreign pointer by associating a
   finalizer with the reference.  The finalizer is represented by a pointer to
   an external function, which will be executed after the last reference to the
-  foreign object is dropped.  On invocation, the finalizer receives a pointer
-  to the associated foreign object as an argument.  Note that there is no
+  foreign pointer is dropped.  On invocation, the finalizer the pointer from
+  which the foreign pointer was created as an argument.  Note that there is no
   guarantee on how soon the finalizer is executed after the last reference was
   dropped; this depends on the details of the Haskell storage manager. The
   only guarantee is that the finalizer runs before the program terminates.
@@ -1240,9 +1246,10 @@ the following signature and purpose:
   dependent.  Portable code may not rely on such call backs.
   
 \item[addForeignPtrFinalizer ::\ ForeignPtr a -> FunPtr (Ptr a -> IO ()) -> IO
-  ()] Add another finalizer to the given foreign object. No guarantees are
-  made on the order in which multiple finalizers for a single object are run.
-  
+  ()] Add another finalizer to the given foreign pointer.  All finalizers
+  associated with a single foreign pointer are executed in the opposite order
+  of their addition---i.e., the finalizer added last will be executed first.
+
 \item[mallocForeignPtr ::\ Storable a => IO (ForeignPtr a)] Allocate a block
   of memory that is sufficient to hold values of type \code{a}.  The size of
   the memory area is determined by the function \code{Storable.sizeOf}
@@ -1261,9 +1268,9 @@ the following signature and purpose:
   must not be applied to the resulting pointer.
 
 \item[withForeignPtr ::\ ForeignPtr a -> (Ptr a -> IO b) -> IO b]
-  This is a way to obtain the pointer living inside a foreign object. This
+  This is a way to obtain the pointer living inside a foreign pointer. This
   function takes a function which is applied to that pointer. The resulting
-  \code{IO} action is then executed. The foreign object is kept alive at least
+  \code{IO} action is then executed. The foreign pointer is kept alive at least
   during the whole action, even if it is not used directly inside. Note that
   it is not safe to return the pointer from the action and use it after the
   action completes.  All uses of the pointer should be inside the
@@ -1302,7 +1309,7 @@ the following signature and purpose:
   routines are occasionally preferred in tool-generated marshalling code.
   
 \item[touchForeignPtr ::\ ForeignPtr a -> IO ()] Ensure that the foreign
-  object in question is alive at the given place in the sequence of \code{IO}
+  pointer in question is alive at the given place in the sequence of \code{IO}
   actions. In particular, \code{withForeignPtr} does a \code{touchForeignPtr}
   after it executes the user action.
   
@@ -1311,7 +1318,7 @@ the following signature and purpose:
   touches a second \code{ForeignPtr}, then it is ensured that the second
   \code{ForeignPtr} will stay alive at least as long as the first. This can be
   useful when you want to manipulate interior pointers to a foreign structure:
-  You can use \code{touchForeignObj} to express the requirement that the
+  You can use \code{touchForeignPtr} to express the requirement that the
   exterior pointer must not be finalized until the interior pointer is no
   longer referenced.
     
@@ -1422,7 +1429,15 @@ The signatures and behaviour of the member functions of the class
   and alignment computes the alignment constraint of the argument.  An
   alignment constraint \code{x} is fulfilled by any address divisible by
   \code{x}. Both functions do not evaluate their argument, but compute the
-  result on the basis of the type of the argument alone.
+  result on the basis of the type of the argument alone.  We require that all
+  the elements of a contiguous array of storable values meet the alignment
+  constraint of these values; more formally, we require that
+  %
+  \begin{quote}
+\begin{verbatim}
+sizeOf v `mod` alignment v == 0
+\end{verbatim}%
+  \end{quote}
 
 \item[peekElemOff ::\ Storable a => Ptr a -> Int -> IO a] Read a value from a
   memory area regarded as an array of values of the same kind. The first
@@ -1991,8 +2006,8 @@ void hs_set_argv (int argc, char *argv[]);
 
 void hs_perform_gc (void);
 
-void hs_free_stable_ptr (HsStablePtr *sp);
-void hs_free_fun_ptr    (HsFunPtr *fp);
+void hs_free_stable_ptr (HsStablePtr sp);
+void hs_free_fun_ptr    (HsFunPtr fp);
 \end{verbatim}
 \end{quote}
 %
