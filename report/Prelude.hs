@@ -53,7 +53,7 @@ infixl 7  *, /, `quot`, `rem`, `div`, `mod`
 infixl 6  +, -
 
 -- The (:) operator is built-in syntax, and cannot legally be given
--- a fixtity declaration; but its fixity is given by:
+-- a fixity declaration; but its fixity is given by:
 --   infixr 5  :
 
 infix  4  ==, /=, <, <=, >=, >

@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/syntax-iso.verb,v 1.5 2001/10/02 09:09:27 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/syntax-iso.verb,v 1.6 2001/10/04 16:28:52 simonpj Exp $
 %
 %**<title>Haskell 98 Syntax</title>
 %*section B
@@ -175,7 +175,7 @@ until either the enclosing context ends or a new context is pushed.
 \end{itemize}
 
 The ``indentation'' of a lexeme is the column number
-indicating the start of that lexeme; the indentation of a line is the
+of the first character of that lexeme; the indentation of a line is the
 indentation of its leftmost lexeme.  To determine the column number,
 assume a fixed-width font with this tab convention: tab stops
 are 8 characters apart, and a tab character causes the insertion of

@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/modules.verb,v 1.13 2001/10/02 09:09:26 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/modules.verb,v 1.14 2001/10/04 16:28:52 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Modules</title>
 %*section 5
@@ -241,15 +241,16 @@ The {\em unqualified} names of the entities exported by a module must all be dis
 (within their respective namespace).  For example
 \bprog
 @
-  module A ( B.f, C.f, g ) where   -- an invalid module
-  import qualified B(f,g)
-  import qualified C(f)
-  g = True
+  module A ( C.f, C.g, g, module B ) where   -- an invalid module
+  import B(f)
+  import qualified C(f,g)
+  g = f True
 @
 \eprog
-There are name clashes in the export list between @B.f@ and @C.f@ and
-between @g@ and @B.g@ even though there are no name clashes within
-module @A@.  
+There are name clashes in the export list 
+between @C.g@ and @g@, 
+and between @module B@ and @C.f@ (assuming @B.f@ and @C.f@ are different entities), 
+even though there are no name clashes within module @A@ itself.  
 
 
 \subsection{Import Declarations}
@@ -294,6 +295,11 @@ non-top-level bindings.
 The effect of multiple @import@ declarations is strictly
 cumulative: an entity is in scope if it is imported by any of the @import@
 declarations in a module.  The ordering of import declarations is irrelevant.
+
+Lexically speaking, the terminal symbols ``@as@'', ``@qualified@'' and
+``@hiding@'' are each a "varid" rather than a "reservedid".  They have
+special significance only in the context of an @import@ declaration;
+they may be used as variables.
 
 \subsubsection{What is imported}
 \label{whatisimported}

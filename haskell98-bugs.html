@@ -381,14 +381,15 @@ list is the union of the entities exported by the individual items of the list.
 The <em>unqualified</em> names of the entities exported by a module must all be distinct
 (within their respective namespace).  For example
 <pre>
-  module A ( module B, C.f, g ) where   -- an invalid module
-  import qualified B(f,g)
-  import qualified C(f)
-  g = True
+  module A ( C.f, C.g, g, module B ) where   -- an invalid module
+  import B(f)
+  import qualified C(f,g)
+  g = f True
 </pre>
-There are name clashes in the export list between <tt>B.f</tt> and <tt>C.f</tt> and
-between <tt>g</tt> and <tt>B.g</tt> even though there are no name clashes within
-module <tt>A</tt>."
+There are name clashes in the export list 
+between <tt>C.g</tt> and <tt>g</tt>, 
+and between <tt>module B</tt> and <tt>C.f</tt> (assuming <tt>B.f</tt> and <tt>C.f</tt> are different entities), 
+even though there are no name clashes within module <tt>A</tt> itself.  
 
 <p><li> [July 2001] <strong>Page 65, Section 5.3, Import Declarations, last line.</strong>
 Start a new subsection "5.3.1  What is imported" before "Exactly which entities are to

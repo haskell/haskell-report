@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/preface-13.verb,v 1.8 2001/10/02 09:09:26 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/preface-13.verb,v 1.9 2001/10/04 16:28:52 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Preface</title>
 %*section
@@ -282,6 +282,7 @@ Mike Joy,
 Stefan Kahrs,
 Antti-Juhani Kaijanaho,
 Jerzy Karczmarczuk,
+Wolfram Karl,
 Kent Karlsson,
 Richard Kelsey,
 Siau-Cheng Khoo, 
