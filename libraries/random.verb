@@ -46,9 +46,6 @@ The class @RandomGen@ provides a common interface to random number generators.
 \item The @genRange@ operation yields the range of values returned by
 the generator. 
 
-\item The @next@ operation returns an @Int@ that is uniformly distributed
-in the range returned by @genRange@ (including both end points), and a new
-generator.
 It is required that:
 \begin{itemize}
 \item If $(a,b) ~=~ @genRange@~ g$, then $a \leq b$.
@@ -60,6 +57,10 @@ instance of @RandomGen@.  That in turn allows an implementation to make
 a single call to @genRange@ to establish a generator's range, without
 being concerned that the generator returned by (say) @next@ might have a different
 range to the generator passed to @next@.
+
+\item The @next@ operation returns an @Int@ that is uniformly distributed
+in the range returned by @genRange@ (including both end points), and a new
+generator.
 
 \item The @split@ operation allows one to obtain two independent random number
 generators.  This is very useful in functional programs (for example, when

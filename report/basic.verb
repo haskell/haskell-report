@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/basic.verb,v 1.6 2001/08/14 07:48:24 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/basic.verb,v 1.7 2001/08/14 15:38:33 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Basic Types and Classes</title>
 %*section 6
@@ -617,7 +617,7 @@ integers (@Int@), arbitrary precision integers (@Integer@), single
 precision floating (@Float@), and double precision floating
 (@Double@).  Other numeric types such as rationals and complex numbers
 are defined in libraries.  In particular, the type @Rational@ is a
-ratio of two @Integer@ values, as defined in the @Rational@
+ratio of two @Integer@ values, as defined in the @Ratio@
 library.  
 
 The default floating point operations defined by the \Haskell{}

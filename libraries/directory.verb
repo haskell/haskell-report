@@ -67,7 +67,7 @@ file may not be in use by other processes).
 {\em Error reporting}:
 the @removeDirectory@ and @removeFile@ computations may fail with:
 @isPermissionError@ if the user is not permitted to remove the file/directory;
-or @isDoesNot@-@ExistError@ if the file/directory does not exist.
+or @isDoesNotExistError@ if the file/directory does not exist.
 
 Computation @renameDirectory@~"old"~"new" changes the name of an existing
 directory from "old" to "new"\index{renaming directories}\index{moving
@@ -111,9 +111,9 @@ calling process to "dir"\index{changing the directory}\index{setting the directo
 
 {\em Error reporting}:
 the @setCurrentDirectory@ computation may fail with:
-@isPermission@-@Error@ if the user is not permitted to change directory
+@isPermissionError@ if the user is not permitted to change directory
 to that specified;
-or @isDoesNotExist@-@Error@ if the directory does not exist.
+or @isDoesNotExistError@ if the directory does not exist.
 
 The @Permissions@ type is used to record whether certain operations are
 permissible on a file/directory.  @getPermissions@ and
@@ -144,7 +144,7 @@ clock time at which the file/directory was last modified.
 {\em Error reporting}:
 the @get(set)Permissions@,
 @doesFile(Directory)Exist@,
-and @getMod@-@ificationTime@
+and @getModificationTime@
 computations may fail with:
 @isPermissionError@ if the user is not permitted to access
 the appropriate information;
