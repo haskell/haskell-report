@@ -1,0 +1,598 @@
+%**<title>The Haskell 98 Library Report: IO</title>
+%**~header
+\section{Input/Output}
+\label{IO}
+\index{input/output}
+\index{I/O}
+\indextt{IO}
+
+% Gotta break the figure ...
+\outline{
+\inputHS{headers/IO}
+}
+\outline{
+\inputHS{headers/IO1}
+}
+
+The monadic I/O system used in \Haskell{} is described by the
+\Haskell{} language report.  Commonly used I/O functions such as
+@print@ are part of the standard prelude and need not be explicitly
+imported.  This library contain more advanced I/O features.
+Some related operations on file systems are contained in the
+@Directory@ library.
+
+\subsection{I/O Errors}
+\index{I/O errors}
+\label{IOError}
+Errors of type @IOError@ are used by the I/O monad.  This is an
+abstract type; the library provides functions to interrogate and
+construct values in @IOError@:\indextt{IOError}
+\begin{itemize}
+\item
+@isAlreadyExistsError@\indextt{isAlreadyExistsError}
+ -- the operation failed because one of its
+arguments already exists.
+\item
+@isDoesNotExistError@\indextt{isDoesNotExistError}
+ -- the operation failed because one of its
+arguments does not exist.
+\item
+@isAlreadyInUseError@\indextt{isAlreadyInUseError}
+ -- the operation failed because one of its
+arguments is a single-use resource, which is already being used (for
+example, opening the same file twice for writing might give this
+error).
+\item
+@isFullError@\indextt{isFullError}
+ -- the operation failed because the device is full.
+\item
+@isEOFError@\indextt{isEOFError}
+ -- the operation failed because the end of file
+has been reached.
+\item
+@isIllegalOperation@\indextt{isIllegalOperation}
+ -- the operation is not possible.
+\item
+@isPermissionError@\indextt{isPermissionError}
+ -- the operation failed because the user does not
+have sufficient operating system privilege to perform that operation.
+\item
+@isUserError@\indextt{isUserError}
+ -- a programmer-defined error value has been raised using
+@fail@.\indextt{fail}
+\end{itemize}
+All these functions return return a @Bool@, which is @True@ if
+its argument is the corresponding kind of error, and @False@
+otherwise.  
+
+Any computation which returns an @IO@ result may fail with
+@isIllegalOperationError@.  Additional errors which could be raised by
+an implementation are listed after the corresponding operation.  In
+some cases, an implementation will not be able to distinguish between
+the possible error causes.  In this case it should return
+@isIllegalOperationError@.
+
+Three additional functions are provided to obtain information about an
+error value.  These are @ioeGetHandle@\indextt{ioeGetHandle} which
+returns @Just@~"hdl" if the error value refers to handle "hdl" and
+@Nothing@ otherwise; @ioeGetFileName@\indextt{ioeGetFileName} which
+returns @Just@~"name" if the error value refers to file "name", and
+@Nothing@ otherwise; and @ioeGetErrorString@\indextt{ioeGetErrorString} which returns a
+string.  For ``user'' errors (those which are raised using @fail@),
+the string returned by @ioeGetErrorString@ is the argument that was passed to
+@fail@; for all other errors, the string is implementation-dependent.
+
+The @try@ function returns an error in a computation explicitly using
+the @Either@ type.
+
+The @bracket@ function 
+captures a common allocate, compute, deallocate idiom in which the
+deallocation step must occur even in the case of an error during
+computation.  This is similar to try-catch-finally in Java.
+% Inline the code here since there's no other functions in IO that
+% are not primitive.
+
+\inputHS{code/IO}
+
+
+\subsection{Files and Handles}
+\Haskell{} interfaces to the external world through an abstract {\em file
+system}\index{file system}.  This file system is a collection of named {\em file
+system objects}, which may be organised
+in {\em directories}\index{directories} (see @Directory@).  
+In some implementations, directories may themselves be file system
+objects and could be entries in other directories.  For simplicity,
+any non-directory file system object is termed a {\em file}\index{file},
+although it could in fact be a communication channel, or any other
+object recognised by the operating system.  {\em Physical
+files}\index{physical file} are 
+persistent, ordered files, and normally reside on disk.
+
+File and directory names are values of type @String@, whose precise
+meaning is operating system dependent.  Files can be opened, yielding
+a handle which can then be used to operate on the contents of that
+file.
+
+\label{Handles}
+\index{handles}
+
+\Haskell{} defines operations to read and write characters from and to files,
+represented by values of type @Handle@.  Each value of this type is a {\em
+handle}: a record used by the \Haskell{} run-time system to {\em manage} I/O
+with file system objects.  A handle has at least the following properties:
+
+\begin{itemize}
+\item
+ whether it manages input or output or both;
+\item
+ whether it is {\em open}, {\em closed} or {\em semi-closed};
+\item
+ whether the object is seekable;
+\item
+ whether buffering is disabled, or enabled on a line or block basis;
+\item
+ a buffer (whose length may be zero).
+\end{itemize}
+
+Most handles will also have a current I/O position indicating where the next
+input or output operation will occur.  A handle is {\em readable} if it
+manages only input or both input and output; likewise, it is {\em writable} if
+it manages only output or both input and output.  A handle is {\em open} when
+first allocated.  Once it is closed it can no longer be used for either input
+or output, though an implementation cannot re-use its storage while references
+remain to it.  Handles are in the @Show@ and @Eq@ classes.  The string
+produced by showing a handle is system dependent; it should include 
+enough information to identify the handle for debugging.  A handle is
+equal according to @==@ only to itself; no attempt
+is made to compare the internal state of different handles for equality.
+
+\subsubsection{Semi-Closed Handles}
+\label{SemiClosed}
+\index{semi-closed handles}
+
+The operation @hGetContents@\indextt{hGetContents} puts a handle "hdl" into an intermediate
+state, {\em semi-closed}.  In this state, "hdl" is effectively closed,
+but items are read from "hdl" on demand and accumulated in a special
+stream returned by @hGetContents@~"hdl".
+ 
+Any operation except for @hClose@ that fails because a handle is
+closed, also fails if a handle is semi-closed.  A semi-closed handle
+becomes closed:
+\begin{itemize}
+\item
+if  @hClose@ is applied to it;
+\item
+if an I/O error occurs when reading an item from the
+file item from the stream;
+\item
+or once the entire contents of the file has been read.
+\end{itemize}
+
+Once a semi-closed handle becomes closed, the contents of the
+associated stream becomes fixed, and is the list of those items which
+were successfully read from that handle. Any I/O errors encountered while
+a handle is semi-closed are simply discarded.
+ 
+
+\subsubsection{Standard Handles}
+\label{StandardHandles}
+\index{standard handles}
+
+Three handles are allocated during program initialisation.  The first
+two (@stdin@\indextt{stdin} and @stdout@\indextt{stdout}) manage input or output from the \Haskell{}
+program's standard input or output channel respectively.  The third
+(@stderr@\indextt{stderr}) manages output to the standard error channel.  These
+handles are initially open.
+
+\subsection{Opening and Closing Files}
+\label{OpeningClosing}
+
+\subsubsection{Opening Files}
+\label{Opening}
+\index{opening a file}
+\index{creating a file}
+
+Computation @openFile@~"file"~"mode"\indextt{openFile} allocates and
+returns a new, open handle to manage the file "file".
+% I don't believe this footnote is technically correct -- functions
+% are never computations IIRC: the computation is the action
+% that occurs when the function is applied to a state token -- KH
+% \footnote{We use
+% the term "computation" instead of "function" here to separate
+% functions which denote actions in the I/O monad from those outside the monad.}
+It manages
+input if "mode"\indextycon{IOMode} is @ReadMode@\indextt{ReadMode},
+output if "mode" is @WriteMode@\indextt{WriteMode} or
+@AppendMode@,\indextt{AppendMode} and both input and output if mode is
+@ReadWriteMode@.\indextt{ReadWriteMode}
+
+If the file does not exist and it is opened for output, it should be created
+as a new file.  If "mode" is @WriteMode@ and the file already exists, then it
+should be truncated to zero length.  Some operating systems delete empty
+files, so there is no guarantee that the file will exist following an
+@openFile@ with "mode" @WriteMode@ unless it is subsequently written to
+successfully.  The handle is positioned at the end of the file if "mode" is
+@AppendMode@, and otherwise at the beginning (in which case its internal I/O
+position is 0).  The initial buffer mode is implementation-dependent.
+
+If @openFile@ fails on a file opened for output, the file may still
+have been created if it did not already exist.
+
+Implementations should enforce as far as possible, locally to the
+\Haskell{} process, multiple-reader single-writer locking on files.
+Thus there may either be many handles on the same file which manage
+input, or just one handle on the file which manages output.  If any
+open or semi-closed handle is managing a file for output, no new
+handle can be allocated for that file.  If any open or semi-closed
+handle is managing a file for input, new handles can only be allocated
+if they do not manage output.  Whether two files are the same is
+implementation-dependent, but they should normally be the same if they
+have the same absolute path name and neither has been renamed, for
+example.
+
+{\em Error reporting}: the @openFile@ computation may fail with
+@isAlreadyInUseError@ if the file is already open and cannot be
+reopened;
+@isDoesNotExistError@ if the file does not exist; or
+@isPermissionError@ if the user does not have
+permission to open the file.
+
+%ADG: this is obvious!
+%KH:  Not really.  It's actually quite subtle!
+
+\subsubsection{Closing Files}
+\label{Closing}
+\index{closing a file}
+
+Computation @hClose@~"hdl"\indextt{hClose} makes handle "hdl" closed.  Before the
+computation finishes, if "hdl" is writable its buffer is flushed as
+for @hFlush@.
+If the operation fails for any reason, any further operations on the 
+handle will still fail as if "hdl" had been successfully closed.
+
+\subsection{Determining the Size of a File}
+\label{FileSize}
+\index{size of file}
+
+For a handle "hdl" which is attached to a physical file, @hFileSize@\indextt{hFileSize}
+"hdl" returns the size of that file in 8-bit bytes ("\geq" 0).
+
+\subsubsection{Detecting the End of Input}
+\label{EOF}
+\index{end of file}
+
+For a readable handle "hdl", computation @hIsEOF@~"hdl"\indextt{hIsEOF} returns @True@
+if no further input can be taken from "hdl"; for a handle attached to a 
+physical file this means that the current I/O position is equal to the length of the file.
+Otherwise, it returns @False@.  The computation @isEOF@\indextt{isEOF} is identical,
+except that it works only on @stdin@.
+
+% The computation may fail with:
+% \begin{itemize}
+% \item
+% @HardwareFault@
+% A physical I/O error has occurred.
+% [@EIO@]
+% \item
+% @ResourceExhausted@
+% Insufficient resources are available to perform the operation.
+% [@ENOMEM@]
+% \item
+% @IllegalOperation@
+% The handle is not open for reading.
+% \end{itemize}
+
+\subsubsection{Buffering Operations}
+\label{Buffering}
+\index{file buffering}
+
+Three kinds of buffering are supported: line-buffering, 
+block-buffering or no-buffering.  These modes have the following effects.
+For output, items are written out from the internal buffer 
+according to the buffer mode:
+\begin{itemize}
+\item
+{\bf line-buffering:}
+the entire buffer is written out whenever a newline is output, the
+buffer overflows, a flush is issued, or the handle is closed.
+\item
+{\bf block-buffering:}
+the entire buffer is written out whenever it overflows, a flush is
+issued, or the handle is closed.
+\item
+{\bf no-buffering:}
+output is written immediately, and never stored in the buffer.
+\end{itemize}
+The buffer is emptied as soon as it has been written out.
+
+Similarly, input occurs according to the buffer mode for handle "hdl".
+\begin{itemize}
+\item
+{\bf line-buffering:}
+when the buffer for "hdl" is not empty, the next item is obtained from
+the buffer; otherwise, when the buffer is empty, characters are read into
+the buffer until the next newline character is encountered or the buffer is full.  No
+characters are available until the newline character is available or the buffer is full.
+\item
+{\bf block-buffering:} 
+when the buffer for "hdl" becomes empty, the
+next block of data is read into the buffer.
+\item
+{\bf no-buffering:} 
+the next input item is read and returned.
+\end{itemize}
+
+For most implementations, physical files will normally be block-buffered 
+and terminals will normally be line-buffered.
+
+Computation @hSetBuffering@~"hdl"~"mode"\indextt{hSetBuffering} sets the
+mode of buffering for handle "hdl" on subsequent reads and writes.
+\begin{itemize}
+\item
+If "mode" is @LineBuffering@, line-buffering is
+enabled if possible.
+\item
+If "mode" is @BlockBuffering@~"size", then block-buffering
+is enabled if possible.  The size of the buffer is "n" items
+if "size" is @Just @"n" and is otherwise implementation-dependent.
+\item
+If "mode" is @NoBuffering@, then buffering is disabled if possible.
+\end{itemize}
+
+If the buffer mode is changed from @BlockBuffering@ or
+@LineBuffering@ to @NoBuffering@, then 
+\begin{itemize}
+\item
+if "hdl" is writable, the buffer is flushed as for 
+@hFlush@;
+\item
+if "hdl" is not writable, the contents of the buffer is discarded.
+\end{itemize}
+
+{\em Error reporting}: the @hSetBuffering@ computation may fail with
+@isPermissionError@ if
+the handle has already been used for reading or writing
+and the implementation does not allow the buffering mode to
+be changed.
+
+Computation @hGetBuffering@~"hdl"\indextt{hGetBuffering} returns the current buffering mode
+for "hdl".
+
+The default buffering mode when a handle is opened is
+implementation-dependent and may depend on the file system object which is
+attached to that handle.
+
+\subsubsection{Flushing Buffers}
+\label{Flushing}
+\index{flushing a file buffer}
+
+Computation @hFlush@~"hdl"\indextt{hFlush} causes any items buffered for output in
+handle "hdl" to be sent immediately to the operating system.
+
+{\em Error reporting}: the @hFlush@ computation may fail with:
+@isFullError@ if the device is full; @isPermissionError@ if a
+system resource limit would be exceeded.  It is unspecified whether the
+characters in the buffer are discarded or retained under these circumstances.
+
+\subsection{Repositioning Handles}
+\label{Seeking}
+\index{random access files}
+\index{seeking a file}
+
+\subsubsection{Revisiting an I/O Position}
+
+Computation @hGetPosn@~"hdl"\indextt{hGetPosn} returns the current I/O position of "hdl" as a
+value of the abstract type @HandlePosn@.  If a call to "@hGetPosn@~h" returns a position "p",
+then computation @hSetPosn@~"p"\indextt{hSetPosn} sets the
+position of "h" to the position it held at the time of the call to @hGetPosn@.
+
+
+{\em Error reporting}: the @hSetPosn@ computation may fail with:
+@isPermissionError@ if a system resource limit would be exceeded.
+
+\subsubsection{Seeking to a new Position}
+
+Computation @hSeek@~"hdl"~"mode"~"i"\indextt{hSeek} sets the position of handle
+"hdl" depending on "mode".\indextycon{SeekMode}  If "mode" is:
+\begin{itemize}
+\item
+@AbsoluteSeek@:\indextt{AbsoluteSeek} the position of "hdl" is set to "i".
+\item
+@RelativeSeek@:\indextt{RelativeSeek} the position of "hdl" is set to offset "i" from
+the current position.
+\item
+@SeekFromEnd@:\indextt{SeekFromEnd} the position of "hdl" is set to offset "i" from
+the end of the file.
+\end{itemize}
+The offset is given in terms of 8-bit bytes.
+
+If "hdl" is block- or line-buffered, then seeking to a position which is not
+in the current buffer will first cause any items in the output buffer to be
+written to the device, and then cause the input buffer to be discarded.  Some
+handles may not be seekable (see @hIsSeekable@), or only support a subset of
+the possible positioning operations (for instance, it may only be possible to
+seek to the end of a tape, or to a positive offset from the beginning or
+current position).  It is not possible to set a negative I/O position, or for
+a physical file, an I/O position beyond the current end-of-file.
+
+{\em Error reporting}:
+the @hSeek@ computation may fail with:
+@isPermissionError@ if a system resource limit would be exceeded.
+
+\subsection{Handle Properties}
+\label{Query}
+
+The functions 
+@hIsOpen@\indextt{hIsOpen}, 
+@hIsClosed@\indextt{hIsClosed},
+@hIsReadable@\indextt{hIsReadable},
+@hIsWritable@\indextt{hIsWritable} and
+@hIsSeekable@\indextt{hIsSeekable}
+return information about the properties of a handle.
+Each of these returns @True@ if the handle has the specified property, and
+@False@ otherwise.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%% Haskell 1.3 Text Input: LibReadTextIO
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Text Input and Output}
+\index{reading from a file}
+%\indextt{LibReadTextIO}
+
+Here we define a standard set of input operations for reading
+characters and strings from text files, using handles.  Many of these
+functions are generalizations of Prelude functions.  I/O in the
+Prelude generally uses @stdin@ and @stdout@; here, handles are explicitly
+specified by the I/O operation.
+
+\subsubsection{Checking for Input}
+\label{hReady}
+\label{hWaitForInput}
+\index{polling a handle for input}
+
+Computation @hWaitForInput@~"hdl"~"t"\indextt{hWaitForInput} 
+waits until input is available on handle "hdl".
+It returns @True@ as soon as input is available on "hdl", or @False@ if no input is available
+within "t" milliseconds.
+
+Computation @hReady@~"hdl"\indextt{hReady} indicates whether at least one item is
+available for input from handle "hdl".
+
+Computation @hGetChar@~"hdl"\indextt{hGetChar} reads a character from
+the file or channel managed by "hdl".
+
+Computation @hGetLine@~"hdl"\indextt{hGetLine} reads a line from
+the file or channel managed by "hdl", similar to @getLine@ in the
+Prelude. 
+
+{\em Error reporting}:
+the @hWaitForInput@, @hReady@ and @hGetChar@ computations may fail with:
+@isEOFError@ if the end of file has been reached.
+
+\subsubsection{Reading Ahead}
+\label{hLookahead}
+\index{lookahead}
+
+Computation @hLookAhead@~"hdl"\indextt{hLookAhead} returns the next character from handle
+"hdl" without removing it from the input buffer, blocking until a
+character is available.
+
+{\em Error reporting}:
+the @hLookahead@ computation may fail with:
+@isEOFError@ if the end of file has been reached.
+
+\label{hGetContents}
+\index{get the contents of a file}
+
+Computation @hGetContents@~"hdl"\indextt{hGetContents} returns the list of
+characters corresponding to the unread portion of the channel or file managed
+by "hdl", which is made semi-closed.
+
+{\em Error reporting}:
+the @hGetContents@ computation may fail with:
+@isEOFError@ if the end of file has been reached.
+
+Computation @hPutChar@~"hdl"~"c"\indextt{hPutChar} writes the character "c" to the file
+or channel managed by "hdl".  Characters may be buffered if buffering
+is enabled for "hdl".
+
+Computation @hPutStr@~"hdl"~"s"\indextt{hPutStr} writes the string
+"s" to the file or channel managed by "hdl".
+
+Computation @hPrint@~"hdl"~"t"\indextt{hPrint} writes the string representation of "t"
+given by the @shows@ function to the file or channel managed by "hdl" and appends a newline.
+
+{\em Error reporting}:
+the @hPutChar@, @hPutStr@ and @hPrint@ computations may fail with:
+@isFull@-@Error@ if the device is full;
+or @isPermissionError@ if another system resource limit would be exceeded.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%% Haskell 1.3 Examples
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Examples}
+\index{input/output examples}
+
+Here are some simple examples to illustrate \Haskell{} I/O.
+
+\subsubsection{Summing Two Numbers}
+
+This program reads and sums two @Integer@s.
+\bprog
+@
+import IO
+
+main = do
+         hSetBuffering stdout NoBuffering            
+         putStr   "Enter an integer: "        
+         x1 <- readNum 
+         putStr   "Enter another integer: "          
+         x2 <- readNum                          
+         putStr  ("Their sum is " ++ show (x1+x2) ++ "\n")
+       where readNum :: IO Integer
+             readNum =  do { line <- getLine; readIO line }
+@
+\eprog
+
+\subsubsection{Copying Files}
+
+A simple program to create a copy of a file, with all lower-case
+characters translated to upper-case.  This program will not allow a
+file to be copied to itself.  This version uses character-level I/O.
+Note that exactly two arguments must be supplied to the program.
+\bprog
+@
+import IO
+import System
+
+main = do 
+         [f1,f2] <- getArgs
+         h1 <- openFile f1 ReadMode     
+         h2 <- openFile f2 WriteMode 
+         copyFile h1 h2            
+         hClose h1                  
+         hClose h2
+
+copyFile h1 h2 = do
+                   eof <- hIsEOF h1
+                   if eof then return () else
+                      do
+                        c <- hGetChar h1
+                        hPutChar h2 (toUpper c)   
+                        copyFile h1 h2
+@
+\eprog
+
+An equivalent but much shorter version, using string I/O is:
+\bprog
+@
+import System
+
+main = do
+         [f1,f2] <- getArgs
+         s <- readFile f1
+         writeFile f2 (map toUpper s)
+@
+\eprog
+
+%	Not any more in Haskell 98!
+% The @~@ used in the patterns above is a necessary consequence of the
+% @do@-notation which has been used for the I/O operations.  In general,
+% if the pattern on the left of any @<-@ fails to match, the value of
+% the entire @do@-expression is defined to be the ``zero'' in the
+% underlying monad.  However, since the @IO@ monad has no zero, the @~@
+% is required in order to force the pattern to be irrefutable.  Without
+% the @~@, a class error would occur because there is no instance of
+% @IO@ for class @MonadZero@.
+
+
+%**~footer

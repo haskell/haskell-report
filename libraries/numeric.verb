@@ -1,0 +1,20 @@
+%**<title>The Haskell 98 Library Report: Numerics</title>
+%**~header
+\section{Numeric}
+\label{lib-numeric}
+
+\outline{
+\inputHS{headers/Numeric}
+}
+This library contains assorted numeric functions, many of which are
+used in the standard Prelude.  Most are
+self-explanatory.  The @floatToDigits@ function converts a floating
+point value into a series of digits and an exponent of a selected
+base.  This is used to build a set of floating point formatting
+functions.
+
+
+\subsection{Library {\tt Numeric}}
+\inputHS{code/Numeric}
+
+%**~footer

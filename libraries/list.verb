@@ -1,0 +1,221 @@
+%**<title>The Haskell 98 Library Report: List Utilities</title>
+%**~header
+\section{List Utilities}
+
+\outline{
+\inputHS{headers/List}
+}
+\outline{
+\inputHS{headers/List1}
+}
+
+This library defines some lesser-used operations over lists.
+
+\subsection{Indexing lists}
+
+Function @elemIndex val list@\indextt{elemIndex} returns the index of
+the first occurrence, if any, of @val@  
+in @list@ as @Just index@.  @Nothing@ is returned if @not (val `elem` list)@.
+
+Function @elemIndices val list@\indextt{elemIndices} returns an
+in-order list of indices, giving the occurrences of @val@ in @list@.
+
+Function @find@ returns the first element of a list that satisfies a predicate,
+or Nothing, if there is no such element.
+@findIndex@ returns the corresponding index.
+@findIndices@ returns a list of all such indices.
+
+\subsection{``Set'' operations}
+
+There are a number of ``set'' operations defined over the @List@ type.
+@nub@ (meaning ``essence'') removes duplicates elements from a list.
+@delete@, @(\\)@, @union@ and @intersect@ preserve the invariant that 
+lists don't contain duplicates, provided that their first argument
+contains no duplicates.
+
+\begin{itemize}
+\item
+@delete x@ removes the first occurrence of @x@ from its list argument,
+e.g.,  
+\bprog
+@
+  delete 'a' "banana" == "bnana"
+@
+\eprog
+
+\item
+@(\\)@ is list difference (non-associative).  In the result of @xs \\ ys@,
+the first occurrence of each element of @ys@ in turn (if any)
+has been removed from @xs@.  Thus, @(xs ++ ys) \\ xs == ys@.
+@union@ is list union, e.g., 
+\bprog
+@
+  "dog" `union` "cow" == "dogcw"
+@
+\eprog
+
+\item
+@intersect@ is list intersection, e.g.,  
+\bprog
+@
+  intersect [1,2,3,4] `intersect` [2,4,6,8] == [2,4]
+@
+\eprog
+\end{itemize}
+
+\subsection{List transformations}
+
+\begin{itemize}
+\item
+@intersperse sep@ inserts @sep@ between the elements of its list argument,
+e.g.,  
+\bprog
+@
+  intersperse ',' "abcde" == "a,b,c,d,e"
+@
+\eprog
+
+\item
+@transpose@ transposes the rows and columns of its argument,
+e.g., 
+\bprog
+@
+  transpose [[1,2,3],[4,5,6]] == [[1,4],[2,5],[3,6]]
+@
+\eprog
+
+\item
+@partition@ takes a predicate and a list and returns a pair of lists:
+those elements of the argument list that do and do not satisfy the
+predicate, respectively; i.e.,
+\bprog
+@
+  partition p xs == (filter p xs, filter (not . p) xs)
+@
+\eprog
+
+\item
+@sort@/@sortBy@ implement a stable sorting algorithm, here specified
+in terms of the @insertBy@ function, which inserts objects into a list
+according to the specified ordering relation.
+
+\item
+@group@ splits its list argument into a list of lists of equal, adjacent
+elements. For exmaple
+\bprog
+@
+  group "Mississippi" == ["M","i","ss","i","ss","i","pp","i"]
+@
+\eprog
+
+\item
+@inits@ returns the list of initial segments of its argument list, shortest first.
+\bprog
+@
+  inits "abc" == ["","a","ab","abc"]
+@
+\eprog
+
+\item
+@tails@ returns the list of all final segments of its argument list, longest first.
+\bprog
+@
+  tails "abc" == ["abc", "bc", "c",""]
+@
+
+\eprog
+\item
+@mapAccumL f s l@ applies @f@ to an accumulating ``state'' parameter @s@
+and to each element of @l@ in turn.
+
+\item
+@mapAccumR@ is similar to @mapAccumL@ except that the list
+is processed from right-to-left rather than left-to-right.
+\end{itemize}
+
+\subsection{@unfoldr@}
+
+The @unfoldr@ function undoes a @foldr@ operation.  Note that,
+in general, only invertible functions can be unfolded.
+\bprog
+@
+  unfoldr f' (foldr f z xs) == xs
+@
+\eprog
+if the following holds:
+\bprog
+@
+  f' (f x y) = Just (x,y)
+  f' z       = Nothing
+@
+\eprog
+
+\subsection{Predicates}
+
+@isPrefixOf@ and @isSuffixOf@ check whether the first argument is a prefix (resp. suffix)
+of the second argument.
+
+
+\subsection{The ``@By@'' operations}
+
+By convention, overloaded functions have a non-overloaded
+counterpart whose name is suffixed with ``@By@''.  For example, the
+function @nub@ could be defined as follows:
+\bprog
+@
+  nub                     :: (Eq a) => [a] -> [a]
+  nub []                  =  []
+  nub (x:xs)              =  x : nub (filter (\y -> x /= y) xs)
+@
+\eprog
+However, the equality method may not be appropriate in all situations.
+The function:
+\bprog
+@
+  nubBy                   :: (a -> a -> Bool) -> [a] -> [a]
+  nubBy eq []             =  []
+  nubBy eq (x:xs)         =  x : nubBy eq (filter (\y -> not (eq x y)) xs)
+@
+\eprog
+allows the programmer to supply their own equality test.
+When the ``@By@'' function replaces an @Eq@ context by a binary predicate,
+the predicate is assumed to define an equivalence; when the ``@By@''
+function replaces an @Ord@ context by a binary predicate, the
+predicate is assumed to define a total ordering.
+
+The ``@By@'' variants are as follows:
+@nubBy@, @deleteBy@, @unionBy@, @intersectBy@, @groupBy@,
+@sortBy@, @insertBy@, @maximumBy@, @minimumBy@.  The library does not
+provide @elemBy@, because @any (eq x)@ does the same job as @elemBy eq x@ would.
+A handful of overloaded functions (@elemIndex@, @elemIndices@, @isPrefixOf@, @isSuffixOf@)
+were not considered important enough to have ``@By@'' variants.
+
+% Several of the functions defined here are derivatives of, or
+% related to, Prelude functions.  These functions are
+% @elem@, @maximum@, @minimum@, @zip@, @zip3@, @zipWith@,
+% @zipWith3@, @unzip@, @unzip3@, 
+% [according to Keith] @take@, @drop@, @splitAt@, @index@, @replicate@.
+
+\subsection{The ``@generic@'' operations}
+
+The prefix ``@generic@'' indicates an overloaded function that is
+a generalised version of a @Prelude@ function.  For example,
+\bprog
+@
+  genericLength       :: Integral a => [b] -> a
+@ 
+\eprog
+is a generalised verion of @length@.
+
+The ``@generic@'' operations are as follows:
+@genericLength@, @genericTake@, @genericDrop@,
+    @genericSplitAt@, @genericIndex@, @genericReplicate@.
+
+
+
+\clearpage
+\subsection{Library {\tt List}}
+\label{List}
+\inputHS{code/List}
+
+%**~footer

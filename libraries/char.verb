@@ -1,0 +1,88 @@
+%**<title>The Haskell 98 Library Report: Character Utilities</title>
+%**~header
+\section{Character Utilities}
+
+\outline{
+\inputHS{headers/Char}
+}
+\indextt{isAscii}
+\indextt{isLatin1}
+\indextt{isControl}
+\indextt{isPrint}
+\indextt{isSpace}
+\indextt{isUpper}
+\indextt{isLower}
+\indextt{isAlpha}
+\indextt{isDigit}
+\indextt{isOctDigit}
+\indextt{isHexDigit}
+\indextt{isAlphaNum}
+\indextt{toUpper}
+\indextt{toLower}
+
+This library provides a limited set of operations on the Unicode
+character set.  
+The first 128 entries of this character set are identical to the
+ASCII set; with the next 128 entries comes the remainder of the
+Latin-1 character set.
+This module offers only a limited view of the
+full Unicode character set; the full set of Unicode character
+attributes is not accessible in this library.
+
+Unicode characters may be divided into five general categories:
+non-printing, lower case alphabetic, other alphabetic, numeric digits, and
+other printable characters.  For the purposes of Haskell, any
+alphabetic character which is not lower case is treated as upper case
+(Unicode actually has three cases: upper, lower, and title).  Numeric
+digits may be part of identifiers but digits outside the ASCII range are not
+used by the reader to represent numbers.  
+
+For each sort of Unicode character, here are the predicates which
+return @True@:
+\begin{center}
+\begin{tabular}{|l|llll|}
+\hline
+Character Type & Predicates  & & & \\
+\hline
+Lower Case Alphabetic & @isPrint@ & @isAlphaNum@ & @isAlpha@ & @isLower@ \\
+Other Alphabetic & @isPrint@ & @isAlphaNum@ & @isAlpha@ & @isUpper@ \\
+Digits & @isPrint@ & @isAlphaNum@ & & \\
+Other Printable & @isPrint@ & & & \\
+Non-printing & & & &\\
+\hline
+\end{tabular}
+\end{center}
+
+The @isDigit@, @isOctDigit@, and @isHexDigit@ functions select only
+ASCII characters.  @intToDigit@ and @digitToInt@ convert between 
+a single digit @Char@ and the corresponding @Int@.  
+@digitToInt@ operates fails unless its argument satisfies @isHexDigit@,
+but recognises both upper and lower-case hexadecimal digits (i.e. @'0'@..@'9'@,
+@'a'@..@'f'@, @'A'@..@'F'@).  @intToDigit@ fails unless its argument is in the range
+@0@..@15@, and generates lower-case hexadecmial digits.
+
+The @isSpace@ function recognizes only white characters in the Latin-1
+range.
+
+The function @showLitChar@ converts a character to a string using
+only printable characters, using Haskell source-language escape conventions.
+The function @readLitChar@ does the reverse.
+
+Function @toUpper@ converts a letter to the corresponding
+upper-case letter, leaving any other character unchanged.  Any
+Unicode letter which has an upper-case equivalent is transformed.
+Similarly, @toLower@ converts a letter to the
+corresponding lower-case letter, leaving any other character
+unchanged.
+
+The @ord@ and @chr@ functions are @fromEnum@ and @toEnum@
+restricted to the type @Char@.
+
+\clearpage
+\subsection{Library {\tt Char}}
+\label{Char}
+\inputHS{code/Char}
+
+%**~footer
+
+

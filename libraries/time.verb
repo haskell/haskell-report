@@ -1,0 +1,76 @@
+%**<title>The Haskell 98 Library Report: Dates and Times</title>
+%**~header
+\section{Dates and Times}
+\label{time}
+\index{time}
+\index{time of day}\index{clock time}
+
+%% Note: HBC has Leap year calculations too.
+%% My feeling is that these are unnecessary given the much stronger
+%% ability here to find the differences between dates.
+
+\outline {
+\inputHS{headers/Time}
+}
+\outline{
+\inputHS{headers/Time1}
+}
+
+The @Time@ library provides standard functionality for clock times,
+including timezone information. It follows RFC~1129 in its use of
+Coordinated Universal Time (UTC).
+
+@ClockTime@ is an abstract type, used for the system's internal clock
+time.  Clock times may be compared directly or converted to a calendar
+time @CalendarTime@ for I/O or other manipulations.
+@CalendarTime@ is a user-readable and manipulable representation of
+the internal @ClockTime@ type.  The numeric fields have the following
+ranges.
+\outline{
+\begin{tabbing}
+\ignorehtml{
+\ \ \ \=ctpicosec\ \ \ \ \=-maxInt\ \=\ldots\ \=$(10^{12})-1$\ \ \ \ \ \=\kill}
+\>\underline{Value}\>\>\underline{Range}\>\>\underline{Comments} \\
+\\
+\>ctYear\>\>-maxInt\'$\ldots$\>maxInt\>Pre-Gregorian dates are inaccurate \\
+\>ctDay\>\>1\'$\ldots$\>31 \\
+\>ctHour\>\>0\'$\ldots$\>23\\
+\>ctMin\>\>0\'$\ldots$\>59\\
+\>ctSec\>\>0\'$\ldots$\>61\>Allows for two Leap Seconds\\
+\>ctPicosec\>\>0\'$\ldots$\>$(10^{12})-1$ \\
+\>ctYDay\>\>0\'$\ldots$\>365\>364 in non-Leap years \\
+\>ctTZ\>\>-89999\'$\ldots$\>89999\>Variation from UTC in seconds
+\end{tabbing}
+}
+The "ctTZName" field is the name of the time zone.  The "ctIsDST" field
+is @True@ if Daylight Savings Time would be in effect, and @False@
+otherwise.
+The @TimeDiff@ type records the difference between two clock times in
+a user-readable way.
+
+Function @getClockTime@ returns the current time in its internal
+representation.  The expression
+@addToClockTime@~"d"~"t" adds a time difference "d" and a
+clock time "t" to yield a new clock time.  The difference "d" may be either
+positive or negative.  The expression @diffClockTimes@~"t1"~"t2"
+returns the difference between two clock times "t1" and "t2" as a
+@TimeDiff@. 
+
+Function @toCalendarTime@~"t" converts "t" to a local time, modified
+by the timezone and daylight savings time settings in force at the
+time of conversion.  Because of this dependence on the local environment,
+@toCalendarTime@ is in the @IO@ monad.
+
+Function @toUTCTime@~"t" converts "t" into a @CalendarTime@
+in standard UTC format.
+@toClockTime@~"l" converts "l" into the corresponding internal
+@ClockTime@ ignoring the contents of the "ctWDay", "ctYDay",
+"ctTZName", and "ctIsDST" fields.
+
+Function @calendarTimeToString@ formats
+calendar times using local conventions and a formatting string.
+
+\subsection{Library {\tt Time}}
+\inputHS{code/Time}
+
+%**~header

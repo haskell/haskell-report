@@ -1,0 +1,68 @@
+%
+% $Header: /home/cvs/root/haskell-report/report/standard-prelude.verb,v 1.1 2001/03/28 14:13:42 simonpj Exp $
+%
+%**<title>The Haskell 98 Report: Standard Prelude</title>
+%*section A
+%**~header
+%*anchor on
+\section{Standard Prelude}
+\label{stdprelude}
+
+In this appendix the entire \Haskell{} Prelude is given.  It constitutes
+a {\em specification} for the Prelude.  Many of the definitions are
+written with clarity rather than efficiency in mind, 
+and it is {\em not} required that the specification be implemented as shown here.
+
+The Prelude shown here is organized into a root module, @Prelude@,
+and three sub-modules, @PreludeList@, @PreludeText@, and @PreludeIO@.
+This structure is purely presentational.
+An implementation is {\em not} required to use 
+this organisation for the Prelude,
+nor are these three modules available for import separately.
+Only the exports of module @Prelude@ are significant.
+
+Some of these modules import Library modules, such as @Char@, @Monad@, @IO@,
+and @Numeric@.  These modules are described fully in the accompanying
+Haskell 98 Library Report.  These imports are not, of course, part of the specification
+of the @Prelude@.  That is, an implementation is free to import more, or less,
+of the Library modules, as it pleases.
+
+Primitives that
+are not definable in \Haskell{}, indicated by names starting with ``@prim@'', are
+defined in a system dependent manner in module @PreludeBuiltin@ and
+are not shown here.  Instance declarations that simply bind primitives to
+class methods are omitted.  Some of the more verbose instances with
+obvious functionality have been left out for the sake of brevity.
+
+Declarations for special types such as @Integer@, @()@, or @(->)@ are
+included in the Prelude for completeness even though the declaration
+may be incomplete or syntactically invalid.
+
+
+\medskip
+% The index entries for :, [], (), and tuples are here
+% it just so HAPPENS that they'll end up referring to the right page
+% HHAACCKK!!   <---- Partain, you scoundrel! -- KH
+% Well, they aren't there anymore so I nuked them.  So there!  jcp
+\inputHS{Prelude}\clearpage
+
+%\subsection{Prelude {\tt PreludeBuiltin}}
+%\label{preludebuiltin}
+%\input{PreludeBuiltin}\clearpage
+
+
+\subsection{Prelude {\tt PreludeList}}
+\label{preludelist}
+\inputHS{PreludeList}\clearpage
+
+\subsection{Prelude {\tt PreludeText}}
+\label{preludetext}
+\inputHS{PreludeText}\cleardoublepage
+
+\subsection{Prelude {\tt PreludeIO}}
+\label{preludeio}
+\inputHS{PreludeIO}
+
+%**~footer
+
+

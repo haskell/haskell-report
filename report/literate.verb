@@ -1,0 +1,82 @@
+%
+% $Header: /home/cvs/root/haskell-report/report/literate.verb,v 1.1 2001/03/28 14:13:42 simonpj Exp $
+%
+%**<title>The Haskell 98 Report: Literate Comments</title>
+%*section C
+%**~header
+\section{Literate comments}
+\label{literate}
+\index{literate comments}
+
+The ``literate comment''
+convention, first developed by Richard Bird and Philip Wadler for
+Orwell, and inspired in turn by Donald Knuth's ``literate
+programming'', is an alternative style for encoding \Haskell{} source
+code. 
+The literate style encourages comments by making them the default.  A
+line in which ``@>@'' is the first character is treated as part of the
+program; all other lines are comment.
+
+The program text is recovered
+by taking only those lines beginning with ``@>@'', and deleting the
+first character of each of those lines.  Layout and comments apply
+exactly as described in Appendix~\ref{syntax} in the resulting text.
+
+To capture some cases where one omits an ``@>@'' by mistake, it is an
+error for a program line to appear adjacent to a non-blank comment line,
+where a line is taken as blank if it consists only of whitespace.
+
+By convention, the style of comment is indicated by the file
+extension, with ``@.hs@'' indicating a usual Haskell file and
+``@.lhs@'' indicating a literate Haskell file.  Using this style, a
+simple factorial program would be:
+\bprog
+@
+> 	-- This literate program prompts the user for a number
+> 	-- and prints the factorial of that number:
+
+> main :: IO ()
+
+> main = do putStr "Enter a number: "
+>           l <- readLine
+>           putStr "n!= "
+>           print (fact (read l))
+          
+This is the factorial function.
+
+> fact :: Integer -> Integer
+> fact 0 = 1
+> fact n = n * fact (n-1)
+@
+\eprog
+
+
+An alternative style of literate programming is particularly
+suitable for use with the LaTeX text processing system.
+In this convention, only those parts of the literate program that are
+entirely enclosed between @\begin{code}@$\ldots$@\end{code}@ delimiters are
+treated as program text; all other lines are comment.  It is not necessary
+to insert additional blank lines before or after these delimiters, though
+it may be stylistically desirable.  For example,
+\bprog
+@
+\documentstyle{article}
+
+\begin{document}
+
+\section{Introduction}
+
+This is a trivial program that prints the first 20 factorials.
+
+\begin{code}
+main :: IO ()
+main =  print [ (n, product [1..n]) | n <- [1..20]]
+\end{code}
+
+\end{document}
+@
+\eprog
+This style uses the same file extension.  It is not advisable to mix
+these two styles in the same file.
+
+%**~footer
