@@ -350,7 +350,7 @@ is given in <xref linkend="pkg-desc">.
 <filename>Setup.lhs</filename> is an executable Haskell program 
 which conforms to a particular specification, given in detail in <xref linkend="setup">.
 In summary, though, <filename>Setup.lhs</filename> allows a consumer to configure, build,
-test, install, register, and un-register a package.  </para>
+test, install, register, and unregister a package.  </para>
 	  </listitem>
 	</itemizedlist>
 The HPS allows a package author to write the setup script in any way she pleases, provided
@@ -444,26 +444,36 @@ This section documents those requirements</para>
 </para>
 <para>It must be possible to register many versions of the same package.</para>
 
-<sect3><title>Shared packages and user packages</title>
+<sect3><title>Global packages and user packages</title>
 
 <para>
-A package can be registered either as a <emphasis>shared package</emphasis> or as a <emphasis>user package</emphasis>.
+A package can be registered either as a <emphasis>global package</emphasis> or as a <emphasis>user package</emphasis>.
 The former means that anyone invoking <command>hc</command> will see the new package.  The latter means
 that only the user who installed the package will see it.
 </para>
 <para>
-User packages <emphasis>shadow</emphasis> shared packages, in the following sense:
-	  <itemizedlist><listitem><para>
-		A Haskell <literal>import</literal> for module M will seek M in a user package first.
-	      </para>
-	    </listitem><listitem><para>
-		The &hc-pkg; commands that take package IDs will look for a user package first.
-	      </para>
-	    </listitem>
-	  </itemizedlist></para>
-<note><para>Hmm.  If there are several ghc's around, can their user packages get mixed up?  I hope not.</para></note>
+User packages <emphasis>shadow</emphasis> global packages, in the following sense:</para>
+	<itemizedlist>
+	  <listitem>
+	    <para>A Haskell <literal>import</literal> for module M
+	    will seek M in a user package first.</para>
+	  </listitem>
+	  <listitem>
+	    <para>The &hc-pkg; commands that take package IDs will
+	    look for a user package first.</para>
+	  </listitem>
+	</itemizedlist>
 
-</sect3>
+	<para>Each user has one package database per compiler and
+	version.  That is, the user packages for GHC 6.2 are separate
+	from those for GHC 6.2.1.  If there are multiple installations
+	of a particular compiler version on the system, then they will
+	all use the same user packages, so the user should refrain
+	from using user packages with different installations of the
+	same compiler version, unless they can guarantee that the
+	different installations are binary compatible, such as if they
+	were installed from identical binary distributions.</para>
+      </sect3>
 
 <sect3><title>Exposed packages and hidden packages</title>
 
@@ -495,7 +505,7 @@ modules of an exposed package populate the module name space seen by a Haskell <
 <itemizedlist>
 <listitem> <para>
 Before registering a package P, check all the packages that P depends on are already registered.
-If P is being registered as a shared package, P's dependencies must also be shared packages.
+If P is being registered as a global package, P's dependencies must also be global packages.
 </para></listitem>
 <listitem> <para>
 Before registering an exposed user package P, check that the modules that are exposed by P do not have the same
@@ -504,7 +514,7 @@ for system packages.  (However, a system package may expose a module with the sa
 </para></listitem>
 <listitem> <para>
 Before un-registering a package P, check that no package that depends on P is registered.
-The exception is that when un-registering a shared package, &hc-pkg; cannot
+The exception is that when un-registering a global package, &hc-pkg; cannot
 check that no user has a user package depending on P.</para>
 	    </listitem>
 </itemizedlist>
@@ -572,7 +582,7 @@ allows a user to make a new package known to the compiler, and to ask what packa
                     <Entry><para>Hide the specified package.</para></entry></row>
 
      <row><Entry><command>hc-pkg list</command></entry>
-                    <Entry><para>List all registered packages, both shared and user, hidden and exposed. </para></entry></row>
+                    <Entry><para>List all registered packages, both global and user, hidden and exposed. </para></entry></row>
 
 
      <row><Entry><cmdsynopsis><command>hc-pkg describe</command> <arg choice=req><replaceable>pkg-id</replaceable> </arg>
@@ -593,15 +603,15 @@ allows a user to make a new package known to the compiler, and to ask what packa
      </table>
 A <replaceable>pkg</replaceable> argument can be a package ID, such as "<literal>hunit-2.3</literal>", or just a package name, 
 such as "<literal>hunit</literal>".  To determine which package is meant, &hc-pkg; searches first the
-registered user packages and then the shared packages.  If no such package exists, the command fails; that is, it does nothing, 
+registered user packages and then the global packages.  If no such package exists, the command fails; that is, it does nothing, 
 returning a non-zero error code.
 If only a name is specified, &hc-pkg; fails
-unless the name identifies a unique package among the user packages, or among the shared packages.  As usual, the
+unless the name identifies a unique package among the user packages, or among the global packages.  As usual, the
 user packages win.
       </para>
 <note><para>Can we give the <option>--user</option> flag to <command>hide</command>, <command>expose</command>,
 <command>describe</command>?  Can we register a package that is already registered?  What if it's registered
-as a shared package and we register it as a user package?</para>
+as a global package and we register it as a user package?</para>
       </note>
 </sect2>
 
