@@ -16,7 +16,7 @@
 \documentclass[a4paper,twosides]{article}
 
 \usepackage{a4wide}
-\usepackage{grammar}  % Get from 
+\usepackage{grammar}  % Get it from 
                       %   http://www.cse.unsw.edu.au/~chak/haskell/grammar.sty
 \usepackage{version}
 \usepackage{url}
@@ -25,12 +25,8 @@
 
 % TODO ========================================================================
 
-%  - Add unsafePerformIO and unsafeInterleaveIO to Foreign?  The former can be
-%    implemented with the FII, so we could provide a default impl.  I am not
-%    sure about the latter.
 %  - Move all the GHC-specific info contained in the old FFI spec to the GHC
 %    users guide 
-%  - CTypesISO still have gaps in their spec and impl
 
 % =============================================================================
 
@@ -46,7 +42,7 @@
     \\
     \textbf{--- DRAFT ---}\\[1ex]
     \ttfamily\scriptsize
-    $\relax$Id: ffi.tex,v 1.10 2001/08/18 15:08:04 chak Exp $\relax$%
+    $\relax$Id: ffi.tex,v 1.11 2001/08/19 10:10:12 chak Exp $\relax$%
     \ignorespaces}
   }
 \end{DRAFT}
@@ -88,8 +84,7 @@
   Simon Peyton Jones, Microsoft Research\\
   Alastair Reid, University of Utah\\
   Malcolm Wallace, University of York\\
-  Michael Weber, University of Aachen\\
-  \texttt{Please let me know if I forgot anybody!}
+  Michael Weber, University of Aachen
   }
 \date{}
 \maketitle
@@ -115,17 +110,24 @@ present FFI specification is aimed at reducing this risk by defining a simple,
 yet comprehensive extension to Haskell 98 for the purpose of interfacing to
 program components implemented in a language other than Haskell.
 
-The goal behind this foreign function interface (FFI) specification is to make
-it possible to describe in Haskell 98 source code the interface to foreign
-functionality such that its semantics is independent of the Haskell system.
-It builds on experiences with a family of foreign function interfaces provided
-by the major implementations of Haskell 98.  Central in the design of this
-interface has been the goal to be comprehensive while being simple and
+The goal behind this foreign function interface (FFI) specification is
+twofold: It must be possible (1) to describe in Haskell the interface to
+foreign functionality and (2) to use from foreign code Haskell routines.  More
+precisely, the aim is to be able to implement programs in a mixture of Haskell
+and other languages such that the source code is portable across different
+implementations of Haskell and non-Haskell systems as well as and architecture
+and operating system independent.
+
+Central in the design of this interface, which builds on experiences with a
+couple of foreign function interfaces provided by the major Haskell
+implementations, has been the goal to be comprehensive while being simple and
 minimising the change with respect to Haskell 98; the latter includes
 pollution of the name space with new keywords.  Consequently, as much as
-possible of the FFI functionality is realised in the form of libraries.  More
-convenient interface specifications are the domain of system-independent tools
-that generate code following the present specification.
+possible the FFI functionality is realised in the form of libraries.
+Simplicity generally overruled maximal convience for the programmer as a
+design goal.  Thus, support for more convenient interface specifications is
+the domain of system-independent tools that generate code following the
+present specification.
 
 \subsection{Embedding Into Haskell 98}
 
@@ -155,7 +157,7 @@ be 16, 32, or 64 bit wide.  Similarly, the Haskell report guarantees only that
 \code{Int} covers at least the range \([-2^{29}, 2^{29} - 1]\).  As a
 consequence, to reliably represent values of C's \code{int} in Haskell, we
 have to introduce a new type \code{CInt}, which is guaranteed to match the
-representation of \code{int} on the same machine.
+representation of \code{int}.
 
 The specification of external names in dependence on a calling convention is
 described in Section~\ref{sec:extent}, whereas the marshalling of the basic
@@ -208,6 +210,9 @@ The following productions are added:
 \section{Foreign Declarations}
 
 This section describes the extension of Haskell 98 by foreign declarations.
+The production for the non-terminal \gnterm{topdecl} extends the corresponding
+non-terminal from the Haskell 98 Report.  All other non-terminals introduced
+in the following are new.
 %
 \begin{grammar}
   \grule{topdecl}{%
@@ -234,8 +239,8 @@ function or memory location defined in an external context, available in the
 Haskell context.  Conversely, an export declaration defines a function of the
 Haskell context as an external entity in an external context.  Consequently,
 the two types of declarations differ in that an import declaration defines a
-new variable, whereas an export declaration uses a variable that is defined
-in the same Haskell module.
+new variable, whereas an export declaration uses a variable that is already
+defined in the Haskell module.
 
 The external context that contains the external entity is determined by the
 calling convention specified in the foreign declaration.  Consequently, the
@@ -265,8 +270,9 @@ system for which the external entity has been compiled.
 As an example of how the calling convention is dominated by the system rather
 than the programming language, consider that an entity compiled to byte code
 for the Java Abstract Machine (JVM)~\cite{lindholm-etal:JVM} needs to be
-invoked by the rules of the JVM rather than that of the language in which it
-is implemented (the entity might be implemented in Oberon, for example).
+invoked by the rules of the JVM rather than that of the source language in
+which it is implemented (the entity might be implemented in Oberon, for
+example).
 
 Any implementation of the Haskell 98 FFI must at least implement the C calling
 convention denoted by \code{ccall}.  All other calling conventions are
@@ -283,14 +289,14 @@ identifiers for common calling conventions.
       \hline\hline
       \code{ccall} 
       & Calling convention of the standard C compiler on a system\\
-      \code{stdcall}
-      & Calling convention of the Win32 API (corresponding to Pascal)\\
       \code{cplusplus}
       & Calling convention of the standard C{+}{+} compiler on a system\\
-      \code{jvm} 
-      & Calling convention of the Java Abstract Machine\\
       \code{dotnet}
       & Calling convention of the \textsc{.net} platform\\
+      \code{jvm} 
+      & Calling convention of the Java Abstract Machine\\
+      \code{stdcall}
+      & Calling convention of the Win32 API (matches Pascal conventions)\\
       \hline
     \end{tabular}
     \caption{Calling conventions}
@@ -318,6 +324,22 @@ FIXME: How many optional calling conventions should we specify here?
 \subsection{Foreign Types}
 \label{sec:foreign-types}
 
+The following types constitute the set of \emph{basic foreign types}:
+%
+\begin{itemize}
+\item \code{Char}, \code{Int}, \code{Double}, \code{Float}, and \code{Bool} as
+  exported by the Haskell 98 \code{Prelude} as well as
+\item \code{Int8}, \code{Int16}, \code{Int32}, \code{Int64}, \code{Word8},
+  \code{Word16}, \code{Word32}, \code{Int64}, \code{Ptr a}, \code{FunPtr a},
+  \code{ForeignPtr a}, and \code{StablePtr a}, for any type \code{a}, as
+  exported by \code{Foreign} (Section~\ref{sec:Foreign}).
+\end{itemize}
+%
+A Haskell system that implements the FFI needs to be able to pass these types
+between the Haskell and the external context as function arguments and results
+with the exception that values of type \code{ForeignPtr a} can only be passed
+from Haskell to the external context and not in the opposite direction.
+
 Foreign types are produced according to the following grammar:
 %
 \begin{grammar}
@@ -342,22 +364,12 @@ context.  A foreign type generally has the form
 \]
 where \(n\geq0\).  It implies that the arity of the external entity is $n$.
 
-The following restrictions are placed on the argument types \(\textit{at}_i\)
-produced by \gnterm{fatype}:
-%
-\begin{itemize}
-\item The type must be an instance of \code{Storable}
-  (cf. Section~\ref{sec:Storable}).
-\item If it is part of an import declaration, \code{Storable.poke} must be
-  defined on this type.
-\item If it is part of an export declaration, \code{Storable.peek} must be
-  defined on this type.
-\end{itemize}
-%
-However, for the type \textit{rt} produced by \gnterm{frtype}, we define the
-following exception to these restrictions: Any type matching \code{Prelude.IO
-  }$t$, where $t$ is produced by \gnterm{frtype} is admissible.  This
-exception is not recursive.
+The argument types \(\textit{at}_i\) and result type \textit{rt} produced by
+\gnterm{fatype} must be \emph{marshalable foreign types}.  A marshalable
+foreign type is either (1) a basic foreign type or (2) a type synonym or
+renamed datatype of a marshalable foreign type.  Moreover, the result type
+\textit{rt} may also be a type matching \code{Prelude.IO }$t$, where $t$ is
+marshalable foreign type.
 
 External functions are generally strict in all arguments.
 
@@ -427,13 +439,13 @@ The general form of export declarations is
 \code{foreign}~\code{export}~c~e~v~\code{{::}}~t
 \]
 %
-Such a declaration enables external access to the variable $v$, which must be
-defined by a top-level function or pattern-binding in the same module.
-Moreover, the Haskell system defines the external entity described by the
-string $e$, which may be used by external code using the calling convention
-$c$; an external invocation of the external entity $e$ is translated into
-evaluation of $v$.  The type $t$ must be an instance of the type of $v$.  For
-example, we may have
+Such a declaration enables external access to $v$, which may be a value, field
+name, or class method that is declared on the top-level of the same module or
+imported.  Moreover, the Haskell system defines the external entity described
+by the string $e$, which may be used by external code using the calling
+convention $c$; an external invocation of the external entity $e$ is
+translated into evaluation of $v$.  The type $t$ must be an instance of the
+type of $v$.  For example, we may have
 %
 \begin{quote}
 \begin{verbatim}
@@ -447,7 +459,8 @@ value returns with an exception, the system behaviour is undefined.  Thus,
 Haskell exceptions have to be caught within Haskell and explicitly marshalled
 to the foreign code.
 
-\subsection{Specification of External Entities}
+
+\section{Specification of External Entities}
 \label{sec:extent}
 
 Each foreign declaration has to specify the external entity that is accessed
@@ -480,7 +493,7 @@ The following defines the syntax for specifying external entities and their
 semantics for each of the standard calling conventions listed in
 Table~\ref{tab:callconv}.
 
-\subsubsection{Standard C Calls}
+\subsection{Standard C Calls}
 \label{sec:ccall}
 
 For import declarations, the syntax for the specification of external entities
@@ -488,13 +501,16 @@ under the \code{ccall} calling convention is
 %
 \begin{grammar}
   \grule[static function or address]{entity}{%
-    " \gopt{static} \gopt{\gnterm{fname}} \gopt{\&} \gopt{\gnterm{cid}} "}
+    " \gopt{static} \gopt{\gnterm{fname}} \gopt{\&} 
+    \gopt{[ \gnterm{lib} ]} \gopt{\gnterm{cid}} "}
   \gor[dynamically imports addresses]{%
     " dynamic "}
   \gor[dynamically exports thunks]{%
     " wrapper "}
   \grule{fname}{%
     \gverbal{file name with suffix `\code{.h}'}}
+  \grule{lib}{%
+    \gverbal{name of library archive}}
   \grule{cid}{%
     \gverbal{C identifier}}
 \end{grammar}
@@ -502,25 +518,26 @@ under the \code{ccall} calling convention is
 The first alternative either imports a static function \gnterm{cid} or, if
 \gterm\& precedes the identifier, a static address.  If \gnterm{cid} is
 omitted, it defaults to the name of the imported Haskell variable.  The
-optional filename \gnterm{fname} specifies a C header file.  The range of
-lexemes that are admissible for \gnterm{fname} and \gnterm{cid} coincides with
-the range of lexemes for arguments to the \code{\#{}include} directive and C
-identifiers as defined in~\cite{C}, respectively.  The only exception is that
-the file name \gnterm{fname} must end in the suffix \code{.h}.  The intended
-meaning is that \gnterm{fname} has to be included to access \gnterm{cid}.  In
-particular, when the Haskell system compiles Haskell to C code, the directive
+optional filename \gnterm{fname} specifies a C header file and the optional
+name \gnterm{lib}, which needs to be enclosed in square brackets, specifies a
+library archive.  The range of lexemes that are admissible for \gnterm{fname}
+and \gnterm{cid} coincides with the range of lexemes for arguments to the
+\code{\#{}include} directive and C identifiers as defined in~\cite{C},
+respectively.  The only exception is that the file name \gnterm{fname} must
+end in the suffix \code{.h}.  The intended meaning is that \gnterm{fname} has
+to be included to access \gnterm{cid}.  In particular, when the Haskell system
+compiles Haskell to C code, the directive
 %
 \begin{quote}
   \gterm{\#include "\gnterm{fname}"}
 \end{quote}
 %
 will be placed into any generated C file that refers to the foreign entity
-before the first occurrence of that entity in the generated C file.
-
-\begin{verbatim}
-FIXME: Use [lib]foo syntax to define from which library object a symbol is
-  taken. 
-\end{verbatim}
+before the first occurrence of that entity in the generated C file.  The
+library name \gnterm{lib}, if provided, constitutes a hint as to which library
+archive contains the code of the imported function at runtime.  The mapping of
+the library name to a system-specific library archive is implementation
+dependent.
 
 The second and third alternative, identified by the keywords \gterm{dynamic}
 and \gterm{wrapper}, respectively, import stub functions that have to be
@@ -541,40 +558,36 @@ The optional C identifier \gnterm{cid} defines the external name by which the
 exported Haskell variable is accessible in C.  If it is omitted, the external
 name defaults to the name of the exported Haskell variable.
 
-Depending on the kind of import declarations there are constraints regarding
-the admissible Haskell type that the variable defined in the import make
-have.  These constraints are specified in the following.
+Depending on the kind of import declaration there are constraints regarding
+the admissible Haskell type that the variable defined in the import may have.
+These constraints are specified in the following.
+%
+\begin{description}
+\item[Static Functions.]  A static function can be of any foreign type; in
+  particular, the result type may or may not be monadic.  If a function that
+  is not pure is not imported monadic, the system behaviour is undefined.
+  Generally, no check for consistency with the C type of the imported label is
+  performed.
 
-\paragraph{Static Functions.}
-A static function can be of any foreign type; in particular, the result type
-may or may not be monadic.  If a function that is not pure is not imported
-monadic, the system behaviour is undefined.  Generally, no check for
-consistency with the C type of the imported label is performed.
+\item[Static addresses.]  The type of an imported address is constrained to be
+  of the form \code{Ptr }\textit{a} or \code{FunPtr }\textit{a}, where
+  \textit{a} can be any type.
 
-\paragraph{Static Addresses.}
-The type of an imported address is constrained to be of the form \code{Ptr
-  }\textit{a} or \code{FunPtr }\textit{a}, where \textit{a} can be any type.
+\item[Dynamic import.]  The type of a \gnterm{dynamic} stub has to be of the
+  form \code{FunPtr }\textit{ft}\code{ -> }\textit{ft}, where \textit{ft} may
+  be any foreign type.
 
-\paragraph{Dynamic Import.}
-The type of a \gnterm{dynamic} stub has to be of the form \code{FunPtr
-  }\textit{ft}\code{ -> }\textit{ft}, where \textit{ft} may be any foreign
-type.
-\begin{verbatim}
-FIXME: The old FFI spec restricted `ft' to `prim_args -> IO prim_result'.
-  Why didn't forbid thunks and pure functions?  Is this really necessary?
-\end{verbatim}
+\item[Dynamic wrapper.]  The type of a \gnterm{wrapper} stub has to be of the
+  form \textit{ft}\code{ -> }\code{IO (FunPtr }\textit{ft}\code), where
+  \textit{ft} may be any foreign type.
+\end{description}
 
-\paragraph{Dynamic Wrapper.}
-The type of a \gnterm{wrapper} stub has to be of the form \textit{ft}\code{ ->
-  }\code{IO (FunPtr }\textit{ft}\code), where \textit{ft} may be any foreign
-type.
-
-\subsubsection{Win32 API Calls}
+\subsection{Win32 API Calls}
 
 The specification of external entities under the \code{stdcall} calling
 convention is identical to that for standard C calls.
 
-\subsubsection{C{+}{+} Calls}
+\subsection{C{+}{+} Calls}
 
 The syntax for the specification of external entities under the
 \code{cplusplus} calling convention is
@@ -583,7 +596,7 @@ The syntax for the specification of external entities under the
 FIXME
 \end{verbatim}
 
-\subsubsection{JVM Calls}
+\subsection{JVM Calls}
 
 The syntax for the specification of external entities under the \code{jvm}
 calling convention is 
@@ -606,7 +619,7 @@ FIXME:
 - force the inclusion of the return type in case of "new"?
 \end{verbatim}
 
-\subsubsection{.NET Calls}
+\subsection{.NET Calls}
 
 The syntax for the specification of external entities under the \code{dotnet}
 calling convention is
@@ -667,6 +680,7 @@ defined.  The interface for C-specific support is discussed in
 Section~\ref{sec:c-marshalling}. 
 
 \subsection{\code{Foreign}}
+\label{sec:Foreign}
 
 The module \code{Foreign} combines the interfaces of all modules providing
 language-independent marshalling support.  These modules are \code{Int},
@@ -675,16 +689,20 @@ language-independent marshalling support.  These modules are \code{Int},
 \code{MarshalUtils}.
 
 \begin{verbatim}
-FIXME: unsafePerformIO is essential for the FFI?  Export it from Foreign.
+NOTE: unsafePerformIO is essential to the FFI?  Export it from Foreign.
   (May also be exported by IOExts, but we might want to guarantee its
-  availability.)
+  availability.) (Maybe also unsafeInterleaveIO.)
+** This note will disappear and `unsafePerformIO' being added to Foreign if
+   there are no complaints **
 \end{verbatim}
 
 \subsection{\code{Bits}}
 
 \begin{verbatim}
-FIXME: Shouldn't Bits be part of the FFI?  If so, IntN and WordN must have
+NOTE: Shouldn't Bits be part of the FFI?  If so, IntN and WordN must have
   an instance for Bits, too.
+** This note will disappear and `Bits' being added if there are no 
+   complaints **
 \end{verbatim}
 
 \subsection{\code{Int} and \code{Word}}
@@ -711,9 +729,10 @@ constraints on the implementation of these instances are also the same as
 those outlined for \code{Int} in the Haskell Report.
 
 \begin{verbatim}
-FIXME: The modules currently in HSLibs assert that ``arithmetic is performed
+NOTE: The modules currently in HSLibs assert that ``arithmetic is performed
   modula 2^n''.  I think, we should not require this, as the standard doesn't
   require it for Int.
+** Unless there are complains, this note will disappear in the next version. **
 \end{verbatim}
 
 \subsection{\code{Ptr}}
@@ -794,8 +813,8 @@ foreign export dynamic mkCompare :: Compare -> IO (FunPtr Compare)
   \code{FunPtr} of a different type.
 \item[freeHaskellFunPtr ::\ FunPtr a -> IO ()] Releases the storage associated
   with the given \code{FunPtr}. This should be called whenever the return
-  value from a foreign export dynamic function is no longer required,
-  otherwise the storage it uses will leak.
+  value from a foreign export dynamic function is no longer required;
+  otherwise, the storage it uses will leak.
 \end{codedesc}
 
 Moreover, there are two functions that are only valid on architectures where
@@ -806,9 +825,9 @@ assumption, should the use of \code{castFunPtrToPtr} and
 using these functions.
 %
 \begin{codedesc}
-\item[castFunPtrToPtr :: FunPtr a -> Ptr b]
-\item[castPtrToFunPtr :: Ptr a -> FunPtr b] These two functions cast Ptrs to
-  FunPtrs and vice versa.
+\item[castFunPtrToPtr ::\ FunPtr a -> Ptr b]
+\item[castPtrToFunPtr ::\ Ptr a -> FunPtr b] \combineitems These two functions
+  cast Ptrs to FunPtrs and vice versa.
 \end{codedesc}
 
 \subsection{\code{ForeignPtr}}
@@ -899,7 +918,9 @@ the following signature and purpose:
 \end{codedesc}
 
 \begin{verbatim}
-FIXME: Why do we only have Eq on ForeignPtr, but also Ord an Show on Ptr?
+NOTE: Why do we only have Eq on ForeignPtr, but also Ord an Show on Ptr?
+** This note will disappear and Ord and Show be added to ForeignPtr unless
+   their are complaints **
 \end{verbatim}
 
 \subsection{\code{StablePtr}}
@@ -1045,16 +1066,6 @@ A minimal complete definition of \code{Storable} needs to define
 \code{sizeOf}, \code{alignment}, one of \code{peek}, \code{peekElemOff}, or
 \code{peekByteOff}, and one of \code{poke}, \code{pokeElemOff}, and
 \code{pokeByteOff}.
-
-
-\begin{verbatim}
-FIXME: This approach has been questioned:
-  \code{Storable} is derivable.  It is only derivable for \code{newtype}s of
-  types for which an instance of \code{Storable} exists.
-
-  Note that the Haskell 98 report says in Section~4.3.3 says, ``Classes defined
-  by the standard libraries may also be derivable.''
-\end{verbatim}
 
 \subsection{\code{MarshalAlloc}}
 \label{sec:MarshalAlloc}
@@ -1262,7 +1273,7 @@ routines.
 
 \item[maybeWith ::\ (a -> (Ptr b -> IO c) -> IO c)%
   -> (Maybe a -> (Ptr b -> IO c) -> IO c)] This function lifts a
-  \code{MarshalAlloc.alloca} based marhsalling function for \code{a} to
+  \code{MarshalAlloc.alloca} based marshalling function for \code{a} to
   \code{Maybe a}.  It marshals values \code{Nothing} in the same way as
   \code{maybeNew}. 
   
@@ -1288,7 +1299,7 @@ routines.
 
 \begin{verbatim}
 FIXME: I am still not sure whether `withMany' isn't to esoteric to be part of
-  the standard library.  It happens to be useful for marhsalling in some
+  the standard library.  It happens to be useful for marshalling in some
   situations, but it isn't really marshalling-specific, but is just another
   list function.
 \end{verbatim}
@@ -1522,15 +1533,56 @@ C side should implement \code{HsInt64} and \code{HsWord64} as a structure.  In
 this case, the bounds \code{HS\_INT64\_MIN}, \code{HS\_INT64\_MAX}, and
 \code{HS\_WORD64\_MAX} are undefined.
 
+\begin{verbatim}
+FIXME: Should HsFFI.h include a function like GHC's startHaskellSystem()?
+\end{verbatim}
+
 \subsection{\code{CTypes} and \code{CTypesISO}}
 \label{sec:CTypes}
 
 The modules \code{CTypes} and \code{CTypesISO} provide Haskell types that
 represent basic C types.  They are needed to accurately represent C function
-prototypes in Haskell.  The module \code{CTypes} provides the following
-integral types, including instances for \code{Eq}, \code{Ord}, \code{Num},
-\code{Read}, \code{Show}, \code{Enum}, \code{Storable}, \code{Bounded},
-\code{Real}, \code{Integral}, and \code{Bits}:
+prototypes, and so, to access C library interfaces in Haskell.  The Haskell
+system is not required to represent those types exactly as C does, but the
+following guarantees are provided concerning a Haskell type \code{CT}
+representing a C type \code{t}:
+%
+\begin{itemize}
+\item If a C function prototype has \code{t} as an argument or result type,
+  the use of \code{CT} in the corresponding position in a foreign declaration
+  permits the Haskell program to access the full range of values encoded by
+  the C type; and conversely, any Haskell value for \code{CT} has a valid
+  representation in C.
+\item \code{Storable.sizeOf (undefined ::\ T)} will yield the same value as
+  \code{sizeof (t)} in C.
+\item \code{Storable.alignment (undefined ::\ T)} matches the alignment
+  constraint enforced by the C implementation for \code{t}.
+\item \code{Storable.peek} and \code{Storable.poke} map all values of
+  \code{CT} to the corresponding value of \code{t} and vice versa.
+\item When an instance of \code{Bounded} is defined for \code{CT}, the values
+  of \code{minBound} and \code{maxBound} coincide with \code{t\_MIN} and
+  \code{t\_MAX} in C.
+\item When an instance of \code{Eq} or \code{Ord} is defined for \code{CT},
+  the predicates defined by the type class implement the same relation as the
+  corresponding predicate in C on \code{t}.
+\item When an instance of \code{Num}, \code{Read}, \code{Integral},
+  \code{Fractional}, \code{Floating}, \code{RealFrac}, or \code{RealFloat} is
+  defined for \code{CT}, the arithmetic operations defined by the type class
+  implement the same function as the corresponding arithmetic operations (if
+  available) in C on \code{t}.
+\item When an instance of \code{Bits} is defined for \code{CT}, the logical
+  operation defined by the type class implement the same function as the
+  corresponding logical relation in C on \code{t}.
+\end{itemize}
+%
+It follows from these guarantees that all types exported by \code{CTypes} and
+\code{CTypesISO} are represented as type synonyms or \code{newtype}s of basic
+foreign types as defined in Section~\ref{sec:foreign-types}.
+
+The module \code{CTypes} provides the following integral types, including
+instances for \code{Eq}, \code{Ord}, \code{Num}, \code{Read}, \code{Show},
+\code{Enum}, \code{Storable}, \code{Bounded}, \code{Real}, \code{Integral},
+and \code{Bits}:
 %
 \begin{quote}
   \begin{tabular}{|l|l|l|}
