@@ -46,7 +46,7 @@
     \\
     \textbf{--- DRAFT ---}\\[1ex]
     \ttfamily\scriptsize
-    $\relax$Id: ffi.tex,v 1.9 2001/08/18 03:11:02 chak Exp $\relax$%
+    $\relax$Id: ffi.tex,v 1.10 2001/08/18 15:08:04 chak Exp $\relax$%
     \ignorespaces}
   }
 \end{DRAFT}
@@ -674,6 +674,12 @@ language-independent marshalling support.  These modules are \code{Int},
 \code{MarshalAlloc}, \code{MarshalArray}, \code{MarshalError}, and
 \code{MarshalUtils}.
 
+\begin{verbatim}
+FIXME: unsafePerformIO is essential for the FFI?  Export it from Foreign.
+  (May also be exported by IOExts, but we might want to guarantee its
+  availability.)
+\end{verbatim}
+
 \subsection{\code{Bits}}
 
 \begin{verbatim}
@@ -1292,25 +1298,455 @@ FIXME: I am still not sure whether `withMany' isn't to esoteric to be part of
 \label{sec:c-marshalling}
 
 \subsection{\code{CForeign}}
+\label{sec:CForeign}
+
+The module \code{CForeign} combines the interfaces of all modules providing
+C-specific marshalling support.  The modules are \code{CTypes},
+\code{CTypesISO}, \code{CString}, and \code{CError}.
+
+\begin{table}
+  \begin{center}
+    \begin{tabular}{|l|l|l|}
+      \hline
+      C symbol          & Haskell symbol & Constraint on concrete C type\\
+      \hline\hline
+      \code{HsChar}     & \code{Char}    
+      & integral type\\
+      \hline
+      \code{HsInt}      & \code{Int}
+      & signed integral type, $\geq30$ bit\\
+      \hline
+      \code{HsInt8}     & \code{Int8}
+      & signed integral type, 8 bit; \code{int8\_t} if available\\
+      \hline
+      \code{HsInt16}    & \code{Int16}
+      & signed integral type, 16 bit; \code{int16\_t} if available\\
+      \hline
+      \code{HsInt32}    & \code{Int32}
+      & signed integral type, 32 bit; \code{int32\_t} if available\\
+      \hline
+      \code{HsInt64}    & \code{Int64}
+      & signed integral type, 64 bit; \code{int64\_t} if available\\ 
+      \hline
+      \code{HsWord8}    & \code{Word8}
+      & unsigned integral type, 8 bit; \code{uint8\_t} if available\\
+      \hline
+      \code{HsWord16}   & \code{Word16}
+      & unsigned integral type, 16 bit; \code{uint16\_t} if available\\
+      \hline
+      \code{HsWord32}   & \code{Word32}
+      & unsigned integral type, 32 bit; \code{uint32\_t} if available\\
+      \hline
+      \code{HsWord64}   & \code{Word64}
+      & unsigned integral type, 64 bit; \code{uint64\_t} if available\\
+      \hline
+      \code{HsFloat}    & \code{Float}
+      & floating point type\\
+     \hline
+      \code{HsDouble}   & \code{Double}
+      & floating point type\\
+     \hline
+      \code{HsBool}     & \code{Bool}
+      & integral type\\
+     \hline
+      \code{HsPtr}      & \code{Ptr a}
+      & \code{(void *)}\\
+     \hline
+      \code{HsFunPtr}   & \code{FunPtr a}
+      & \code{(void (*)(void))}\\
+     \hline
+      \code{HsForeignPtr}& \code{ForeignPtr a}
+      & \code{(void *)}\\
+     \hline
+      \code{HsStablePtr}& \code{StablePtr a}
+      & \code{(void *)}\\
+     \hline
+    \end{tabular}
+    \caption{C Interface to Basic Haskell Types}
+    \label{tab:c-haskell-types}
+  \end{center}
+\end{table}
+%
+\begin{table}
+  \begin{center}
+%    \begin{tabular}{|l|l|l|}
+    \begin{tabular}{|l|l|p{30ex}|}
+      \hline
+      C symbol           & Haskell value & Description\\
+      \hline\hline
+      \code{HS\_CHAR\_MIN} & \code{minBound ::\ Char}
+      & \\
+      \hline
+      \code{HS\_CHAR\_MAX} & \code{maxBound ::\ Char}
+      & \\
+      \hline
+      \code{HS\_INT\_MIN} & \code{minBound ::\ Int}
+      & \\
+      \hline
+      \code{HS\_INT\_MAX} & \code{maxBound ::\ Int}
+      & \\
+      \hline
+      \code{HS\_INT8\_MIN} & \code{minBound ::\ Int8}
+      & \\
+      \hline
+      \code{HS\_INT8\_MAX} & \code{maxBound ::\ Int8}
+      & \\
+      \hline
+      \code{HS\_INT16\_MIN} & \code{minBound ::\ Int16}
+      & \\
+      \hline
+      \code{HS\_INT16\_MAX} & \code{maxBound ::\ Int16}
+      & \\
+      \hline
+      \code{HS\_INT32\_MIN} & \code{minBound ::\ Int32}
+      & \\
+      \hline
+      \code{HS\_INT32\_MAX} & \code{maxBound ::\ Int32}
+      & \\
+      \hline
+      \code{HS\_INT64\_MIN} & \code{minBound ::\ Int64}
+      & \\
+      \hline
+      \code{HS\_INT64\_MAX} & \code{maxBound ::\ Int64}
+      & \\
+      \hline
+      \code{HS\_WORD8\_MAX} & \code{maxBound ::\ Word8}
+      & \\
+      \hline
+      \code{HS\_WORD16\_MAX} & \code{maxBound ::\ Word16}
+      & \\
+      \hline
+      \code{HS\_WORD32\_MAX} & \code{maxBound ::\ Word32}
+      & \\
+      \hline
+      \code{HS\_WORD64\_MAX} & \code{maxBound ::\ Word64}
+      & \\
+      \hline
+      \code{HS\_FLOAT\_RADIX} & \code{floatRadix ::\ Float}
+      & \\
+      \hline
+      \code{HS\_FLOAT\_ROUNDS} & n/a
+      & rounding style as per~\cite{C99}\\
+      \hline
+      \code{HS\_FLOAT\_EPSILON} & n/a
+      & difference between 1 and the least value greater
+      than 1 as per~\cite{C99}\\
+      \hline
+      \code{HS\_DOUBLE\_EPSILON} & n/a
+      & (as above)\\
+      \hline
+      \code{HS\_FLOAT\_DIG} & n/a
+      & number of decimal digits as per~\cite{C99}\\
+      \hline
+      \code{HS\_DOUBLE\_DIG} & n/a
+      & (as above)\\
+      \hline
+      \code{HS\_FLOAT\_MANT\_DIG} & \code{floatDigits ::\ Float}
+      & \\
+      \hline
+      \code{HS\_DOUBLE\_MANT\_DIG} & \code{floatDigits ::\ Double}
+      & \\
+      \hline
+      \code{HS\_FLOAT\_MIN} & n/a
+      & minimum floating point number as per~\cite{C99}\\
+      \hline
+      \code{HS\_DOUBLE\_MIN} & n/a
+      & (as above)\\
+      \hline
+      \code{HS\_FLOAT\_MIN\_EXP} & \code{fst .\ floatRange ::\ Float}
+      & \\
+      \hline
+      \code{HS\_DOUBLE\_MIN\_EXP} & \code{fst .\ floatRange ::\ Double}
+      & \\
+      \hline
+      \code{HS\_FLOAT\_MIN\_10\_EXP} & n/a
+      & minimum decimal exponent as per~\cite{C99}\\
+      \hline
+      \code{HS\_DOUBLE\_MIN\_10\_EXP} & n/a
+      & (as above)\\
+      \hline
+      \code{HS\_FLOAT\_MAX} & n/a
+      & maximum floating point number as per~\cite{C99}\\
+      \hline
+      \code{HS\_DOUBLE\_MAX} & n/a
+      & (as above)\\
+      \hline
+      \code{HS\_FLOAT\_MAX\_EXP} & \code{snd .\ floatRange ::\ Float}
+      & \\
+      \hline
+      \code{HS\_DOUBLE\_MAX\_EXP} & \code{snd .\ floatRange ::\ Double}
+      & \\
+      \hline
+      \code{HS\_FLOAT\_MAX\_10\_EXP} & n/a
+      & maximum decimal exponent as per~\cite{C99}\\
+      \hline
+      \code{HS\_DOUBLE\_MAX\_10\_EXP} & n/a
+      & (as above)\\
+      \hline
+      \code{0} & \code{False}
+      & \\
+      \hline
+      \code{1} & \code{True}
+      & \\
+      \hline
+    \end{tabular}
+    \caption{C Interface to Range and Precision of Basic Types}
+    \label{tab:c-haskell-values}
+  \end{center}
+\end{table}
+%
+Every Haskell system that implements the FFI needs to provide a C header file
+named \code{HsFFI.h} that defines the C symbols listed in
+Tables~\ref{tab:c-haskell-types} and~\ref{tab:c-haskell-values}.
+Table~\ref{tab:c-haskell-types} table lists symbols that represent types
+together with the Haskell type that they represent and any constraints that
+are placed on the concrete C types that implement these symbols.  When a C
+type \code{HsT} represents a Haskell type \code{T}, the occurrence of \code{T}
+in a foreign function declaration should be matched by \code{HsT} in the
+corresponding C function prototype.  Indeed, where the Haskell system
+translates Haskell to C code that invokes \code{foreign} \code{import}ed C
+routines, such prototypes need to be provided and included via the header that
+can be specified in external entity strings for foreign C functions (cf.\ 
+Section~\ref{sec:ccall}); otherwise, the system behaviour is undefined.
+
+Table~\ref{tab:c-haskell-values} contains symbols characterising the range and
+precision of the types from Table~\ref{tab:c-haskell-types}.  Where available,
+the table states the corresponding Haskell values.  All C symbols, except
+\code{HS\_FLOAT\_ROUND} are constants that are suitable for use in \code{\#if}
+preprocessing directives.  Note that there is only one rounding style
+(\code{HS\_FLOAT\_ROUND}) and one radix (\code{HS\_FLOAT\_RADIX}), as this is
+all that is supported by~\cite{C99}.
+
+Moreover, an implementation that does not support 64 bit integral types on the
+C side should implement \code{HsInt64} and \code{HsWord64} as a structure.  In
+this case, the bounds \code{HS\_INT64\_MIN}, \code{HS\_INT64\_MAX}, and
+\code{HS\_WORD64\_MAX} are undefined.
+
+\subsection{\code{CTypes} and \code{CTypesISO}}
+\label{sec:CTypes}
+
+The modules \code{CTypes} and \code{CTypesISO} provide Haskell types that
+represent basic C types.  They are needed to accurately represent C function
+prototypes in Haskell.  The module \code{CTypes} provides the following
+integral types, including instances for \code{Eq}, \code{Ord}, \code{Num},
+\code{Read}, \code{Show}, \code{Enum}, \code{Storable}, \code{Bounded},
+\code{Real}, \code{Integral}, and \code{Bits}:
+%
+\begin{quote}
+  \begin{tabular}{|l|l|l|}
+    \hline
+    Haskell type     & Represented C type\\\hline\hline
+    \code{CChar}     & \code{char}\\\hline
+    \code{CSChar}    & \code{signed char}\\\hline
+    \code{CUChar}    & \code{unsigned char}\\\hline
+    \code{CShort}    & \code{short}\\\hline
+    \code{CUShort}   & \code{unsigned short}\\\hline
+    \code{CInt}      & \code{int}\\\hline
+    \code{CUInt}     & \code{unsigned int}\\\hline
+    \code{CLong}     & \code{long}\\\hline
+    \code{CULong}    & \code{unsigned long}\\\hline
+    \code{CLLong}    & \code{long long}\\\hline
+    \code{CULLong}   & \code{unsigned long long}\\\hline
+  \end{tabular}
+\end{quote}
+%
+Moreover, it provides the following floating point types, including instances
+for \code{Eq}, \code{Ord}, \code{Num}, \code{Read}, \code{Show}, \code{Enum},
+\code{Storable}, \code{Real}, \code{Fractional}, \code{Floating},
+\code{RealFrac}, and \code{RealFloat}.
+%
+\begin{quote}
+  \begin{tabular}{|l|l|l|}
+    \hline
+    Haskell type     & Represented C type\\\hline\hline
+    \code{CFloat}    & \code{float}\\\hline
+    \code{CDouble}   & \code{double}\\\hline
+    \code{CLDouble}  & \code{long double}\\\hline
+  \end{tabular}
+\end{quote}
+
+The module \code{CTypesISO} provides the following integral types, including
+instances for \code{Eq}, \code{Ord}, \code{Num}, \code{Read}, \code{Show},
+\code{Enum}, \code{Storable}, \code{Bounded}, \code{Real}, \code{Integral},
+and \code{Bits}:
+%
+\begin{quote}
+  \begin{tabular}{|l|l|l|}
+    \hline
+    Haskell type     & Represented C type\\\hline\hline
+    \code{CPtrdiff}  & \code{ptrdiff\_t}\\\hline
+    \code{CSize}     & \code{size\_t}\\\hline
+    \code{CWChar}    & \code{wchar\_t}\\\hline
+    \code{CSigAtomic}& \code{sig\_atomic\_t}\\\hline
+  \end{tabular}
+\end{quote}
+%
+Moreover, it provides the following numeric point types, including instances
+for \code{Eq}, \code{Ord}, \code{Num}, \code{Read}, \code{Show}, \code{Enum},
+and \code{Storable}:
+%
+\begin{quote}
+  \begin{tabular}{|l|l|l|}
+    \hline
+    Haskell type     & Represented C type\\\hline\hline
+    \code{CClock}    & \code{clock\_t}\\\hline
+    \code{CTime}     & \code{time\_t}\\\hline
+  \end{tabular}
+\end{quote}
+%
+And finally, the following types, including instances for \code{Eq} and
+\code{Storable}:
+%
+\begin{quote}
+  \begin{tabular}{|l|l|l|}
+    \hline
+    Haskell type     & Represented C type\\\hline\hline
+    \code{CFile}     & \code{FILE}\\\hline
+    \code{CFpos}     & \code{fpos\_t}\\\hline
+    \code{CJmpBuf}   & \code{jmp\_buf}\\\hline
+  \end{tabular}
+\end{quote}
 
 \begin{verbatim}
-FIXME: Mention HsFFI.h and include the table of primitive types
-FIXME: Storable.peek for ForeignPtr doesn't make much sense, or does it?
-FIXME: It might be argued that Bits is needed for the FFI, too.
-
-FIXME: CTypes and CTypesISO instantiate all types for Storable
+FIXME: The name CTypesISO is not really accurate.
 \end{verbatim}
 
+\subsection{\code{CString}}
+\label{sec:CString}
+
+The module \code{CString} provides routines marshalling Haskell into C strings
+and vice versa.  The marshalling takes the current Unicode encoding on the
+Haskell side into account.  As a consequence, no guarantees can be made about
+the relative length of a Haskell string and its corresponding C string, and
+therefore, all routines provided by \code{CString} combine memory allocation
+and marshalling.
+%
+\begin{codedesc}
+\item[CString = Ptr CChar] A C string is a reference to an array of C
+  characters terminated by NUL.
+
+\item[CStringLen = (CString, Int)] In addition to NUL-terminated strings,
+  the module \code{CString} also supports strings with explicit length
+  information. 
+
+\item[peekCString~~~~::\ CString~~~~-> IO String]
+\item[peekCStringLen~::\ CStringLen~-> IO String]\combineitems
+  Marshal a C string to Haskell.  There are two variants of the routine, one
+  for each supported string representation.
+
+\item[newCString~~~~::\ String -> IO CString]
+\item[newCStringLen~::\ String -> IO CStringLen] \combineitems Allocate a
+  memory area for a Haskell string and marshal the string into its C
+  representation.  There are two variants of the routine, one for each
+  supported string representation.
+
+\item[withCString~~~~::\ String -> (CString~~~~-> IO a) -> IO a]
+\item[withCStringLen~::\ String -> (CStringLen~-> IO a) -> IO a] \combineitems
+  These two routines operate as \code{newCString} and \code{newCStringLen},
+  respectively, but handle memory allocation and deallocation like
+  \code{MarshalAlloc.alloca} (Section~\ref{sec:MarshalAlloc}).
+
+\item[castCharToCChar ::\ Char -> CChar]
+\item[castCCharToChar ::\ CChar -> Char] \combineitems These two functions cast
+  Haskell characters to C characters and vice versa while ignoring the Unicode
+  encoding of the Haskell character.  These functions should be used with
+  care.
+\end{codedesc}
+
+\subsection{\code{CError}}
+\label{sec:CError}
+
+The module CError facillitates C-specific error handling of \code{errno}.  In
+Haskell, we represent values of \code{errno} by
+%
 \begin{quote}
 \begin{verbatim}
-/*  HsFFI.h
- */
-typedef void  *HsPtr;            /* C representation of a `Ptr a'    */
-typedef void (*HsFunPtr)(void);  /* C representation of a `FunPtr a' */
-
-typedef void* HsForeignPtr;  /* C representation of a ForeignPtr */
+newtype Errno = Errno CInt
 \end{verbatim}
 \end{quote}
+%
+which has an instance for the type class \code{Eq}.  The implementation of
+\code{Errno} is disclosed on purpose.  Different operating systems and/or C
+libraries often support different values of \code{errno}.  This module defines
+the common values, but due to the open definition of \code{Errno} users may
+add definition, which are not predefined.  The predefined values are the
+following:
+%
+\begin{quote}
+\begin{verbatim}
+eOK, e2BIG, eACCES, eADDRINUSE, eADDRNOTAVAIL, eADV, eAFNOSUPPORT, eAGAIN, 
+  eALREADY, eBADF, eBADMSG, eBADRPC, eBUSY, eCHILD, eCOMM, eCONNABORTED, 
+  eCONNREFUSED, eCONNRESET, eDEADLK, eDESTADDRREQ, eDIRTY, eDOM, eDQUOT, 
+  eEXIST, eFAULT, eFBIG, eFTYPE, eHOSTDOWN, eHOSTUNREACH, eIDRM, eILSEQ, 
+  eINPROGRESS, eINTR, eINVAL, eIO, eISCONN, eISDIR, eLOOP, eMFILE, eMLINK, 
+  eMSGSIZE, eMULTIHOP, eNAMETOOLONG, eNETDOWN, eNETRESET, eNETUNREACH, 
+  eNFILE, eNOBUFS, eNODATA, eNODEV, eNOENT, eNOEXEC, eNOLCK, eNOLINK, 
+  eNOMEM, eNOMSG, eNONET, eNOPROTOOPT, eNOSPC, eNOSR, eNOSTR, eNOSYS, 
+  eNOTBLK, eNOTCONN, eNOTDIR, eNOTEMPTY, eNOTSOCK, eNOTTY, eNXIO, 
+  eOPNOTSUPP, ePERM, ePFNOSUPPORT, ePIPE, ePROCLIM, ePROCUNAVAIL, 
+  ePROGMISMATCH, ePROGUNAVAIL, ePROTO, ePROTONOSUPPORT, ePROTOTYPE, 
+  eRANGE, eREMCHG, eREMOTE, eROFS, eRPCMISMATCH, eRREMOTE, eSHUTDOWN, 
+  eSOCKTNOSUPPORT, eSPIPE, eSRCH, eSRMNT, eSTALE, eTIME, eTIMEDOUT, 
+  eTOOMANYREFS, eTXTBSY, eUSERS, eWOULDBLOCK, eXDEV
+  :: Errno
+\end{verbatim}
+\end{quote}
+%
+The meaning of these values corresponds to that of the C constants of the same
+name---after dropping the leading ``e''.
+
+The module \code{CError} provides the following functions:
+%
+\begin{codedesc}
+\item[isValidErrno ::\ Errno -> Bool] Yield \code{True} if the given
+  \code{Errno} value is valid on the system.  This implies that the \code{Eq}
+  instance of \code{Errno} is also system dependent as it is only defined for
+  valid values of \code{Errno}.
+
+\item[getErrno ::\ IO Errno] Get the current value of \code{errno}.
+
+\item[resetErrno ::\ IO ()] Reset \code{errno} to \code{eOK}.
+  
+\item[errnoToIOError ::\ String -> Errno -> Maybe Handle -> Maybe String ->
+  IOError] Throw an \code{IO} exception based on the given \code{Errno} value.
+  The first argument to the function should specify the location where the
+  error occured and the third and fourth can be used to specify a file handle
+  and filename in the course of whose manipulation the error occured.  This is
+  optional information, which can be used to improve the accuracy of error
+  messages.  
+  
+\item[throwErrno ::\ String -> IO a] Apply \code{errnoToIOError} to the value
+  currently returned by \code{getErrno}.  Its first argument specifies the
+  location---no extra information about a file handle or filename can be
+  provided in this case.
+
+\item[throwErrnoIf~~:: (a -> Bool) -> String -> IO a -> IO a]
+\item[throwErrnoIf\_~:: (a -> Bool) -> String -> IO a -> IO ()]\combineitems
+  Behave like \code{throwErrno} in case that the result of the \code{IO}
+  action fulfils the predicate passed as a first argument.  The second variant
+  discards the result after error handling.
+
+\item[throwErrnoIfRetry~~:: (a -> Bool) -> String -> IO a -> IO a]
+\item[throwErrnoIfRetry\_~:: (a -> Bool) -> String -> IO a -> IO ()]%
+\combineitems Like \code{throwErrnoIf} and \code{throwErrnoIf\_}, but retry
+the \code{IO} action when it yields the error code \code{eINTR}---this amounts
+to the standard retry loop for interrupted POSIX system calls.
+
+\item[throwErrnoIfMinus1~~:: Num a => String -> IO a -> IO a]
+\item[throwErrnoIfMinus1\_~:: Num a => String -> IO a -> IO ()]\combineitems
+  Instantiate \code{throwErrnoIf} and \code{throwErrnoIf\_} with the predicate
+  \code{(< -1)}.
+
+\item[throwErrnoIfMinus1Retry~~:: Num a => String -> IO a -> IO a]
+\item[throwErrnoIfMinus1Retry\_~:: Num a => String -> IO a -> IO ()]%
+  \combineitems Instantiate \code{throwErrnoIfRetry} and
+  \code{throwErrnoIfRetry\_} with the predicate \code{(< -1)}.
+
+\item[throwErrnoIfNull~~~~~~:: String -> IO (Ptr a) -> IO (Ptr a)]
+\item[throwErrnoIfNullRetry~:: String -> IO (Ptr a) -> IO (Ptr a)]%
+  \combineitems Instantiate \code{throwErrnoIf} and \code{throwErrnoIfRetry}
+  with the predicate \code{(== Ptr.nullPtr)}.
+\end{codedesc}
 
 
 \appendix
