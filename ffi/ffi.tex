@@ -14,8 +14,10 @@
 % Interface. 
 
 % TODO:
-% * Have an appendix with the module names under the new library naming
-%   scheme?  I'd say, no.  (Rather have it in the Libraries Addendum.)
+% * Revise layout of the front page.
+% * Implement HTMLization.
+% * Should we have an appendix with the module names under the new library
+%   naming scheme?  I'd say, no.  (Rather have it in the Libraries Addendum.)
 
 % TODO after Version 1.0:
 %
@@ -24,7 +26,7 @@
 % * Modifiers for concurrency control might be needed
 
  
-\documentclass[a4paper,twosides]{article}
+\documentclass[a4paper,twoside]{article}
 
 \usepackage{a4wide}
 \usepackage{grammar}  % Get it from 
@@ -47,7 +49,7 @@
     \\
     \textbf{--- DRAFT ---}\\[1ex]
     \ttfamily\scriptsize
-    $\relax$Id: ffi.tex,v 1.18 2001/10/29 08:07:11 chak Exp $\relax$%
+    $\relax$Id: ffi.tex,v 1.19 2001/10/30 10:19:20 chak Exp $\relax$%
     \ignorespaces}
   }
 \end{DRAFT}
@@ -68,6 +70,12 @@
   }
 \makeatother
 \newcommand{\combineitems}{\vspace*{-\itemsep}\vspace*{-\parsep}\vspace*{-1em}}
+\newcommand{\us}{\char"5F}
+
+% general
+%
+\newcommand{\clearemptydoublepage}{%
+  \newpage{\pagestyle{empty}\cleardoublepage}}
 
 
 \begin{document}
@@ -107,9 +115,14 @@ Copyright (c) 2001 Manuel M. T. Chakravarty
 \par\bigskip\noindent
 The master version of the Haskell FFI Report is at \url{haskell.org}. Any
 corrections or changes in the report are found there.
+\thispagestyle{empty}
 
 
-\newpage
+\clearemptydoublepage
+\pagenumbering{roman}
+\tableofcontents
+
+\clearemptydoublepage
 \section*{Preface}
 
 The definition of Haskell 98~\cite{haskell98}, while being comprehensive with
@@ -124,21 +137,21 @@ yet comprehensive extension to Haskell 98 for the purpose of interfacing to
 program components implemented in a language other than Haskell.
 
 The goal behind this foreign function interface (FFI) specification is
-twofold: It must be possible (1) to describe in Haskell the interface to
-foreign functionality and (2) to use from foreign code Haskell routines.  More
-precisely, the aim is to be able to implement programs in a mixture of Haskell
-and other languages such that the source code is portable across different
-implementations of Haskell and non-Haskell systems as well as architecture
-and operating system independent.
+twofold: It enables (1) to describe in Haskell the interface to foreign
+functionality and (2) to use from foreign code Haskell routines.  More
+precisely, its aim is to support the implementation of programs in a mixture
+of Haskell and other languages such that the source code is portable across
+different implementations of Haskell and non-Haskell systems as well as
+independent of the architecture and operating system.
 
 The design as presented in this report builds on experiences with a number of
-foreign function interfaces that, over time, have been supported by the major
-Haskell implementations.  Central in the final design has been the goal to be
+foreign function interfaces that, over time, have been provided by the major
+Haskell implementations.  Central in the final design was the goal to be
 comprehensive while being simple and minimising changes with respect to
-Haskell 98; the latter includes avoiding pollution of the name space with new
+Haskell 98; the latter includes to avoid pollution of the name space with new
 keywords.  Consequently, as much as possible of the FFI functionality is
 realised in the form of libraries.  Simplicity generally overruled maximum
-convience for the programmer as a design goal.  Thus, support for more
+convenience for the programmer as a design goal.  Thus, support for more
 convenient interface specifications is the domain of system-independent tools
 that generate code following the present specification.
 
@@ -146,12 +159,13 @@ that generate code following the present specification.
 
 \begin{verbatim}
 FIXME: To be written
+\end{verbatim}
 % We should get some people to acknowledge here as soon as the spec is
 % published with a call for comments on the main list.
-\end{verbatim}
 
 
-\newpage
+\clearemptydoublepage
+\pagenumbering{arabic}
 \section{Introduction}
 
 The extension of Haskell 98 defined in this report facilitates the use of
@@ -162,9 +176,10 @@ been extensively tested with large libraries.
 The present Version 1.0 of the FFI report does only fully specify the
 interaction between Haskell code with code that follows the C calling
 convention.  However, the design of the FFI is such that it enables the
-modular extension of the present definition to include other programming
-languages, such as C++ and Java.  A precise definition of the support for
-those languages is expected to be included in later versions of this report.
+modular extension of the present definition to include the calling conventions
+of other programming languages, such as C++ and Java.  A precise definition of
+the support for those languages is expected to be included in later versions
+of this report.
 
 \subsection{Embedding Into Haskell 98}
 
@@ -181,24 +196,25 @@ for inclusion into future revisions of the Haskell standard.
 
 \subsection{Language-Specific FFI Support}
 
-The core of the present specification is independent of the foreign language.
-However, there are two areas where FFI specifications must become language
-specific: (1) the specification of external names and (2) the marshalling of
-the basic types of a foreign language.  As an example of the former, consider
-that in C~\cite{C} a simple identifier is sufficient to identify an object,
-while Java~\cite{gosling-etal:Java}, in general, requires a qualified name in
+The core of the present specification is independent of the foreign language
+that is used in conjunction with Haskell.  However, there are two areas where
+FFI specifications must become language specific: (1) the specification of
+external names and (2) the marshalling of the basic types of a foreign
+language.  As an example of the former, consider that in C~\cite{C} a simple
+identifier is sufficient to identify an object, while
+Java~\cite{gosling-etal:Java}, in general, requires a qualified name in
 conjunction with argument and result types to resolve possible overloading.
-Regarding the second point, note that many languages do not specify the exact
-representation of some basic types.  For example the type \code{int} in C may
-be 16, 32, or 64 bits wide.  Similarly, the Haskell report guarantees only that
-\code{Int} covers at least the range \([-2^{29}, 2^{29} - 1]\).  As a
-consequence, to reliably represent values of C's \code{int} in Haskell, we
+Regarding the second point, consider that many languages do not specify the
+exact representation of some basic types.  For example the type \code{int} in
+C may be 16, 32, or 64 bits wide.  Similarly, the Haskell report guarantees
+only that \code{Int} covers at least the range \([-2^{29}, 2^{29} - 1]\).  As
+a consequence, to reliably represent values of C's \code{int} in Haskell, we
 have to introduce a new type \code{CInt}, which is guaranteed to match the
 representation of \code{int}.
 
 The specification of external names, dependent on a calling convention, is
 described in Section~\ref{sec:extent}, whereas the marshalling of the basic
-types dependent on a foreign language is described in
+types in dependence on a foreign language is described in
 Section~\ref{sec:marshalling}.
 
 \subsection{Contexts}
@@ -225,13 +241,13 @@ Given that many external languages support static types, the question arises
 whether the consistency of Haskell types with the types of the external
 language can be enforced for foreign functions.  Unfortunately, this is in
 general not possible with reasonable effort (i.e., without implementing a
-dedicated type checker).  For example, in the case of the C calling convention
-the only feasible approach would be to generate a C prototype from the Haskell
-type and leave it to the C compiler to match this prototype with the prototype
-for the imported function specified in the C header file.  However, the
-Haskell type is lacking some information that would be required to pursue this
-route.  In particular, the Haskell type does not contain any information as to
-when \code{const} modifiers have to be emitted.
+dedicated type checker).  For example, in the case of the C calling
+convention, the only feasible approach would be to generate a C prototype from
+the Haskell type and leave it to the C compiler to match this prototype with
+the prototype that is specified in a C header file for the imported function.
+However, the Haskell type is lacking some information that would be required
+to pursue this route.  In particular, the Haskell type does not contain any
+information as to when \code{const} modifiers have to be emitted.
 
 
 \newpage
@@ -250,19 +266,23 @@ The following productions are added:
   \grule{specialid}{%
     export \galt\ import \galt\ safe \galt\ unsafe}
   \gor{%
-    ccall \galt\ stdcall \galt\ cplusplus \galt\ jvm \galt\ dotnet}
+    ccall \galt\ cplusplus \galt\ dotnet \galt\ jvm \galt\ stdcall}
   \gor{%
     \gverbal{system-specific calling conventions}}
 \end{grammar}
+%
+The special identifiers \code{ccall}, \code{cplusplus}, \code{dotnet},
+\code{jvm}, and \code{stdcall} are defined to denote calling conventions.
+However, a concrete implementation of the FFI is free to support additional,
+system-specific calling conventions whose name is not explicitly listed here.
 
 
 \newpage
 \section{Foreign Declarations}
 
 This section describes the extension of Haskell 98 by foreign declarations.
-The production for the non-terminal \gnterm{topdecl} extends the corresponding
-non-terminal from the Haskell 98 Report.  All other non-terminals introduced
-in the following are new.
+The following production for the nonterminal \gnterm{topdecl} extends the same
+nonterminal from the Haskell 98 Report.  All other nonterminals are new.
 %
 \begin{grammar}
   \grule{topdecl}{%
@@ -293,9 +313,9 @@ new variable, whereas an export declaration uses a variable that is already
 defined in the Haskell module.
 
 The external context that contains the external entity is determined by the
-calling convention specified in the foreign declaration.  Consequently, the
-exact form of the specification of the external entity is dependent on both
-the calling convention and on whether it appears in an import or export
+calling convention given in the foreign declaration.  Consequently, the exact
+form of the specification of the external entity is dependent on both the
+calling convention and on whether it appears in an import or export
 declaration.  To provide syntactic uniformity in the presence of different
 calling conventions, it is guaranteed that the description of an external
 entity lexically appears as a Haskell string lexeme.  The only exception is
@@ -310,10 +330,10 @@ declarations.
 \subsection{Calling Conventions}
 \label{sec:call-conv}
 
-The calling convention determines the binary interface to an external entity
-on a given architecture.  It often depends on the programming language in
-which the external entity is implemented, but usually is more dependent on the
-system for which the external entity has been compiled.
+The binary interface to an external entity on a given architecture is
+determined by a calling convention.  It often depends on the programming
+language in which the external entity is implemented, but usually is more
+dependent on the system for which the external entity has been compiled.
 
 As an example of how the calling convention is dominated by the system rather
 than the programming language, consider that an entity compiled to byte code
@@ -465,16 +485,11 @@ the safety level that should be used when invoking an external entity.  A
 in a state that allows callbacks from the external code.  In contrast, an
 \code{unsafe} call, while carrying less overhead, may not trigger a callback
 into the Haskell system.  If it does, the system behaviour is undefined.  The
-default for an invocation is to be \code{safe}.  Note that a call back into
+default for an invocation is to be \code{safe}.  Note that a callback into
 the Haskell system implies that a garbage collection might be triggered after
 an external entity was called, but before this call returns.  Consequently,
 objects other than stable pointers (cf.\ Section~\ref{sec:StablePtr}) may be
-moved by the storage manager.
-
-It is guaranteed that any argument passed to an external entity upon
-invocation is kept alive by the Haskell storage manager until the call to the
-external entity returns.  If an argument needs to be kept alive longer, a
-stable pointer has to be used.
+moved or garbage collected by the storage manager.
 
 \subsection{Export Declarations}
 
@@ -546,7 +561,7 @@ entirely independent of the particular implementation of the foreign language.
 The following defines the syntax for specifying external entities and their
 semantics for the calling conventions \code{ccall} and \code{stdcall}.  Other
 calling conventions from Table~\ref{tab:callconv} are expected to be defined
-in future version of this report.
+in future versions of this report.
 
 
 \subsection{Standard C Calls}
@@ -560,15 +575,15 @@ of foreign functions are defined.
 \subsubsection{Import Declarations}
 
 For import declarations, the syntax for the specification of external entities
-under the \code{ccall} calling convention is
+under the \code{ccall} calling convention is as follows:
 %
 \begin{grammar}
   \grule[static function or address]{entity}{%
     " \gopt{static} \gopt{\gnterm{fname}} \gopt{\&} 
     \gopt{[ \gnterm{lib} ]} \gopt{\gnterm{cid}} "}
-  \gor[dynamically imports addresses]{%
+  \gor[stub factory importing addresses]{%
     " dynamic "}
-  \gor[dynamically exports thunks]{%
+  \gor[stub factory exporting thunks]{%
     " wrapper "}
   \grule{fname}{%
     \gverbal{file name with suffix `\code{.h}'}}
@@ -585,10 +600,10 @@ optional filename \gnterm{fname} specifies a C header file and the optional
 name \gnterm{lib}, which needs to be enclosed in square brackets, specifies a
 library archive.  The range of lexemes that are admissible for \gnterm{fname}
 and \gnterm{cid} coincides with the range of lexemes for arguments to the
-\code{\#{}include} directive and C identifiers as defined in~\cite{C},
-respectively.  The only exception is that the file name \gnterm{fname} must
-end in the suffix \code{.h}.  The intended meaning is that \gnterm{fname} has
-to be included to access \gnterm{cid}.  In particular, when the Haskell system
+\code{\#{}include} directive and C identifiers, respectively, as defined
+in~\cite{C}.  The only exception is that the file name \gnterm{fname} must end
+in the suffix \code{.h}.  The intended meaning is that \gnterm{fname} has to
+be included to access \gnterm{cid}.  In particular, when the Haskell system
 compiles Haskell to C code, the directive
 %
 \begin{quote}
@@ -609,15 +624,14 @@ converts C function pointers into Haskell functions; and conversely, in the
 case of \gterm{wrapper}, the stub converts Haskell thunks to C function
 pointers.
 
-If neither of the specifiers \code{static}, \code{dynamic}, and \code{wrapper}
+If neither of the specifiers \code{static}, \code{dynamic}, or \code{wrapper}
 is given, \code{static} is assumed.  The specifier \code{static} is
 nevertheless needed so that we can import C routines that are named
 \code{dynamic} or \code{wrapper}.
 
 \subsubsection{Export Declarations}
 
-Moreover, external entities in \gnterm{ccall} export declarations are of the
-form
+External entities in \gnterm{ccall} export declarations are of the form
 %
 \begin{grammar}
   \grule{entity}{%
@@ -642,34 +656,79 @@ the following.
   behaviour is undefined.  Generally, no check for consistency with the C type
   of the imported label is performed.
 
+  As an example, consider
+  %
+  \begin{quote}
+\begin{verbatim}
+foreign import ccall "static stdlib.h" system :: Ptr CChar -> IO CInt
+\end{verbatim}
+  \end{quote}
+  %
+  This declaration imports the \code{system()} function whose prototype is
+  available from \code{stdlib.h}.
+
 \item[Static addresses.]  The type of an imported address is constrained to be
   of the form \code{Ptr }\textit{a} or \code{FunPtr }\textit{a}, where
   \textit{a} can be any type.
+
+  As an example, consider
+  %
+  \begin{quote}
+\begin{verbatim}
+foreign import ccall "errno.h &errno" errno :: Ptr CInt
+\end{verbatim}
+  \end{quote}
+  %
+  It imports the address of the variable \code{errno}, which is of the C type
+  \code{int}.
 
 \item[Dynamic import.]  The type of a \gnterm{dynamic} stub has to be of the
   form \code{FunPtr }\textit{ft}\code{ -> }\textit{ft}, where \textit{ft} may
   be any foreign type.
 
+  As an example, consider
+  %
+  \begin{quote}
+\begin{verbatim}
+foreign import ccall "dynamic" 
+  mkFun :: FunPtr (CInt -> IO ()) -> (CInt -> IO ())
+\end{verbatim}
+  \end{quote}
+  %
+  The stub factory \code{mkFun} converts any pointer to a C function that gets
+  an integer value as its only argument and does not have a return value into
+  a corresponding Haskell function.
+
 \item[Dynamic wrapper.]  The type of a \gnterm{wrapper} stub has to be of the
   form \textit{ft}\code{ -> }\code{IO (FunPtr }\textit{ft}\code), where
   \textit{ft} may be any foreign type.
-\end{description}
 
+  As an example, consider
+  %
+  \begin{quote}
 \begin{verbatim}
-FIXME: Add one example for each item in the preceding description list.
+foreign import ccall "wrapper" mkCallback :: IO () -> FunPtr (IO ())
 \end{verbatim}
+  \end{quote}
+  %
+  The stub factory \code{mkCallback} turns any Haskell computation of type
+  \code{IO ()} into a C function pointer that can be passed to C routines,
+  which can call back into the Haskell context by invoking the referenced
+  function.
+
+\end{description}
 
 \subsubsection{Specification of Header Files and Library Objects}
 
-C header files are always included by \gterm{\#include "\gnterm{fname}"}.
-There is no explicit support for \gterm{\#include <\gnterm{fname}>} style
-inclusion.  The ISO C99~\cite{C99} standard guarantees that any search path
-that would be used for a \gterm{\#include <\gnterm{fname}>} is also used for
-\gterm{\#include "\gnterm{fname}"} and it is guaranteed that these paths are
-searched after all paths that are unique to \gterm{\#include
-  "\gnterm{fname}"}.  Furthermore, we require that \gnterm{fname} ends on
-\code{.h} to make parsing of the specification of external entities
-unambiguous.
+A C header specified in an import declaration is always included by
+\gterm{\#include "\gnterm{fname}"}.  There is no explicit support for
+\gterm{\#include <\gnterm{fname}>} style inclusion.  The ISO C99~\cite{C99}
+standard guarantees that any search path that would be used for a
+\gterm{\#include <\gnterm{fname}>} is also used for \gterm{\#include
+  "\gnterm{fname}"} and it is guaranteed that these paths are searched after
+all paths that are unique to \gterm{\#include "\gnterm{fname}"}.  Furthermore,
+we require that \gnterm{fname} ends on \code{.h} to make parsing of the
+specification of external entities unambiguous.
   
 The specification of include files has been kept to a minimum on purpose.
 Libraries often require a multitude of include directives, some of which may
@@ -682,17 +741,18 @@ Similarly, there is only minimal support for link information (such as, for
 example, the name of a library archive), as comprehensive support would have
 made the design significantly more complex.  In fact, as in contrast to
 include files, simple support that offloads the complexity to standard C
-mechanisms seems not to be possible here, we would have delegated the handling
-of link information to the package management system of the Haskell
-implementation if it had not been for multi-language intermediate forms, such
-as ILX for Microsoft's .NET, which requires simple link information.  The
-option to associate the name of a library archive with an external function
-simplifies the generation of such intermediate code.
+mechanisms seems not to be possible here, it would have been reasonable to
+delegate the handling of link information to the package management system of
+the Haskell implementation entirely if it had not been for multi-language
+intermediate forms, such as ILX of .NET, which requires simple link
+information.  The option to associate the name of a library archive with an
+external function simplifies the generation of such intermediate code.
 
 \subsection{Win32 API Calls}
 
 The specification of external entities under the \code{stdcall} calling
-convention is identical to that for standard C calls.
+convention is identical to that for standard C calls.  The two calling
+conventions only differ in the generated code.
 
 
 \begin{FUTURE} % ===== Material for future extension =======================
@@ -736,13 +796,13 @@ calling convention is
 \section{Marshalling}
 \label{sec:marshalling}
 
-In addition to the language extension discussed in previous sections, FFI
-support includes a set of standard libraries, which ease portable use of
-foreign functions as well as marshalling of compound structures.  Generally,
-the marshalling of Haskell structures into a foreign representation and vice
-versa can be implemented in either Haskell or the foreign language.  At least
-where the foreign language is at a significantly lower level, e.g.\ C, there
-are good reasons for doing the marshalling in Haskell:
+In addition to the language extension discussed in previous sections, the FFI
+includes a set of standard libraries, which ease portable use of foreign
+functions as well as marshalling of compound structures.  Generally, the
+marshalling of Haskell structures into a foreign representation and vice versa
+can be implemented in either Haskell or the foreign language.  At least where
+the foreign language is at a significantly lower level, e.g.\ C, there are
+good reasons for doing the marshalling in Haskell:
 %
 \begin{itemize}
 \item Haskell's lazy evaluation strategy would require any foreign code that
@@ -756,9 +816,7 @@ are good reasons for doing the marshalling in Haskell:
 \item Direct access to Haskell heap structures from a language like
   C---especially, when marshalling from C to Haskell, i.e., when Haskell
   structures are created---carries the risk of corrupting the heap, which
-  usually leads to faults that are very hard to debug. (Paradox as it may
-  seem, the cause for corrupted C structures is usually easier to locate, at
-  least when a conventional debugger like gdb is at hand.)
+  usually leads to faults that are very hard to debug.
 \end{itemize}
 %
 Consequently, the Haskell FFI emphasises Haskell-side marshalling.
@@ -768,12 +826,12 @@ The interface to the marshalling libraries is provided by the module
 particular, the standard requires the availability of the module
 \code{CForeign}, which simplifies portable interfacing with external C code.
 Language-dependent modules, such as \code{CForeign}, generally provide Haskell
-types representing the types of the foreign language using a representation
-that is compatible with the foreign types as implemented by the default
-implementation of the foreign language on the present architecture.  This is
-especially important for languages where the standard leaves some aspects of
-the implementation of basic types to the implementation.  For example, in C,
-the size of the various integral types is not fixed.  Thus, to represent C
+types representing the basic types of the foreign language using a
+representation that is compatible with the foreign types as implemented by the
+default implementation of the foreign language on the present architecture.
+This is especially important for languages where the standard leaves some
+aspects of the implementation of basic types open.  For example, in C, the
+size of the various integral types is not fixed.  Thus, to represent C
 interfaces faithfully in Haskell, for each integral type in C, we need to have
 an integral type in Haskell that is guaranteed to have the same size as the
 corresponding C type.
@@ -830,14 +888,16 @@ infixl 6 `xor`
 infixl 5 .|.
 \end{verbatim}
   \end{quote}
-
-\item[complement ::\ a -> a] Calculate the bitwise complement.
   
-\item[shift, rotate ::\ a -> Int -> a] Shift or rotate the bitpattern to the
-  right for a positive argument and to the left for a negative argument.  The
-  function \code{shift} performs sign extension on signed number types: i.e.,
-  right shifts fill the top bits with 1 if the number is negative and with 0
-  otherwise.
+\item[complement ::\ Bits a => a -> a] Calculate the bitwise complement of the
+  argument.
+  
+\item[shift, rotate ::\ Bits a => a -> Int -> a] Shift or rotate the bit
+  pattern to the right for a positive second argument and to the left for a
+  negative argument.  The function \code{shift} performs sign extension on
+  signed number types; i.e., right shifts fill the top bits with 1 if the
+  number is negative and with 0 otherwise.  The operators have the following
+  precedences as infix operators:
   %
   \begin{quote}
 \begin{verbatim}
@@ -847,28 +907,35 @@ infixl 8 `shift`, `rotate`
   %
   The function \code{rotate} is undefined for types where \code{bitSize}
   returns 0.
-
-\item[bit ::\ Int -> a] Obtains a value where only the $n$th bit is set.
+  
+\item[bit ::\ Bits a => Int -> a] Obtain a value where only the $n$th bit
+  is set.
   
 \item[setBit, clearBit, complementBit ::\ a -> Int -> a] Set, clear, or
   complement the bit at the given position.
+  
+\item[testBit ::\ Bits a => a -> Int -> Bool] Check whether the $n$th bit of
+  the first argument is set.
 
-\item[testBit ::\ a -> Int -> Bool] Check whether the $n$th bit is set.
-
-\item[bitSize~~::\ a -> Int]
-\item[isSigned~::\ a -> Bool]\combineitems Query the number of bits of values
-  of type \code{a} and whether they are signed, respectively.  These functions
-  never evaluate their first argument.  The function \code{bitSize} returns 0
-  for types that don't have a have a fixed bitsize (eg, \code{Integer}).
+\item[bitSize~~::\ Bits a => a -> Int]
+\item[isSigned~::\ Bits a => a -> Bool]\combineitems Respectively, query the
+  number of bits of values of type \code{a} and whether these values are
+  signed.  These functions never evaluate their argument.  The function
+  \code{bitSize} returns 0 for types that don't have a have a fixed bitsize
+  (e.g., \code{Integer}).
 
 \item[shiftL,~~shiftR~~::\ Bits a => a -> Int -> a]
 \item[rotateL,~rotateR~::\ Bits a => a -> Int -> a]\combineitems The functions
   \code{shiftL} and \code{rotateL} are synonyms for \code{shift} and
-  \code{rotate}, \code{shiftR} and \code{rotateR} negate the second argument.
+  \code{rotate}; \code{shiftR} and \code{rotateR} negate the second argument.
 
 \end{codedesc}
 %
-Bits are numbered from 0 with bit 0 being the least significant bit.
+Bits are numbered from 0 with bit 0 being the least significant bit.  A
+minimal complete definition of the type class \code{Bits} must include
+definitions for the following functions: \code{(.\&.)}, \code{(.|.)},
+\code{xor}, \code{complement}, \code{shift}, \code{rotate}, \code{bitSize},
+and \code{isSigned}. 
 
 \subsection{\code{Int} and \code{Word}}
 \label{sec:Int-Word}
@@ -893,15 +960,15 @@ instances for all types classes for which \code{Int} has an instance; this
 includes the type class \code{Bits}.  The constraints on the implementation of
 these instances are also the same as those outlined for \code{Int} in the
 Haskell Report.  There is, however, the additional constraint that all
-arithmetic on the fixed-sized types is performed modula \(2^n\).
+arithmetic on the fixed-sized types is performed modulo \(2^n\).
 
 \subsection{\code{Ptr}}
 \label{sec:Ptr}
 
-The module \code{Ptr} provides typed pointers to foreign data.  We distinguish
-two kinds of pointers: pointers to data and pointers to functions.  It is
-understood that these two kinds of pointers may be repesented differently as
-they may be references to data and text segments, respectively.
+The module \code{Ptr} provides typed pointers to foreign entities.  We
+distinguish two kinds of pointers: pointers to data and pointers to functions.
+It is understood that these two kinds of pointers may be represented
+differently as they may be references to data and text segments, respectively.
 
 \subsubsection{Data Pointers}
 
@@ -910,9 +977,9 @@ The interface defining data pointers and associated operations is as follows:
 \begin{codedesc}
 \item[data Ptr a] A value of type \code{Ptr a} represents a pointer to an
   object, or an array of objects, which may be marshalled to or from Haskell
-  values of type \code{a}.  The type a will normally be an instance of class
-  \code{Storable} (see Section~\ref{sec:Storable}), which provides the
-  marshalling operations.
+  values of type \code{a}.  The type \code{a} will normally be an instance of
+  class \code{Storable} (see Section~\ref{sec:Storable}), which provides the
+  necessary marshalling operations.
 
   Instances for the classes \code{Eq}, \code{Ord}, and \code{Show} are
   provided. 
@@ -927,7 +994,7 @@ The interface defining data pointers and associated operations is as follows:
   higher, that fulfills the alignment constraint. An alignment constraint
   \code{x} is fulfilled by any address divisible by \code{x}. This operation
   is idempotent.
-\item[minusPtr ::\ Ptr a -> Ptr b -> Int] Computes the offset required to get
+\item[minusPtr ::\ Ptr a -> Ptr b -> Int] Compute the offset required to get
   from the first to the second argument.  We have
   %
   \begin{quote}
@@ -949,7 +1016,7 @@ follows:
 \begin{codedesc}
 \item[data FunPtr a] A value of type \code{FunPtr a} is a pointer to a piece
   of code.  It may be the pointer to a C function or to a Haskell function
-  created using wrapper stub as outlined in Section~\ref{sec:ccall}. For
+  created using a wrapper stub as outlined in Section~\ref{sec:ccall}. For
   example,
   %
   \begin{quote}
@@ -964,12 +1031,13 @@ foreign export dynamic mkCompare :: Compare -> IO (FunPtr Compare)
 \item[nullFunPtr ::\ FunPtr a] The constant \code{nullFunPtr} contains a
   distinguished value of \code{FunPtr} that is not associated with a valid
   memory location.
-\item[castFunPtr ::\ FunPtr a -> FunPtr b] Casts a \code{FunPtr} to a
+\item[castFunPtr ::\ FunPtr a -> FunPtr b] Cast a \code{FunPtr} to a
   \code{FunPtr} of a different type.
-\item[freeHaskellFunPtr ::\ FunPtr a -> IO ()] Releases the storage associated
-  with the given \code{FunPtr}. This should be called whenever the return
-  value from a foreign export dynamic function is no longer required;
-  otherwise, the storage it uses will leak.
+\item[freeHaskellFunPtr ::\ FunPtr a -> IO ()] Release the storage associated
+  with the given \code{FunPtr}, which must have been obtained from a wrapper
+  stub.  This should be called whenever the return value from a foreign import
+  wrapper function is no longer required; otherwise, the storage it uses will
+  leak.
 \end{codedesc}
 
 Moreover, there are two functions that are only valid on architectures where
@@ -982,7 +1050,7 @@ using these functions.
 \begin{codedesc}
 \item[castFunPtrToPtr ::\ FunPtr a -> Ptr b]
 \item[castPtrToFunPtr ::\ Ptr a -> FunPtr b] \combineitems These two functions
-  cast Ptrs to FunPtrs and vice versa.
+  cast \code{Ptr}s to \code{FunPtr}s and vice versa.
 \end{codedesc}
 
 \subsection{\code{ForeignPtr}}
@@ -1006,7 +1074,7 @@ the following signature and purpose:
 \begin{codedesc}
 \item[data ForeignPtr a] A value of type \code{ForeignPtr a} represents a
   pointer to an object, or an array of objects, which may be marshalled to or
-  from Haskell values of type \code{a}.  The type a will normally be an
+  from Haskell values of type \code{a}.  The type \code{a} will normally be an
   instance of class \code{Storable} (see Section~\ref{sec:Storable}), which
   provides the marshalling operations.
   
@@ -1015,7 +1083,7 @@ the following signature and purpose:
   the plain pointers that can be obtained with \code{foreignPtrToPtr} from
   those foreign pointers.
   
-\item[newForeignPtr ::\ Ptr a -> IO () -> IO (ForeignPtr a)] Turns a plain
+\item[newForeignPtr ::\ Ptr a -> IO () -> IO (ForeignPtr a)] Turn a plain
   memory reference into a foreign object by associating a finaliser---given by
   the monadic operation---with the reference. The finaliser will be executed
   after the last reference to the foreign object is dropped. Note that there
@@ -1024,13 +1092,13 @@ the following signature and purpose:
   manager. The only guarantee is that the finaliser runs before the program
   terminates.  
   
-\item[addForeignPtrFinalizer ::\ ForeignPtr a -> IO () -> IO ()] This function
-  adds another finaliser to the given foreign object. No guarantees are made
-  on the order in which multiple finalisers for a single object are run.
+\item[addForeignPtrFinalizer ::\ ForeignPtr a -> IO () -> IO ()] Add another
+  finaliser to the given foreign object. No guarantees are made on the order
+  in which multiple finalisers for a single object are run.
 
 \item[withForeignPtr ::\ ForeignPtr a -> (Ptr a -> IO b) -> IO b]
   
-  This is a way to look at the pointer living inside a foreign object. This
+  This is a way to obtain the pointer living inside a foreign object. This
   function takes a function which is applied to that pointer. The resulting
   \code{IO} action is then executed. The foreign object is kept alive at least
   during the whole action, even if it is not used directly inside. Note that
@@ -1044,7 +1112,7 @@ the following signature and purpose:
   might render the pointer that is passed to the function useless.
   Consequently, this pointer cannot be used safely anymore after the
   \code{withForeignPtr} is finished, unless the function
-  \code{touchForeignPtr} is used to explicitly keep the foreign pointer alove.
+  \code{touchForeignPtr} is used to explicitly keep the foreign pointer alive.
   
   This function is normally used for marshalling data to or from the object
   pointed to by the \code{ForeignPtr}, using the operations from the
@@ -1052,13 +1120,12 @@ the following signature and purpose:
 
 \item[foreignPtrToPtr ::\ ForeignPtr a -> Ptr a]
   
-  This function extracts the pointer component of a foreign pointer. This is a
-  potentially dangerous operation, as if the argument to
-  \code{foreignPtrToPtr} is the last usage occurrence of the given foreign
-  pointer, then its finaliser(s) will be run, which potentially invalidates
-  the plain pointer just obtained.  Hence, \code{touchForeignPtr} must be used
-  wherever it has to be guaranteed that the pointer lives on---i.e., has
-  another usage occurrence.
+  Extract the pointer component of a foreign pointer. This is a potentially
+  dangerous operation.  If the argument to \code{foreignPtrToPtr} is the last
+  usage occurrence of the given foreign pointer, then its finaliser(s) will be
+  run, which potentially invalidates the plain pointer just obtained.  Hence,
+  \code{touchForeignPtr} must be used wherever it has to be guaranteed that
+  the pointer lives on---i.e., has another usage occurrence.
 
   It should be noticed that this function does not need to be monadic when
   used in combination with \code{touchForeignPtr}.  Until the
@@ -1067,25 +1134,25 @@ the following signature and purpose:
   \code{touchForeignPtr} keeps the pointer alive.
   
   To avoid subtle coding errors, hand written marshalling code should
-  preferably use \code{withForeignPtr} rather than combinations of
-  \code{foreignPtrToPtr} and \code{touchForeignPtr}. However, the later
+  preferably use the function \code{withForeignPtr} rather than combinations
+  of \code{foreignPtrToPtr} and \code{touchForeignPtr}. However, the later
   routines are occasionally preferred in tool-generated marshalling code.
   
-\item[touchForeignPtr ::\ ForeignPtr a -> IO ()] This function ensures that
-  the foreign object in question is alive at the given place in the sequence
-  of \code{IO} actions. In particular \code{withForeignPtr} does a
-  \code{touchForeignPtr} after it executes the user action.
+\item[touchForeignPtr ::\ ForeignPtr a -> IO ()] Ensure that the foreign
+  object in question is alive at the given place in the sequence of \code{IO}
+  actions. In particular, \code{withForeignPtr} does a \code{touchForeignPtr}
+  after it executes the user action.
   
   This function can be used to express liveness dependencies between
-  \code{ForeignPtr}s: for example, if the finalizer for one \code{ForeignPtr}
+  \code{ForeignPtr}s: For example, if the finaliser for one \code{ForeignPtr}
   touches a second \code{ForeignPtr}, then it is ensured that the second
   \code{ForeignPtr} will stay alive at least as long as the first. This can be
   useful when you want to manipulate interior pointers to a foreign structure:
   You can use \code{touchForeignObj} to express the requirement that the
-  exterior pointer must not be finalized until the interior pointer is no
+  exterior pointer must not be finalised until the interior pointer is no
   longer referenced.
     
-\item[castForeignPtr ::\ ForeignPtr a -> ForeignPtr b] This function casts a
+\item[castForeignPtr ::\ ForeignPtr a -> ForeignPtr b] Cast a
   \code{ForeignPtr} parameterised by one type into another type.
 \end{codedesc}
 
@@ -1109,10 +1176,10 @@ purpose:
   \code{Ptr} and \code{ForeignPtr}).  Any attempt to do so will lead to
   undefined behaviour.
   
-\item[newStablePtr ::\ a -> IO (StablePtr a)] Creates a stable pointer
+\item[newStablePtr ::\ a -> IO (StablePtr a)] Create a stable pointer
   referring to the given Haskell value.
   
-\item[deRefStablePtr ::\ StablePtr a -> IO a] Obtains the Haskell value
+\item[deRefStablePtr ::\ StablePtr a -> IO a] Obtain the Haskell value
   referenced by a stable pointer, i.e., the same value that was passed to the
   corresponding call to \code{makeStablePtr}.
   
@@ -1120,16 +1187,16 @@ purpose:
   the stable pointer and the Haskell value. Afterwards, if the stable pointer
   is passed to \code{deRefStablePtr} or \code{freeStablePtr}, the behaviour is
   undefined.  However, the stable pointer may still be passed to
-  \code{castStablePtrToPtr}, but the Ptr () value returned by
+  \code{castStablePtrToPtr}, but the \code{Ptr ()} value returned by
   \code{castStablePtrToPtr}, in this case, is undefined (in particular, it may
   be \code{Ptr.nullPtr}).  Nevertheless, the call is guaranteed not to
   diverge.
   
-\item[castStablePtrToPtr ::\ StablePtr a -> Ptr ()] Coerces a stable pointer
-  to an address. No guarantees are made about the resulting value, except that
+\item[castStablePtrToPtr ::\ StablePtr a -> Ptr ()] Coerce a stable pointer to
+  an address. No guarantees are made about the resulting value, except that
   the original stable pointer can be recovered by \code{castPtrToStablePtr}.
-  In particular, the address may not refer to a valid memory address and any
-  attempt to pass it to the member functions of the class \code{Storable}
+  In particular, the address may not refer to a accessible memory location and
+  any attempt to pass it to the member functions of the class \code{Storable}
   (Section~\ref{sec:Storable}) leads to undefined behaviour.
   
 \item[castPtrToStablePtr ::\ Ptr () -> StablePtr a] The inverse of
@@ -1171,7 +1238,7 @@ assists in resolving overloading.
 
 The class \code{Storable} is instantiated for all standard basic types of
 Haskell, the fixed size integral types of the modules \code{Int} and
-\code{Word} (Section~\ref{sec:Int-Word}) , data and function pointers
+\code{Word} (Section~\ref{sec:Int-Word}), data and function pointers
 (Section~\ref{sec:Ptr}), and stable pointers (Section~\ref{sec:StablePtr}).
 There is no instance of \code{Storable} for foreign pointers.  The intention
 is to ensure that storing a foreign pointer requires an explicit cast to a
@@ -1254,7 +1321,7 @@ storage space for such an array can be allocated by the following functions:
   computation.
 
 \item[allocaBytes ::\ Int -> (Ptr a -> IO b) -> IO b] As \code{alloca}, but
-  allocates a memory area of the given size.
+  allocate a memory area of the given size.
   
 \item[reallocBytes ::\ Ptr a -> Int -> IO (Ptr a)] Resize a memory area that
   was allocated with \code{malloc} or \code{mallocBytes} to the given size.
@@ -1340,7 +1407,8 @@ The following functions are provided by the module:
 \item[newArray0~~::\ Storable a => a -> {[a]} -> IO (Ptr a)]
 \item[withArray0~::\ Storable a => a -> {[a]} -> (Ptr a -> IO b) -> IO b]\combineitems
   These two functions combine \code{mallocArray0} and \code{allocaArray0},
-  respectively, with \code{pokeArray0}; i.e., they allocate a memory area for
+  respectively, with the function \code{pokeArray0}; i.e., they allocate a
+  memory area for 
   an array whose length matches that of the list, and then, marshal the list
   into that memory area.  The first argument determines the terminator.
 
@@ -1370,7 +1438,7 @@ The following functions are provided by the module:
 \label{sec:MarshalError}
 
 The module \code{MarshalError} provides language independent routines for
-converting error conditions of external functions into Haskell IO monad
+converting error conditions of external functions into Haskell \code{IO} monad
 exceptions.  It consists out of two parts.  The first part extends the I/O
 error facilities of the \code{IO} module of the Haskell 98 Library Report with
 functionality to construct I/O errors.  The second part provides a set of
@@ -1382,11 +1450,11 @@ The following functions can be used to construct values of type
 \code{IOError}.
 %
 \begin{codedesc}
-\item[data IOErrorType] Abstract type that contains a value for each variant
-  of \code{IOError}.
+\item[data IOErrorType] This is an abstract type that contains a value for
+  each variant of \code{IOError}.
 
 \item[mkIOError ::\ IOErrorType -> String -> Maybe FilePath -> Maybe Handle
-  -> IOError] Construct an \code{IOError} of the given type with the second
+  -> IOError] Construct an \code{IOError} of the given type where the second
   argument describes the error location and the third and fourth argument
   contain the file path and file handle of the file involved in the error if
   applicable. 
@@ -1436,13 +1504,13 @@ exception in case of values indicating an error state.
   If no exception is raised, the result of the computation is the result of
   the whole operation.
 
-\item[throwIf\_ ::\ (a -> Bool) -> (a -> String) -> IO a -> IO ()]
+\item[throwIf\us ::\ (a -> Bool) -> (a -> String) -> IO a -> IO ()]
   Operate as \code{throwIf} does, but discard the result of the computation
   in any case.
 
 \item[throwIfNeg~~::\ (Ord a, Num a) => (a -> String) -> IO a -> IO a]
-\item[throwIfNeg\_~::\ (Ord a, Num a) => (a -> String) -> IO a -> IO ()]\combineitems
-  These two functions are instances of \code{throwIf} and \code{throwIf\_},
+\item[throwIfNeg\us~::\ (Ord a, Num a) => (a -> String) -> IO a -> IO ()]\combineitems
+  These two functions are instances of \code{throwIf} and \code{throwIf\us},
   respectively, where the predicate is \code{(< 0)}.
   
 \item[throwIfNull ::\ String -> IO (Ptr a) -> IO (Ptr a)] This is an instance
@@ -1456,7 +1524,7 @@ exception in case of values indicating an error state.
 \subsection{\code{MarshalUtils}}
 \label{sec:MarshalUtils}
 
-Finally, the module \code{MarshalUtils} provides a set of useful auxilliary
+Finally, the module \code{MarshalUtils} provides a set of useful auxiliary
 routines. 
 %
 \begin{codedesc}
@@ -1516,7 +1584,7 @@ routines.
 
 The module \code{CForeign} combines the interfaces of all modules providing
 C-specific marshalling support.  The modules are \code{CTypes},
-\code{CTypesISO}, \code{CString}, and \code{CError}.
+\code{CString}, and \code{CError}.
 
 \begin{table}
   \begin{center}
@@ -1725,11 +1793,11 @@ Section~\ref{sec:ccall}); otherwise, the system behaviour is undefined.
 
 Table~\ref{tab:c-haskell-values} contains symbols characterising the range and
 precision of the types from Table~\ref{tab:c-haskell-types}.  Where available,
-the table states the corresponding Haskell values.  All C symbols, except
-\code{HS\_FLOAT\_ROUND} are constants that are suitable for use in \code{\#if}
-preprocessing directives.  Note that there is only one rounding style
-(\code{HS\_FLOAT\_ROUND}) and one radix (\code{HS\_FLOAT\_RADIX}), as this is
-all that is supported by~\cite{C99}.
+the table states the corresponding Haskell values.  All C symbols, with the
+exception of \code{HS\_FLOAT\_ROUND} are constants that are suitable for use in
+\code{\#if} preprocessing directives.  Note that there is only one rounding
+style (\code{HS\_FLOAT\_ROUND}) and one radix (\code{HS\_FLOAT\_RADIX}), as
+this is all that is supported by ISO C~\cite{C99}.
 
 Moreover, an implementation that does not support 64 bit integral types on the
 C side should implement \code{HsInt64} and \code{HsWord64} as a structure.  In
@@ -1753,9 +1821,9 @@ application is implemented in a foreign language that accesses routines
 implemented in Haskell.  The function \code{hs\_init()} initialises the
 Haskell system, passing it the available command line arguments.  Upon return,
 the arguments intended for the Haskell runtime system are removed.  This
-function must be called exactly once before any Haskell function may be
-invoked.  If a Haskell function is invoked earlier or \code{hs\_init()} called
-multiple times, the system behaviour is undefined.
+function must be called during program startup exactly once and before any
+Haskell function is invoked.  If a Haskell function is invoked earlier or
+\code{hs\_init()} called multiple times, the system behaviour is undefined.
 
 The Haskell system is deinitialised by a call to \code{hs\_exit()}.  The
 behaviour of calls to Haskell functions after \code{hs\_exit()} has been
@@ -1765,10 +1833,10 @@ invoked is undefined, as is the system behaviour after multiple calls to
 The function \code{hs\_set\_argv()} sets the values returned by the functions
 \code{getProgName} and \code{getArgs} of the module \code{System} defined in
 the Haskell 98 Library Report.  This function may only be invoked after
-\code{hs\_init()}.  Note that in cases where in addition to the Haskell system
-other libraries that process command line arguments during initialisation are
-used, the separation of \code{hs\_init()} and \code{hs\_set\_argv()} is
-essential.
+\code{hs\_init()}.  Note that the separation of \code{hs\_init()} and
+\code{hs\_set\_argv()} is essential in cases where in addition to the Haskell
+system other libraries that process command line arguments during
+initialisation are used.
 
 \subsection{\code{CTypes}}
 \label{sec:CTypes}
@@ -1802,9 +1870,9 @@ provided concerning a Haskell type \code{CT} representing a C type \code{t}:
   defined for \code{CT}, the arithmetic operations defined by the type class
   implement the same function as the corresponding arithmetic operations (if
   available) in C on \code{t}.
-\item When an instance of \code{Bits} is defined for \code{CT}, the logical
+\item When an instance of \code{Bits} is defined for \code{CT}, the bitwise
   operation defined by the type class implement the same function as the
-  corresponding logical relation in C on \code{t}.
+  corresponding bitwise operation in C on \code{t}.
 \end{itemize}
 %
 It follows from these guarantees that all types exported by \code{CTypes} are
@@ -1837,7 +1905,7 @@ and \code{Bits}:
 Moreover, it provides the following floating point types, including instances
 for \code{Eq}, \code{Ord}, \code{Num}, \code{Read}, \code{Show}, \code{Enum},
 \code{Storable}, \code{Real}, \code{Fractional}, \code{Floating},
-\code{RealFrac}, and \code{RealFloat}.
+\code{RealFrac}, and \code{RealFloat}:
 %
 \begin{quote}
   \begin{tabular}{|l|l|l|}
@@ -1848,11 +1916,11 @@ for \code{Eq}, \code{Ord}, \code{Num}, \code{Read}, \code{Show}, \code{Enum},
     \code{CLDouble}  & \code{long double}\\\hline
   \end{tabular}
 \end{quote}
-
-Moreover, the module provides the following integral types, including
-instances for \code{Eq}, \code{Ord}, \code{Num}, \code{Read}, \code{Show},
-\code{Enum}, \code{Storable}, \code{Bounded}, \code{Real}, \code{Integral},
-and \code{Bits}:
+%
+The module provides the following integral types, including instances for
+\code{Eq}, \code{Ord}, \code{Num}, \code{Read}, \code{Show}, \code{Enum},
+\code{Storable}, \code{Bounded}, \code{Real}, \code{Integral}, and
+\code{Bits}:
 %
 \begin{quote}
   \begin{tabular}{|l|l|l|}
@@ -1865,9 +1933,9 @@ and \code{Bits}:
   \end{tabular}
 \end{quote}
 %
-Moreover, it provides the following numeric point types, including instances
-for \code{Eq}, \code{Ord}, \code{Num}, \code{Read}, \code{Show}, \code{Enum},
-and \code{Storable}:
+Moreover, it provides the following numeric types, including instances for
+\code{Eq}, \code{Ord}, \code{Num}, \code{Read}, \code{Show}, \code{Enum}, and
+\code{Storable}:
 %
 \begin{quote}
   \begin{tabular}{|l|l|l|}
@@ -1879,7 +1947,7 @@ and \code{Storable}:
 \end{quote}
 %
 And finally, the following types, including instances for \code{Eq} and
-\code{Storable}:
+\code{Storable}, are provided:
 %
 \begin{quote}
   \begin{tabular}{|l|l|l|}
@@ -1902,10 +1970,10 @@ therefore, all routines provided by \code{CString} combine memory allocation
 and marshalling.
 %
 \begin{codedesc}
-\item[CString = Ptr CChar] A C string is a reference to an array of C
+\item[type CString = Ptr CChar] A C string is a reference to an array of C
   characters terminated by NUL.
 
-\item[CStringLen = (CString, Int)] In addition to NUL-terminated strings,
+\item[type CStringLen = (CString, Int)] In addition to NUL-terminated strings,
   the module \code{CString} also supports strings with explicit length
   information. 
 
@@ -1936,7 +2004,7 @@ and marshalling.
 \subsection{\code{CError}}
 \label{sec:CError}
 
-The module CError facillitates C-specific error handling of \code{errno}.  In
+The module CError facilitates C-specific error handling of \code{errno}.  In
 Haskell, we represent values of \code{errno} by
 %
 \begin{quote}
@@ -2001,26 +2069,26 @@ The module \code{CError} provides the following functions:
   provided in this case.
 
 \item[throwErrnoIf~~:: (a -> Bool) -> String -> IO a -> IO a]
-\item[throwErrnoIf\_~:: (a -> Bool) -> String -> IO a -> IO ()]\combineitems
+\item[throwErrnoIf\us~:: (a -> Bool) -> String -> IO a -> IO ()]\combineitems
   Behave like \code{throwErrno} in case that the result of the \code{IO}
   action fulfils the predicate passed as a first argument.  The second variant
   discards the result after error handling.
 
 \item[throwErrnoIfRetry~~:: (a -> Bool) -> String -> IO a -> IO a]
-\item[throwErrnoIfRetry\_~:: (a -> Bool) -> String -> IO a -> IO ()]%
-\combineitems Like \code{throwErrnoIf} and \code{throwErrnoIf\_}, but retry
+\item[throwErrnoIfRetry\us~:: (a -> Bool) -> String -> IO a -> IO ()]%
+\combineitems Like \code{throwErrnoIf} and \code{throwErrnoIf\us}, but retry
 the \code{IO} action when it yields the error code \code{eINTR}---this amounts
 to the standard retry loop for interrupted POSIX system calls.
 
 \item[throwErrnoIfMinus1~~:: Num a => String -> IO a -> IO a]
-\item[throwErrnoIfMinus1\_~:: Num a => String -> IO a -> IO ()]\combineitems
-  Instantiate \code{throwErrnoIf} and \code{throwErrnoIf\_} with the predicate
+\item[throwErrnoIfMinus1\us~:: Num a => String -> IO a -> IO ()]\combineitems
+  Instantiate \code{throwErrnoIf} and \code{throwErrnoIf\us} with the predicate
   \code{(< -1)}.
 
 \item[throwErrnoIfMinus1Retry~~:: Num a => String -> IO a -> IO a]
-\item[throwErrnoIfMinus1Retry\_~:: Num a => String -> IO a -> IO ()]%
+\item[throwErrnoIfMinus1Retry\us~:: Num a => String -> IO a -> IO ()]%
   \combineitems Instantiate \code{throwErrnoIfRetry} and
-  \code{throwErrnoIfRetry\_} with the predicate \code{(< -1)}.
+  \code{throwErrnoIfRetry\us} with the predicate \code{(< -1)}.
 
 \item[throwErrnoIfNull~~~~~~:: String -> IO (Ptr a) -> IO (Ptr a)]
 \item[throwErrnoIfNullRetry~:: String -> IO (Ptr a) -> IO (Ptr a)]%
