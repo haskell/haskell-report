@@ -18,6 +18,7 @@
 <!entity  hmake       "<application>hmake</application>">
 <!entity  dpkg        "<application>dpkg</application>">
 <!entity  rpm        "<application>rpm</application>">
+<!entity  hc-pkg     "<command>hc-pkg</command>">
 ]>
  
 <!-- You should search this document for 'foo' and delete it. -->
@@ -269,11 +270,11 @@ HPS requires that a conforming Haskell compiler is somewhat package aware.
 In summary, the requirements are these:
 <itemizedlist>
 <listitem><para>Each compiler <function>hc</function> must provide an associated package-management
-program <function>hc-pkg</function>.  A compiler user installs a package by placing the package's 
-supporting files somewhere, and then using <function>hc-pkg</function> to make the compiler aware
+program &hc-pkg;.  A compiler user installs a package by placing the package's 
+supporting files somewhere, and then using &hc-pkg; to make the compiler aware
 of the new package.  This step is called <emphasis>registering the package with the compiler</emphasis>.
 </para></listitem>
-<listitem><para>To register a package, <function>hc-pkg</function> takes as input
+<listitem><para>To register a package, &hc-pkg; takes as input
 an <emphasis>installed package description (IPD)</emphasis>, 
 which describes the installed form of the package in detail.  
 The format of an IPD is given in <xref linkend="ipd">.</para>
@@ -427,8 +428,8 @@ This section documents those requirements</para>
 <listitem> <para>
   <emphasis>Registering the package</emphasis>: telling the compiler about the 
      existence of the package, and where its files are.
-  To register the package one invokes a compiler-specific program <function>hc-pkg</function> (i.e. <function>ghc-pkg</function>, 
-  <function>hugs-pkg</function> etc), passing it an <emphasis>installed package description (IPD)</emphasis>
+  To register the package one invokes a compiler-specific program &hc-pkg; (i.e. <command>ghc-pkg</command>, 
+  <command>hugs-pkg</command> etc), passing it an <emphasis>installed package description (IPD)</emphasis>
   describing the package.  The format of an IPD is given in <xref linkend="ipd">.
 </para></listitem>
 </itemizedlist>
@@ -448,7 +449,7 @@ User packages <emphasis>shadow</emphasis> shared packages, in the following sens
 		A Haskell <function>import</function> for module M will seek M in a user package first.
 	      </para>
 	    </listitem><listitem><para>
-		The <function>hc-pkg</function> commands that take package IDs will look for a user package first.
+		The &hc-pkg; commands that take package IDs will look for a user package first.
 	      </para>
 	    </listitem>
 	  </itemizedlist></para>
@@ -469,11 +470,11 @@ whole-program invariant described in <xref linkend="packages-and-haskell"> impli
 not also use A-2.1, because then both A-2.1 and A-1.9 would form part of the program, and they almost certainly 
 use the same module names.)
 </para>
-<para>The registration program <function>hc-pkg</function> provides operations to expose or hide an 
+<para>The registration program &hc-pkg; provides operations to expose or hide an 
 already-installed package.  By default, installing a package installs it exposed, and hides any
 existing installed package of the same name (and presumably different version).
 	  </para>
-<para>Hiding or exposing a package is an operation that can be performed, by <function>hc-pkg</function>,
+<para>Hiding or exposing a package is an operation that can be performed, by &hc-pkg;,
 on any package.  It is quite distinct from the question of which modules in a pacakge are hidden or
 exposed (see <xref linkend="package-descr">), which is a property of the package itself.  Only the exposed
 modules of an exposed package populate the module name space seen by a Haskell <literal>import</literal> statement.
@@ -482,7 +483,7 @@ modules of an exposed package populate the module name space seen by a Haskell <
 
 <sect3><title>Registration invariants</title>
 
-<para>The registration program <function>hc-pkg</function> checks the following invariants:
+<para>The registration program &hc-pkg; checks the following invariants:
 <itemizedlist>
 <listitem> <para>
 Before registering a package P, check all the packages that P depends on are already registered.
@@ -495,7 +496,7 @@ for system packages.  (However, a system package may expose a module with the sa
 </para></listitem>
 <listitem> <para>
 Before un-registering a package P, check that no package that depends on P is registered.
-The exception is that when un-registering a shared package, <function>hc-pkg</function> cannot
+The exception is that when un-registering a shared package, &hc-pkg; cannot
 check that no user has a user package depending on P.</para>
 	    </listitem>
 </itemizedlist>
@@ -524,12 +525,12 @@ implementation-specific way; how it does so is not constrained by the HPS.
 Much of an IPD is independent of the compiler, but it may also include compiler-specific
 fields.</para>
 
-<para>Each Haskell implementation <function>hc</function> must provide an associated program <function>hc-pkg</function> which 
+<para>Each Haskell implementation <function>hc</function> must provide an associated program &hc-pkg; which 
 allows a user to make a new package known to the compiler, and to ask what packages it knows. Here is a summary of its interface
 
 <note><para>Some of these commands (unregister, hide, and describe) make sense for package IDs which offer a range, such as "hc-pkg unregister "hmake<2.3".</para></note>
 
-     <table frame=all><title><function>hc-pkg</function> interface</title>
+     <table frame=all><title>&hc-pkg; interface</title>
 
      <tgroup cols=2 align=left colsep=1 rowsep=1>     <tbody>
 
@@ -578,10 +579,10 @@ allows a user to make a new package known to the compiler, and to ask what packa
      </tbody></tgroup>
      </table>
 A <replaceable>pkg</replaceable> argument can be a package ID, such as "<function>hunit-2.3</function>", or just a package name, 
-such as "<function>hunit</function>".  To determine which package is meant, <function>hc-pkg</function> searches first the
+such as "<function>hunit</function>".  To determine which package is meant, &hc-pkg; searches first the
 registered user packages and then the shared packages.  If no such package exists, the command fails; that is, it does nothing, 
 returning a non-zero error code.
-If only a name is specified, <function>hc-pkg</function> fails
+If only a name is specified, &hc-pkg; fails
 unless the name identifies a unique package among the user packages, or among the shared pacakges.  As usual, the
 user packages win.
       </para>
@@ -628,7 +629,9 @@ is given in <xref linkend="sbi-pkg-desc">.
   deps:    [ "foogle > 2.9", "bargle = 2.5.1" ]
 </programlisting>
 If not, how can a program that doesn't understand a particular field safely ignore it?  Skip to end of line?
-But there may be many lines in field like <function>deps</function>, 
+But there may be many lines in fields like <function>deps</function>.
+<emphasis>ToDo: pick a syntax, provide a parser in the Distribution
+libraries somewhere.</emphasis>
 </para>
     </sect2>
 
@@ -672,24 +675,27 @@ But there may be many lines in field like <function>deps</function>,
      </table>
     </para>
 
-<sect3><title><function>setup configure</function></title>
+      <para>For wrapped make-based systems (for instance), a
+      command-line parser that understands the standard
+      <literal>Setup.lhs</literal> command-line syntax will be
+      provided as a library.</para>
 
-<para>The command <function>./Setup.lhs configure</function> prepares
-to build the package.  For sophisticated packages, the configure step
-may perform elaborate checks, to gather information about the target
-system.  It may write a file to record its results, but the name and
-format of this file are not part of the specification.  For wrapped
-make-based systems (for instance), a command-line parser that
-understands the standard targets will be provided.
+      <sect3>
+	<title><option>configure</option></title>
 
-      </para>
-<para>
-All flags are optional.  The flags are these:
+	<para>The command <function>./Setup.lhs configure</function>
+        prepares to build the package.  For sophisticated packages,
+        the configure step may perform elaborate checks, to gather
+        information about the target system.  It may write a file to
+        record its results, but the name and format of this file are
+        not part of the specification.</para>
+
+<para>All flags are optional.  The flags are these:</para>
 <itemizedlist>
-<listitem><para><function>--with-compiler=</function><replaceable>path</replaceable>, 
-<function>--ghc</function>, 
-<function>--nhc</function>, 
-<function>--hugs</function>: 
+<listitem><para><option>--with-compiler=</option><replaceable>path</replaceable>, 
+<option>--ghc</option>, 
+<option>--nhc</option>, 
+<option>--hugs</option>: 
 specifies which compiler to use.  At most one of the value of these flags may be specified.
 The configure step checks
 that the compiler is available, in a sufficiently up-to-date form for the package, and that the package
@@ -698,8 +704,8 @@ is not specified, <function>setup</function> will choose one; some packages will
 </para>
 	  </listitem>
 <listitem><para><function>--prefix=</function><replaceable>path</replaceable>: specifies where the installed files
-for the package should be installed.  Typically on Unix this will be <function>/usr/local</function> and
-on Windows it will be <function>Program Files</function>.  The setup script will use a sensible default
+for the package should be installed.  Typically on Unix this will be <filename>/usr/local</filename> and
+on Windows it will be <filename>Program Files</filename>.  The setup script will use a sensible default
 (often platform-specific) if the flag is not specified.
 	    </para>
 	  </listitem>
@@ -707,67 +713,98 @@ on Windows it will be <function>Program Files</function>.  The setup script will
 <listitem><para>Unrecognized flags are errors in the default build system, but may be meaningful to wrapped make-based systems (for instance).  Therefore, the provided command-line parser will pass unrecognized command-line flags on to the wrapped system.</para></listitem>
 
         </itemizedlist>
-It is OK for these flags to be "baked into" the compiled library.  In particular, the build system may
-bake the installation path into the compiled files.  There is no provision for installing the compiled
-files anywhere other than the place specified in the <function>configure</function> step.
-      </para>
+
+	<para>It is OK for these flags to be "baked into" the compiled
+        library.  In particular, the build system may bake the
+        installation path into the compiled files.  There is no
+        provision for installing the compiled files anywhere other
+        than the place specified in the <option>--prefix</option>
+        flag.</para>
     </sect3>
 
-<sect3><title><function>setup build</function></title>
+      <sect3><title><option>build</option></title>
+	
+ 	<para>The command <literal>./Setup.lhs build</literal> makes
+        this package ready for installation.  It takes no
+        flags.</para>
 
-<para>The command <function>./Setup.lhs build</function> makes this
-package, ready for installation.  It takes no flags.</para>
+      </sect3>
 
-    </sect3>
+      <sect3><title><option>install</option></title>
 
-<sect3><title><function>setup install</function></title>
+	<para>The command <literal>./Setup.lhs install</literal>
+        copies files from the built package to the right location for
+        installed files, specified in the configure step.  Then it
+        registers the new package with the compiler, using the
+        &hc-pkg; command.</para>
 
-<para>The command <function>./Setup.lhs install</function> copies files from the built package to
-the right location for installed files, specified in the configure step.  Then it registers the new package with
-the compiler, using the <function>hc-pkg</function> command.
-<itemizedlist>
-<listitem><para><function>--install-prefix=</function><replaceable>path</replaceable> has three effects. 
-First, it over-rides the <function>--prefix</function> flag specified in the <function>configure</function> step,
-providing an alternative location.  Second, it does not call <function>hc-pkg</function> to register the package.
-Instead, third, it creates an installed package description file, <filename>installed-pkg-descr</filename>, 
-which can later be fed to <function>hc-pkg</function>.
+	<itemizedlist>
+	  <listitem>
+	    <para><option>--install-prefix=</option><replaceable>path</replaceable>
+            has three effects.  First, it over-rides the
+            <option>--prefix</option> flag specified in the
+            <option>configure</option> step, providing an
+            alternative location.  Second, it does not call
+            &hc-pkg; to register the package.
+            Instead, third, it creates an installed package
+            description file,
+            <filename>installed-pkg-descr</filename>, which can later
+            be fed to &hc-pkg;.
 	    </para>
 	  </listitem>
 
-<listitem><para><function>--shared</function>: if present, this flag is passed to <function>hc-pkg</function> 
-so that the package is registed as shared.  This flag has no effect if <function>--install-prefix</function> is
-used, because in that case <function>hc-pkg</function> is not called.
-	    </para>
+          <listitem>
+	    <para><option>--shared</option>: if present, this flag is
+            passed to &hc-pkg; so that the package is
+            registed as shared.  This flag has no effect if
+            <function>--install-prefix</function> is used, because in
+            that case &hc-pkg; is not called.</para>
 	  </listitem>
 	</itemizedlist>
 
-</para>
-<para>The reason for the <option>--install-prefix</option> flag is that Roland RPM 
-wants to create an exact installation tree, all ready
-to bundle up for the target machine, <emphasis>but in a temporary location</emphasis>. He cannot use
-this location for <function>--prefix</function> in the <function>configure</function> step, because that
-might bake the wrong path into some compiled files.  Nor does he want to register this temporary tree with the compiler
-on his machine. Instead, he bundles up the temporary installation tree, plus the <filename>installed-pkg-descr</filename>,
-and ships them all to the target machine.  When they are installed there, the post-installation script runs
-<function>hc-pkg</function> on the <filename>installed-pkg-descr</filename> file.
+	<para>The reason for the <option>--install-prefix</option>
+        flag is that Roland RPM wants to create an exact installation
+        tree, all ready to bundle up for the target machine,
+        <emphasis>but in a temporary location</emphasis>. He cannot
+        use this location for <option>--prefix</option> in the
+        <option>configure</option> step, because that might bake
+        the wrong path into some compiled files.  Nor does he want to
+        register this temporary tree with the compiler on his
+        machine. Instead, he bundles up the temporary installation
+        tree, plus the <filename>installed-pkg-descr</filename>, and
+        ships them all to the target machine.  When they are installed
+        there, the post-installation script runs
+        &hc-pkg; on the
+        <filename>installed-pkg-descr</filename> file.
 	    </para>
-<para>Note that there is no <command>uninstall</command> command in the setup script.  
-Why not?  Because... <emphasis>Someone tell me why not!</emphasis></para>
 
+	<para>Note that there is no <command>uninstall</command>
+        command in the setup script.  While it would be easy enough to
+        implement in the simple build infrastructure, we don't want to
+        require make-based build systems to implement <literal>make
+        uninstall</literal>, which is fairly non-standard.  In the
+        majority of cases, we expect libraries to be installed via a
+        package manager, which will also provide uninstallation
+        services.</para>
+      </sect3>
 
-    </sect3>
+      <sect3>
+	<title><option>register</option> and
+	<option>unregister</option></title>
 
-<sect3><title><function>setup register</function> and <function>setup unregister</function></title>
+	<para>The command <function>./Setup.lhs register</function>
+        registers the now-installed package with the compiler.
+        Similarly, <function>./Setup.lhs unregister</function>
+        un-registers the package.</para>
 
-<para>The command <function>./Setup.lhs register</function> registers the now-installed package with the compiler.
-Similarly, <function>./Setup.lhs unregister</function> un-registers the package.
-<itemizedlist>
-<listitem><para><function>--shared</function>: registers/un-registers a shared package as shared.  
-The default is to treat the package as a user package.</para>
+	<itemizedlist>
+	  <listitem>
+	    <para><option>--shared</option>: registers/un-registers a
+            shared package as shared.  The default is to treat the
+            package as a user package.</para>
 	  </listitem>
-	</itemizedlist></para>
-
-    </sect3>
+	</itemizedlist>
+      </sect3>
     </sect2>
 
 <sect2><title>Examples</title>
@@ -799,7 +836,7 @@ A that point, Donald will say
 </programlisting>
 to construct a ready-to-zip tree of all the installed files, plus a file <filename>installed-pkg-descr</filename>
 that describes the installed package.  He arranges to deliver both these components to the target machine,
-and then feed <filename>installed-pkg-descr</filename> to <function>hc-pkg</function> on the target machine.
+and then feed <filename>installed-pkg-descr</filename> to &hc-pkg; on the target machine.
       </para>
 <para>
 The file <filename>installed-pkg-descr</filename> also contains information he needs for building
