@@ -366,6 +366,26 @@ all be blocked in a foreign call.
 
 \section{Primitives}
 
+The following primitives are exported from the module @Control.Concurrent@,
+except for the @forkProcess@ function, which is only available on POSIX systems
+and exported from @System.Posix.Process@.
+
+\subsection{rtsSupportsBoundThreads}
+
+\begin{quote}
+\begin{verbatim}
+rtsSupportsBoundThreads :: Bool
+\end{verbatim}
+\end{quote}
+
+Defined to be @True@ if multiple OS threads are supported as described in this
+document. When @rtsSupportsBoundThreads@ is @False@, the function
+@isCurrentThreadBound@ below will always return @False@, and @forkOS@ will fail.
+
+Note that an implementation which uses a simple 1:1 correspondence between
+Haskell threads and OS threads will define @rtsSupportsBoundThreads@ to be
+@True@.
+
 \subsection{forkIO and forkOS}
 
 \begin{quote}
@@ -399,12 +419,43 @@ a way that thread-local-state can be used from all threads, e.g. using a 1-1
 relationship between Haskell threads and OS threads.
 
 This primitive is intended to make use of forkOS unnecessary when a bound
-thread is already available; consider the following utility function:
+thread is already available; take a look at @runInBoundThread@ below.
+
+\subsection{forkProcess}
 
 \begin{quote}
 \begin{verbatim}
-runInBoundThread :: IO a -> IO a
+forkProcess :: IO () -> IO ProcessID
+\end{verbatim}
+\end{quote}
 
+The primitive @forkProcess@ is available in the module @System.Posix.Process@
+on Posix platforms only.
+While it is based on the POSIX fork system call, it's semantics are slightly
+different: It only returns to the parent; it doesn't return to the child process,
+rather, the IO action passed as a parameter will be run as a bound thread in the
+child process. No other threads will be copied to the child process. When the IO
+action finishes, the child process will terminate.
+
+\section{Utility Functions}
+
+The following utility functions are exported from @Control.Concurrent@. They can
+be implemented in terms of the primitives above; simple reference
+implementations that ignore exception handling issues are provided below.
+
+\subsection{runInBoundThread}
+\begin{quote}
+\begin{verbatim}
+runInBoundThread :: IO a -> IO a
+\end{verbatim}
+\end{quote}
+
+Run the IO computation passed as the first argument. If the calling thread
+is not bound, a bound thread is created temporarily. @runInBoundThread@
+doesn't finish until the IO computation finishes.
+
+\begin{quote}
+\begin{verbatim}
 runInBoundThread action = do
     bound <- isCurrentThreadBound
     if bound
@@ -416,33 +467,30 @@ runInBoundThread action = do
 \end{verbatim}
 \end{quote}
 
-\subsection{forkProcess}
+
+\subsection{runInUnboundThread}
 
 \begin{quote}
 \begin{verbatim}
-forkProcess :: IO (Maybe ProcessID)
+runInUnboundThread :: IO a -> IO a
 \end{verbatim}
 \end{quote}
 
-The primitive @forkProcess@ is available in the module @System.Posix.Process@
-on Posix platforms only.
-It's semantics are anologous to POSIX @fork@; it returns a process
-id to the parent, and @Nothing@ to the child. Only the Haskell thread that
-@forkProcess@ was called from is duplicated in the child process; it
-will be the only thread in the child process.
+Run the IO computation passed as the first argument. If the calling thread
+is bound, an unbound thread is created temporarily using @forkIO@.
+@runInBoundThread@ doesn't finish until the IO computation finishes.
 
-If @forkProcess@ is called from a bound Haskell thread, the duplicated Haskell
-thread in the child process will again be bound and all the thread-local
-state will be preserved.
-
-If @forkProcess@ is called from an unbound Haskell thread, the duplicated
-Haskell thread in the child process will be unbound.
-
-\paragraph{Issues:}
-\begin{itemize}
-\item Under what circumstances should the forked process terminate?
-\item The action @forkProcessAll@ from the same module should be removed, as
-      it seems to be unimplementable in the presence of multiple OS threads.
-\end{itemize}
-
+\begin{quote}
+\begin{verbatim}
+runInUnboundThread action = do
+    bound <- isCurrentThreadBound
+    if bound
+        then do
+            mv <- newEmptyMVar
+            forkIO (action >>= putMVar mv)
+            takeMVar mv
+        else action
+\end{verbatim}
+\end{quote}        
+        
 \end{document}
