@@ -14,6 +14,8 @@
 % Interface. 
 
 % TODO:
+% * Do we want `isAlreadyExistsErrorType' etc functions (otherwise, an
+%   ErrorType needs to be wrapped into IOError before it can be inspected)
 % * Revise layout of the front page.
 % * Implement HTMLization.
 
@@ -41,14 +43,14 @@
 \excludeversion{FUTURE}  % material for future extensions
 
 %\def\Version{\relax}
-\def\Version{\\(Release Candidate 1)}
+\def\Version{\\(Release Candidate 2)}
 \begin{DRAFT}%
 {
   \gdef\Version{%
     \\
     \textbf{--- DRAFT ---}\\[1ex]
     \ttfamily\scriptsize
-    $\relax$Id: ffi.tex,v 1.21 2002/01/10 10:16:21 chak Exp $\relax$%
+    $\relax$Id: ffi.tex,v 1.22 2002/02/04 08:39:24 chak Exp $\relax$%
     \ignorespaces}
   }
 \end{DRAFT}
@@ -1462,30 +1464,30 @@ The following functions can be used to construct values of type
   contain the file path and file handle of the file involved in the error if
   applicable. 
   
-\item[alreadyExistsError ::\ IOErrorType] I/O error where the operation
+\item[alreadyExistsErrorType ::\ IOErrorType] I/O error where the operation
   failed because one of its arguments already exists.
   
-\item[doesNotExistError ::\ IOErrorType] I/O error where the operation
+\item[doesNotExistErrorType ::\ IOErrorType] I/O error where the operation
   failed because one of its arguments does not exist.
   
-\item[alreadyInUseError ::\ IOErrorType] I/O error where the operation failed
-  because one of its arguments is a single-use resource, which is already
-  being used.
+\item[alreadyInUseErrorType ::\ IOErrorType] I/O error where the operation
+  failed because one of its arguments is a single-use resource, which is
+  already being used.
   
-\item[fullError ::\ IOErrorType] I/O error where the operation failed
+\item[fullErrorType ::\ IOErrorType] I/O error where the operation failed
   because the device is full.
   
-\item[eofError ::\ IOErrorType] I/O error where the operation failed because
-  the end of file has been reached.
+\item[eofErrorType ::\ IOErrorType] I/O error where the operation failed
+  because the end of file has been reached.
   
-\item[illegalOperation ::\ IOErrorType] I/O error where the operation is not
-  possible.
+\item[illegalOperationType ::\ IOErrorType] I/O error where the operation is
+  not possible.
   
-\item[permissionError ::\ IOErrorType] I/O error where the operation failed
+\item[permissionErrorType ::\ IOErrorType] I/O error where the operation failed
   because the user does not have sufficient operating system privilege to
   perform that operation.
 
-\item[userError ::\ IOErrorType] I/O error that is programmer-defined.
+\item[userErrorType ::\ IOErrorType] I/O error that is programmer-defined.
 
 \item[annotateIOError ::\ IOError -> String -> Maybe FilePath -> Maybe
   Handle -> IOError] Adds a location description and maybe a file path and
