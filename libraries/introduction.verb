@@ -18,9 +18,9 @@ which are not a recognized part of the \Haskell{} standard.
 The latest version of this report, as well many other available libraries,
 can be found on the web at @http://haskell.org@.
 
-\subsection*{The April 2001 Revision}
+\subsection*{The August 2001 Revision}
 
-Both Haskell 98 Reports were revised in April 2001, to incorporate
+Both Haskell 98 Reports were revised in August 2001, to incorporate
 dozens of typographical errors and presentational improvements.  A
 complete list of all changes can be found at @http://haskell.org@.
 
@@ -36,7 +36,7 @@ Sigbjorn Finne,
 Andy Gill, 
 Mike Gunter,
 Fergus Henderson,
-Ørjan Johansen,
+Orjan Johansen,
 Kent Karlsson,
 Sandra Loosemore,
 Graeme Moss,

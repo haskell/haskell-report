@@ -28,7 +28,8 @@ MAKEINDEX = makeindex
 # 'expand' expands tabs to spaces
 # On my machine the windows program (which does something
 # quite different) shadows it.  Sigh.
-EXPAND = expand
+# EXPAND = expand
+EXPAND = c:/cygwin/bin/expand
 
 
 #########################################
@@ -147,13 +148,13 @@ publish-pdf: library.pdf
 .SUFFIXES:	.hs .verb .tex .dvi .gz .ps
 
 .verb.tex:
-	expand < $< | $(VERBATIM) >$@
+	$(EXPAND) < $< | $(VERBATIM) >$@
 
 .hs.verb:
-	expand < $< | $(SPLITPGM) >$@
+	$(EXPAND) < $< | $(SPLITPGM) >$@
 
 .hs.tex:
-	expand < $< | $(SPLITPGM) | $(VERBATIM) >$@
+	$(EXPAND) < $< | $(SPLITPGM) | $(VERBATIM) >$@
 
 .tex.dvi:
 	$(LATEX) $<

@@ -426,8 +426,6 @@ instance  Functor IO where
 instance Monad IO where
    (>>=)  = ...
    return = ...
-
-   m >> k = m >>= \_ -> k
    fail s = ioError (userError s)
 
 -- Ordering type

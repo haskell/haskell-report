@@ -52,6 +52,8 @@ two characters of input, return and linefeed, may read as a single
 newline character.  These functions cannot be used portably for binary
 I/O.
 
+In the following, recall that @String@ is a synonym for @[Char]@ (Section~\ref{characters}).
+
 \paragraph*{Output Functions}
 These functions write to the standard output device (this is normally
 the user's terminal). 
@@ -101,7 +103,7 @@ readLn      :: Read a => IO a
 \indextt{getChar}%
 \indextt{getLine}%
 \indextt{getContents}%
-Both @getChar@ and @getLine@ raise an exception on end-of-file; a 
+Both @getChar@ and @getLine@ raise an exception (Section~\ref{io-exceptions}) on end-of-file; a 
 predicate @isEOFError@ that identifies this exception is defined in the @IO@ library.
 The @getContents@ operation returns all user input as a single
 string, which is read lazily as it is needed.  The @interact@

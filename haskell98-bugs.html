@@ -29,6 +29,27 @@ versions of this Report may also be copied and distributed for any purpose,
 provided that the modified version is clearly presented as such,
 and that it does not claim to be a definition of the language Haskell 98."
 
+<p><li> [Aug 2001] <strong>Page 2, The Haskell Kernel.</strong>
+Replace the entire section with the following:
+<p>
+"Haskell has adopted many of the convenient syntactic structures
+that have become popular
+in functional programming.  In this Report, the meaning of such
+syntactic sugar is given by translation into simpler constructs.
+If these translations are applied exhaustively, the result is a program
+written in a small subset of Haskell that we call the Haskell <em>kernel</em>.
+<p>
+"Though the kernel is not formally specified, it is essentially a
+slightly sugared variant of the lambda calculus with a straightforward
+denotational semantics.  The translation of each syntactic structure
+into the kernel is given as the syntax is introduced.  This modular
+design facilitates reasoning about Haskell programs and provides
+useful guidelines for implementors of the language."
+<p>
+(The intent here is to avoid the common misconception that the kernel
+is a formally specified thing.)
+
+
 <p><li> <strong>Page 9, Section 2.6, Character and String Literals.</strong>
 In the production for "cntrl" replace "ASClarge" by "ascLarge".
 
@@ -47,6 +68,10 @@ should be
 <pre>
   size :: Stack a -> Int
 </pre>
+
+<p><li> [Aug 2001] <strong>Page 13, Section 3, Expressions.</strong>
+Remove Table 1, and the associated paragraph beginning "As an aid to
+understanding...".  (The table causes more confusion than it clears up.)
 
 <p><li> [July 2001] <strong>Page 12, Section 3, Expressions.</strong>  
 Replace the last two sentences of the first paragrah of the section by:
@@ -93,12 +118,18 @@ Change the production for <em>stmts</em> to read:
 That is, every list of statements must end in an expression, optionally
 followed by a semicolon.
 
+<p><li> [Aug 2001] <strong>Page ???, Section 3.15, Datatypes with Field Labels.</strong>.
+Add an example to illustrate the final point in para 2.
+
 <p><li> [Apr 2001] <strong>Page 31,33, Figures 3 and 4, Semantics of Case Expressions.</strong>
 Replace "completely new variable" by "new variable" in these two figures.  (Some clauses
 said "new" and some "completely new" which is misleadingly inconsistent.)
 
 <p><li> [Apr 2001] <strong>Page 33, Figure 4, Semantics of Case Expressions Part 2.</strong>
 In clause (r) replace "e0" by "v" throughout.
+
+<p><li> [Aug 2001] <strong>Page ???, Section 3.17.1, Patterns.</strong>.
+Give an example to illustrate an illegal non-linear pattern.
 
 <p><li> <strong>Page 40, Section 4.2.1, Algebraic Datatype Declarations.</strong>
 In the bottom paragraph on the page, before "The context in the data declaration
@@ -143,6 +174,15 @@ definitions are equivalent:", and the two lines of code that follow by:
 </pre>"
 (This change makes explicit that an infix operator with more than two arguments
 can have all of them on the LHS.)
+
+<p><li> [Aug 2001] <strong>Page ???, Section 4.4.2, Fixity Declarations.</strong>
+<ul>
+<li> In the prodution for <em>gendecl</em> change <em>digit</em> to <em>integer</em>.
+<li> Make the same change in the syntax at the start of Section 4 and in Appendix B.
+<li> After "A fixity declaration gives the fixity and binding
+precedence of one or more operators." add the sentence "The <em>integer</em> in a fixity declaration
+must be in the range 0 to 9."
+</ul>
 
 <p><li> [Apr 2001] <strong>Page 54, Section 4.4.3, subsection Function Bindings.</strong>
 In the first translation scheme ("The general binding form for functions..."), 
@@ -260,6 +300,9 @@ reference to <tt>null</tt> must also resolve the ambiguous use of <tt>null</tt>
 just as <tt>A</tt> does.  Thus there is little danger of accidentally shadowing 
 Prelude names."
 
+<p><li> [Aug 2001]  <strong>Page ???, Section 6.1.3, Lists.</strong>  In the last sentence,
+after "@Monad@" add ", @Functor@".  (The list type is an instance of @Functor@.)
+
 <p><li> [May 2001]  <strong>Page 74, Section 6.1.6, Tuples.</strong>
 Replace the first paragraph of this section with:
 <p>
@@ -277,9 +320,12 @@ and <tt>Show</tt>.  The Prelude and
 libraries define tuple functions such as <tt>zip</tt> for tuples up to a size
 of 7."
 
-
 <p><li> [Apr 2001]  <strong>Page 74, Section 6.1.6, Function Types.</strong>
 Delete the sentence "Functions are an instance of the <tt>Show</tt> class but not <tt>Read</tt>".
+
+<p><li> [Aug 2001]  <strong>Page ???, Section 6.1.7, The IO and IOError Types.</strong>
+In the second sentence, replace "<tt>Show</tt>" by "<tt>Functor</tt>".  
+(@IO@ is an instance of @Functor@, but not @Show@.)
 
 <p><li>  [Apr 2001] <strong>Page 76, Section 6.3, Standard Haskell classes.</strong>
 There is a formatting error in the example.  There should be a new line
@@ -363,6 +409,9 @@ Replace the definition of <tt>fail</tt> in <tt>instance Monad IO</tt> by
 <tt>instance Enum Float</tt>.</strong>
 Replace "<tt>1.0</tt>" by "<tt>0.95</tt>".
 
+<p><li> [Aug 2001] <strong>Page ???, Appendix A, instance of <tt>Monad IO</tt>.</strong>
+Delete defintion for <tt> >> </tt>.  (The default definition will do.)
+
 <p> <li> [Apr 2001] <strong>Page 105, Appendix A.1, line 11.</strong>
 In the module header for <tt>PreludeList</tt> replace "<tt>Sum</tt>" by "<tt>sum</tt>".
 
@@ -439,6 +488,10 @@ Replace the instances for <tt>Show Int</tt> and <tt>Read Int</tt> with
 	    -- possible difficulty with minInt
 </pre>
 The previous definitions (which are simply specifications, remember) failed on minInt.
+
+<p><li> [Aug 2001]  <strong>Page ???, Appendix B.3, Layout</strong>. 
+Near the end of the sub-section, delete from "Another place where..." to the end of the 
+sub-section.  (Note 5 covers the top-level case.)
 
 <p><li> [May 2001]  <strong>Page 132, Appendix D, Specification of Derived Instances</strong>. 
 In numbered item 3, replace 
@@ -634,6 +687,16 @@ Replace the definitions of <tt>maximumBy</tt> and <tt>minimumBy</tt> by the foll
 <strong>NOTE:</strong> this is a semantic change, but it makes the definitions
 consistent with the other "By" functions, and with the signatures given on page 28.
 
+<p><li><strong>Page 54, Sections 11, 12, 13</strong>.
+Replace "<tt>isIllegalOperationError</tt>" with "<tt>isIllegalOperation</tt>" throughout.
+Namely:
+<ul>
+<li> Section 11.1, second para after bullets (two occurrences).
+<li> Section 12, para 2 (two occurrences).
+<li> Section 13, para 2 (two occurrences).
+</ul>
+(It was inconsistent before.)  
+
 <p><li><strong>Page 54, Section 11</strong>.
 The signature for <tt>try</tt> should be
 <pre>
@@ -653,7 +716,7 @@ This change attempts to clarify the (murky) meaning of <tt>hGetContents</tt> fol
 <p><li> [Apr 2001] <strong>Page 56-58, Section 11.2, Files and Handles</strong>.
 Add a section 11.2.3 to clarify the file-locking issue.  It says:
 <p>
-"Implementations should enforce as far as possible, locally to the
+"Implementations should enforce as far as possible, at least locally to the
 Haskell process, multiple-reader single-writer locking on files.
 That is, there may either be many handles on the same file which manage
 input, or just one handle on the file which manages output.  If any

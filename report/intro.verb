@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/intro.verb,v 1.1 2001/03/28 14:13:42 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/intro.verb,v 1.2 2001/08/20 07:57:53 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Introduction</title>
 %*section 1
@@ -125,18 +125,17 @@ declarations, "t" for types, etc.
 
 \Haskell{} has adopted many of the convenient syntactic structures
 that have become popular
-in functional programming.  In all cases, their formal
-semantics can be given via translation into a proper subset of
-\Haskell{} called the \Haskell{} {\em kernel}.  It is
-essentially a slightly sugared variant of the lambda calculus with
-a straightforward denotational semantics.  The translation of each
-syntactic structure into the kernel is given as the syntax is
-introduced.
-% and the formal semantics of the kernel is given in
-% Appendix~\ref{formal-semantics}.
-This modular design facilitates
-reasoning about \Haskell{} programs and provides useful guidelines
-for implementors of the language.
+in functional programming.  In this Report, the meaning of such
+syntactic sugar is given by translation into simpler constructs.
+If these translations are applied exhaustively, the result is a program
+written in a small subset of Haskell that we call the \Haskell{} {\em kernel}.
+
+Although the kernel is not formally specified, it is essentially a
+slightly sugared variant of the lambda calculus with a straightforward
+denotational semantics.  The translation of each syntactic structure
+into the kernel is given as the syntax is introduced.  This modular
+design facilitates reasoning about \Haskell{} programs and provides
+useful guidelines for implementors of the language.
 
 % In specifying the translation of special syntax, named entities are
 % often referred to ``as defined in the standard prelude.''  This means
@@ -162,9 +161,9 @@ also {\em ad hoc} polymorphism, or {\em overloading} (using
 Errors in \Haskell{} are semantically equivalent to
 $\bot$.  Technically, they are not distinguishable
 from nontermination, so the language includes no mechanism
-for detecting or acting upon errors.  Of course, implementations
+for detecting or acting upon errors.  However, implementations
 will probably try to provide useful information about
-errors.
+errors.  See Section~\ref{basic-errors}.
 
 
 

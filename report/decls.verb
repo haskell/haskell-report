@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/decls.verb,v 1.4 2001/08/14 07:48:24 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/decls.verb,v 1.5 2001/08/20 07:57:53 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Declarations</title>
 %*section 4
@@ -41,11 +41,11 @@ cdecl	-> gendecl
 
 idecls	-> @{@ idecl_1 @;@ ... @;@ idecl_n @}@		& \qquad (n>=0)
 idecl	-> (funlhs | qfunlhs | var | qvar) rhs
-	|						& (empty)
+	|						& (\tr{empty})
 
-gendecl	-> vars @::@ [context @=>@] type	& (type signature)
-	|  fixity [digit] ops 			& (fixity declaration)
-	|					& (empty declaration)
+gendecl	-> vars @::@ [context @=>@] type	& (\tr{type signature})
+	|  fixity [integer] ops			& (\tr{fixity declaration})
+	|					& (\tr{empty declaration})
 
 ops	-> op_1 @,@ ... @,@ op_n		& \qquad (n>=1)
 vars	-> var_1 @,@ ... @,@ var_n		& \qquad (n>=1)
@@ -95,7 +95,7 @@ Section~\ref{basic-types}.
 Hindley-Milner\index{Hindley-Milner type system}
 polymorphic type system to provide a static type semantics
 \cite{damas-milner82,hindley69}, but the type system has been extended with
-{\em type} and {\em constructor} classes (or just {\em
+{\em type classes} (or just {\em
 classes}\index{class}) that provide 
 a structured way to introduce {\em overloaded} functions.\index{type
 class} \index{constructor class} \index{overloaded functions}
@@ -115,13 +115,13 @@ type class called @Num@:\nopagebreak[4]
 \bprog
 @
   class Num a  where          -- simplified class declaration for Num
-    (+)    :: a -> a -> a
+    (+)    :: a -> a -> a     -- (Num is defined in the Prelude)
     negate :: a -> a
 @
 \eprog
 This declaration may be read ``a type @a@ is an instance of the class
-@Num@ if there are (overloaded) class methods @(+)@ and @negate@, of the
-appropriate types, defined on it.''
+@Num@ if there are class methods @(+)@ and @negate@, of the
+given types, defined on it.''
 
 We may then declare @Int@ and @Float@ to be instances of this class:
 \bprog
@@ -215,7 +215,7 @@ The main forms of type expression are as follows:\nopagebreak[4]
       a lowercase letter.  The kind of a variable is determined implicitly
       by the context in which it appears.
 
-\item Type constructors.  Most type constructors are written as identifiers
+\item Type constructors.  Most type constructors are written as an identifier
       beginning with an uppercase letter.  For example:\nopagebreak[4]
       \begin{itemize}
       \item @Char@, @Int@, @Integer@, @Float@, @Double@ and @Bool@ are
@@ -228,7 +228,7 @@ The main forms of type expression are as follows:\nopagebreak[4]
             the type vocabulary.  The kind of @T@ is determined by
             kind inference.
       \end{itemize}
-      Special syntax is provided for some type constructors:\nopagebreak[4]
+      Special syntax is provided for certain built-in type constructors:\nopagebreak[4]
       \begin{itemize}
       \item The {\em trivial type}\index{trivial type} is written as @()@ and
             has kind $\ast$.
@@ -272,6 +272,7 @@ in a more traditional style:\nopagebreak[4]
 \item A {\em function type}\index{function type} has the form
 "t_1 @->@ t_2", which is equivalent to the type
 "@(->)@ t_1 t_2".  Function arrows associate to the right.
+For example, @Int -> Int -> Float@ means @Int -> (Int -> Float)@.
 
 \item A {\em tuple type}\index{tuple type} has the form 
 "@(@t_1@,@ ... @,@ t_k@)@" where "k>=2", which is equivalent to
@@ -306,7 +307,10 @@ syntax for universal quantification~\cite{damas-milner82}.
 For example, the type expression
 @a -> a@ denotes the type "\forall a.~a \rightarrow a".
 For clarity, however, we often write quantification explicitly
-when discussing the types of \Haskell{} programs.
+when discussing the types of \Haskell{} programs.  When we write an
+explicitly quantified type, the scope of the "\forall" extends as far
+to the right as possible; for example, "\forall a.~a \rightarrow a" means
+"\forall a.~(a \rightarrow a)".
 
 The exception referred to is that of the distinguished type variable
 in a class declaration (Section~\ref{class-decls}).
@@ -435,7 +439,7 @@ a substitution "S" whose domain is "\overline{u}" such that:
 \item Whenever "cx_2" holds in the class environment, "S(cx_1)" also holds.
 \end{itemize}
 
-The main point about contexts above is that, a value of type
+A value of type
 "\forall \overline{u}.~cx \Rightarrow t",
 may be instantiated at types "\overline{s}" if and only if
 the context "cx[\overline{s}/\overline{u}]" holds.
@@ -567,8 +571,8 @@ useful to assign "field labels" to the components of a data object.
 This allows a specific field to be referenced independently of its
 location within the constructor.
 
-A constructor definition in a @data@ declaration using the @{@ @}@
-syntax assigns labels to the components of the constructor.
+A constructor definition in a @data@ declaration using the record syntax
+syntax (@C { ... }@) assigns labels to the components of the constructor.
 Constructors using field labels may be freely mixed with constructors
 without them. 
 A constructor with associated field labels may still be used as an
@@ -603,7 +607,8 @@ The pattern @F {}@ matches any value built with constructor @F@,
 \index{strictness flag}
 Whenever a data constructor is applied, each argument to the
 constructor is evaluated if and only if the corresponding type in the
-algebraic datatype declaration has a strictness flag (@!@).
+algebraic datatype declaration has a strictness flag, denoted by
+an exclamation point, ``@!@''.
 \indextt{!}
 
 \outline{
@@ -673,12 +678,12 @@ is allowed, whereas
 \bprog
 @
   type Rec a   =  [Circ a]        -- invalid
-  type Circ a  =  [Rec a]         --
+  type Circ a  =  [Rec a]         -- invalid
 @
 \eprog
 is not. Similarly, @type Rec a = [Rec a]@ is not allowed.
 
-Type synonyms are a strictly syntactic mechanism to make type
+Type synonyms are a convenient, but strictly syntactic, mechanism to make type
 signatures more readable.  A synonym and its definition are completely
 interchangeable, except in the instance type of an @instance@ declaration (Section~\ref{instance-decls}).
 
@@ -719,7 +724,7 @@ type defined by @newtype@ but may not be defined for a type synonym.  A type
 created by @newtype@ differs from an algebraic datatype in that the
 representation of an
 algebraic datatype has an extra level of indirection.  This difference
-makes access to the representation less efficient.  The difference is
+may make access to the representation less efficient.  The difference is
 reflected in different rules for pattern matching (see
 Section~\ref{pattern-matching}).  Unlike algebraic datatypes, the
 newtype constructor "N" is {\em unlifted}, so that "N \bot"
@@ -758,7 +763,7 @@ there may only be one field.  Thus:
   newtype Age = Age { unAge :: Int }
 @
 \eprog
-brings into scope both a constructor and a destructor:
+brings into scope both a constructor and a de-constructor:
 \bprog
 @
   Age   :: Int -> Age
@@ -1029,7 +1034,7 @@ most general instance context "cx'" satisfying the above two constraints,
 but it is nevertheless mandatory
 to write an explicit instance context.
 \end{itemize}
-The following illustrates the restrictions imposed by superclass instances:
+The following example illustrates the restrictions imposed by superclass instances:
 \bprog
 @
   class Foo a => Bar a where ...
@@ -1039,7 +1044,7 @@ The following illustrates the restrictions imposed by superclass instances:
   instance Num a => Bar [a] where ...
 @
 \eprog
-This is perfectly valid.  Since @Foo@ is a superclass of @Bar@,
+This example is valid Haskell.  Since @Foo@ is a superclass of @Bar@,
 the second instance declaration is only valid if @[a]@ is an
 instance of @Foo@ under the assumption @Num a@.  
 The first instance declaration does indeed say that @[a]@ is an instance
@@ -1193,7 +1198,7 @@ forced to have the same type.  For example,
   approxSqrt x = encodeFloat 1 (exponent x `div` 2) `asTypeOf` x
 @
 \eprog
-(See Section~\ref{coercion}.)
+(See Section~\ref{coercion} for a description of @encodeFloat@ and @exponent@.)
 
 Ambiguities in the class @Num@\indexclass{Num}
 are most common, so \Haskell{}
@@ -1351,7 +1356,7 @@ to supply the more general type signature, @T a -> a@.
 \label{fixity}
 
 @@@
-gendecl	-> fixity [digit] ops
+gendecl	-> fixity [integer] ops
 fixity	-> @infixl@ | @infixr@ | @infix@
 ops	-> op_1 @,@ ... @,@ op_n		& \qquad (n>=1)
 op	-> varop | conop 
@@ -1362,7 +1367,9 @@ op	-> varop | conop
 \indexsyn{op}%
 %\indextt{infixl}\indextt{infixr}\indextt{infix}
 A fixity declaration gives the fixity and binding
-precedence of one or more operators.  A fixity declaration may appear anywhere that 
+precedence of one or more operators.  The "integer" in a fixity declaration
+must be in the range "0" to "9".
+A fixity declaration may appear anywhere that 
 a type signature appears and, like a type signature, declares a property of
 a particular operator.  Also like a type signature,
 a fixity declaration can only occur in the same declaration group as
@@ -1616,7 +1623,8 @@ simple pattern binding:
 
 \paragraph*{A note about syntax.}  It is usually straightforward
 to tell whether a binding is a pattern binding or a function binding,
-but the existence of @n+k@ patterns sometimes confuses the issue.
+but the existence of @n+k@ patterns\index{n+k pattern@@"n@+@k" pattern}
+sometimes confuses the issue.
 Here are four examples:
 \bprog
 @
@@ -1653,7 +1661,7 @@ In general the static semantics are given by the
 normal Hindley-Milner\index{Hindley-Milner type system} inference rules.
 A {\em dependency
 analysis\index{dependency analysis} transformation} is first performed
-to enhance polymorphism.
+to increase polymorphism.
 Two variables bound by value declarations are in the
 same {\em declaration group} if either
 \index{declaration group}

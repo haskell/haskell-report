@@ -168,7 +168,7 @@ splitAt n xs             =  (take n xs, drop n xs)
 
 -- takeWhile, applied to a predicate p and a list xs, returns the longest
 -- prefix (possibly empty) of xs of elements that satisfy p.  dropWhile p xs
--- returns the remaining suffix.  Span p xs is equivalent to 
+-- returns the remaining suffix.  span p xs is equivalent to 
 -- (takeWhile p xs, dropWhile p xs), while break p uses the negation of p.
 
 takeWhile               :: (a -> Bool) -> [a] -> [a]

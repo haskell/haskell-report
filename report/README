@@ -47,10 +47,10 @@ PreludeText.hs
 
 Figures:
 
-class-fig.cdr      --  The original class figure (Corel Draw 6 format)
-class-fig.eps (*)   --  Postscript version of class-fig
-class-fig.gif (*)  --  For html version
-cover.cdr          --  A nice looking cover for the report
+classes.ppt       --  The original class figure (Powerpoint)
+classes.eps (*)   --  Postscript version of class-fig
+classes.gif (*)   --  For html version
+cover.cdr         --  A nice looking cover for the report
 cover.eps (*)
 
 Html support:

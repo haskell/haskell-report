@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/modules.verb,v 1.4 2001/08/14 07:48:25 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/modules.verb,v 1.5 2001/08/20 07:57:53 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Modules</title>
 %*section 5
@@ -65,7 +65,7 @@ It is equivalent to the following single-module program:
     bf = ...
 @
 \eprog
-Because they are mutually recursive,
+Because they are allowed to be mutually recursive,
 modules allow a program to be partitioned freely without regard to
 dependencies.
 
@@ -343,7 +343,8 @@ qualified {\em and} unqualified name of the entity is brought into scope.
 Section~\ref{qualifiers} describes qualified names in more detail.
 
 The qualifier on the imported name is either the name of the imported module,
-or the local alias given in the @as@ clause on the @import@ statement (Section~\ref{as-clause}).
+or the local alias given in the @as@ clause (Section~\ref{as-clause}) 
+on the @import@ statement.
 Hence, {\em the qualifier is not necessarily the name of the module in which the
 entity was originally declared}.
 
@@ -372,12 +373,12 @@ using the @as@ clause.
 For example, in
 \bprog
 @
-  import qualified Complex as C
+  import qualified VeryLongModuleName as C
 @
 \eprog
 entities must be referenced using `@C.@' as a qualifier instead of
-`@Complex.@'.  This also allows a different module to be substituted
-for @Complex@ without changing the qualifiers used for the imported module.
+`@VeryLongModuleName.@'.  This also allows a different module to be substituted
+for @VeryLongModuleName@ without changing the qualifiers used for the imported module.
 It is legal for more than one module in scope to 
 use the same qualifier, provided that all names can still be resolved unambiguously.
 For example:
@@ -461,7 +462,7 @@ declarations can have an empty export list.  For example
 A {\em qualified name} is written as "modid"@.@"name".
 Since qualifier names are part of the lexical syntax, no spaces are
 allowed between the qualifier and the name.
-Sample parses are shown below.
+Sample lexical analyses are shown below.
 \[\bto{|l|l|}
 \hline
 This                       	    & Lexes as this                       \\
@@ -485,7 +486,7 @@ the qualified name of the entity being defined.  Thus:
     g x = M.f x x
 @
 \eprog
-is legal.  The {\em defining} occurrence must mention the unqualified name, however; it is
+is legal.  The {\em defining} occurrence must mention the unqualified name; therefore, it is
 illegal to write
 \bprog
 @
@@ -583,7 +584,7 @@ refers to the local declaration for @sin@.
 Every module in a \Haskell{} program must be {\em closed}.  That is,
 every name explicitly mentioned by the source code
 must be either defined locally or imported from another module.
-Entities that the compiler requires for type checking or other
+However, entities that the compiler requires for type checking or other
 compile time analysis need not be imported if they are not mentioned
 by name.  The \Haskell{} compilation system is responsible for finding
 any information needed for compilation without the help of the
@@ -668,7 +669,7 @@ implicit `@import qualified Prelude@' is part of every module and
 names prefixed by `@Prelude.@' can always be used to refer to entities in the
 Prelude.
 
-The semantics of the entities in @Prelude@ is specified by an
+The semantics of the entities in @Prelude@ is specified by a reference
 implementation of @Prelude@ written in \Haskell{}, given in
 Appendix~\ref{stdprelude}.  Some datatypes (such as @Int@) and
 functions (such as @Int@ addition) cannot be specified directly in
@@ -766,6 +767,7 @@ an ADT for stacks could be defined as:
 \eprog
 Modules importing @Stack@ cannot construct values of type @StkType@
 because they do not have access to the constructors of the type.
+Instead, they must use @push@, @pop@, and @empty@ to construct such values.
 
 It is also possible to build an ADT on top of an existing type by
 using a @newtype@ declaration.  For example, stacks can be defined

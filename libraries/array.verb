@@ -48,7 +48,7 @@ a = array (1,100) ((1,1) : [(i, i * a!(i-1)) | i <- [2..100]])
 \eprog
 Not every index within the bounds of the array need
 appear in the association list, but the values associated with indices
-that do not appear will be undefined.
+that do not appear will be undefined (i.e.~$\bot$).
 Figure~\ref{array-examples} shows some examples that use the
 @array@ constructor.
 

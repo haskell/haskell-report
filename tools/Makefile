@@ -20,7 +20,7 @@ verbatim: verbatim.lex
 	$(CC) -o verbatim verbatim.o
 
 run_tex: tex.hs
-	$(GHC) -o run_tex tex.hs -fglasgow-exts -H20m
+	$(GHC) -o run_tex tex.hs -fglasgow-exts -H20m -package lang
 
 run_index: index.hs
 	$(GHC) -o run_index index.hs -fglasgow-exts -H20m

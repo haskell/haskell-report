@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/exps.verb,v 1.4 2001/08/14 07:48:25 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/exps.verb,v 1.5 2001/08/20 07:57:53 simonpj Exp $
 %
 %*section 3
 %**<title>The Haskell 98 Report: Expressions</title>
@@ -33,7 +33,7 @@ nonterminals "op", "varop", and "conop" may have a double index:
 a letter "l", "r", or "n" for left-, right- or non-associativity and
 a precedence level.  A precedence-level variable "i" ranges from 0 to 9;
 an associativity variable "a" varies over "\{l, r, n\}".
-Thus, for example
+For example
 @@@
 aexp	->  @(@ exp^{i+1} qop^{(a,i)} @)@
 @@@
@@ -78,48 +78,48 @@ aexp 	->  qvar				& (\tr{variable})
 \indexsyn{aexp}%
 \indexsyn{fexp}%
 
-As an aid to understanding this grammar,
-Table~\ref{syntax-precedences} shows the relative precedence of
-expressions, patterns and definitions, plus an extended associativity.
-"-" indicates that the item is non-associative.
-
-\begin{table}[tb]
-\[
-\centerline{
-\begin{tabular}{|l|c|}\hline
-Item						&	Associativity \\ 
-\hline
-						&			\\
-simple terms, parenthesized terms               &	--	       	\\
-irrefutable patterns (@~@)                      &       --		\\
-as-patterns ({\tt @@})                          &       right		\\
-function application				&	left		\\
-@do@, @if@, @let@, lambda(@\@), @case@ (leftwards)&	right		\\
-@case@ (rightwards)				&	right		\\
-						&			\\
-infix operators, prec. 9			&	as defined	\\
-\ldots						&	\ldots		\\
-infix operators, prec. 0			&	as defined	\\
-						&			\\
-function types (@->@)				&	right		\\
-contexts (@=>@)					&	--		\\
-type constraints (@::@)				&	--		\\
-@do@, @if@, @let@, lambda(@\@) (rightwards)	&	right		\\
-sequences (@..@)				&	--		\\
-generators (@<-@)				&	--		\\
-grouping (@,@)					&	n-ary		\\
-guards (@|@)					&	--		\\
-case alternatives (@->@)			&	--		\\
-definitions (@=@)				&	--		\\
-separation (@;@)				&	n-ary		\\ 
-\hline
-\end{tabular}
-}
-\]
-%**<div align=center> <h4>Table 1</h4> </div>
-\ecaption{Precedence of expressions, patterns, definitions (highest to lowest)}
-\label{syntax-precedences}
-\end{table}
+% As an aid to understanding this grammar,
+% Table~\ref{syntax-precedences} shows the relative precedence of
+% expressions, patterns and definitions, plus an extended associativity.
+% "-" indicates that the item is non-associative.
+% 
+% \begin{table}[tb]
+% \[
+% \centerline{
+% \begin{tabular}{|l|c|}\hline
+% Item						&	Associativity \\ 
+% \hline
+% 						&			\\
+% simple terms, parenthesized terms               &	--	       	\\
+% irrefutable patterns (@~@)                      &       --		\\
+% as-patterns ({\tt @@})                          &       right		\\
+% function application				&	left		\\
+% @do@, @if@, @let@, lambda(@\@), @case@ (leftwards)&	right		\\
+% @case@ (rightwards)				&	right		\\
+% 						&			\\
+% infix operators, prec. 9			&	as defined	\\
+% \ldots						&	\ldots		\\
+% infix operators, prec. 0			&	as defined	\\
+% 						&			\\
+% function types (@->@)				&	right		\\
+% contexts (@=>@)					&	--		\\
+% type constraints (@::@)				&	--		\\
+% @do@, @if@, @let@, lambda(@\@) (rightwards)	&	right		\\
+% sequences (@..@)				&	--		\\
+% generators (@<-@)				&	--		\\
+% grouping (@,@)					&	n-ary		\\
+% guards (@|@)					&	--		\\
+% case alternatives (@->@)			&	--		\\
+% definitions (@=@)				&	--		\\
+% separation (@;@)				&	n-ary		\\ 
+% \hline
+% \end{tabular}
+% }
+% \]
+% %**<div align=center> <h4>Table 1</h4> </div>
+% \ecaption{Precedence of expressions, patterns, definitions (highest to lowest)}
+% \label{syntax-precedences}
+% \end{table}
 
 The grammar is ambiguous regarding the extent of lambda abstractions,
 let expressions, and conditionals.  The ambiguity is resolved by the
@@ -304,7 +304,7 @@ The integers "n" and "d" are chosen so that "n/d = f".
 %
 @@@
 fexp	->  [fexp] aexp				& (\tr{function application})
-exp	->  @\@ apat_1 ... apat_n @->@ exp
+exp	->  @\@ apat_1 ... apat_n @->@ exp	& (\tr{lambda abstraction}, n>=1)
 @@@
 \indexsyn{exp}%
 \indexsyn{fexp}%
@@ -556,9 +556,9 @@ gcon	-> @()@
 The form "@(@e@)@" is simply a {\em parenthesized expression}, and is
 equivalent to "e".  The {\em unit expression} @()@ has type
 @()@\index{trivial type} (see
-Section~\ref{type-syntax}); it is the only member of that type apart
-from $\bot$ (it can
-be thought of as the ``nullary tuple'')---see Section~\ref{basic-trivial}.
+Section~\ref{type-syntax}).  It is the only member of that type apart
+from $\bot$, and can
+be thought of as the ``nullary tuple'' (see Section~\ref{basic-trivial}).
 \nopagebreak[4]
 
 \outline{
@@ -666,9 +666,9 @@ type are in @Enum@.
 %
 @@@
 aexp	-> @[@ exp @|@ qual_1 @,@ ... @,@ qual_n @]@	& (\tr{list comprehension}, n>=1)
-qual	-> pat @<-@ exp 	& (generator)
-         | @let@ decls		& (local declaration)
-         | exp 			& (guard)
+qual	-> pat @<-@ exp 	& (\tr{generator})
+         | @let@ decls		& (\tr{local declaration})
+         | exp 			& (\tr{guard})
 @@@
 \indexsyn{aexp}
 \indexsyn{qual}
@@ -832,10 +832,13 @@ where each "match_i" is of the general form
  & "@|@ g_{im_i}" & "@->@ e_{im_i}" \\
  & \multicolumn{2}{l}{"@where@ decls_i"}
 \ea\]
+(Notice that in the syntax rule for "gd", the ``@|@'' is a 
+terminal symbol, not the syntactic metasymbol for alternation.)
 Each alternative "p_i match_i" consists of a 
-pattern\index{pattern} "p_i" and its matches, "match_i", which
-consists of pairs of guards\index{guard}
-"g_{ij}" and bodies "e_{ij}" (expressions), as well as
+pattern\index{pattern} "p_i" and its matches, "match_i".
+Each match in turn
+consists of a sequence of pairs of guards\index{guard}
+"g_{ij}" and bodies "e_{ij}" (expressions), followed by
 optional bindings ("decls_i") that scope over all of the guards and
 expressions of the alternative.  An alternative of the form
 \[
@@ -940,7 +943,14 @@ Different datatypes cannot share common field labels in the same scope.
 A field label can be used at most once in a constructor.
 Within a datatype, however, a field label can be used in more
 than one constructor provided the field has the same typing in all
-constructors.
+constructors. To illustrate the last point, consider:
+@
+  data S = S1 { x :: Int } | S2 { x :: Int }   -- OK
+  data T = T1 { y :: Int } | T2 { y :: Bool }  -- BAD
+@
+Here @S@ is legal but @T@ is not, because @y@ is given 
+inconsistent typings in the latter.
+
 \subsubsection{Field Selection}
 @@@
 aexp ->     qvar
@@ -1067,7 +1077,7 @@ Expression                       	    & Translation                       \\
 @x {f1 = 1}@                 & @case x of C1 _ f2    -> C1 1 f2@ \\
                              & @          C2 _ f3 f4 -> C2 1 f3 f4@   \\
 \hline\et\]
-The field f1 is common to both constructors in T.  This
+The field @f1@ is common to both constructors in T.  This
 example translates expressions using constructors in field-label
 notation into equivalent expressions using the same constructors
 without field labels. 
@@ -1161,7 +1171,11 @@ sub-patterns associated with it; one cannot match against a
 partially-applied constructor.
 
 All patterns must be {\em linear}\index{linearity}
-\index{linear pattern}---no variable may appear more than once.
+\index{linear pattern}---no variable may appear more than once.  For
+example, this definition is illegal:
+@
+  f (x,x) = x	-- ILLEGAL; x used twice in pattern
+@
 
 Patterns of the form "var"{\tt @@}"pat" are called {\em as-patterns},
 \index{as-pattern ({\tt {\char'100}})}
@@ -1219,7 +1233,7 @@ Patterns are matched against values.  Attempting to match a pattern
 can have one of three results: it may {\em fail\/}; it may {\em
 succeed}, returning a binding for each variable in the pattern; or it
 may {\em diverge} (i.e.~return "\bot").  Pattern matching proceeds
-from left to right, and outside to inside, according to these rules:
+from left to right, and outside to inside, according to the following rules:
 \begin{enumerate}
 \item Matching a value "v" against the irrefutable pattern
 \index{irrefutable pattern}
@@ -1304,7 +1318,7 @@ then so does the overall match.
 
 Aside from the obvious static type constraints (for
 example, it is a static error to match a character against a
-boolean), these static class constraints hold: an integer
+boolean), the following static class constraints hold: an integer
 literal pattern
 \index{integer literal pattern}
 can only be matched against a value in the class
@@ -1411,6 +1425,19 @@ f ~(x,y,z) [a] | a && y = 1
 % \eprog
 both @a@ and @y@ will be evaluated by @&&@ in the guard.
 
+
+\subsubsection{Formal Semantics of Pattern Matching}
+\label{case-semantics}
+
+The semantics of all pattern matching constructs other than @case@
+expressions are defined by giving identities that relate those
+constructs to @case@ expressions.  The semantics of
+@case@ expressions themselves are in turn given as a series of
+identities, in Figures~\ref{simple-case-expr-1}--\ref{simple-case-expr-2}. 
+Any implementation should behave so that these identities hold; it is 
+not expected that it will use them directly, since that 
+would generate rather inefficient code.
+  
 \begin{figure}[tb]
 \outlinec{
 \begin{tabular}{@@{}cl}
@@ -1426,7 +1453,7 @@ both @a@ and @y@ will be evaluated by @&&@ in the guard.
 %\\
 (c)&@case @$v$@ of { @$p$@ | @$g_1$@ -> @$e_1$@ ; @$\ldots{}$\\
    &\hspace*{4pt}@             | @$g_n$@ -> @$e_n$@ where { @$decls$@ }@\\
-   &\hspace*{2pt}@            _      -> @$e'$@ }@\\
+   &\hspace*{2pt}@            _     -> @$e'$@ }@\\
    &$=$@ case @$e'$@ of@\\
    &   @  {@$y$@ -> @     {\rm (where "y" is a new variable)}\\
  &@   case @$v$@ of {@\\
@@ -1451,18 +1478,6 @@ $x_1$@ })@ $\ldots$ @(case @$v$@ of { @$p$@ -> @$x_n$@})@\\
 \label{simple-case-expr-1}
 \end{figure}
 
-\subsubsection{Formal Semantics of Pattern Matching}
-\label{case-semantics}
-
-The semantics of all pattern matching constructs other than @case@
-expressions are defined by giving identities that relate those
-constructs to @case@ expressions.  The semantics of
-@case@ expressions themselves are in turn given as a series of
-identities, in Figures~\ref{simple-case-expr-1}--\ref{simple-case-expr-2}. 
-Any implementation should behave so that these identities hold; it is 
-not expected that it will use them directly, since that 
-would generate rather inefficient code.
-  
 \begin{figure}[tb]
 \outlinec{
 \begin{tabular}{@@{}cl}

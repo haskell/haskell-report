@@ -201,7 +201,8 @@ roundTo base d is = case f d is of
 --
 -- Based on "Printing Floating-Point Numbers Quickly and Accurately"
 -- by R.G. Burger and R. K. Dybvig, in PLDI 96.
--- This version uses a much slower logarithm estimator.  It should be improved.
+-- The version here uses a much slower logarithm estimator.  
+-- It should be improved.
 
 -- This function returns a list of digits (Ints in [0..base-1]) and an
 -- exponent.

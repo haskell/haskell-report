@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/basic.verb,v 1.7 2001/08/14 15:38:33 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/basic.verb,v 1.8 2001/08/20 07:57:52 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Basic Types and Classes</title>
 %*section 6
@@ -107,7 +107,7 @@ two convenient
 syntaxes for special kinds of lists, are described in
 Sections~\ref{arithmetic-sequences} and \ref{list-comprehensions},
 respectively.  Lists are an instance of classes @Read@, @Show@, @Eq@, @Ord@, 
-@Monad@, and @MonadPlus@.
+@Monad@, @Functor@, and @MonadPlus@.
 
 \subsubsection{Tuples}
 \label{basic-tuples}
@@ -167,8 +167,8 @@ functional values.  The following simple functions are found in the Prelude:
 \subsubsection{The IO and IOError Types}
 The @IO@ type serves as a tag for operations (actions) that interact
 with the outside world.  The @IO@ type is abstract: no constructors are
-visible to the user.  @IO@ is an instance of the @Monad@ and 
-@Show@ classes.  Section \ref{io} describes I/O operations.
+visible to the user.  @IO@ is an instance of the @Monad@ and @Functor@
+classes.  Section \ref{io} describes I/O operations.
 
 @IOError@ is an abstract type representing errors raised by I/O
 operations.  It is an instance of @Show@ and @Eq@.  Values of this type
@@ -182,8 +182,8 @@ Report contains many more.
 \subsubsection{Other Types}
 \bprog
 @
-data  Maybe a     =  Nothing | Just a	deriving (Eq, Ord, Read, Show)
-data  Either a b  =  Left a | Right b	deriving (Eq, Ord, Read, Show)
+data  Maybe a     =  Nothing | Just a  deriving (Eq, Ord, Read, Show)
+data  Either a b  =  Left a | Right b  deriving (Eq, Ord, Read, Show)
 data  Ordering    =  LT | EQ | GT deriving
                                   (Eq, Ord, Bounded, Enum, Read, Show)
 @
@@ -226,15 +226,15 @@ The function @seq@ is defined by the equations:
 avoiding unneeded laziness.  Strict datatypes (see
 \index{strictness flags}
 Section~\ref{strictness-flags}) are defined in terms of the @$!@
-function. 
-However, it has important semantic consequences, because it is available
+operator. 
+However, the provision of @seq@ has important semantic consequences, because it is available
 {\em at every type}.
 As a consequence, "\bot" is
 not the same as @\x -> @ "\bot", since @seq@ can be used to distinguish them.
 For the same reason, the existence of @seq@ weakens Haskell's parametricity properties.
 
 The operator @$!@ is strict (call-by-value) application, and is defined
-in terms of @seq@.  The Prelude also defines lazy application, @$@.
+in terms of @seq@.  The Prelude also defines the @$@ operator to perform lazy application.
 \bprog
 @
   infixr 0 $, $!
@@ -280,7 +280,7 @@ of class @Eq@ is:
         (==), (/=)  ::  a -> a -> Bool
 
         x /= y  = not (x == y)
-	x == y  = not (x /= y)
+        x == y  = not (x /= y)
 @
 \eprog
 This declaration gives default method declarations for both @/=@ and @==@,
@@ -306,7 +306,7 @@ be given to fully specify an instance.
         (==), (/=)  ::  a -> a -> Bool
 
         x /= y  = not (x == y)
-	x == y  = not (x /= y)
+        x == y  = not (x /= y)
 @
 \eprog
 The @Eq@ class provides equality (@==@) and inequality (@/=@) methods.
@@ -328,16 +328,16 @@ constituents are also instances of @Eq@.
   class  (Eq a) => Ord a  where
     compare              :: a -> a -> Ordering
     (<), (<=), (>=), (>) :: a -> a -> Bool
-    max, min		 :: a -> a -> a
+    max, min             :: a -> a -> a
 
     compare x y | x == y    = EQ
-	        | x <= y    = LT
-	        | otherwise = GT
+                | x <= y    = LT
+                | otherwise = GT
 
     x <= y  = compare x y /= GT
-    x <	 y  = compare x y == LT
+    x <  y  = compare x y == LT
     x >= y  = compare x y /= LT
-    x >	 y  = compare x y == GT
+    x >  y  = compare x y == GT
 
     -- Note that (min x y, max x y) = (x,y) or (y,x)
     max x y | x <= y    =  y
@@ -389,7 +389,7 @@ class  Show a  where
     showList  :: [a] -> ShowS
 
     showsPrec _ x s   = show x ++ s
-    show x 	      = showsPrec 0 x ""
+    show x            = showsPrec 0 x ""
     -- ... default decl for showList given in Prelude
 @
 \eprog
@@ -425,17 +425,17 @@ For convenience, the Prelude provides the following auxiliary
 functions: 
 \bprog
 @
-reads 	        :: (Read a) => ReadS a
-reads		=  readsPrec 0
+reads   :: (Read a) => ReadS a
+reads   =  readsPrec 0
 
-shows 	    	:: (Show a) => a -> ShowS
-shows		=  showsPrec 0
+shows   :: (Show a) => a -> ShowS
+shows   =  showsPrec 0
 
-read 	    	:: (Read a) => String -> a
-read s 	    	=  case [x | (x,t) <- reads s, ("","") <- lex t] of
-			[x] -> x
-			[]  -> error "PreludeText.read: no parse"
-			_   -> error "PreludeText.read: ambiguous parse"
+read    :: (Read a) => String -> a
+read s  =  case [x | (x,t) <- reads s, ("","") <- lex t] of
+              [x] -> x
+              []  -> error "PreludeText.read: no parse"
+              _   -> error "PreludeText.read: ambiguous parse"
 @
 \eprog
 \indextt{shows}\indextt{reads}\indextt{show}\indextt{read}
@@ -454,13 +454,13 @@ process.  The @lex@ function used by @read@ is also part of the Prelude.
 \bprog
 @
 class  Enum a  where
-    succ, pred		:: a -> a
-    toEnum              :: Int -> a
-    fromEnum            :: a -> Int
-    enumFrom		:: a -> [a]		-- [n..]
-    enumFromThen	:: a -> a -> [a]	-- [n,n'..]
-    enumFromTo		:: a -> a -> [a]	-- [n..m]
-    enumFromThenTo	:: a -> a -> a -> [a]	-- [n,n'..m]
+    succ, pred     :: a -> a
+    toEnum         :: Int -> a
+    fromEnum       :: a -> Int
+    enumFrom       :: a -> [a]            -- [n..]
+    enumFromThen   :: a -> a -> [a]       -- [n,n'..]
+    enumFromTo     :: a -> a -> [a]       -- [n..m]
+    enumFromThenTo :: a -> a -> a -> [a]  -- [n,n'..m]
 
     -- Default declarations given in Prelude
 @
@@ -503,7 +503,7 @@ Instances of @Functor@ should satisfy the following laws:
 @fmap id@&=&@id@\\
 @fmap (f . g)@&=&@fmap f . fmap g@\\
 \ea\]
-All instances defined in the Prelude satisfy these laws.
+All instances of @Functor@ defined in the Prelude satisfy these laws.
 
 
 \subsubsection{Class @Monad@}
@@ -545,12 +545,14 @@ Instances of @Monad@ should satisfy the following laws:
 @return a >>= k@&=&@k a@ \\
 @m >>= return@&=&@m@ \\
 @m >>= (\x -> k x >>= h)@&=&@(m >>= k) >>= h@\\
+\ea\]
+Instances of both @Monad@ and @Functor@ should additionally satisfy the law:
+\[\ba{lcl}
 @fmap f xs@&=&@xs >>= return . f@\\
 \ea\]
-All instances defined in the Prelude satisfy these laws.
+All instances of @Monad@ defined in the Prelude satisfy these laws.
 
-The Prelude provides the following auxiliary
-functions: 
+The Prelude provides the following auxiliary functions: 
 \bprog
 @
 sequence  :: Monad m => [m a] -> m [a] 
@@ -626,7 +628,7 @@ conform to current language independent arithmetic (LIA) standards.  These
 standards require considerably more complexity in the numeric
 structure and have thus been relegated to a library.  Some, but not
 all, aspects of the IEEE floating point standard have been
-accounted for in class @RealFloat@.
+accounted for in Prelude class @RealFloat@.b
 
 The standard numeric types are listed in Table~\ref{standard-numeric-types}.
 The finite-precision integer type @Int@\indextycon{Int} covers at
@@ -677,31 +679,31 @@ built-in types that are instances of the numeric classes.
 \outlinec{
 @
 class  (Eq a, Show a) => Num a  where
-    (+), (-), (*)	:: a -> a -> a
-    negate		:: a -> a
-    abs, signum		:: a -> a
-    fromInteger		:: Integer -> a
+    (+), (-), (*)  :: a -> a -> a
+    negate         :: a -> a
+    abs, signum    :: a -> a
+    fromInteger    :: Integer -> a
 
 class  (Num a, Ord a) => Real a  where
-    toRational		::  a -> Rational
+    toRational ::  a -> Rational
 
 class  (Real a, Enum a) => Integral a  where
-    quot, rem, div, mod	:: a -> a -> a
-    quotRem, divMod	:: a -> a -> (a,a)
-    toInteger		:: a -> Integer
+    quot, rem, div, mod :: a -> a -> a
+    quotRem, divMod     :: a -> a -> (a,a)
+    toInteger           :: a -> Integer
 
 class  (Num a) => Fractional a  where
-    (/)			:: a -> a -> a
-    recip		:: a -> a
-    fromRational	:: Rational -> a
+    (/)          :: a -> a -> a
+    recip        :: a -> a
+    fromRational :: Rational -> a
 
 class  (Fractional a) => Floating a  where
-    pi			:: a
-    exp, log, sqrt	:: a -> a
-    (**), logBase	:: a -> a -> a
-    sin, cos, tan	:: a -> a
-    asin, acos, atan	:: a -> a
-    sinh, cosh, tanh	:: a -> a
+    pi                  :: a
+    exp, log, sqrt      :: a -> a
+    (**), logBase       :: a -> a -> a
+    sin, cos, tan       :: a -> a
+    asin, acos, atan    :: a -> a
+    sinh, cosh, tanh    :: a -> a
     asinh, acosh, atanh :: a -> a
 @
 }
@@ -735,29 +737,29 @@ class  (Fractional a) => Floating a  where
 \outlinec{
 @
 class  (Real a, Fractional a) => RealFrac a  where
-    properFraction	:: (Integral b) => a -> (b,a)
-    truncate, round	:: (Integral b) => a -> b
-    ceiling, floor	:: (Integral b) => a -> b
+    properFraction   :: (Integral b) => a -> (b,a)
+    truncate, round  :: (Integral b) => a -> b
+    ceiling, floor   :: (Integral b) => a -> b
 
 class  (RealFrac a, Floating a) => RealFloat a  where
-    floatRadix		:: a -> Integer
-    floatDigits		:: a -> Int
-    floatRange		:: a -> (Int,Int)
-    decodeFloat		:: a -> (Integer,Int)
-    encodeFloat		:: Integer -> Int -> a
-    exponent		:: a -> Int
-    significand		:: a -> a
-    scaleFloat		:: Int -> a -> a
+    floatRadix          :: a -> Integer
+    floatDigits         :: a -> Int
+    floatRange          :: a -> (Int,Int)
+    decodeFloat         :: a -> (Integer,Int)
+    encodeFloat         :: Integer -> Int -> a
+    exponent            :: a -> Int
+    significand         :: a -> a
+    scaleFloat          :: Int -> a -> a
     isNaN, isInfinite, isDenormalized, isNegativeZero, isIEEE 
                         :: a -> Bool
-    atan2		:: a -> a -> a
+    atan2               :: a -> a -> a
 
-gcd, lcm		:: (Integral a) => a -> a-> a
-(^)			:: (Num a, Integral b) => a -> b -> a
-(^^)			:: (Fractional a, Integral b) => a -> b -> a
+gcd, lcm :: (Integral a) => a -> a-> a
+(^)      :: (Num a, Integral b) => a -> b -> a
+(^^)     :: (Fractional a, Integral b) => a -> b -> a
 
-fromIntegral		:: (Integral a, Num b) => a -> b
-realToFrac	        :: (Real a, Fractional b) => a -> b
+fromIntegral :: (Integral a, Num b) => a -> b
+realToFrac   :: (Real a, Fractional b) => a -> b
 @
 }
 %**<div align=center> <h4>Figure 7</h4> </div>
@@ -845,8 +847,8 @@ divMod  x y  =  (x @\bkqB@div@\bkqA@ y, x @\bkqB@mod@\bkqA@ y)
 Also available on integral numbers are the even and odd predicates:
 \bprog
 @
-even x	    =  x @\bkqB@rem@\bkqA@ 2 == 0
-odd	    =  not . even
+even x =  x @\bkqB@rem@\bkqA@ 2 == 0
+odd    =  not . even
 @
 \eprog\indextt{even}\indextt{odd}
 Finally, there are the greatest common divisor and least common

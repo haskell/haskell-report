@@ -61,16 +61,16 @@ have sufficient operating system privilege to perform that operation.
  -- a programmer-defined error value has been raised using
 @fail@.\indextt{fail}
 \end{itemize}
-All these functions return return a @Bool@, which is @True@ if
+All these functions return a @Bool@, which is @True@ if
 its argument is the corresponding kind of error, and @False@
 otherwise.  
 
 Any computation which returns an @IO@ result may fail with
-@isIllegalOperationError@.  Additional errors which could be raised by
+@isIllegalOperation@.  Additional errors which could be raised by
 an implementation are listed after the corresponding operation.  In
 some cases, an implementation will not be able to distinguish between
 the possible error causes.  In this case it should return
-@isIllegalOperationError@.
+@isIllegalOperation@.
 
 Three additional functions are provided to obtain information about an
 error value.  These are @ioeGetHandle@\indextt{ioeGetHandle} which
@@ -188,7 +188,7 @@ discarded.
  
 \subsubsection{File locking}
 
-Implementations should enforce as far as possible, locally to the
+Implementations should enforce as far as possible, at least locally to the
 \Haskell{} process, multiple-reader single-writer locking on files.
 That is, {\em there may either be many handles on the same file which manage
 input, or just one handle on the file which manages output}.  If any

@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/libraries/library.verb,v 1.5 2001/08/14 07:48:24 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/libraries/library.verb,v 1.6 2001/08/20 07:57:52 simonpj Exp $
 %
 % NOTE:--------------------------------------------------------------
 % The formatting of this report and the ``new font selection scheme''
@@ -74,7 +74,7 @@
 
 \makeindex
 % an extra thing for makeindex
-\newcommand{\seealso}[2]{{\em see also\/} #1}
+\renewcommand{\seealso}[2]{{\em see also\/} #1}
 
 % NEWCOMMANDS
 

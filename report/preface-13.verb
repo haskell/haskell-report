@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/preface-13.verb,v 1.4 2001/08/14 15:38:33 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/preface-13.verb,v 1.5 2001/08/20 07:57:53 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Preface</title>
 %*section
@@ -117,9 +117,9 @@ For the benefit of those who have some knowledge of earlier
 version of Haskell, we briefly summarise the differences between
 Haskell 98 and its predecessors.
 
-\subsubsection{Highlights of the April 2001 Revision}
+\subsubsection{Highlights of the August 2001 Revision}
 
-Both Haskell 98 Reports were revised in April 2001, to incorporate
+Both Haskell 98 Reports were revised in August 2001, to incorporate
 dozens of typographical errors and presentational improvements.  A
 complete list of all changes can be found at @http://haskell.org@.
 
@@ -203,7 +203,7 @@ recursion over natural numbers.  Alternatives to "n@+@k"
 patterns have been explored, but are too premature to include in
 \Haskell{} 98.  Thus we decided to retain this feature
 at present but to discourage the use of "n@+@k" patterns by \Haskell{}
-users.  This feature may be altered or removed in Haskell 2, 
+users --- see Section~\ref{patterns}.  This feature may be altered or removed in Haskell 2, 
 and should be avoided.
 Implementors are encouraged to provide a mechanism for users to
 selectively enable or disable "n@+@k" patterns.
@@ -275,7 +275,7 @@ Randy Hudson,
 Alexander Jacobson,
 Patrick Jansson,
 Robert Jeschofnik,
-Ørjan Johansen,
+Orjan Johansen,
 Simon B.~Jones, 
 Stef Joosten, 
 Mike Joy,

@@ -29,7 +29,8 @@ MAKEINDEX = makeindex
 # 'expand' expands tabs to spaces
 # On my machine the windows program (which does something
 # quite different) shadows it.  Sigh.
-EXPAND = expand
+# EXPAND = expand
+EXPAND = c:/cygwin/bin/expand
 
 
 #########################################

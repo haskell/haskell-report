@@ -15,10 +15,10 @@
 This library describes the interaction of the program with the
 operating system.  
 
-Any @System@ operation could raise an @isIllegalOperationError@, as
+Any @System@ operation could raise an @isIllegalOperation@, as
 described in Section~\ref{IOError}; all other permissible errors are
 described below.  Note that, in particular, if an implementation does
-not support an operation it must raise an @isIllegalOperationError@.
+not support an operation it must raise an @isIllegalOperation@.
 
 The @ExitCode@ type defines the exit codes that a program can return.
 @ExitSuccess@ indicates successful termination; and @ExitFailure@
