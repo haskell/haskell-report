@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/lexemes.verb,v 1.6 2001/09/10 11:06:23 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/lexemes.verb,v 1.7 2001/09/11 13:04:27 simonpj Exp $
 %
 %*section 2
 %**<title>Haskell 98 Lexical Structure</title>
@@ -156,7 +156,7 @@ specialid -> @as@ | @qualified@ | @hiding@
 
 An identifier consists of a letter followed by zero or more letters,
 digits, underscores, and single quotes.  Identifiers are lexically
-distinguished into two classes: those that begin with a lower-case letter
+distinguished into two namespaces (Section~\ref{namespaces}): those that begin with a lower-case letter
 (variable identifiers) and those that begin with an upper-case letter
 (constructor identifiers).  Identifiers are case sensitive: @name@,
 @naMe@, and @Name@ are three distinct identifiers (the first two are
@@ -180,13 +180,13 @@ specialop       -> @-@ | @!@
 \indexsyn{specialop}%
 \indexsyn{reservedop}%
 
-\emph{Operator symbols} \index{operator} 
+{\em Operator symbols} \index{operator} 
 are formed from one or more symbol characters, as
 defined above, and are lexically distinguished into two namespaces 
 (Section~\ref{namespaces}):
 \begin{itemize}
-\item operator symbols that start with a colon are constructors
-\item those that do not are ordinary functions
+\item An operator symbol starting with a colon is a constructor.
+\item An operator symbol starting with any other character is an ordinary identifier.
 \end{itemize}
 Notice that a colon by itself, ``@:@'', is reserved solely for use
 as the Haskell list constructor; this makes its treatment uniform with

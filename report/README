@@ -12,6 +12,11 @@ makeindex, and dvips.
 To generate the html report you need Hugs 1.4 (probably any Haskell
 1.4 compiler will do).
 
+To chage the date on the report, you must change:
+	* haskell.verb
+	* index.html
+	* html.config (~foot item)
+	
 
 Source files for the report:
 plain-haskell.verb  -- Top level of the report

@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/modules.verb,v 1.9 2001/08/31 16:03:08 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/modules.verb,v 1.10 2001/09/11 13:04:28 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Modules</title>
 %*section 5
@@ -105,10 +105,10 @@ topdecls     -> topdecl_1 @;@ ... @;@ topdecl_n 	& \qquad (n>=1)
 A module 
 begins with a header: the keyword
 @module@, the module name, and a list of entities (enclosed in round
-parentheses) to be exported.  The header is followed by an optional
+parentheses) to be exported.  The header is followed by a possibly-empty
 list of @import@ declarations ("impdecls", Section~\ref{import}) that specify modules to be imported,
 optionally restricting the imported bindings.  
-This is followed by a list of top-level declarations ("topdecls", Section~\ref{declarations}).  
+This is followed by a possibly-empty list of top-level declarations ("topdecls", Section~\ref{declarations}).  
 
 An abbreviated form of module, consisting only 
 of\index{abbreviated module}

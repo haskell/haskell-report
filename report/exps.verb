@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/exps.verb,v 1.8 2001/09/10 11:06:23 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/exps.verb,v 1.9 2001/09/11 13:04:27 simonpj Exp $
 %
 %*section 3
 %**<title>The Haskell 98 Report: Expressions</title>
@@ -243,16 +243,16 @@ gconsym ->  @:@ | qconsym
 \indexsyn{gconsym}%
 
 \Haskell{} provides special syntax to support infix notation.
-An \emph{operator} is a function that can be applied using infix 
+An {\em operator} is a function that can be applied using infix 
 syntax (Section~\ref{operators}), or partially applied using a
-\emph{section} (Section~\ref{sections}).
+{\em section} (Section~\ref{sections}).
 
-An \emph{operator} is either an \emph{operator symbol}, such as @+@ or @$$@,
+An {\em operator} is either an {\em operator symbol}, such as @+@ or @$$@,
 or is an ordinary identifier enclosed in grave accents (backquotes), such
 as \bkqB@op@\bkqA.  For example, instead of writing the prefix application
 @op x y@, one can write the infix application \mbox{@x@ \bkqB@op@\bkqA@ y@}.
 If no fixity\index{fixity}
-declaration is given for \bkqB@op@\bkqA then it defaults
+declaration is given for \bkqB@op@\bkqA{} then it defaults
 to highest precedence and left associativity
 (see Section~\ref{fixity}).
 
@@ -266,9 +266,7 @@ to @x + y@, and @foldr (*) 1 xs@ is equivalent to @foldr (\x y -> x*y) 1 xs@.
 % defined at the top level, 
 % but not in the definition of a new variable or constructor.  Thus
 % \bprog
-% @
 % let F.x = 1 in F.x   -- invalid
-% @
 % \eprog
 % incorrectly uses a qualifier in the definition of @x@, regardless of
 % the module containing this definition.  Qualification does not affect

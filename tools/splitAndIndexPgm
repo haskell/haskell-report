@@ -1,7 +1,7 @@
 eval "exec perl -S $0 $*"
      if $running_under_some_random_shell;
 #
-# $Header: /home/cvs/root/haskell-report/tools/splitAndIndexPgm,v 1.1 2001/03/28 14:15:26 simonpj Exp $
+# $Header: /home/cvs/root/haskell-report/tools/splitAndIndexPgm,v 1.2 2001/09/11 13:04:28 simonpj Exp $
 #
 # This script reads a Haskell program and inserts LaTeX/verbatim
 #   magic to indicate where a page break may occur.
@@ -92,7 +92,7 @@ sub printIndexEntries { # also re-sets $indexentries, specialentries
     &grokForIndexEntries();	# in $SaveForIndexing; results in @indexentries, @specialentries
 
     foreach $i (@indexentries) {
-    	if ($i =~ /^[A-Za-z][A-Za-z0-9_]*$/) {
+    	if ($i =~ /^[A-Za-z][A-Za-z0-9'_]*$/) {
     	    $i =~ s/\_/\{\\char'137\}/g;
     	    print "\\indextt\{$i\}%\n" if ($i !~ /^prim[A-Z]/); # no primitives, we're British
 	} elsif ($i =~ /^\((.*)\)$/) {

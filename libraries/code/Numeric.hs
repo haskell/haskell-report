@@ -136,55 +136,71 @@ showFloat      =  showGFloat Nothing
 data FFFormat = FFExponent | FFFixed | FFGeneric
 
 formatRealFloat :: (RealFloat a) => FFFormat -> Maybe Int -> a -> String
-formatRealFloat fmt decs x = s
-  where base = 10
-        s = if isNaN x then 
-                "NaN"
-            else if isInfinite x then 
-                if x < 0 then "-Infinity" else "Infinity"
-            else if x < 0 || isNegativeZero x then 
-                '-' : doFmt fmt (floatToDigits (toInteger base) (-x))
-            else 
-                doFmt fmt (floatToDigits (toInteger base) x)
-        doFmt fmt (is, e) =
-            let ds = map intToDigit is
-            in  case fmt of
-                FFGeneric -> 
-                    doFmt (if e < 0 || e > 7 then FFExponent else FFFixed)
-                          (is, e)
-                FFExponent ->
-                    case decs of
-                    Nothing ->
-                        case ds of
-                         ['0'] -> "0.0e0"
-                         [d]   -> d : ".0e" ++ show (e-1)
-                         d:ds  -> d : '.' : ds ++ 'e':show (e-1)
-                    Just dec ->
-                        let dec' = max dec 1 in
-                        case is of
-                         [0] -> '0':'.':take dec' (repeat '0') ++ "e0"
-                         _ ->
-                          let (ei, is') = roundTo base (dec'+1) is
-                              d:ds = map intToDigit
-                                         (if ei > 0 then init is' else is')
-                          in d:'.':ds  ++ "e" ++ show (e-1+ei)
-                FFFixed ->
-                    case decs of
-		       Nothing | e >= 0    -> take e (ds ++ repeat '0') ++ "." ++ mk0 (drop e ds)
-			       | otherwise -> "0." ++ replicate (-e) '0' ++ ds
-                    Just dec ->
-                        let dec' = max dec 0 in
-                        if e >= 0 then
-                            let (ei, is') = roundTo base (dec' + e) is
-                                (ls, rs) = splitAt (e+ei) (map intToDigit is')
-                            in  (if null ls then "0" else ls) ++ 
-                                (if null rs then "" else '.' : rs)
-                        else
-                            let (ei, is') = roundTo base dec'
-                                              (replicate (-e) 0 ++ is)
-                                d : ds = map intToDigit
-                                            (if ei > 0 then is' else 0:is')
-                            in  d : '.' : ds
+formatRealFloat fmt decs x 
+  = s
+  where 
+    base = 10
+    s = if isNaN x then 
+            "NaN"
+        else if isInfinite x then 
+            if x < 0 then "-Infinity" else "Infinity"
+        else if x < 0 || isNegativeZero x then 
+            '-' : doFmt fmt (floatToDigits (toInteger base) (-x))
+        else 
+            doFmt fmt (floatToDigits (toInteger base) x)
+    
+    mk0 "" = "0"            -- Used to ensure we print 34.0, not 34.
+    mk0 s  = s              -- and 0.34 not .34
+    
+    mkdot0 "" = ""          -- Used to ensure we print 34, not 34.
+    mkdot0 s  = '.' : s
+    
+    doFmt fmt (is, e)
+      = let 
+           ds = map intToDigit is
+        in  
+        case fmt of
+          FFGeneric -> 
+              doFmt (if e < 0 || e > 7 then FFExponent else FFFixed)
+                    (is, e)
+          FFExponent ->
+            case decs of
+              Nothing ->
+                case ds of
+                   []    -> "0.0e0"
+                   [d]   -> d : ".0e" ++ show (e-1)
+                   d:ds  -> d : '.' : ds ++ 'e':show (e-1)
+    	  
+              Just dec ->
+                let dec' = max dec 1 in
+                case is of
+                  [] -> '0':'.':take dec' (repeat '0') ++ "e0"
+                  _ ->
+                    let (ei, is') = roundTo base (dec'+1) is
+                        d:ds = map intToDigit
+                                   (if ei > 0 then init is' else is')
+                    in d:'.':ds  ++ "e" ++ show (e-1+ei)
+    	  
+          FFFixed ->
+            case decs of
+               Nothing 
+                 | e > 0     -> take e (ds ++ repeat '0')
+                                ++ mkdot0 (drop e ds)
+                 | otherwise -> '0' : mkdot0 (replicate (-e) '0' ++ ds)
+              
+               Just dec ->
+                 let dec' = max dec 0 in
+                 if e >= 0 then
+                   let (ei, is') = roundTo base (dec' + e) is
+                       (ls, rs)  = splitAt (e+ei) 
+                                              (map intToDigit is')
+                   in  mk0 ls ++ mkdot0 rs
+                 else
+                   let (ei, is') = roundTo base dec' 
+                                           (replicate (-e) 0 ++ is)
+                       d : ds = map intToDigit 
+                                    (if ei > 0 then is' else 0:is')
+                   in  d : mkdot0 ds
 
 roundTo :: Int -> Int -> [Int] -> (Int, [Int])
 roundTo base d is = case f d is of
@@ -204,20 +220,27 @@ roundTo base d is = case f d is of
 -- The version here uses a much slower logarithm estimator.  
 -- It should be improved.
 
--- This function returns a list of digits (Ints in [0..base-1]) and an
--- exponent.
+-- This function returns a non-empty list of digits (Ints in [0..base-1])
+-- and an exponent.  In general, if
+--      floatToDigits r = ([a, b, ... z], e)
+-- then
+--      r = 0.ab..z * base^e
+-- 
 
 floatToDigits :: (RealFloat a) => Integer -> a -> ([Int], Int)
 
-floatToDigits _ 0 = ([0], 0)
+floatToDigits _ 0 = ([], 0)
 floatToDigits base x =
     let (f0, e0) = decodeFloat x
         (minExp0, _) = floatRange x
         p = floatDigits x
         b = floatRadix x
         minExp = minExp0 - p            -- the real minimum exponent
+
         -- Haskell requires that f be adjusted so denormalized numbers
         -- will have an impossibly low exponent.  Adjust for this.
+	f :: Integer
+	e :: Int
         (f, e) = let n = minExp - e0
                  in  if n > 0 then (f0 `div` (b^n), e0+n) else (f0, e0)
 
@@ -243,7 +266,7 @@ floatToDigits base x =
                         (p - 1 + e0) * 3 `div` 10
                     else
                         ceiling ((log (fromInteger (f+1)) + 
-                                 fromInt e * log (fromInteger b)) / 
+                                 fromIntegral e * log (fromInteger b)) / 
                                   log (fromInteger base))
                 fixup n =
                     if n >= 0 then
@@ -268,7 +291,7 @@ floatToDigits base x =
             else
                 let bk = expt base (-k)
                 in  gen [] (r * bk) s (mUp * bk) (mDn * bk)
-    in  (map toInt (reverse rds), k)
+    in  (map fromIntegral (reverse rds), k)
 
 
 
@@ -278,8 +301,8 @@ floatToDigits base x =
 readFloat     :: (RealFloat a) => ReadS a
 readFloat r    = [(fromRational ((n%1)*10^^(k-d)),t) | (n,d,s) <- readFix r,
                                                        (k,t)   <- readExp s] ++
-		 [ (0/0, t) | ("NaN",t)      <- lex r] ++
-		 [ (1/0, t) | ("Infinity",t) <- lex r]
+                 [ (0/0, t) | ("NaN",t)      <- lex r] ++
+                 [ (1/0, t) | ("Infinity",t) <- lex r]
                  where readFix r = [(read (ds++ds'), length ds', t)
                                         | (ds,d) <- lexDigits r,
                                           (ds',t) <- lexFrac d ]
