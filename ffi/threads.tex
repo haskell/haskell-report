@@ -23,7 +23,7 @@
 \newcommand{\ret}[1]{R~#1}
 
 \newcommand{\bound}[1]{B(#1)}
-
+\newcommand{\forkio}[1]{ForkIO(#1)}
 \begin{document}
 
 
@@ -81,6 +81,7 @@ that just uses other OS threads for foreign calls.
 should never cause other threads to block.
 \end{itemize}
 
+\newpage
 \part{First Proposal}
 \section{Proposed design}
 
@@ -364,6 +365,7 @@ function go?
 
 \end{itemize}
 
+\newpage
 \part{Second Proposal}
 
 This proposal avoids introducing yet another language extension, and it allows
@@ -435,12 +437,13 @@ $$
 \mbox{Haskell thread} &  h & ::= & (a)_{at} \\
 \\
 \mbox{Haskell action} &  a & ::= & p ~@>>@~ a  & \mbox{Sequence} \\
-	& & | & \ret{N}  & \mbox{Return to native thread $N$} \\
+	& & | & \epsilon & \mbox{End of thread}
 \\
 \mbox{Primitive action} &  p & ::= & \tau & \mbox{Internal action} \\
 	& & | & \fcall{si}{f} & \mbox{Foreign call} \\
 	& & | & \bound{a} & \mbox{``@threadbound@'' combinator} \\
 	& & | & \bound{a}_{bt} & \mbox{the same with specified native thread} \\
+	& & | & \forkio{a} & \mbox{@forkIO@: fork a new thread} \\
 \\
 \mbox{Associated thread id} & at & ::= & \epsilon & \mbox{Not associated} \\
 	& & | & N & \mbox{Associated with native thread N} \\
@@ -454,6 +457,12 @@ Note that $\bound{a}_{bt}$, the ``@threadbound@'' combinator with an explicitly
 specified native thread, is only an ``intermediate result'' of the rules below.
 There will be no way to directly specify this action in a Haskell program
 (or if there will be, it will be a separate extension to the FFI).
+
+In the other proposal (and in a previous version of this one), there was a
+$\ret{N}$ action for returning to foreign land after a call-in. This is not
+necessary here, as Haskell threads always return to their associated native
+threads.
+Threads forked using forkIO do not return anywhere, they just terminate.
 
 \subsection{Initial State}
 
@@ -479,13 +488,13 @@ N[\hcall:S]; (\bound{a}~@>>@~b)_{N}
 	& \Rightarrow 
 	& N[\hcall]; (\bound{a}_N~@>>@~b)_{N} & (BIND2) \\
 \\
-N[\hcall:S]; (\bound{}_N~@>>@~b)_N 
+N[\hcall:S]; (\bound{\epsilon}_N~@>>@~b)_N 
 	& \Rightarrow 
-	& N[\hcall:S]; (b)_N & (END1) \\
+	& N[\hcall:S]; (b)_N & (UNBIND1) \\
 \\
-N[\hcall]; (\bound{}_N~@>>@~b)_{\epsilon} 
+N[\hcall]; (\bound{\epsilon}_N~@>>@~b)_{\epsilon} 
 	& \Rightarrow 
-	& ; (b)_{\epsilon} & (END2) \\
+	& ; (b)_{\epsilon} & (UNBIND2) \\
 \\
 N[\hcall:S]; (\bound{\bound{a}~@>>@~b}_{bt}~@>>@~c)_{at} 
 	& \Rightarrow 
@@ -495,23 +504,23 @@ N[\hcall:S]; (\bound{\bound{a}~@>>@~b}_{bt}~@>>@~c)_{at}
 	& \Rightarrow 
 	& ; (a)_{at} & (INT1) \\
 \\
-N[\hcall:S]; (\bound{\tau~@>>@~a}_{bt}~@>>@~b)_{at} 
+; (\bound{\tau~@>>@~a}_{bt}~@>>@~b)_{at} 
 	& \Rightarrow 
-	& N[\hcall:S]; (\bound{a}_{bt}~@>>@~b)_{at} & (INT2) \\
+	& ; (\bound{a}_{bt}~@>>@~b)_{at} & (INT2) \\
 \\
 N[\hcall]; (\fcall{si}{f}~@>>@~a)_{\epsilon} 
 	& \Rightarrow 
 	& N[\fcall{si}{a_\epsilon}:\hcall];  & (FCALL1) \\
 \\
-N[\hcall:S]; (\fcall{si}{f}@>>@~a)_N 
+N[\hcall:S]; (\fcall{si}{f}~@>>@~a)_N 
 	& \Rightarrow 
 	& N[\fcall{si}{a_N}:\hcall:S];  & (FCALL2) \\
 \\
-M[\hcall]; (\fcall{si}{f}@>>@~a)_N
+M[\hcall]; (\fcall{si}{f}~@>>@~a)_N
 	& \Rightarrow 
 	& M[\fcall{si}{a_N}:\hcall];  & (FCALL3) \\
 \\
-N[\hcall:S]; (\bound{\fcall{si}{f}@>>@~a}_N~@>>@~b)_at
+N[\hcall:S]; (\bound{\fcall{si}{f}~@>>@~a}_N~@>>@~b)_at
 	& \Rightarrow 
 	& N[\fcall{si}{(\bound{a}_N~@>>@~b)_{at}}:\hcall:S];  & (FCALL4) \\
 \\
@@ -521,18 +530,30 @@ N[\fcall{si}{a_{at}}:S];
 \\
 N[\bullet];
 	& \Rightarrow 
-	& N[\hcall:\bullet];  (f ~@>>@~ \ret{N})_{N} & (HCALL1) \\
+	& N[\hcall:\bullet];  (f)_{N} & (HCALL1) \\
 	& \multicolumn{2}{l}{\mbox{where $f$ is a foreign export}} \\
 \\
 N[\fcall{si}{a_{at}} : S]; 
 	& \Rightarrow 
-	& N[\hcall : \fcall{si}{a_{at}} : S]; ~ (f ~@>>@~ \ret{N})_{N} & (HCALL2) \\
+	& N[\hcall : \fcall{si}{a_{at}} : S]; ~ (f)_{N} & (HCALL2) \\
 	& \multicolumn{2}{l}{\mbox{where $f$ is a foreign export}} \\
 	& \multicolumn{2}{l}{\mbox{and}~si \in \{s,t\}} \\
 \\
-N[\hcall : S]; \ret{N} 
+N[\hcall : S]; (\epsilon)_N 
 	& \Rightarrow 
 	& N[S]; & (HRET) \\
+\\
+; (\forkio{a}~@>>@~b)_{at}
+	& \Rightarrow
+	& ; (b)_{at}, (a)_\epsilon & (FORK1) \\
+\\
+; (\bound{\forkio{a}~@>>@~b}_{bt}~@>>@~c)_{at}
+	& \Rightarrow
+	& ; (\bound{b}_{bt}~@>>@~c)_{at}, (a)_\epsilon & (FORK2) \\
+\\
+; (\epsilon)_\epsilon
+	& \Rightarrow
+	& (nothing) & (END) \\
 \\
 (nothing)
 	& \Rightarrow 
@@ -556,9 +577,9 @@ becomes bound to the thread $N$ when the @threadbound@ combinator is used (The
 native thread when the @threadbound@ combinator is used.
 
 \item A Haskell thread becomes unbound again when
-the action inside the @threadbound@ combinator is finished (END1). If the
+the action inside the @threadbound@ combinator is finished (UNBIND1). If the
 Haskell thread is not associated with the native thread, the native thread,
-which was spawned by (BIND2), terminates (END2).
+which was spawned by (BIND2), terminates (UNBIND2).
 
 \item (NEST) says that nested invocations of the @threadbound@ combinator are
 legal, but have no effect.
@@ -598,13 +619,26 @@ be modeling the safety levels here at all --- after all, they are independent
 of the issue at hand.}.
 
 \item (HRET) deals with returning from a completed Haskell thread to the
-appropriate calling native thread.  Notice that even an unbound Haskell thread
-must return its result to the right calling native thread, hence the
-``return action'' $\ret{t}$ tacked onto the end of the Haskell thread.
+appropriate calling native thread, which happens to be the associated native
+thread.
+
+\item (FORK1) and (FORK2) say that threads forked using @forkIO@ are not
+associated with any native thread.
+
+\item A thread that is not associated to a native thread (one spawned using
+@forkIO@) just vanishes when it's finished (END).
 
 \item (WKR) and (EXT) allow new native threads to enter the system.
 
 \end{itemize}
+
+From these rules follows an invariant that is very useful from an implementor's
+point of view:
+
+\begin{quote}
+  At any one time, there is at most one Haskell thread
+  associated with, or bound to, any given native thread.
+\end{quote}
 
 \section{Issues}
 
