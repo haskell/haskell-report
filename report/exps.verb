@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/exps.verb,v 1.7 2001/08/31 16:03:08 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/exps.verb,v 1.8 2001/09/10 11:06:23 simonpj Exp $
 %
 %*section 3
 %**<title>The Haskell 98 Report: Expressions</title>
@@ -242,19 +242,23 @@ gconsym ->  @:@ | qconsym
 \indexsyn{qop}%
 \indexsyn{gconsym}%
 
-Alphanumeric operators are formed by enclosing an identifier between
-grave accents (backquotes).  Any variable or constructor may be used as
-an operator in this way.  If "fun" is an identifier (either variable
-or constructor), then an expression of the form "fun x y" is
-equivalent to "x \bkqB{fun}\bkqA y".  If no fixity\index{fixity}
-declaration is given for "\bkqB{fun}\bkqA" then it defaults
+\Haskell{} provides special syntax to support infix notation.
+An \emph{operator} is a function that can be applied using infix 
+syntax (Section~\ref{operators}), or partially applied using a
+\emph{section} (Section~\ref{sections}).
+
+An \emph{operator} is either an \emph{operator symbol}, such as @+@ or @$$@,
+or is an ordinary identifier enclosed in grave accents (backquotes), such
+as \bkqB@op@\bkqA.  For example, instead of writing the prefix application
+@op x y@, one can write the infix application \mbox{@x@ \bkqB@op@\bkqA@ y@}.
+If no fixity\index{fixity}
+declaration is given for \bkqB@op@\bkqA then it defaults
 to highest precedence and left associativity
 (see Section~\ref{fixity}).
 
-Similarly, any symbolic operator may be used as a (curried) variable
-or constructor by enclosing it in parentheses.  If "op" is an infix
-operator, then an expression or pattern of the form \mbox{"x op y"} is
-equivalent to {"@(@op@)@ x y"}.
+Dually, an operator symbol can be converted to an ordinary identifier
+by enclosing it in parentheses.  For example, @(+) x y@ is equivalent
+to @x + y@, and @foldr (*) 1 xs@ is equivalent to @foldr (\x y -> x*y) 1 xs@.
 
 %	This para is covered by Section 2.4 and 5.5.1
 % A qualified name may only be used to refer to a variable or

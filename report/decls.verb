@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/decls.verb,v 1.9 2001/09/10 08:31:58 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/decls.verb,v 1.10 2001/09/10 11:06:23 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Declarations</title>
 %*section 4
@@ -349,7 +349,7 @@ tyvar	-> varid
 \indexsyn{tyvar}%
 
 A {\em class assertion} has form "qtycls tyvar", and
-indicates the membership of the parameterized type "tyvar" in the class
+indicates the membership of the type "tyvar" in the class
 "qtycls".  A class identifier begins with an uppercase
 letter.
 A {\em context} consists of zero or more class assertions,
@@ -395,7 +395,7 @@ Section~\ref{classes&contexts}.  For example, here are some
 valid types:
 \bprog
 @
-  (Eq a) => a -> a
+  Eq a => a -> a
   (Eq a, Show a, Eq b) => [a] -> [b] -> String
   (Eq (f a), Functor f) => (a -> b) -> f a -> f b -> Bool
 @

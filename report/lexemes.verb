@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/lexemes.verb,v 1.5 2001/08/23 16:41:41 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/lexemes.verb,v 1.6 2001/09/10 11:06:23 simonpj Exp $
 %
 %*section 2
 %**<title>Haskell 98 Lexical Structure</title>
@@ -180,10 +180,14 @@ specialop       -> @-@ | @!@
 \indexsyn{specialop}%
 \indexsyn{reservedop}%
 
-
-Operator symbols are formed from one or more symbol characters, as
-defined above, and are lexically distinguished into two classes: those
-that start with a colon (constructors) and those that do not (functions).
+\emph{Operator symbols} \index{operator} 
+are formed from one or more symbol characters, as
+defined above, and are lexically distinguished into two namespaces 
+(Section~\ref{namespaces}):
+\begin{itemize}
+\item operator symbols that start with a colon are constructors
+\item those that do not are ordinary functions
+\end{itemize}
 Notice that a colon by itself, ``@:@'', is reserved solely for use
 as the Haskell list constructor; this makes its treatment uniform with
 other parts of list syntax, such as ``@[]@'' and ``@[a,b]@''.
