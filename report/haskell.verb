@@ -362,7 +362,7 @@ Simon Peyton Jones (editor)
 \begin{center} \emph{Copyright notice.} \end{center}
 
 The authors and publisher intend this Report to belong to the entire Haskell
-community, and grants permission to copy and distribute it for any
+community, and grant permission to copy and distribute it for any
 purpose, provided that it is reproduced in its
 entirety, including this Notice. Modified versions of this Report may
 also be copied and distributed for any 
@@ -411,6 +411,7 @@ that it does not claim to be a definition of the language Haskell 98.
 % ------------------------- Part II: libraries report -----------------------------------
 
 \part{The Haskell 98 Libraries}
+\label{libraries}
 
 \input{ratio}\startnewsection
 \input{complex}\startnewsection

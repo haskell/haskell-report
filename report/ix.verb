@@ -7,7 +7,7 @@
 }
 The @Ix@ class is used to map a contiguous subrange of values in a
 type onto integers.  It is used primarily for array indexing (see
-Section~\ref{arrays}).  
+Chapter~\ref{arrays}).
 The @Ix@ class contains the methods @range@\indextt{range},
 @index@\indextt{index}, and @inRange@\indextt{inRange}. 
 The @index@ operation maps a bounding pair, which defines the lower
@@ -35,8 +35,7 @@ operations:
 \index{Ix@@{\tt Ix}!derived instance}
 
 It is possible to derive an instance of @Ix@ automatically, using
-a @deriving@ clause on a @data@ declaration (Section~4.3.3
-of the Language Report).
+a @deriving@ clause on a @data@ declaration (Section~\ref{derived-decls}).
 Such derived instance declarations for the class @Ix@ are only possible
 for enumerations\index{enumeration} (i.e.~datatypes having
 only nullary constructors) and single-constructor datatypes,

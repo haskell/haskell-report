@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/lexemes.verb,v 1.12 2002/12/02 14:53:30 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/lexemes.verb,v 1.13 2002/12/10 11:51:11 simonpj Exp $
 %
 %*section 2
 %**<title>Haskell 98 Lexical Structure</title>
@@ -32,7 +32,7 @@
 %% \end{quote}
 
 \noindent
-In this section, 
+In this chapter, 
 we describe the low-level lexical structure of \Haskell{}.
 Most of the details may be skipped in a first reading of
 the report.
@@ -135,7 +135,7 @@ sequences ``@{-@'' and ``@-}@'' have no special significance, and, in a
 nested comment, a sequence of dashes has no special significance.
 
 Nested comments are also used for compiler pragmas, as explained in
-Appendix \ref{pragmas}.
+Chapter~\ref{pragmas}.
 
 If some code is commented out using a nested comment, then any
 occurrence of @{-@ or @-}@ within a string or within an end-of-line
@@ -227,7 +227,7 @@ A name may optionally be {\em qualified} in certain
 circumstances by prepending them with a module identifier.  This
 applies to variable, constructor, type constructor and type class
 names, but not type variables or module names.  Qualified
-names are discussed in detail in Section~\ref{modules}.
+names are discussed in detail in Chapter~\ref{modules}.
 @@@
 qvarid   -> [modid @.@] varid
 qconid   -> [modid @.@] conid

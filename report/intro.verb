@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/intro.verb,v 1.6 2002/12/03 11:14:41 ross Exp $
+% $Header: /home/cvs/root/haskell-report/report/intro.verb,v 1.7 2002/12/10 11:51:11 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Introduction</title>
 %*section 1
@@ -69,23 +69,23 @@ In this section, we describe the abstract syntactic and semantic structure of
 rest of the report.
 \begin{enumerate}
 \item At the topmost level a \Haskell{} program is a set
-of {\em modules}, described in Section~\ref{modules}.  Modules provide
+of {\em modules}, described in Chapter~\ref{modules}.  Modules provide
 a way to control namespaces
 and to re-use software in large programs.
 
 \item The top level of a module consists of a collection of
 {\em declarations}, of which there are several kinds, all described
-in Section~\ref{declarations}.  Declarations
+in Chapter~\ref{declarations}.  Declarations
 define things such as ordinary values, datatypes, type
 classes, and fixity information.
 
 \item At the next lower level are {\em expressions}, described
-in Section~\ref{expressions}.  An expression denotes a {\em value}
+in Chapter~\ref{expressions}.  An expression denotes a {\em value}
 and has a {\em static type}; expressions are at the heart of
 \Haskell{} programming ``in the small.''
 
 \item At the bottom level is \Haskell{}'s {\em
-lexical structure}, defined in Section~\ref{lexical-structure}.  The
+lexical structure}, defined in Chapter~\ref{lexical-structure}.  The
 lexical structure captures the concrete
 representation of \Haskell{} programs in text files.
 
@@ -93,12 +93,12 @@ representation of \Haskell{} programs in text files.
 This report proceeds bottom-up with respect
 to \Haskell{}'s syntactic structure.
 
-The sections not mentioned above are
-Section~\ref{basic-types-and-classes}, which
+The chapters not mentioned above are
+Chapter~\ref{basic-types-and-classes}, which
 describes the standard built-in datatypes and classes in \Haskell{}, and
-Section~\ref{io}, which discusses the I/O facility in \Haskell{}
+Chapter~\ref{io}, which discusses the I/O facility in \Haskell{}
 (i.e.~how \Haskell{} programs communicate with the outside world).
-Also, there are several appendices describing the Prelude,
+Also, there are several chapters describing the Prelude,
 the concrete syntax, literate programming, the specification of derived
 instances, and pragmas supported by most \Haskell{} compilers.
 

@@ -10,7 +10,7 @@ J.~Backus.
 \newblock {\em CACM}, 21(8):613--641, August 1978.
 
 \bibitem{curry&feys:book}
-H.B. Curry and R.~Feys.
+H.B.~Curry and R.~Feys.
 \newblock {\em Combinatory Logic}.
 \newblock North-Holland Pub. Co., Amsterdam, 1958.
 
@@ -21,7 +21,7 @@ L.~Damas and R.~Milner.
   Programming Languages}, pages 207--212, Albuquerque, N.M., January 1982.
 
 \bibitem{faxen:static}
-K-F. Fax\'en
+K-F.~Fax\'en
 \newblock A static semantics for Haskell
 \newblock {\em Journal of Functional Programming}, 2002.
 
@@ -37,13 +37,13 @@ P.~Hudak, J.~Fasel, and J.~Peterson.
 \newblock Technical Report YALEU/DCS/RR-901, Yale University, May 1996.
 
 \bibitem{jones:cclasses}
-Mark~P. Jones.
+Mark~P.~Jones.
 \newblock A system of constructor classes: overloading and implicit
   higher-order polymorphism.
 \newblock {\em Journal of Functional Programming}, 5(1), January 1995.
 
 \bibitem{jones:thih}
-Mark~P. Jones.
+Mark~P.~Jones.
 \newblock Typing Haskell in Haskell.
 \newblock {\em Haskell Workshop}, Paris, October 1999.
 
@@ -54,7 +54,7 @@ P.~Penfield, Jr.
   Francisco, September 1981.
 
 \bibitem{peyton-jones:book}
-S.L. Peyton~Jones.
+S.L.~Peyton~Jones.
 \newblock {\em The Implementation of Functional Programming Languages}.
 \newblock Prentice-Hall International, Englewood Cliffs, New Jersey, 1987.
 

@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/derived.verb,v 1.11 2002/12/03 10:27:22 ross Exp $
+% $Header: /home/cvs/root/haskell-report/report/derived.verb,v 1.12 2002/12/10 11:51:10 simonpj Exp $
 %
 % The paragraph describing the formats of standard representations might
 % be deleted, since the info is already in the Prelude.  
@@ -19,7 +19,7 @@ automatically in conjunction with a @data@ or @newtype@ declaration.
 The body of a derived instance declaration is derived syntactically from
 the definition of the associated type.  Derived instances are
 possible only for classes known to the compiler: those defined in
-either the Prelude or a standard library.  In this appendix, we
+either the Prelude or a standard library.  In this chapter, we
 describe the derivation of classes defined by the Prelude.
 
 If "T" is an algebraic datatype declared by:\index{algebraic datatype}
@@ -126,7 +126,7 @@ instances for each of the derivable Prelude classes are now given.
 Free variables and constructors used in these translations
 always refer to entities defined by the @Prelude@.
 
-\subsection{Derived instances of @Eq@ and @Ord@.}
+\subsection{Derived instances of @Eq@ and @Ord@}
 \indexdi{Eq}
 \indexdi{Ord}
 The class methods automatically introduced by derived instances
@@ -159,7 +159,7 @@ These examples illustrate this property:
 @
 \eprog
 All derived operations of class @Eq@ and @Ord@ are strict in both arguments.
-For example, "@False <=@ \bot" is "\bot", even though @False@ is the first constructor
+For example, "@False < @\bot" is "\bot", even though @False@ is the first constructor
 of the @Bool@ type.
 
 \subsection{Derived instances of @Enum@}
@@ -210,7 +210,7 @@ we would have:
 @
 \eprog
 
-\subsection{Derived instances of @Bounded@.}
+\subsection{Derived instances of @Bounded@}
 \indexdi{Bounded}
 The @Bounded@ class introduces the class
 methods 
@@ -235,7 +235,7 @@ would generate the following @Bounded@ instance:
 @
 \eprog
 
-\subsection{Derived instances of @Read@ and @Show@.}
+\subsection{Derived instances of @Read@ and @Show@}
 \label{derived-text}
 \indexdi{Read}
 \indexdi{Show}
@@ -316,7 +316,7 @@ using non-standard denotations.  This is especially useful for strings
 @readsPrec@ will parse any valid representation of the standard types 
 apart from strings, for which only quoted strings are accepted, and other lists,
 for which only the bracketed form @[@\ldots@]@ is accepted. See
-Appendix~\ref{stdprelude} for full details.
+Chapter~\ref{stdprelude} for full details.
 
 The result of @show@ is a syntactically correct \Haskell{} expression
 containing only constants, given the fixity declarations in force at

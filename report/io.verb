@@ -199,7 +199,7 @@ implementation-dependent, but they should normally be the same if they
 have the same absolute path name and neither has been renamed, for
 example.
 
-{\em Warning}: the @readFile@ operation (Section 7.1 of the Haskell Language Report)
+{\em Warning}: the @readFile@ operation (Section~\ref{standard-io-functions})
 holds a semi-closed handle on the file until the entire contents of the file have been
 consumed.  It follows that an attempt to write to a file (using @writeFile@, for example)
 that was earlier opened by @readFile@ will usually result in 
@@ -480,8 +480,8 @@ within "t" milliseconds.
 Computation @hReady@~"hdl"\indextt{hReady} indicates whether at least one item is
 available for input from handle "hdl".
 
-{\em Error reporting}.
-The @hWaitForInput@ and @hReady@ computations fail with
+{\em Error reporting}:
+the @hWaitForInput@ and @hReady@ computations fail with
 @isEOFError@ if the end of file has been reached.
 
 \subsubsection{Reading Input}
@@ -493,10 +493,10 @@ Computation @hGetLine@~"hdl"\indextt{hGetLine} reads a line from the file or
 channel managed by "hdl". The Prelude's @getLine@ is a shorthand
 for @hGetLine stdin@.
 
-{\em Error reporting}.
-The @hGetChar@ computation fails with
+{\em Error reporting}:
+the @hGetChar@ computation fails with
 @isEOFError@ if the end of file has been reached.
-The @hGetLine@ fails with @isEOFError@ if the end of file is encountered
+The @hGetLine@ computation fails with @isEOFError@ if the end of file is encountered
 when reading the {\em first} character of the line. If @hGetLine@ encounters
 end-of-file at any other point while reading in a line, it is treated as
 a line terminator and the (partial) line is returned.

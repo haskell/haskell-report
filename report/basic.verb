@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/basic.verb,v 1.15 2002/12/03 10:27:21 ross Exp $
+% $Header: /home/cvs/root/haskell-report/report/basic.verb,v 1.16 2002/12/10 11:51:05 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Predefined Types and Classes</title>
 %*section 6
@@ -8,13 +8,12 @@
 \label{basic-types-and-classes}
 The \Haskell{} Prelude contains predefined classes, types,
 and functions that are implicitly imported into every Haskell
-program.  In this section, we describe the types and classes found in
+program.  In this chapter, we describe the types and classes found in
 the Prelude.
 Most functions are not described in detail here as they
-can easily be understood from their definitions as given in Appendix
-\ref{stdprelude}.
+can easily be understood from their definitions as given in Chapter~\ref{stdprelude}.
 Other predefined types such as arrays, complex numbers, and rationals
-are defined in the \Haskell{} Library Report.
+are defined in Part~\ref{libraries}.
 
 \subsection{Standard Haskell Types}
 \label{basic-types}
@@ -99,7 +98,7 @@ The first constructor is the null list, written `@[]@' (``nil''),
 \index{[]@@{\tt  []} (nil)}%
 and the second is `@:@' (``cons'').
 \indextt{:}
-The module @PreludeList@ (see Appendix~\ref{preludelist}) 
+The module @PreludeList@ (see Section~\ref{preludelist})
 defines many standard list functions.  
 Arithmetic sequences
 \index{arithmetic sequence}
@@ -170,14 +169,14 @@ functional values.  The following simple functions are found in the Prelude:
 The @IO@ type serves as a tag for operations (actions) that interact
 with the outside world.  The @IO@ type is abstract: no constructors are
 visible to the user.  @IO@ is an instance of the @Monad@ and @Functor@
-classes.  Section \ref{io} describes I/O operations.
+classes.  Chapter~\ref{io} describes I/O operations.
 
 @IOError@ is an abstract type representing errors raised by I/O
 operations.  It is an instance of @Show@ and @Eq@.  Values of this type
 are constructed by the various I/O functions and are not presented in
 any further detail in this report.  The Prelude contains a few
-I/O functions (defined in Section~\ref{preludeio}), and the Library
-Report contains many more.
+I/O functions (defined in Section~\ref{preludeio}), and Part~\ref{libraries}
+contains many more.
 \indextycon{IO}
 \indextycon{IOError}
 
@@ -278,7 +277,7 @@ are instances of these classes.
 
 Default class method declarations (Section~\ref{classes}) are provided
 for many of the methods in standard classes.  A comment with each
-@class@ declaration in Appendix~\ref{stdprelude} specifies the
+@class@ declaration in Chapter~\ref{stdprelude} specifies the
 smallest collection of method definitions that, together with the
 default declarations, provide a reasonable definition for all the
 class methods.  If there is no such comment, then all class methods
@@ -389,7 +388,7 @@ class  Show a  where
 The @Read@ and @Show@ classes are used to convert values to
 or from strings. 
 The @Int@ argument to @showsPrec@ and @readsPrec@ gives the operator
-precedence of the enclosing context (see Appendix~\ref{derived-text}).
+precedence of the enclosing context (see Section~\ref{derived-text}).
 
 @showsPrec@ and @showList@ return a @String@-to-@String@
 function, to allow constant-time concatenation of its results using function
@@ -477,7 +476,7 @@ The @enumFrom@... methods are used when translating arithmetic
 sequences (Section~\ref{arithmetic-sequences}).
 
 Instances of @Enum@ may be derived for any enumeration type (types
-whose constructors have no fields); see Appendix~\ref{derived-appendix}.
+whose constructors have no fields); see Chapter~\ref{derived-appendix}.
 
 For any type that is an instance of class @Bounded@ as well as @Enum@, the following
 should hold:
@@ -505,10 +504,10 @@ an implicit bound, thus:
 The following @Prelude@ types are instances of @Enum@: 
 \begin{itemize}
 \item Enumeration types: @()@, @Bool@, and @Ordering@. The
-semantics of these instances is given by Appendix~\ref{derived-appendix}.
+semantics of these instances is given by Chapter~\ref{derived-appendix}.
 For example, @[LT..]@ is the list @[LT,EQ,GT]@.
 
-\item @Char@: the instance is given in Appendix~\ref{stdprelude}, based 
+\item @Char@: the instance is given in Chapter~\ref{stdprelude}, based
 on the primitive functions that convert between a @Char@ and an @Int@.
 For example, @enumFromTo 'a' 'z'@ denotes
 the list of lowercase letters in alphabetical order.
@@ -595,7 +594,7 @@ class  Monad m  where
 @
 \eprog
 The @Monad@ class defines the basic operations over a {\em monad}.
-See Section \ref{io} for more information about monads.
+See Chapter~\ref{io} for more information about monads.
 
 ``@do@'' expressions provide a convenient syntax for writing
 monadic expressions (see Section~\ref{do-expressions}).

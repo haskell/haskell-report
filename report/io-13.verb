@@ -41,6 +41,7 @@ corresponding to sequencing operators (such as the semicolon) in imperative
 languages.
 
 \subsection{Standard I/O Functions}
+\label{standard-io-functions}
 Although \Haskell{} provides fairly sophisticated I/O facilities, as
 defined in the @IO@ library, it is possible to write many
 \Haskell{} programs using only the few simple functions that are
@@ -286,7 +287,7 @@ The @fail@ method of the @IO@ instance of the @Monad@ class (Section~\ref{monad-
 \eprog
 \indextt{fail}%
 The exceptions raised by the I/O functions in the Prelude are defined
-in the Library Report.
+in Chapter~\ref{IO}.
 
 %**~footer
 

@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/modules.verb,v 1.18 2002/12/02 14:53:30 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/modules.verb,v 1.19 2002/12/10 11:51:11 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Modules</title>
 %*section 5
@@ -9,7 +9,7 @@
 \index{module}
 
 A module defines a collection of values, datatypes, type synonyms,
-classes, etc.~(see Section~\ref{declarations}), in an environment created
+classes, etc.~(see Chapter~\ref{declarations}), in an environment created
 by a set of {\em imports} (resources brought into scope from other modules).
 It {\em exports} some of these resources, making them available to
 other modules.  
@@ -22,7 +22,7 @@ which, by convention, must be called @Main@\indexmodule{Main} and must
 export the value @main@\indextt{main}.  The {\em value} of the program
 is the value of the identifier @main@ in module @Main@,
 which must be a computation of type $@IO@~\tau$ for some type $\tau$
-(see Section~\ref{io}).  When the program is executed, the computation
+(see Chapter~\ref{io}).  When the program is executed, the computation
 @main@ is performed, and its result (of type $\tau$) is discarded.
 
 Modules may reference other modules via explicit
@@ -75,14 +75,14 @@ beginning with a capital letter; i.e.~"modid").
 There is one distinguished module, @Prelude@, which is imported into
 all modules by default (see Section~\ref{standard-prelude}), plus a
 set of standard library modules that may be imported as required
-(see the \Haskell{} Library Report).
+(see Part~\ref{libraries}).
 
 \subsection{Module Structure} 
 \label{module-implementations}
 
 A module defines a mutually
 recursive scope containing declarations for value bindings, data
-types, type synonyms, classes, etc. (see Section~\ref{declarations}).
+types, type synonyms, classes, etc. (see Chapter~\ref{declarations}).
 
 @@@
 module -> @module@ modid [exports] @where@ body
@@ -108,7 +108,7 @@ begins with a header: the keyword
 parentheses) to be exported.  The header is followed by a possibly-empty
 list of @import@ declarations ("impdecls", Section~\ref{import}) that specify modules to be imported,
 optionally restricting the imported bindings.  
-This is followed by a possibly-empty list of top-level declarations ("topdecls", Section~\ref{declarations}).  
+This is followed by a possibly-empty list of top-level declarations ("topdecls", Chapter~\ref{declarations}).
 
 An abbreviated form of module, consisting only 
 of\index{abbreviated module}
@@ -658,7 +658,7 @@ many predefined library modules, which provide less frequently used
 functions and types.  For example, arrays, 
 tables, and most of the input/output are all part of the standard
 libraries.    These are 
-defined in the Haskell Library Report.
+defined in Part~\ref{libraries}
 Separating
 libraries from the Prelude has the advantage of reducing the size and
 complexity of the Prelude, allowing it to be more easily assimilated,
@@ -683,16 +683,16 @@ just like those from any other module.
 
 The semantics of the entities in @Prelude@ is specified by a reference
 implementation of @Prelude@ written in \Haskell{}, given in
-Appendix~\ref{stdprelude}.  Some datatypes (such as @Int@) and
+Chapter~\ref{stdprelude}.  Some datatypes (such as @Int@) and
 functions (such as @Int@ addition) cannot be specified directly in
 \Haskell{}.  Since the treatment of such entities depends on the
-implementation, they are not formally defined in the appendix.
+implementation, they are not formally defined in Chapter~\ref{stdprelude}.
 The implementation of
 @Prelude@ is also incomplete in its treatment of tuples: there should
 be an infinite family of tuples and their instance declarations, but the
 implementation only gives a scheme.
 
-Appendix~\ref{stdprelude} defines the module @Prelude@ using
+Chapter~\ref{stdprelude} defines the module @Prelude@ using
 several other modules: @PreludeList@, @PreludeIO@, and so on.
 These modules are {\em not} part of Haskell 98, and they cannot be imported
 separately.  They are simply 

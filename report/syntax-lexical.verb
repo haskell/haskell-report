@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/syntax-lexical.verb,v 1.8 2002/12/02 11:22:02 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/syntax-lexical.verb,v 1.9 2002/12/10 11:51:11 simonpj Exp $
 % 
 
 @@@
@@ -28,7 +28,7 @@ opencom		-> @{-@
 closecom	-> @-}@
 ncomment	-> opencom ANYseq \{ncomment ANYseq\} closecom
 ANYseq		-> \{ANY\}_{\langle{}\{ANY\} ( opencom | closecom ) \{ANY\}\rangle{}}
-ANY		-> grahic | whitechar
+ANY		-> graphic | whitechar
 any		-> graphic | space | tab
 graphic		-> small | large | symbol | digit | special | @:@ | @"@ | @'@
 

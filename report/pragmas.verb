@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/pragmas.verb,v 1.5 2002/12/03 01:17:14 ross Exp $
+% $Header: /home/cvs/root/haskell-report/report/pragmas.verb,v 1.6 2002/12/10 11:51:11 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Compiler Pragmas</title>
 %**~header
@@ -11,7 +11,7 @@ Some compiler implementations support compiler {\em pragmas}, which are
 used to give additional instructions or hints to the compiler, but which
 do not form part of the \Haskell{} language proper and do not change a
 program's semantics.  This
-section summarizes this existing practice.  An implementation is not
+chapter summarizes this existing practice.  An implementation is not
 required to respect any pragma, but the pragma should be ignored if an
 implementation is not prepared to handle it.  
 Lexically, pragmas appear as comments, except that the enclosing

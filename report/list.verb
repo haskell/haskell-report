@@ -33,7 +33,7 @@ or Nothing, if there is no such element.
 There are a number of ``set'' operations defined over the @List@ type.
 @nub@ (meaning ``essence'') removes duplicates elements from a list.
 @delete@, @(\\)@, @union@ and @intersect@ (and their @By@ variants) 
-preserve the invariant their result
+preserve the invariant that their result
 does not contain duplicates, provided that their first argument
 contains no duplicates.
 

@@ -304,7 +304,7 @@
 \indexentry{abstract datatype}{44}
 \indexentry{field label}{44}
 \indexentry{strictness flag}{45}
-\indexentry{!@{\tt  !}}{45}
+\indexentry{"!@{\tt  {\char'041}}}{45}
 \indexentry{type synonym}{45}
 \indexentry{topdecl@{\em topdecl} (\mbox{\tt type})}{45}
 \indexentry{simpletype@{\it  simpletype}}{45}
@@ -395,7 +395,7 @@
 \indexentry{>=@{\tt  >=}}{55}
 \indexentry{elem@{\tt  elem}}{55}
 \indexentry{notElem@{\tt  notElem}}{55}
-\indexentry{&&@{\tt  \&\&}@{\tt  &&@{\tt  \&\&}}}{55}
+\indexentry{&&@{\tt  \&\&}}{55}
 \indexentry{"|"|@{\tt  {\char'174}{\char'174}}}{55}
 \indexentry{>>@{\tt  >>}}{55}
 \indexentry{>>=@{\tt  >>=}}{55}
@@ -505,7 +505,7 @@
 \indexentry{Ordering@{\tt  Ordering} (datatype)}{81}
 \indexentry{maybe@{\tt  maybe}}{81}
 \indexentry{either@{\tt  either}}{81}
-\indexentry{$!@{\tt  $!}}{81}
+\indexentry{$"!@{\tt  {\char'044}{\char'041}}}{81}
 \indexentry{seq@{\tt  seq}}{81}
 \indexentry{strictness flags}{82}
 \indexentry{Eq@{\tt  Eq} (class)}{82}
@@ -1172,13 +1172,13 @@
 \indexentry{algebraic datatype}{141}
 \indexentry{Eq@{\tt  Eq} (class)!derived instance}{142}
 \indexentry{Ord@{\tt  Ord} (class)!derived instance}{142}
-\indexentry{==@{\tt ==}}{142}
-\indexentry{/=@{\tt /=}}{142}
+\indexentry{==@{\tt  ==}}{142}
+\indexentry{/=@{\tt  /=}}{142}
 \indexentry{compare@{\tt  compare}}{142}
-\indexentry{<@{\tt <}}{142}
-\indexentry{<=@{\tt <=}}{142}
-\indexentry{>@{\tt >}}{142}
-\indexentry{>=@{\tt >=}}{142}
+\indexentry{<@{\tt  <}}{142}
+\indexentry{<=@{\tt  <=}}{142}
+\indexentry{>@{\tt  >}}{142}
+\indexentry{>=@{\tt  >=}}{142}
 \indexentry{max@{\tt  max}}{142}
 \indexentry{min@{\tt  min}}{142}
 \indexentry{Enum@{\tt  Enum} (class)!derived instance}{142}
@@ -1204,7 +1204,7 @@
 \indexentry{Rational@{\tt  Rational} (type synonym)}{151}
 \indexentry{Ratio@{\tt  Ratio} (datatype)}{151}
 \indexentry{Rational@{\tt  Rational} (type synonym)}{151}
-\indexentry{%@{\tt {\char'045}}}{151}
+\indexentry{%@{\tt  {\char'045}}}{151}
 \indexentry{numerator@{\tt  numerator}}{151}
 \indexentry{denominator@{\tt  denominator}}{151}
 \indexentry{Ratio@{\tt  Ratio} (module)}{153}
@@ -1351,7 +1351,7 @@
 \indexentry{ixmap@{\tt  ixmap}}{173}
 \indexentry{Array@{\tt  Array} (datatype)}{174}
 \indexentry{array@{\tt  array}}{174}
-\indexentry{!@{\tt {\char'041}}}{174}
+\indexentry{"!@{\tt  {\char'041}}}{174}
 \indexentry{bounds@{\tt  bounds}}{174}
 \indexentry{indices@{\tt  indices}}{174}
 \indexentry{elems@{\tt  elems}}{174}
@@ -1444,7 +1444,7 @@
 \indexentry{find@{\tt  find}}{182}
 \indexentry{nub@{\tt  nub}}{182}
 \indexentry{delete@{\tt  delete}}{182}
-\indexentry{(\\)@{\tt  (\\)}}{182}
+\indexentry{\\\\@{\tt  {\char'134}{\char'134}}}{182}
 \indexentry{union@{\tt  union}}{182}
 \indexentry{intersect@{\tt  intersect}}{182}
 \indexentry{intersperse@{\tt  intersperse}}{183}
@@ -1890,11 +1890,11 @@
 \indexentry{ClockTime@{\tt  ClockTime} (datatype)}{234}
 \indexentry{Month@{\tt  Month} (datatype)}{234}
 \indexentry{Day@{\tt  Day} (datatype)}{234}
-\indexentry{ctDay@{\tt  ctDay}}{234}
-\indexentry{ctHour@{\tt  ctHour}}{234}
-\indexentry{ctMin@{\tt  ctMin}}{234}
-\indexentry{ctIsDST@{\tt  ctIsDST}}{234}
-\indexentry{CalendarTime@{\tt  CalendarTime} (datatype)}{234}
+\indexentry{ctDay@{\tt  ctDay}}{235}
+\indexentry{ctHour@{\tt  ctHour}}{235}
+\indexentry{ctMin@{\tt  ctMin}}{235}
+\indexentry{ctIsDST@{\tt  ctIsDST}}{235}
+\indexentry{CalendarTime@{\tt  CalendarTime} (datatype)}{235}
 \indexentry{tdYear@{\tt  tdYear}}{235}
 \indexentry{tdMonth@{\tt  tdMonth}}{235}
 \indexentry{tdDay@{\tt  tdDay}}{235}
@@ -2018,8 +2018,8 @@
 \indexentry{type renaming|see{{\tt newtype} declaration}}{249}
 \indexentry{type signature!for an expression|see{expression type-signature}}{249}
 \indexentry{(aaa)@{\tt ()}|see{trivial type and unit expression}}{249}
-\indexentry{-@{\tt -}|hseealso{negation}}{249}
-\indexentry{+@{\tt +}|hseealso{\mbox{$\it n\makebox{\tt +}k$} pattern}}{249}
+\indexentry{-@{\tt  -}|hseealso{negation}}{249}
+\indexentry{+@{\tt  +}|hseealso{\mbox{$\it n\makebox{\tt +}k$} pattern}}{249}
 \indexentry{\\@{\tt {\char'134}}|see{lambda abstraction}}{249}
 \indexentry{~@{\tt {\char'176}}|see{irrefutable pattern}}{249}
 \indexentry{derived instance|hseealso{instance declaration}}{249}

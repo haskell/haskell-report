@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/decls.verb,v 1.17 2002/12/03 10:27:21 ross Exp $
+% $Header: /home/cvs/root/haskell-report/report/decls.verb,v 1.18 2002/12/10 11:51:10 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Declarations</title>
 %*section 4
@@ -9,7 +9,7 @@
 \index{binding}
 \label{declarations}
 
-In this section, we describe the syntax and informal semantics of \Haskell{}
+In this chapter, we describe the syntax and informal semantics of \Haskell{}
 {\em declarations}.
 % including their translations into
 % the \Haskell{} kernel where appropriate.
@@ -66,7 +66,7 @@ fixity	-> @infixl@ | @infixr@ | @infix@
 
 The declarations in the syntactic category "topdecls" are only allowed
 at the top level of a \Haskell{} module (see
-Section~\ref{modules}), whereas "decls" may be used either at the top level or
+Chapter~\ref{modules}), whereas "decls" may be used either at the top level or
 in nested scopes (i.e.~those within a @let@ or @where@ construct).
 
 For exposition, we divide the declarations into
@@ -295,7 +295,7 @@ These special syntactic forms always denote the built-in type constructors
 for functions, tuples, and lists, regardless of what is in scope.
 In a similar way, the prefix type constructors @(->)@, @[]@, @()@, @(,)@, 
 and so on, always denote the built-in type constructors; they 
-cannot be qualified, nor mentioned in import or export lists (Section~\ref{modules}).
+cannot be qualified, nor mentioned in import or export lists (Chapter~\ref{modules}).
 (Hence the special production, ``gtycon'', above.)
 
 Although the list and tuple types have special syntax, their semantics 
@@ -377,7 +377,7 @@ case the concrete syntax contains no @=>@.
 \subsubsection{Semantics of Types and Classes}
 \label{type-semantics}
 
-In this subsection, we provide informal details of the type system.
+In this section, we provide informal details of the type system.
 % the formal semantics is described in Appendix~\ref{static-semantics}
 (Wadler and Blott \cite{wadler:classes} and Jones
 \cite{jones:cclasses} discuss type
@@ -1090,7 +1090,7 @@ valid only if @[a]@ is an instance of @Foo@ under the assumptions
 instance of @Foo@ under the stronger assumption @Num a@.
 
 Further examples of 
-@instance@ declarations may be found in Appendix~\ref{stdprelude}.
+@instance@ declarations may be found in Chapter~\ref{stdprelude}.
 
 \subsubsection{Derived Instances}
 \index{derived instance}
@@ -1125,7 +1125,7 @@ and @Read@\indexdi{Read},
 all mentioned in Figure~\ref{standard-classes}, page~\pageref{standard-classes}.
 The
 precise details of how the derived instances are generated for each of
-these classes are provided in Appendix~\ref{derived-appendix}, including
+these classes are provided in Chapter~\ref{derived-appendix}, including
 a specification of when such derived instances are possible. 
 %(which is important for the following discussion).
 Classes defined by the standard libraries may also be derivable.
@@ -1172,7 +1172,7 @@ A problem inherent with \Haskell{}-style overloading is the
 possibility of an {\em ambiguous type}.
 \index{ambiguous type}
 For example, using the
-@read@ and @show@ functions defined in Appendix~\ref{derived-appendix},
+@read@ and @show@ functions defined in Chapter~\ref{derived-appendix},
 and supposing that just @Int@ and @Bool@ are members of @Read@ and
 @Show@, then the expression
 \bprog
@@ -1215,7 +1215,7 @@ which disambiguates the type.
 Occasionally, an otherwise ambiguous expression needs to be made
 the same type as some variable, rather than being given a fixed
 type with an expression type-signature.  This is the purpose
-of the function @asTypeOf@ (Appendix~\ref{stdprelude}):
+of the function @asTypeOf@ (Chapter~\ref{stdprelude}):
 "x" @`asTypeOf`@ "y" has the value of "x", but "x" and "y" are
 forced to have the same type.  For example,
 \bprog

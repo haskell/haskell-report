@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/exps.verb,v 1.18 2002/12/03 01:17:14 ross Exp $
+% $Header: /home/cvs/root/haskell-report/report/exps.verb,v 1.19 2002/12/10 11:51:10 simonpj Exp $
 %
 %*section 3
 %**<title>The Haskell 98 Report: Expressions</title>
@@ -7,7 +7,7 @@
 \section{Expressions}\index{expression}
 \label{expressions}
 
-In this section, we describe the syntax and informal semantics of
+In this chapter, we describe the syntax and informal semantics of
 \Haskell{} {\em expressions}, including their translations into the
 \Haskell{} kernel, where appropriate.  Except in the case of @let@
 expressions, these translations preserve both the static and dynamic
@@ -440,7 +440,7 @@ but @(+a+b)@ is not; the latter may legally be written as @(+(a+b))@.
 As another example, the expression
 \bprog
 @
-  (let x = 10 in x +)
+  (let n = 10 in n +)
 @
 \eprog
 is invalid because, by the let/lambda meta-rule (Section~\ref{expressions}),
@@ -544,7 +544,7 @@ gconsym -> @:@
 "k>=1".  The list constructor is @:@, and the empty list is denoted @[]@.
 Standard operations on
 lists are given in the Prelude (see Section~\ref{basic-lists}, and
-Appendix~\ref{stdprelude} notably Section~\ref{preludelist}).
+Chapter~\ref{stdprelude} notably Section~\ref{preludelist}).
 
 \outline{
 \paragraph*{Translation:}  
@@ -580,7 +580,7 @@ of arbitrary length "k>=2".  The constructor for an "n"-tuple is denoted by
 @(,@\ldots@,)@, where there are "n-1" commas.  Thus @(a,b,c)@ and
 @(,,) a b c@ denote the same value.
 Standard operations on tuples are given
-in the Prelude (see Section~\ref{basic-tuples} and Appendix~\ref{stdprelude}).
+in the Prelude (see Section~\ref{basic-tuples} and Chapter~\ref{stdprelude}).
 
 \outline{
 \paragraph*{Translation:}  
@@ -762,7 +762,7 @@ nested, lexically-scoped,
 mutually-recursive list of declarations (@let@ is often called @letrec@ in
 other languages).  The scope of the declarations is the expression "e"
 and the right hand side of the declarations.  Declarations are
-described in Section~\ref{declarations}.  Pattern bindings are matched
+described in Chapter~\ref{declarations}.  Pattern bindings are matched
 lazily; an implicit @~@ makes these patterns
 irrefutable.\index{irrefutable pattern}
 For example, 
@@ -1593,14 +1593,14 @@ $e'$ @ }@ \\
 &{\rm where $K$ and $K'$ are distinct @data@ constructors of arity $n$ and $m$, respectively}\\[4pt]
 %\\
 (q)&@case (@$K$@ @$e_1$@ @$\ldots$@ @$e_n$@) of { @$K$@ @$x_1$@ @$\ldots$@ @$x_n$@ -> @$e$@; _ -> @$e'$@ }@\\
-&$=~(@\@x_1 \ldots x_n@ -> @e)~e_1 ~\ldots~ e_n$\\
+&$=$@ (\@$x_1~\ldots~x_n$@ -> @$e$@) @$e_1~\ldots~e_n$\\
 &{\rm where $K$ is a @data@ constructor of arity $n$}\\[4pt]
 
 (r)&@case@~$\bot$~@of { @$K$@ @$x_1$@ @$\ldots$@ @$x_n$@ -> @$e$@; _ -> @$e'$@ }@ ~$=$~ $\bot$ \\
 &{\rm where $K$ is a @data@ constructor of arity $n$}\\[4pt]
 
 (s)&@case @$v$@ of { @$x$@+@$k$@ -> @$e$@; _ -> @$e'$@ }@\\
-&$=$@ if @$v$@ >= @$k$@ then @(@\@$x$@ -> @$e$)~($v$@-@$k$)@ else @$e'$\\
+&$=$@ if @$v$@ >= @$k$@ then (\@$x$@ -> @$e$@) (@$v$@-@$k$@) else @$e'$\\
 &{\rm where $k$ is a numeric literal}\\
 \end{tabular}
 }
