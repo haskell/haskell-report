@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/exps.verb,v 1.10 2001/09/24 14:40:47 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/exps.verb,v 1.11 2001/09/24 16:29:41 simonpj Exp $
 %
 %*section 3
 %**<title>The Haskell 98 Report: Expressions</title>
@@ -510,6 +510,7 @@ type of the overall expression is @[@"t"@]@ (see Section~\ref{type-syntax}).
 }
 The constructor ``@:@'' is reserved solely for list construction; like
 @[]@, it is considered part of the language syntax, and cannot be hidden or redefined.
+It is a right-associative operator, with precedence level 5 (Section~\ref{fixity}).
 
 \subsection{Tuples}
 \label{tuples}
