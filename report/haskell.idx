@@ -1,0 +1,2041 @@
+\indexentry{functional language}{vii}
+\indexentry{Haskell@\Haskell{}}{vii}
+\indexentry{Curry, Haskell B.}{vii}
+\indexentry{Haskell@\Haskell{}}{3}
+\indexentry{formal semantics}{3}
+\indexentry{program structure}{3}
+\indexentry{Haskell kernel@\Haskell{} kernel}{4}
+\indexentry{value}{4}
+\indexentry{type}{4}
+\indexentry{error}{4}
+\indexentry{expression}{4}
+\indexentry{polymorphism}{4}
+\indexentry{Hindley-Milner type system}{4}
+\indexentry{type class}{4}
+\indexentry{namespaces}{5}
+\indexentry{lexical structure}{7}
+\indexentry{Unicode character set}{7}
+\indexentry{ASCII character set}{7}
+\indexentry{program@{\it  program}}{9}
+\indexentry{lexeme@{\it  lexeme}}{9}
+\indexentry{literal@{\it  literal}}{9}
+\indexentry{special@{\it  special}}{9}
+\indexentry{whitespace@{\it  whitespace}}{9}
+\indexentry{whitestuff@{\it  whitestuff}}{9}
+\indexentry{whitechar@{\it  whitechar}}{9}
+\indexentry{uniWhite@{\it  uniWhite}}{9}
+\indexentry{newline@{\it  newline}}{9}
+\indexentry{space@{\it  space}}{9}
+\indexentry{tab@{\it  tab}}{9}
+\indexentry{vertab@{\it  vertab}}{9}
+\indexentry{formfeed@{\it  formfeed}}{9}
+\indexentry{comment@{\it  comment}}{9}
+\indexentry{dashes1@{\it  dashes1}}{9}
+\indexentry{ncomment@{\it  ncomment}}{9}
+\indexentry{opencom@{\it  opencom}}{9}
+\indexentry{closecom@{\it  closecom}}{9}
+\indexentry{ANYseq@{\it  ANYseq}}{9}
+\indexentry{ANY@{\it  ANY}}{9}
+\indexentry{any@{\it  any}}{9}
+\indexentry{graphic@{\it  graphic}}{9}
+\indexentry{small@{\it  small}}{9}
+\indexentry{ascSmall@{\it  ascSmall}}{9}
+\indexentry{uniSmall@{\it  uniSmall}}{9}
+\indexentry{uniDigit@{\it  uniDigit}}{9}
+\indexentry{large@{\it  large}}{9}
+\indexentry{ascLarge@{\it  ascLarge}}{9}
+\indexentry{uniLarge@{\it  uniLarge}}{9}
+\indexentry{symbol@{\it  symbol}}{9}
+\indexentry{ascSymbol@{\it  ascSymbol}}{9}
+\indexentry{uniSymbol@{\it  uniSymbol}}{9}
+\indexentry{digit@{\it  digit}}{9}
+\indexentry{ascDigit@{\it  ascDigit}}{9}
+\indexentry{uniDigit@{\it  uniDigit}}{9}
+\indexentry{octit@{\it  octit}}{9}
+\indexentry{hexit@{\it  hexit}}{9}
+\indexentry{maximal munch rule}{9}
+\indexentry{comment}{9}
+\indexentry{comment!end-of-line}{9}
+\indexentry{comment!nested}{9}
+\indexentry{identifier}{9}
+\indexentry{operator}{9}
+\indexentry{varid@{\it  varid}}{10}
+\indexentry{conid@{\it  conid}}{10}
+\indexentry{reservedid@{\it  reservedid}}{10}
+\indexentry{varsym@{\it  varsym}}{10}
+\indexentry{consym@{\it  consym}}{10}
+\indexentry{reservedop@{\it  reservedop}}{10}
+\indexentry{operator}{10}
+\indexentry{section}{10}
+\indexentry{namespaces}{10}
+\indexentry{varid@{\it  varid}}{11}
+\indexentry{conid@{\it  conid}}{11}
+\indexentry{tyvar@{\it  tyvar}}{11}
+\indexentry{tycon@{\it  tycon}}{11}
+\indexentry{tycls@{\it  tycls}}{11}
+\indexentry{modid@{\it  modid}}{11}
+\indexentry{qualified name}{11}
+\indexentry{qvarid@{\it  qvarid}}{11}
+\indexentry{qconid@{\it  qconid}}{11}
+\indexentry{qtycon@{\it  qtycon}}{11}
+\indexentry{qtycls@{\it  qtycls}}{11}
+\indexentry{qvarsym@{\it  qvarsym}}{11}
+\indexentry{qconsym@{\it  qconsym}}{11}
+\indexentry{number!literal syntax}{11}
+\indexentry{decimal@{\it  decimal}}{11}
+\indexentry{octal@{\it  octal}}{11}
+\indexentry{hexadecimal@{\it  hexadecimal}}{11}
+\indexentry{integer@{\it  integer}}{12}
+\indexentry{float@{\it  float}}{12}
+\indexentry{character!literal syntax}{12}
+\indexentry{string!literal syntax}{12}
+\indexentry{char@{\it  char}}{12}
+\indexentry{string@{\it  string}}{12}
+\indexentry{escape@{\it  escape}}{12}
+\indexentry{charesc@{\it  charesc}}{12}
+\indexentry{ascii@{\it  ascii}}{12}
+\indexentry{cntrl@{\it  cntrl}}{12}
+\indexentry{gap@{\it  gap}}{12}
+\indexentry{\\a@{\tt {\char'134}a}}{12}
+\indexentry{\\b@{\tt {\char'134}b}}{12}
+\indexentry{\\f@{\tt {\char'134}f}}{12}
+\indexentry{\\n@{\tt {\char'134}n}}{12}
+\indexentry{\\r@{\tt {\char'134}r}}{12}
+\indexentry{\\t@{\tt {\char'134}t}}{12}
+\indexentry{\\v@{\tt {\char'134}v}}{12}
+\indexentry{\\\&@{\tt {\char'134}\&}}{12}
+\indexentry{Unicode character set}{12}
+\indexentry{maximal munch rule}{12}
+\indexentry{layout}{13}
+\indexentry{off-side rule}{13}
+\indexentry{expression}{15}
+\indexentry{exp@{\it  exp}}{16}
+\indexentry{exp@\mbox{$\it exp^i$}}{16}
+\indexentry{lexp@\mbox{$\it lexp^i$}}{16}
+\indexentry{rexp@\mbox{$\it rexp^i$}}{16}
+\indexentry{aexp@{\it  aexp}}{16}
+\indexentry{fexp@{\it  fexp}}{16}
+\indexentry{negation}{16}
+\indexentry{error}{17}
+\indexentry{\mbox{$\it \bot$}}{17}
+\indexentry{error@{\tt  error}}{17}
+\indexentry{undefined@{\tt  undefined}}{17}
+\indexentry{var@{\it  var}}{17}
+\indexentry{con@{\it  con}}{17}
+\indexentry{varop@{\it  varop}}{17}
+\indexentry{conop@{\it  conop}}{17}
+\indexentry{op@{\it  op}}{17}
+\indexentry{gcon@{\it  gcon}}{18}
+\indexentry{var@{\it  var}}{18}
+\indexentry{qvar@{\it  qvar}}{18}
+\indexentry{con@{\it  con}}{18}
+\indexentry{qcon@{\it  qcon}}{18}
+\indexentry{varop@{\it  varop}}{18}
+\indexentry{qvarop@{\it  qvarop}}{18}
+\indexentry{conop@{\it  conop}}{18}
+\indexentry{qconop@{\it  qconop}}{18}
+\indexentry{qop@{\it  qop}}{18}
+\indexentry{gconsym@{\it  gconsym}}{18}
+\indexentry{fixity}{18}
+\indexentry{number!translation of literals}{18}
+\indexentry{fromInteger@{\tt  fromInteger}}{18}
+\indexentry{fromRational@{\tt  fromRational}}{18}
+\indexentry{Num@{\tt  Num} (class)}{18}
+\indexentry{Fractional@{\tt  Fractional} (class)}{18}
+\indexentry{lambda abstraction}{19}
+\indexentry{application}{19}
+\indexentry{exp@{\it  exp}}{19}
+\indexentry{fexp@{\it  fexp}}{19}
+\indexentry{application}{19}
+\indexentry{linearity}{19}
+\indexentry{linear pattern}{19}
+\indexentry{operator application}{19}
+\indexentry{exp@{\it  exp}}{19}
+\indexentry{qop@{\it  qop}}{19}
+\indexentry{operator}{19}
+\indexentry{negation}{19}
+\indexentry{negate@{\tt  negate}}{19}
+\indexentry{section}{20}
+\indexentry{aexp@{\it  aexp}}{20}
+\indexentry{negation}{20}
+\indexentry{conditional expression}{21}
+\indexentry{exp@{\it  exp}}{21}
+\indexentry{conditional expression}{21}
+\indexentry{aexp@{\it  aexp}}{21}
+\indexentry{list}{21}
+\indexentry{aexp@{\it  aexp}}{22}
+\indexentry{tuple}{22}
+\indexentry{unit expression}{22}
+\indexentry{aexp@{\it  aexp}}{22}
+\indexentry{trivial type}{22}
+\indexentry{aexp@{\it  aexp}}{23}
+\indexentry{arithmetic sequence}{23}
+\indexentry{list comprehension}{23}
+\indexentry{let expression!in list comprehensions}{23}
+\indexentry{aexp@{\it  aexp}}{23}
+\indexentry{qual@{\it  qual}}{23}
+\indexentry{qualifier}{23}
+\indexentry{generator}{23}
+\indexentry{guard}{23}
+\indexentry{let expression}{24}
+\indexentry{exp@{\it  exp}}{24}
+\indexentry{declaration!within a {\tt let} expression}{24}
+\indexentry{irrefutable pattern}{24}
+\indexentry{exp@{\it  exp}}{25}
+\indexentry{alts@{\it  alts}}{25}
+\indexentry{alt@{\it  alt}}{25}
+\indexentry{gdpat@{\it  gdpat}}{25}
+\indexentry{gd@{\it  gd}}{25}
+\indexentry{case expression}{25}
+\indexentry{pattern}{25}
+\indexentry{guard}{25}
+\indexentry{do expression}{26}
+\indexentry{let expression!in do expressions}{26}
+\indexentry{monad}{26}
+\indexentry{exp@{\it  exp}}{26}
+\indexentry{stmt@{\it  stmt}}{26}
+\indexentry{stmts@{\it  stmts}}{26}
+\indexentry{Monad@{\tt  Monad} (class)}{27}
+\indexentry{data declaration@{\tt data} declaration}{27}
+\indexentry{label}{27}
+\indexentry{field label|see{label}}{27}
+\indexentry{field label!selection}{27}
+\indexentry{field label!construction}{28}
+\indexentry{fbind@{\it  fbind}}{28}
+\indexentry{field label!update}{29}
+\indexentry{expression type-signature}{30}
+\indexentry{exp@{\it  exp}}{30}
+\indexentry{::@{\tt  ::}}{30}
+\indexentry{pattern-matching}{30}
+\indexentry{pattern}{30}
+\indexentry{pat@{\it  pat}}{31}
+\indexentry{pat@\mbox{$\it pat^i$}}{31}
+\indexentry{lpat@\mbox{$\it lpat^i$}}{31}
+\indexentry{rpat@\mbox{$\it rpat^i$}}{31}
+\indexentry{apat@{\it  apat}}{31}
+\indexentry{fpats@{\it  fpats}}{31}
+\indexentry{fpat@{\it  fpat}}{31}
+\indexentry{linearity}{31}
+\indexentry{linear pattern}{31}
+\indexentry{as-pattern ({\tt {\char'100}})}{31}
+\indexentry{wildcard pattern ({\tt {\char'137}})}{31}
+\indexentry{newtype declaration@{\tt newtype} declaration}{32}
+\indexentry{literal pattern}{32}
+\indexentry{n+k pattern@\mbox{$\it n\makebox{\tt +}k$} pattern}{32}
+\indexentry{as-pattern ({\tt {\char'100}})}{33}
+\indexentry{integer literal pattern}{33}
+\indexentry{floating literal pattern}{33}
+\indexentry{n+k pattern@\mbox{$\it n\makebox{\tt +}k$} pattern}{33}
+\indexentry{irrefutable pattern}{33}
+\indexentry{refutable pattern}{33}
+\indexentry{newtype declaration@{\tt newtype} declaration}{33}
+\indexentry{guard}{34}
+\indexentry{irrefutable pattern}{34}
+\indexentry{newtype declaration@{\tt newtype} declaration}{34}
+\indexentry{pattern-matching!overloaded constant}{34}
+\indexentry{monomorphic type variable}{34}
+\indexentry{declaration}{37}
+\indexentry{binding}{37}
+\indexentry{vars@{\it  vars}}{38}
+\indexentry{fixity@{\it  fixity}}{38}
+\indexentry{ops@{\it  ops}}{38}
+\indexentry{topdecls@{\it  topdecls}}{38}
+\indexentry{topdecl@{\it  topdecl}}{38}
+\indexentry{gendecl@{\it  gendecl}}{38}
+\indexentry{decls@{\it  decls}}{38}
+\indexentry{decl@{\it  decl}}{38}
+\indexentry{cdecls@{\it  cdecls}}{38}
+\indexentry{cdecl@{\it  cdecl}}{38}
+\indexentry{idecls@{\it  idecls}}{38}
+\indexentry{idecl@{\it  idecl}}{38}
+\indexentry{Hindley-Milner type system}{38}
+\indexentry{class}{38}
+\indexentry{type class}{38}
+\indexentry{constructor class}{38}
+\indexentry{overloaded functions}{38}
+\indexentry{class method}{38}
+\indexentry{class method}{39}
+\indexentry{kind}{39}
+\indexentry{type}{39}
+\indexentry{type@{\it  type}}{40}
+\indexentry{atype@{\it  atype}}{40}
+\indexentry{btype@{\it  btype}}{40}
+\indexentry{gtycon@{\it  gtycon}}{40}
+\indexentry{type expression}{40}
+\indexentry{constructor expression}{40}
+\indexentry{trivial type}{40}
+\indexentry{function type}{40}
+\indexentry{list}{40}
+\indexentry{tuple}{40}
+\indexentry{kind}{40}
+\indexentry{kind inference}{40}
+\indexentry{function type}{41}
+\indexentry{tuple type}{41}
+\indexentry{list type}{41}
+\indexentry{quantification}{41}
+\indexentry{class assertion}{41}
+\indexentry{context}{41}
+\indexentry{context@{\it  context}}{41}
+\indexentry{class@{\it  class}}{41}
+\indexentry{simpleclass@{\it  simpleclass}}{41}
+\indexentry{tycls@{\it  tycls}}{41}
+\indexentry{tyvar@{\it  tyvar}}{41}
+\indexentry{type}{42}
+\indexentry{type environment}{42}
+\indexentry{class environment}{42}
+\indexentry{generalization preorder}{42}
+\indexentry{principal type}{42}
+\indexentry{type signature}{42}
+\indexentry{datatype}{43}
+\indexentry{algebraic datatype}{43}
+\indexentry{topdecl@{\em topdecl} (\mbox{\tt data})}{43}
+\indexentry{simpletype@{\it  simpletype}}{43}
+\indexentry{constrs@{\it  constrs}}{43}
+\indexentry{constr@{\it  constr}}{43}
+\indexentry{fielddecl@{\it  fielddecl}}{43}
+\indexentry{deriving@{\it  deriving}}{43}
+\indexentry{dclass@{\it  dclass}}{43}
+\indexentry{data declaration@{\tt data} declaration}{43}
+\indexentry{precedence}{43}
+\indexentry{data constructor}{43}
+\indexentry{type constructor}{43}
+\indexentry{kind}{44}
+\indexentry{kind inference}{44}
+\indexentry{abstract datatype}{44}
+\indexentry{field label}{44}
+\indexentry{strictness flag}{45}
+\indexentry{!@{\tt  !}}{45}
+\indexentry{type synonym}{45}
+\indexentry{topdecl@{\em topdecl} (\mbox{\tt type})}{45}
+\indexentry{simpletype@{\it  simpletype}}{45}
+\indexentry{kind}{45}
+\indexentry{kind inference}{45}
+\indexentry{recursive datatype}{46}
+\indexentry{type synonym!recursive}{46}
+\indexentry{newtype declaration@{\tt newtype} declaration}{46}
+\indexentry{topdecl@{\em topdecl} (\mbox{\tt newtype})}{46}
+\indexentry{simpletype@{\it  simpletype}}{46}
+\indexentry{newconstr@{\it  newconstr}}{46}
+\indexentry{class}{47}
+\indexentry{overloading}{47}
+\indexentry{class declaration}{47}
+\indexentry{topdecl@{\em topdecl} (\mbox{\tt class})}{47}
+\indexentry{gendecl@{\it  gendecl}}{47}
+\indexentry{cdecls@{\it  cdecls}}{47}
+\indexentry{cdecl@{\it  cdecl}}{47}
+\indexentry{declaration!within a {\tt class} declaration}{47}
+\indexentry{superclass}{48}
+\indexentry{superclass}{48}
+\indexentry{class method}{48}
+\indexentry{fixity declaration}{48}
+\indexentry{default class method}{48}
+\indexentry{class declaration!with an empty \mbox{\tt where} part}{48}
+\indexentry{superclass}{49}
+\indexentry{instance declaration!with an empty \mbox{\tt where} part}{49}
+\indexentry{instance declaration}{49}
+\indexentry{topdecl@{\em topdecl} (\mbox{\tt instance})}{49}
+\indexentry{inst@{\it  inst}}{49}
+\indexentry{valdefs@{\it  valdefs}}{49}
+\indexentry{gtycon@{\it  gtycon}}{49}
+\indexentry{idecl@{\it  idecl}}{49}
+\indexentry{idecls@{\it  idecls}}{49}
+\indexentry{declaration!within an {\tt instance} declaration}{49}
+\indexentry{type synonym}{49}
+\indexentry{class method}{49}
+\indexentry{type signature}{49}
+\indexentry{fixity declaration}{49}
+\indexentry{default class method}{50}
+\indexentry{default class method}{50}
+\indexentry{instance declaration}{50}
+\indexentry{kind}{50}
+\indexentry{kind inference}{50}
+\indexentry{derived instance}{51}
+\indexentry{Eq@{\tt  Eq} (class)!derived instance}{51}
+\indexentry{Ord@{\tt  Ord} (class)!derived instance}{51}
+\indexentry{Enum@{\tt  Enum} (class)!derived instance}{51}
+\indexentry{Bounded@{\tt  Bounded} (class)!derived instance}{51}
+\indexentry{Show@{\tt  Show} (class)!derived instance}{51}
+\indexentry{Read@{\tt  Read} (class)!derived instance}{51}
+\indexentry{Enum@{\tt  Enum} (class)}{51}
+\indexentry{default declaration@{\tt default} declaration}{51}
+\indexentry{overloading!defaults}{51}
+\indexentry{topdecl@{\em topdecl} (\mbox{\tt default})}{51}
+\indexentry{ambiguous type}{51}
+\indexentry{expression type-signature}{52}
+\indexentry{Num@{\tt  Num} (class)}{52}
+\indexentry{type signature}{53}
+\indexentry{signdecl@{\it  signdecl}}{53}
+\indexentry{vars@{\it  vars}}{53}
+\indexentry{principal type}{53}
+\indexentry{polymorphic recursion}{54}
+\indexentry{fixity declaration}{54}
+\indexentry{gendecl@{\it  gendecl}}{54}
+\indexentry{fixity@{\it  fixity}}{54}
+\indexentry{ops@{\it  ops}}{54}
+\indexentry{op@{\it  op}}{54}
+\indexentry{"!"!@{\tt  {\char'041}{\char'041}}}{55}
+\indexentry{.@{\tt  .}}{55}
+\indexentry{**@{\tt  **}}{55}
+\indexentry{^@{\tt  {\char'136}}}{55}
+\indexentry{^^@{\tt  {\char'136}{\char'136}}}{55}
+\indexentry{*@{\tt  *}}{55}
+\indexentry{/@{\tt  /}}{55}
+\indexentry{div@{\tt  div}}{55}
+\indexentry{mod@{\tt  mod}}{55}
+\indexentry{rem@{\tt  rem}}{55}
+\indexentry{+@{\tt  +}}{55}
+\indexentry{-@{\tt  -}}{55}
+\indexentry{:@{\tt  :}}{55}
+\indexentry{++@{\tt  ++}}{55}
+\indexentry{/=@{\tt  /=}}{55}
+\indexentry{<@{\tt  <}}{55}
+\indexentry{<=@{\tt  <=}}{55}
+\indexentry{==@{\tt  ==}}{55}
+\indexentry{>@{\tt  >}}{55}
+\indexentry{>=@{\tt  >=}}{55}
+\indexentry{elem@{\tt  elem}}{55}
+\indexentry{notElem@{\tt  notElem}}{55}
+\indexentry{&&@{\tt  \&\&}@{\tt  &&@{\tt  \&\&}}}{55}
+\indexentry{"|"|@{\tt  {\char'174}{\char'174}}}{55}
+\indexentry{>>@{\tt  >>}}{55}
+\indexentry{>>=@{\tt  >>=}}{55}
+\indexentry{$@{\tt  {\char'044}}}{55}
+\indexentry{function binding}{55}
+\indexentry{pattern binding}{55}
+\indexentry{decl@{\it  decl}}{56}
+\indexentry{rhs@{\it  rhs}}{56}
+\indexentry{gdrhs@{\it  gdrhs}}{56}
+\indexentry{gd@{\it  gd}}{56}
+\indexentry{function binding}{56}
+\indexentry{linearity}{56}
+\indexentry{linear pattern}{56}
+\indexentry{pattern binding}{57}
+\indexentry{simple pattern binding}{57}
+\indexentry{irrefutable pattern}{57}
+\indexentry{n+k pattern@\mbox{$\it n\makebox{\tt +}k$} pattern}{57}
+\indexentry{Hindley-Milner type system}{58}
+\indexentry{dependency analysis}{58}
+\indexentry{declaration group}{58}
+\indexentry{generalization}{59}
+\indexentry{context reduction}{59}
+\indexentry{monomorphic type variable}{60}
+\indexentry{monomorphic type variable}{61}
+\indexentry{monomorphism restriction}{61}
+\indexentry{simple pattern binding}{62}
+\indexentry{ambiguous type}{62}
+\indexentry{simple pattern binding}{62}
+\indexentry{kind}{64}
+\indexentry{kind inference}{64}
+\indexentry{module}{65}
+\indexentry{entity}{65}
+\indexentry{Main@{\tt  Main} (module)}{65}
+\indexentry{main@{\tt  main}}{65}
+\indexentry{module@{\it  module}}{66}
+\indexentry{body@{\it  body}}{66}
+\indexentry{modid@{\it  modid}}{66}
+\indexentry{impdecls@{\it  impdecls}}{66}
+\indexentry{topdecls@{\it  topdecls}}{66}
+\indexentry{abbreviated module}{66}
+\indexentry{export list}{66}
+\indexentry{exports@{\it  exports}}{67}
+\indexentry{export@{\it  export}}{67}
+\indexentry{algebraic datatype}{67}
+\indexentry{type synonym}{67}
+\indexentry{class declaration}{67}
+\indexentry{import declaration}{69}
+\indexentry{impdecl@{\it  impdecl}}{69}
+\indexentry{impspec@{\it  impspec}}{69}
+\indexentry{import@{\it  import}}{69}
+\indexentry{cname@{\it  cname}}{69}
+\indexentry{hiding}{70}
+\indexentry{qualified name}{70}
+\indexentry{instance declaration!importing and exporting}{71}
+\indexentry{qualified name}{72}
+\indexentry{closure}{74}
+\indexentry{standard prelude}{74}
+\indexentry{libraries}{74}
+\indexentry{Prelude@{\tt  Prelude} (module)}{75}
+\indexentry{Prelude@{\tt  Prelude} (module)}{75}
+\indexentry{Prelude!implicit import of}{75}
+\indexentry{separate compilation}{76}
+\indexentry{abstract datatype}{76}
+\indexentry{boolean}{79}
+\indexentry{Bool@{\tt  Bool} (datatype)}{79}
+\indexentry{False@{\tt  False}}{79}
+\indexentry{True@{\tt  True}}{79}
+\indexentry{"|"|@{\tt  {\char'174}{\char'174}}}{79}
+\indexentry{&&@{\tt  \&\&}}{79}
+\indexentry{not@{\tt  not}}{79}
+\indexentry{otherwise@{\tt  otherwise}}{79}
+\indexentry{character}{79}
+\indexentry{string}{79}
+\indexentry{Char@{\tt  Char} (datatype)}{79}
+\indexentry{String@{\tt  String} (type synonym)}{80}
+\indexentry{list}{80}
+\indexentry{[]@{\tt  []} (nil)}{80}
+\indexentry{:@{\tt  :}}{80}
+\indexentry{arithmetic sequence}{80}
+\indexentry{list comprehension}{80}
+\indexentry{tuple}{80}
+\indexentry{(,)@{\tt  (,)}}{80}
+\indexentry{(,,)@{\tt  (,,)}}{80}
+\indexentry{fst@{\tt  fst}}{80}
+\indexentry{snd@{\tt  snd}}{80}
+\indexentry{curry@{\tt  curry}}{80}
+\indexentry{uncurry@{\tt  uncurry}}{80}
+\indexentry{zip@{\tt  zip}}{80}
+\indexentry{trivial type}{81}
+\indexentry{function}{81}
+\indexentry{id@{\tt  id}}{81}
+\indexentry{const@{\tt  const}}{81}
+\indexentry{.@{\tt  .}}{81}
+\indexentry{flip@{\tt  flip}}{81}
+\indexentry{until@{\tt  until}}{81}
+\indexentry{IO@{\tt  IO} (datatype)}{81}
+\indexentry{IOError@{\tt  IOError} (datatype)}{81}
+\indexentry{Just@{\tt  Just}}{81}
+\indexentry{Nothing@{\tt  Nothing}}{81}
+\indexentry{Maybe@{\tt  Maybe} (datatype)}{81}
+\indexentry{Left@{\tt  Left}}{81}
+\indexentry{Right@{\tt  Right}}{81}
+\indexentry{Either@{\tt  Either} (datatype)}{81}
+\indexentry{LT@{\tt  LT}}{81}
+\indexentry{EQ@{\tt  EQ}}{81}
+\indexentry{GT@{\tt  GT}}{81}
+\indexentry{Ordering@{\tt  Ordering} (datatype)}{81}
+\indexentry{maybe@{\tt  maybe}}{81}
+\indexentry{either@{\tt  either}}{81}
+\indexentry{$!@{\tt  $!}}{81}
+\indexentry{seq@{\tt  seq}}{81}
+\indexentry{strictness flags}{82}
+\indexentry{Eq@{\tt  Eq} (class)}{82}
+\indexentry{==@{\tt  ==}}{82}
+\indexentry{/=@{\tt  /=}}{82}
+\indexentry{Ord@{\tt  Ord} (class)}{84}
+\indexentry{<@{\tt  <}}{84}
+\indexentry{<=@{\tt  <=}}{84}
+\indexentry{>@{\tt  >}}{84}
+\indexentry{>=@{\tt  >=}}{84}
+\indexentry{compare@{\tt  compare}}{84}
+\indexentry{max@{\tt  max}}{84}
+\indexentry{min@{\tt  min}}{84}
+\indexentry{ReadS@{\tt  ReadS} (type synonym)}{85}
+\indexentry{ShowS@{\tt  ShowS} (type synonym)}{85}
+\indexentry{Read@{\tt  Read} (class)}{85}
+\indexentry{Show@{\tt  Show} (class)}{85}
+\indexentry{show@{\tt  show}}{85}
+\indexentry{readsPrec@{\tt  readsPrec}}{85}
+\indexentry{showsPrec@{\tt  showsPrec}}{85}
+\indexentry{readList@{\tt  readList}}{85}
+\indexentry{showList@{\tt  showList}}{85}
+\indexentry{reads@{\tt  reads}}{85}
+\indexentry{shows@{\tt  shows}}{85}
+\indexentry{read@{\tt  read}}{85}
+\indexentry{shows@{\tt  shows}}{86}
+\indexentry{reads@{\tt  reads}}{86}
+\indexentry{show@{\tt  show}}{86}
+\indexentry{read@{\tt  read}}{86}
+\indexentry{lex@{\tt  lex}}{86}
+\indexentry{Enum@{\tt  Enum} (class)}{86}
+\indexentry{toEnum@{\tt  toEnum}}{86}
+\indexentry{fromEnum@{\tt  fromEnum}}{86}
+\indexentry{enumFrom@{\tt  enumFrom}}{86}
+\indexentry{enumFromThen@{\tt  enumFromThen}}{86}
+\indexentry{enumFromTo@{\tt  enumFromTo}}{86}
+\indexentry{enumFromThenTo@{\tt  enumFromThenTo}}{86}
+\indexentry{Functor@{\tt  Functor} (class)}{87}
+\indexentry{fmap@{\tt  fmap}}{87}
+\indexentry{functor}{87}
+\indexentry{Monad@{\tt  Monad} (class)}{88}
+\indexentry{return@{\tt  return}}{88}
+\indexentry{fail@{\tt  fail}}{88}
+\indexentry{>>@{\tt  >>}}{88}
+\indexentry{>>=@{\tt  >>=}}{88}
+\indexentry{monad}{88}
+\indexentry{sequence@{\tt  sequence}}{88}
+\indexentry{sequence{\char '137}@{\tt  sequence{\char '137}}}{88}
+\indexentry{mapM{\char '137}@{\tt  mapM{\char '137}}}{88}
+\indexentry{mapM@{\tt  mapM}}{88}
+\indexentry{=<<@{\tt  =<<}}{88}
+\indexentry{Bounded@{\tt  Bounded} (class)}{89}
+\indexentry{minBound@{\tt  minBound}}{89}
+\indexentry{maxBound@{\tt  maxBound}}{89}
+\indexentry{number}{89}
+\indexentry{Num@{\tt  Num} (class)}{89}
+\indexentry{Eq@{\tt  Eq} (class)}{89}
+\indexentry{Real@{\tt  Real} (class)}{89}
+\indexentry{Ord@{\tt  Ord} (class)}{89}
+\indexentry{Integral@{\tt  Integral} (class)}{89}
+\indexentry{Fractional@{\tt  Fractional} (class)}{89}
+\indexentry{Floating@{\tt  Floating} (class)}{89}
+\indexentry{Int@{\tt  Int} (datatype)}{89}
+\indexentry{Float@{\tt  Float} (datatype)}{89}
+\indexentry{Double@{\tt  Double} (datatype)}{89}
+\indexentry{numeric type}{90}
+\indexentry{fromInteger@{\tt  fromInteger}}{90}
+\indexentry{fromRational@{\tt  fromRational}}{90}
+\indexentry{fromInteger@{\tt  fromInteger}}{90}
+\indexentry{fromRational@{\tt  fromRational}}{90}
+\indexentry{arithmetic operator}{90}
+\indexentry{+@{\tt  +}}{90}
+\indexentry{*@{\tt  *}}{90}
+\indexentry{-@{\tt  -}}{90}
+\indexentry{negate@{\tt  negate}}{90}
+\indexentry{quot@{\tt  quot}}{90}
+\indexentry{rem@{\tt  rem}}{90}
+\indexentry{div@{\tt  div}}{90}
+\indexentry{mod@{\tt  mod}}{90}
+\indexentry{/@{\tt  /}}{90}
+\indexentry{Num@{\tt  Num} (class)}{91}
+\indexentry{+@{\tt  +}}{91}
+\indexentry{-@{\tt  -}}{91}
+\indexentry{*@{\tt  *}}{91}
+\indexentry{negate@{\tt  negate}}{91}
+\indexentry{abs@{\tt  abs}}{91}
+\indexentry{signum@{\tt  signum}}{91}
+\indexentry{fromInteger@{\tt  fromInteger}}{91}
+\indexentry{Real@{\tt  Real} (class)}{91}
+\indexentry{toRational@{\tt  toRational}}{91}
+\indexentry{Integral@{\tt  Integral} (class)}{91}
+\indexentry{quotRem@{\tt  quotRem}}{91}
+\indexentry{divMod@{\tt  divMod}}{91}
+\indexentry{mod@{\tt  mod}}{91}
+\indexentry{div@{\tt  div}}{91}
+\indexentry{rem@{\tt  rem}}{91}
+\indexentry{quot@{\tt  quot}}{91}
+\indexentry{even@{\tt  even}}{91}
+\indexentry{odd@{\tt  odd}}{91}
+\indexentry{Fractional@{\tt  Fractional} (class)}{91}
+\indexentry{/@{\tt  /}}{91}
+\indexentry{recip@{\tt  recip}}{91}
+\indexentry{fromRational@{\tt  fromRational}}{91}
+\indexentry{Floating@{\tt  Floating} (class)}{91}
+\indexentry{pi@{\tt  pi}}{91}
+\indexentry{exp@{\tt  exp}}{91}
+\indexentry{log@{\tt  log}}{91}
+\indexentry{sqrt@{\tt  sqrt}}{91}
+\indexentry{**@{\tt  **}}{91}
+\indexentry{logBase@{\tt  logBase}}{91}
+\indexentry{sin@{\tt  sin}}{91}
+\indexentry{cos@{\tt  cos}}{91}
+\indexentry{tan@{\tt  tan}}{91}
+\indexentry{asin@{\tt  asin}}{91}
+\indexentry{acos@{\tt  acos}}{91}
+\indexentry{atan@{\tt  atan}}{91}
+\indexentry{sinh@{\tt  sinh}}{91}
+\indexentry{cosh@{\tt  cosh}}{91}
+\indexentry{tanh@{\tt  tanh}}{91}
+\indexentry{asinh@{\tt  asinh}}{91}
+\indexentry{acosh@{\tt  acosh}}{91}
+\indexentry{atanh@{\tt  atanh}}{91}
+\indexentry{even@{\tt  even}}{91}
+\indexentry{odd@{\tt  odd}}{91}
+\indexentry{gcd@{\tt  gcd}}{91}
+\indexentry{lcm@{\tt  lcm}}{91}
+\indexentry{exponentiation}{91}
+\indexentry{logarithm}{91}
+\indexentry{exp@{\tt  exp}}{91}
+\indexentry{log@{\tt  log}}{91}
+\indexentry{logBase@{\tt  logBase}}{91}
+\indexentry{sqrt@{\tt  sqrt}}{91}
+\indexentry{^@{\tt  {\char'136}}}{91}
+\indexentry{^^@{\tt  {\char'136}{\char'136}}}{91}
+\indexentry{**@{\tt  **}}{91}
+\indexentry{RealFrac@{\tt  RealFrac} (class)}{92}
+\indexentry{properFraction@{\tt  properFraction}}{92}
+\indexentry{approxRational@{\tt  approxRational}}{92}
+\indexentry{truncate@{\tt  truncate}}{92}
+\indexentry{round@{\tt  round}}{92}
+\indexentry{ceiling@{\tt  ceiling}}{92}
+\indexentry{floor@{\tt  floor}}{92}
+\indexentry{RealFloat@{\tt  RealFloat} (class)}{92}
+\indexentry{floatRadix@{\tt  floatRadix}}{92}
+\indexentry{floatDigits@{\tt  floatDigits}}{92}
+\indexentry{floatRange@{\tt  floatRange}}{92}
+\indexentry{decodeFloat@{\tt  decodeFloat}}{92}
+\indexentry{encodeFloat@{\tt  encodeFloat}}{92}
+\indexentry{exponent@{\tt  exponent}}{92}
+\indexentry{significand@{\tt  significand}}{92}
+\indexentry{scaleFloat@{\tt  scaleFloat}}{92}
+\indexentry{Int@{\tt  Int} (datatype)}{92}
+\indexentry{Integer@{\tt  Integer} (datatype)}{92}
+\indexentry{fromIntegral@{\tt  fromIntegral}}{92}
+\indexentry{gcd@{\tt  gcd}}{92}
+\indexentry{lcm@{\tt  lcm}}{92}
+\indexentry{^@{\tt  {\char'136}}}{92}
+\indexentry{^^@{\tt  {\char'136}{\char'136}}}{92}
+\indexentry{RealFrac@{\tt  RealFrac} (class)}{92}
+\indexentry{Float@{\tt  Float} (datatype)}{92}
+\indexentry{Double@{\tt  Double} (datatype)}{92}
+\indexentry{realToFrac@{\tt  realToFrac}}{92}
+\indexentry{atan2@{\tt  atan2}}{92}
+\indexentry{magnitude}{92}
+\indexentry{sign}{92}
+\indexentry{abs@{\tt  abs}}{92}
+\indexentry{signum@{\tt  signum}}{92}
+\indexentry{trigonometric function}{93}
+\indexentry{sine}{93}
+\indexentry{cosine}{93}
+\indexentry{tangent}{93}
+\indexentry{atan2@{\tt  atan2}}{93}
+\indexentry{atan2@{\tt  atan2}}{93}
+\indexentry{coercion}{93}
+\indexentry{ceiling@{\tt  ceiling}}{93}
+\indexentry{floor@{\tt  floor}}{93}
+\indexentry{truncate@{\tt  truncate}}{93}
+\indexentry{round@{\tt  round}}{93}
+\indexentry{properFraction@{\tt  properFraction}}{93}
+\indexentry{toRational@{\tt  toRational}}{93}
+\indexentry{approxRational@{\tt  approxRational}}{93}
+\indexentry{RealFloat@{\tt  RealFloat} (class)}{93}
+\indexentry{floatRadix@{\tt  floatRadix}}{93}
+\indexentry{floatDigits@{\tt  floatDigits}}{93}
+\indexentry{floatRange@{\tt  floatRange}}{93}
+\indexentry{decodeFloat@{\tt  decodeFloat}}{93}
+\indexentry{encodeFloat@{\tt  encodeFloat}}{93}
+\indexentry{significand@{\tt  significand}}{94}
+\indexentry{exponent@{\tt  exponent}}{94}
+\indexentry{fromIntegral@{\tt  fromIntegral}}{94}
+\indexentry{realToFrac@{\tt  realToFrac}}{94}
+\indexentry{basic input/output}{95}
+\indexentry{monad}{95}
+\indexentry{putChar@{\tt  putChar}}{96}
+\indexentry{putStr@{\tt  putStr}}{96}
+\indexentry{putStrLn@{\tt  putStrLn}}{96}
+\indexentry{print@{\tt  print}}{96}
+\indexentry{interact@{\tt  interact}}{96}
+\indexentry{readIO@{\tt  readIO}}{96}
+\indexentry{readLn@{\tt  readLn}}{96}
+\indexentry{getChar@{\tt  getChar}}{96}
+\indexentry{getLine@{\tt  getLine}}{96}
+\indexentry{getContents@{\tt  getContents}}{96}
+\indexentry{writeFile@{\tt  writeFile}}{97}
+\indexentry{readFile@{\tt  readFile}}{97}
+\indexentry{appendFile@{\tt  appendFile}}{97}
+\indexentry{FilePath@{\tt  FilePath} (type synonym)}{97}
+\indexentry{>>@{\tt  >>}}{97}
+\indexentry{>>=@{\tt  >>=}}{97}
+\indexentry{do expression}{97}
+\indexentry{exception handling}{98}
+\indexentry{userError@{\tt  userError}}{98}
+\indexentry{ioError@{\tt  ioError}}{98}
+\indexentry{catch@{\tt  catch}}{98}
+\indexentry{fail@{\tt  fail}}{99}
+\indexentry{Prelude@{\tt  Prelude} (module)}{103}
+\indexentry{PreludeList@{\tt  PreludeList} (module)}{103}
+\indexentry{PreludeBuiltin@{\tt  PreludeBuiltin} (module)}{103}
+\indexentry{UnicodePrims@{\tt  UnicodePrims} (module)}{103}
+\indexentry{PreludeList@{\tt  PreludeList} (module)}{103}
+\indexentry{PreludeText@{\tt  PreludeText} (module)}{103}
+\indexentry{PreludeIO@{\tt  PreludeIO} (module)}{103}
+\indexentry{Ratio@{\tt  Ratio} (module)}{103}
+\indexentry{.@{\tt  .}}{104}
+\indexentry{^@{\tt  {\char'136}}}{104}
+\indexentry{^^@{\tt  {\char'136}{\char'136}}}{104}
+\indexentry{**@{\tt  **}}{104}
+\indexentry{*@{\tt  *}}{104}
+\indexentry{/@{\tt  /}}{104}
+\indexentry{quot@{\tt  quot}}{104}
+\indexentry{rem@{\tt  rem}}{104}
+\indexentry{div@{\tt  div}}{104}
+\indexentry{mod@{\tt  mod}}{104}
+\indexentry{+@{\tt  +}}{104}
+\indexentry{-@{\tt  -}}{104}
+\indexentry{==@{\tt  ==}}{104}
+\indexentry{/=@{\tt  /=}}{104}
+\indexentry{<@{\tt  <}}{104}
+\indexentry{<=@{\tt  <=}}{104}
+\indexentry{>=@{\tt  >=}}{104}
+\indexentry{>@{\tt  >}}{104}
+\indexentry{&&@{\tt  \&\&}}{104}
+\indexentry{"|"|@{\tt  {\char'174}{\char'174}}}{104}
+\indexentry{>>@{\tt  >>}}{104}
+\indexentry{>>=@{\tt  >>=}}{104}
+\indexentry{=<<@{\tt  =<<}}{104}
+\indexentry{$@{\tt  {\char'044}}}{104}
+\indexentry{$"!@{\tt  {\char'044}{\char'041}}}{104}
+\indexentry{seq@{\tt  seq}}{104}
+\indexentry{==@{\tt  ==}}{104}
+\indexentry{/=@{\tt  /=}}{104}
+\indexentry{Eq@{\tt  Eq} (class)}{104}
+\indexentry{compare@{\tt  compare}}{104}
+\indexentry{<@{\tt  <}}{104}
+\indexentry{<=@{\tt  <=}}{104}
+\indexentry{>=@{\tt  >=}}{104}
+\indexentry{>@{\tt  >}}{104}
+\indexentry{max@{\tt  max}}{104}
+\indexentry{min@{\tt  min}}{104}
+\indexentry{Ord@{\tt  Ord} (class)}{104}
+\indexentry{Eq@{\tt  Eq} (class)!superclass of {\tt Ord}}{104}
+\indexentry{succ@{\tt  succ}}{105}
+\indexentry{pred@{\tt  pred}}{105}
+\indexentry{toEnum@{\tt  toEnum}}{105}
+\indexentry{fromEnum@{\tt  fromEnum}}{105}
+\indexentry{enumFrom@{\tt  enumFrom}}{105}
+\indexentry{enumFromThen@{\tt  enumFromThen}}{105}
+\indexentry{enumFromTo@{\tt  enumFromTo}}{105}
+\indexentry{enumFromThenTo@{\tt  enumFromThenTo}}{105}
+\indexentry{Enum@{\tt  Enum} (class)}{105}
+\indexentry{minBound@{\tt  minBound}}{105}
+\indexentry{maxBound@{\tt  maxBound}}{105}
+\indexentry{Bounded@{\tt  Bounded} (class)}{105}
+\indexentry{+@{\tt  +}}{105}
+\indexentry{-@{\tt  -}}{105}
+\indexentry{*@{\tt  *}}{105}
+\indexentry{negate@{\tt  negate}}{105}
+\indexentry{abs@{\tt  abs}}{105}
+\indexentry{signum@{\tt  signum}}{105}
+\indexentry{fromInteger@{\tt  fromInteger}}{105}
+\indexentry{Num@{\tt  Num} (class)}{105}
+\indexentry{Eq@{\tt  Eq} (class)!superclass of {\tt Num}}{105}
+\indexentry{Show@{\tt  Show} (class)!superclass of {\tt Num}}{105}
+\indexentry{toRational@{\tt  toRational}}{105}
+\indexentry{Real@{\tt  Real} (class)}{105}
+\indexentry{Num@{\tt  Num} (class)!superclass of {\tt Real}}{105}
+\indexentry{Ord@{\tt  Ord} (class)!superclass of {\tt Real}}{105}
+\indexentry{quot@{\tt  quot}}{106}
+\indexentry{rem@{\tt  rem}}{106}
+\indexentry{div@{\tt  div}}{106}
+\indexentry{mod@{\tt  mod}}{106}
+\indexentry{quotRem@{\tt  quotRem}}{106}
+\indexentry{divMod@{\tt  divMod}}{106}
+\indexentry{toInteger@{\tt  toInteger}}{106}
+\indexentry{Integral@{\tt  Integral} (class)}{106}
+\indexentry{Real@{\tt  Real} (class)!superclass of {\tt Integral}}{106}
+\indexentry{Enum@{\tt  Enum} (class)!superclass of {\tt Integral}}{106}
+\indexentry{/@{\tt  /}}{106}
+\indexentry{recip@{\tt  recip}}{106}
+\indexentry{fromRational@{\tt  fromRational}}{106}
+\indexentry{Fractional@{\tt  Fractional} (class)}{106}
+\indexentry{Num@{\tt  Num} (class)!superclass of {\tt Fractional}}{106}
+\indexentry{pi@{\tt  pi}}{106}
+\indexentry{exp@{\tt  exp}}{106}
+\indexentry{log@{\tt  log}}{106}
+\indexentry{sqrt@{\tt  sqrt}}{106}
+\indexentry{**@{\tt  **}}{106}
+\indexentry{logBase@{\tt  logBase}}{106}
+\indexentry{sin@{\tt  sin}}{106}
+\indexentry{cos@{\tt  cos}}{106}
+\indexentry{tan@{\tt  tan}}{106}
+\indexentry{asin@{\tt  asin}}{106}
+\indexentry{acos@{\tt  acos}}{106}
+\indexentry{atan@{\tt  atan}}{106}
+\indexentry{sinh@{\tt  sinh}}{106}
+\indexentry{cosh@{\tt  cosh}}{106}
+\indexentry{tanh@{\tt  tanh}}{106}
+\indexentry{asinh@{\tt  asinh}}{106}
+\indexentry{acosh@{\tt  acosh}}{106}
+\indexentry{atanh@{\tt  atanh}}{106}
+\indexentry{Floating@{\tt  Floating} (class)}{106}
+\indexentry{Fractional@{\tt  Fractional} (class)!superclass of {\tt Floating}}{106}
+\indexentry{properFraction@{\tt  properFraction}}{107}
+\indexentry{truncate@{\tt  truncate}}{107}
+\indexentry{round@{\tt  round}}{107}
+\indexentry{ceiling@{\tt  ceiling}}{107}
+\indexentry{floor@{\tt  floor}}{107}
+\indexentry{RealFrac@{\tt  RealFrac} (class)}{107}
+\indexentry{Real@{\tt  Real} (class)!superclass of {\tt RealFrac}}{107}
+\indexentry{Fractional@{\tt  Fractional} (class)!superclass of {\tt RealFrac}}{107}
+\indexentry{floatRadix@{\tt  floatRadix}}{108}
+\indexentry{floatDigits@{\tt  floatDigits}}{108}
+\indexentry{floatRange@{\tt  floatRange}}{108}
+\indexentry{decodeFloat@{\tt  decodeFloat}}{108}
+\indexentry{encodeFloat@{\tt  encodeFloat}}{108}
+\indexentry{exponent@{\tt  exponent}}{108}
+\indexentry{significand@{\tt  significand}}{108}
+\indexentry{scaleFloat@{\tt  scaleFloat}}{108}
+\indexentry{atan2@{\tt  atan2}}{108}
+\indexentry{RealFloat@{\tt  RealFloat} (class)}{108}
+\indexentry{RealFrac@{\tt  RealFrac} (class)!superclass of {\tt RealFloat}}{108}
+\indexentry{Floating@{\tt  Floating} (class)!superclass of {\tt RealFloat}}{108}
+\indexentry{subtract@{\tt  subtract}}{108}
+\indexentry{even@{\tt  even}}{108}
+\indexentry{odd@{\tt  odd}}{108}
+\indexentry{gcd@{\tt  gcd}}{108}
+\indexentry{lcm@{\tt  lcm}}{109}
+\indexentry{^@{\tt  {\char'136}}}{109}
+\indexentry{^^@{\tt  {\char'136}{\char'136}}}{109}
+\indexentry{fromIntegral@{\tt  fromIntegral}}{109}
+\indexentry{realToFrac@{\tt  realToFrac}}{109}
+\indexentry{fmap@{\tt  fmap}}{109}
+\indexentry{Functor@{\tt  Functor} (class)}{109}
+\indexentry{>>=@{\tt  >>=}}{109}
+\indexentry{>>@{\tt  >>}}{109}
+\indexentry{return@{\tt  return}}{109}
+\indexentry{fail@{\tt  fail}}{109}
+\indexentry{Monad@{\tt  Monad} (class)}{109}
+\indexentry{sequence@{\tt  sequence}}{109}
+\indexentry{sequence{\char '137}@{\tt  sequence{\char '137}}}{109}
+\indexentry{mapM@{\tt  mapM}}{109}
+\indexentry{mapM{\char '137}@{\tt  mapM{\char '137}}}{109}
+\indexentry{=<<@{\tt  =<<}}{109}
+\indexentry{id@{\tt  id}}{110}
+\indexentry{const@{\tt  const}}{110}
+\indexentry{.@{\tt  .}}{110}
+\indexentry{flip@{\tt  flip}}{110}
+\indexentry{seq@{\tt  seq}}{110}
+\indexentry{$@{\tt  {\char'044}}}{110}
+\indexentry{$"!@{\tt  {\char'044}{\char'041}}}{110}
+\indexentry{Bool@{\tt  Bool} (datatype)}{110}
+\indexentry{&&@{\tt  \&\&}}{110}
+\indexentry{"|"|@{\tt  {\char'174}{\char'174}}}{110}
+\indexentry{not@{\tt  not}}{110}
+\indexentry{otherwise@{\tt  otherwise}}{110}
+\indexentry{Char@{\tt  Char} (datatype)}{110}
+\indexentry{Eq@{\tt  Eq} (class)!instance for {\tt Char}}{110}
+\indexentry{Ord@{\tt  Ord} (class)!instance for {\tt Char}}{111}
+\indexentry{Enum@{\tt  Enum} (class)!instance for {\tt Char}}{111}
+\indexentry{Bounded@{\tt  Bounded} (class)!instance for {\tt Char}}{111}
+\indexentry{String@{\tt  String} (type synonym)}{111}
+\indexentry{Maybe@{\tt  Maybe} (datatype)}{111}
+\indexentry{maybe@{\tt  maybe}}{111}
+\indexentry{Functor@{\tt  Functor} (class)!instance for {\tt Maybe}}{111}
+\indexentry{Monad@{\tt  Monad} (class)!instance for {\tt Maybe}}{111}
+\indexentry{Either@{\tt  Either} (datatype)}{111}
+\indexentry{either@{\tt  either}}{111}
+\indexentry{IO@{\tt  IO} (datatype)}{111}
+\indexentry{Functor@{\tt  Functor} (class)!instance for {\tt IO}}{111}
+\indexentry{Monad@{\tt  Monad} (class)!instance for {\tt IO}}{111}
+\indexentry{Ordering@{\tt  Ordering} (datatype)}{112}
+\indexentry{Int@{\tt  Int} (datatype)}{112}
+\indexentry{Integer@{\tt  Integer} (datatype)}{112}
+\indexentry{Float@{\tt  Float} (datatype)}{112}
+\indexentry{Double@{\tt  Double} (datatype)}{112}
+\indexentry{Enum@{\tt  Enum} (class)!instance for {\tt Float}}{113}
+\indexentry{Enum@{\tt  Enum} (class)!instance for {\tt Double}}{113}
+\indexentry{numericEnumFrom@{\tt  numericEnumFrom}}{113}
+\indexentry{numericEnumFromThen@{\tt  numericEnumFromThen}}{113}
+\indexentry{numericEnumFromTo@{\tt  numericEnumFromTo}}{113}
+\indexentry{numericEnumFromThenTo@{\tt  numericEnumFromThenTo}}{113}
+\indexentry{Functor@{\tt  Functor} (class)!instance for {\tt []}}{113}
+\indexentry{Monad@{\tt  Monad} (class)!instance for {\tt []}}{113}
+\indexentry{fst@{\tt  fst}}{114}
+\indexentry{snd@{\tt  snd}}{114}
+\indexentry{curry@{\tt  curry}}{114}
+\indexentry{uncurry@{\tt  uncurry}}{114}
+\indexentry{until@{\tt  until}}{114}
+\indexentry{asTypeOf@{\tt  asTypeOf}}{114}
+\indexentry{error@{\tt  error}}{114}
+\indexentry{undefined@{\tt  undefined}}{114}
+\indexentry{PreludeList@{\tt  PreludeList} (module)}{115}
+\indexentry{"!"!@{\tt  {\char'041}{\char'041}}}{115}
+\indexentry{++@{\tt  ++}}{115}
+\indexentry{elem@{\tt  elem}}{115}
+\indexentry{notElem@{\tt  notElem}}{115}
+\indexentry{map@{\tt  map}}{115}
+\indexentry{++@{\tt  ++}}{115}
+\indexentry{filter@{\tt  filter}}{115}
+\indexentry{concat@{\tt  concat}}{115}
+\indexentry{concatMap@{\tt  concatMap}}{115}
+\indexentry{head@{\tt  head}}{115}
+\indexentry{tail@{\tt  tail}}{115}
+\indexentry{last@{\tt  last}}{116}
+\indexentry{init@{\tt  init}}{116}
+\indexentry{null@{\tt  null}}{116}
+\indexentry{length@{\tt  length}}{116}
+\indexentry{"!"!@{\tt  {\char'041}{\char'041}}}{116}
+\indexentry{foldl@{\tt  foldl}}{116}
+\indexentry{foldl1@{\tt  foldl1}}{116}
+\indexentry{scanl@{\tt  scanl}}{116}
+\indexentry{scanl1@{\tt  scanl1}}{116}
+\indexentry{foldr@{\tt  foldr}}{117}
+\indexentry{foldr1@{\tt  foldr1}}{117}
+\indexentry{scanr@{\tt  scanr}}{117}
+\indexentry{scanr1@{\tt  scanr1}}{117}
+\indexentry{iterate@{\tt  iterate}}{117}
+\indexentry{repeat@{\tt  repeat}}{117}
+\indexentry{replicate@{\tt  replicate}}{117}
+\indexentry{cycle@{\tt  cycle}}{117}
+\indexentry{take@{\tt  take}}{117}
+\indexentry{drop@{\tt  drop}}{118}
+\indexentry{splitAt@{\tt  splitAt}}{118}
+\indexentry{takeWhile@{\tt  takeWhile}}{118}
+\indexentry{dropWhile@{\tt  dropWhile}}{118}
+\indexentry{span@{\tt  span}}{118}
+\indexentry{break@{\tt  break}}{118}
+\indexentry{lines@{\tt  lines}}{118}
+\indexentry{words@{\tt  words}}{118}
+\indexentry{unlines@{\tt  unlines}}{119}
+\indexentry{unwords@{\tt  unwords}}{119}
+\indexentry{reverse@{\tt  reverse}}{119}
+\indexentry{and@{\tt  and}}{119}
+\indexentry{or@{\tt  or}}{119}
+\indexentry{any@{\tt  any}}{119}
+\indexentry{all@{\tt  all}}{119}
+\indexentry{elem@{\tt  elem}}{119}
+\indexentry{notElem@{\tt  notElem}}{119}
+\indexentry{lookup@{\tt  lookup}}{119}
+\indexentry{sum@{\tt  sum}}{119}
+\indexentry{product@{\tt  product}}{119}
+\indexentry{maximum@{\tt  maximum}}{119}
+\indexentry{minimum@{\tt  minimum}}{119}
+\indexentry{zip@{\tt  zip}}{120}
+\indexentry{zip3@{\tt  zip3}}{120}
+\indexentry{zipWith@{\tt  zipWith}}{120}
+\indexentry{zipWith3@{\tt  zipWith3}}{120}
+\indexentry{unzip@{\tt  unzip}}{120}
+\indexentry{unzip3@{\tt  unzip3}}{120}
+\indexentry{PreludeText@{\tt  PreludeText} (module)}{121}
+\indexentry{Char@{\tt  Char} (module)}{121}
+\indexentry{Numeric@{\tt  Numeric} (module)}{121}
+\indexentry{ReadS@{\tt  ReadS} (type synonym)}{121}
+\indexentry{ShowS@{\tt  ShowS} (type synonym)}{121}
+\indexentry{readsPrec@{\tt  readsPrec}}{121}
+\indexentry{readList@{\tt  readList}}{121}
+\indexentry{Read@{\tt  Read} (class)}{121}
+\indexentry{showsPrec@{\tt  showsPrec}}{121}
+\indexentry{show@{\tt  show}}{121}
+\indexentry{showList@{\tt  showList}}{121}
+\indexentry{Show@{\tt  Show} (class)}{121}
+\indexentry{reads@{\tt  reads}}{122}
+\indexentry{shows@{\tt  shows}}{122}
+\indexentry{read@{\tt  read}}{122}
+\indexentry{showChar@{\tt  showChar}}{122}
+\indexentry{showString@{\tt  showString}}{122}
+\indexentry{showParen@{\tt  showParen}}{122}
+\indexentry{readParen@{\tt  readParen}}{122}
+\indexentry{lex@{\tt  lex}}{122}
+\indexentry{Show@{\tt  Show} (class)!instance for {\tt Int}}{123}
+\indexentry{Read@{\tt  Read} (class)!instance for {\tt Int}}{123}
+\indexentry{Show@{\tt  Show} (class)!instance for {\tt Integer}}{123}
+\indexentry{Read@{\tt  Read} (class)!instance for {\tt Integer}}{123}
+\indexentry{Show@{\tt  Show} (class)!instance for {\tt Float}}{123}
+\indexentry{Read@{\tt  Read} (class)!instance for {\tt Float}}{123}
+\indexentry{Show@{\tt  Show} (class)!instance for {\tt Double}}{123}
+\indexentry{Read@{\tt  Read} (class)!instance for {\tt Double}}{123}
+\indexentry{Show@{\tt  Show} (class)!instance for {\tt Char}}{124}
+\indexentry{Read@{\tt  Read} (class)!instance for {\tt Char}}{124}
+\indexentry{Show@{\tt  Show} (class)!instance for {\tt [a]}}{124}
+\indexentry{Read@{\tt  Read} (class)!instance for {\tt [a]}}{124}
+\indexentry{PreludeIO@{\tt  PreludeIO} (module)}{125}
+\indexentry{PreludeBuiltin@{\tt  PreludeBuiltin} (module)}{125}
+\indexentry{FilePath@{\tt  FilePath} (type synonym)}{125}
+\indexentry{IOError@{\tt  IOError} (datatype)}{125}
+\indexentry{ioError@{\tt  ioError}}{125}
+\indexentry{userError@{\tt  userError}}{125}
+\indexentry{catch@{\tt  catch}}{125}
+\indexentry{putChar@{\tt  putChar}}{125}
+\indexentry{putStr@{\tt  putStr}}{125}
+\indexentry{putStrLn@{\tt  putStrLn}}{125}
+\indexentry{print@{\tt  print}}{125}
+\indexentry{getChar@{\tt  getChar}}{125}
+\indexentry{getLine@{\tt  getLine}}{125}
+\indexentry{getContents@{\tt  getContents}}{125}
+\indexentry{interact@{\tt  interact}}{126}
+\indexentry{readFile@{\tt  readFile}}{126}
+\indexentry{writeFile@{\tt  writeFile}}{126}
+\indexentry{appendFile@{\tt  appendFile}}{126}
+\indexentry{readIO@{\tt  readIO}}{126}
+\indexentry{readLn@{\tt  readLn}}{126}
+\indexentry{syntax}{127}
+\indexentry{maximal munch rule}{127}
+\indexentry{program@{\it  program}}{129}
+\indexentry{lexeme@{\it  lexeme}}{129}
+\indexentry{literal@{\it  literal}}{129}
+\indexentry{special@{\it  special}}{129}
+\indexentry{whitespace@{\it  whitespace}}{129}
+\indexentry{whitestuff@{\it  whitestuff}}{129}
+\indexentry{whitechar@{\it  whitechar}}{129}
+\indexentry{uniWhite@{\it  uniWhite}}{129}
+\indexentry{newline@{\it  newline}}{129}
+\indexentry{space@{\it  space}}{129}
+\indexentry{tab@{\it  tab}}{129}
+\indexentry{vertab@{\it  vertab}}{129}
+\indexentry{formfeed@{\it  formfeed}}{129}
+\indexentry{comment@{\it  comment}}{129}
+\indexentry{dashes1@{\it  dashes1}}{129}
+\indexentry{ncomment@{\it  ncomment}}{129}
+\indexentry{opencom@{\it  opencom}}{129}
+\indexentry{closecom@{\it  closecom}}{129}
+\indexentry{ANYseq@{\it  ANYseq}}{129}
+\indexentry{ANY@{\it  ANY}}{129}
+\indexentry{any@{\it  any}}{129}
+\indexentry{graphic@{\it  graphic}}{129}
+\indexentry{small@{\it  small}}{129}
+\indexentry{ascSmall@{\it  ascSmall}}{129}
+\indexentry{uniSmall@{\it  uniSmall}}{129}
+\indexentry{uniDigit@{\it  uniDigit}}{129}
+\indexentry{large@{\it  large}}{129}
+\indexentry{ascLarge@{\it  ascLarge}}{129}
+\indexentry{uniLarge@{\it  uniLarge}}{129}
+\indexentry{symbol@{\it  symbol}}{129}
+\indexentry{ascSymbol@{\it  ascSymbol}}{129}
+\indexentry{uniSymbol@{\it  uniSymbol}}{129}
+\indexentry{digit@{\it  digit}}{129}
+\indexentry{ascDigit@{\it  ascDigit}}{129}
+\indexentry{uniDigit@{\it  uniDigit}}{129}
+\indexentry{octit@{\it  octit}}{129}
+\indexentry{hexit@{\it  hexit}}{129}
+\indexentry{varid@{\it  varid}}{130}
+\indexentry{conid@{\it  conid}}{130}
+\indexentry{reservedid@{\it  reservedid}}{130}
+\indexentry{varsym@{\it  varsym}}{130}
+\indexentry{consym@{\it  consym}}{130}
+\indexentry{symbol@{\it  symbol}}{130}
+\indexentry{reservedop@{\it  reservedop}}{130}
+\indexentry{tyvar@{\it  tyvar}}{130}
+\indexentry{tycon@{\it  tycon}}{130}
+\indexentry{tycls@{\it  tycls}}{130}
+\indexentry{modid@{\it  modid}}{130}
+\indexentry{qvarid@{\it  qvarid}}{130}
+\indexentry{qconid@{\it  qconid}}{130}
+\indexentry{qtycon@{\it  qtycon}}{130}
+\indexentry{qtycls@{\it  qtycls}}{130}
+\indexentry{qvarsym@{\it  qvarsym}}{130}
+\indexentry{qconsym@{\it  qconsym}}{130}
+\indexentry{decimal@{\it  decimal}}{130}
+\indexentry{octal@{\it  octal}}{130}
+\indexentry{hexadecimal@{\it  hexadecimal}}{130}
+\indexentry{char@{\it  char}}{130}
+\indexentry{string@{\it  string}}{130}
+\indexentry{escape@{\it  escape}}{130}
+\indexentry{charesc@{\it  charesc}}{130}
+\indexentry{ascii@{\it  ascii}}{130}
+\indexentry{cntrl@{\it  cntrl}}{130}
+\indexentry{gap@{\it  gap}}{130}
+\indexentry{layout}{130}
+\indexentry{literate comments}{134}
+\indexentry{module@{\it  module}}{136}
+\indexentry{body@{\it  body}}{136}
+\indexentry{modid@{\it  modid}}{136}
+\indexentry{impdecls@{\it  impdecls}}{136}
+\indexentry{exports@{\it  exports}}{136}
+\indexentry{export@{\it  export}}{136}
+\indexentry{impdecl@{\it  impdecl}}{136}
+\indexentry{impspec@{\it  impspec}}{136}
+\indexentry{import@{\it  import}}{136}
+\indexentry{cname@{\it  cname}}{136}
+\indexentry{topdecls@{\it  topdecls}}{136}
+\indexentry{topdecl@{\it  topdecl}}{136}
+\indexentry{vars@{\it  vars}}{137}
+\indexentry{fixity@{\it  fixity}}{137}
+\indexentry{ops@{\it  ops}}{137}
+\indexentry{gendecl@{\it  gendecl}}{137}
+\indexentry{decls@{\it  decls}}{137}
+\indexentry{decl@{\it  decl}}{137}
+\indexentry{cdecls@{\it  cdecls}}{137}
+\indexentry{cdecl@{\it  cdecl}}{137}
+\indexentry{idecls@{\it  idecls}}{137}
+\indexentry{idecl@{\it  idecl}}{137}
+\indexentry{type@{\it  type}}{137}
+\indexentry{btype@{\it  btype}}{137}
+\indexentry{atype@{\it  atype}}{137}
+\indexentry{gtycon@{\it  gtycon}}{137}
+\indexentry{context@{\it  context}}{137}
+\indexentry{class@{\it  class}}{137}
+\indexentry{simpleclass@{\it  simpleclass}}{137}
+\indexentry{scontext@{\it  scontext}}{137}
+\indexentry{simpletype@{\it  simpletype}}{138}
+\indexentry{constrs@{\it  constrs}}{138}
+\indexentry{constr@{\it  constr}}{138}
+\indexentry{fielddecl@{\it  fielddecl}}{138}
+\indexentry{deriving@{\it  deriving}}{138}
+\indexentry{dclass@{\it  dclass}}{138}
+\indexentry{newconstr@{\it  newconstr}}{138}
+\indexentry{inst@{\it  inst}}{138}
+\indexentry{funlhs@{\it  funlhs}}{138}
+\indexentry{rhs@{\it  rhs}}{138}
+\indexentry{gdrhs@{\it  gdrhs}}{138}
+\indexentry{gd@{\it  gd}}{138}
+\indexentry{exp@{\it  exp}}{139}
+\indexentry{exp@\mbox{$\it exp^i$}}{139}
+\indexentry{lexp@\mbox{$\it lexp^i$}}{139}
+\indexentry{rexp@\mbox{$\it rexp^i$}}{139}
+\indexentry{fexp@{\it  fexp}}{139}
+\indexentry{aexp@{\it  aexp}}{139}
+\indexentry{qual@{\it  qual}}{139}
+\indexentry{alts@{\it  alts}}{139}
+\indexentry{alt@{\it  alt}}{139}
+\indexentry{gdpat@{\it  gdpat}}{139}
+\indexentry{stmt@{\it  stmt}}{139}
+\indexentry{stmts@{\it  stmts}}{139}
+\indexentry{fbind@{\it  fbind}}{139}
+\indexentry{pat@{\it  pat}}{140}
+\indexentry{pat@\mbox{$\it pat^i$}}{140}
+\indexentry{lpat@\mbox{$\it lpat^i$}}{140}
+\indexentry{rpat@\mbox{$\it rpat^i$}}{140}
+\indexentry{fpat@{\it  fpat}}{140}
+\indexentry{fpats@{\it  fpats}}{140}
+\indexentry{apat@{\it  apat}}{140}
+\indexentry{gcon@{\it  gcon}}{140}
+\indexentry{var@{\it  var}}{140}
+\indexentry{qvar@{\it  qvar}}{140}
+\indexentry{con@{\it  con}}{140}
+\indexentry{qcon@{\it  qcon}}{140}
+\indexentry{varop@{\it  varop}}{140}
+\indexentry{qvarop@{\it  qvarop}}{140}
+\indexentry{conop@{\it  conop}}{140}
+\indexentry{qconop@{\it  qconop}}{140}
+\indexentry{op@{\it  op}}{140}
+\indexentry{qop@{\it  qop}}{140}
+\indexentry{derived instance}{141}
+\indexentry{algebraic datatype}{141}
+\indexentry{Eq@{\tt  Eq} (class)!derived instance}{142}
+\indexentry{Ord@{\tt  Ord} (class)!derived instance}{142}
+\indexentry{==@{\tt ==}}{142}
+\indexentry{/=@{\tt /=}}{142}
+\indexentry{compare@{\tt  compare}}{142}
+\indexentry{<@{\tt <}}{142}
+\indexentry{<=@{\tt <=}}{142}
+\indexentry{>@{\tt >}}{142}
+\indexentry{>=@{\tt >=}}{142}
+\indexentry{max@{\tt  max}}{142}
+\indexentry{min@{\tt  min}}{142}
+\indexentry{Enum@{\tt  Enum} (class)!derived instance}{142}
+\indexentry{Bounded@{\tt  Bounded} (class)!derived instance}{143}
+\indexentry{maxBound@{\tt  maxBound}}{143}
+\indexentry{minBound@{\tt  minBound}}{143}
+\indexentry{Read@{\tt  Read} (class)!derived instance}{143}
+\indexentry{Show@{\tt  Show} (class)!derived instance}{143}
+\indexentry{showsPrec@{\tt  showsPrec}}{143}
+\indexentry{readsPrec@{\tt  readsPrec}}{143}
+\indexentry{showList@{\tt  showList}}{143}
+\indexentry{readList@{\tt  readList}}{143}
+\indexentry{default class method}{145}
+\indexentry{pragmas}{147}
+\indexentry{inlining}{147}
+\indexentry{rational numbers}{151}
+\indexentry{Ratio@{\tt  Ratio} (module)}{151}
+\indexentry{%@{\tt  {\char'045}}}{151}
+\indexentry{numerator@{\tt  numerator}}{151}
+\indexentry{denominator@{\tt  denominator}}{151}
+\indexentry{approxRational@{\tt  approxRational}}{151}
+\indexentry{%@{\tt  {\char'045}}}{151}
+\indexentry{Rational@{\tt  Rational} (type synonym)}{151}
+\indexentry{Ratio@{\tt  Ratio} (datatype)}{151}
+\indexentry{Rational@{\tt  Rational} (type synonym)}{151}
+\indexentry{%@{\tt {\char'045}}}{151}
+\indexentry{numerator@{\tt  numerator}}{151}
+\indexentry{denominator@{\tt  denominator}}{151}
+\indexentry{Ratio@{\tt  Ratio} (module)}{153}
+\indexentry{%@{\tt  {\char'045}}}{153}
+\indexentry{Rational@{\tt  Rational} (type synonym)}{153}
+\indexentry{%@{\tt  {\char'045}}}{153}
+\indexentry{numerator@{\tt  numerator}}{153}
+\indexentry{denominator@{\tt  denominator}}{153}
+\indexentry{approxRational@{\tt  approxRational}}{153}
+\indexentry{Ord@{\tt  Ord} (class)!instance for {\tt Ratio}}{153}
+\indexentry{Num@{\tt  Num} (class)!instance for {\tt Ratio}}{153}
+\indexentry{Real@{\tt  Real} (class)!instance for {\tt Ratio}}{153}
+\indexentry{Fractional@{\tt  Fractional} (class)!instance for {\tt Ratio}}{153}
+\indexentry{RealFrac@{\tt  RealFrac} (class)!instance for {\tt Ratio}}{154}
+\indexentry{Enum@{\tt  Enum} (class)!instance for {\tt Ratio}}{154}
+\indexentry{Read@{\tt  Read} (class)!instance for {\tt Ratio}}{154}
+\indexentry{Show@{\tt  Show} (class)!instance for {\tt Ratio}}{154}
+\indexentry{Complex@{\tt  Complex} (module)}{155}
+\indexentry{:+@{\tt  :+}}{155}
+\indexentry{realPart@{\tt  realPart}}{155}
+\indexentry{imagPart@{\tt  imagPart}}{155}
+\indexentry{conjugate@{\tt  conjugate}}{155}
+\indexentry{mkPolar@{\tt  mkPolar}}{155}
+\indexentry{cis@{\tt  cis}}{155}
+\indexentry{polar@{\tt  polar}}{155}
+\indexentry{magnitude@{\tt  magnitude}}{155}
+\indexentry{phase@{\tt  phase}}{155}
+\indexentry{:+@{\tt  :+}}{155}
+\indexentry{mkPolar@{\tt  mkPolar}}{155}
+\indexentry{polar@{\tt  polar}}{155}
+\indexentry{polar@{\tt  polar}}{155}
+\indexentry{realPart@{\tt  realPart}}{156}
+\indexentry{imagPart@{\tt  imagPart}}{156}
+\indexentry{magnitude@{\tt  magnitude}}{156}
+\indexentry{phase@{\tt  phase}}{156}
+\indexentry{conjugate@{\tt  conjugate}}{156}
+\indexentry{Complex@{\tt  Complex} (module)}{156}
+\indexentry{:+@{\tt  :+}}{156}
+\indexentry{realPart@{\tt  realPart}}{156}
+\indexentry{imagPart@{\tt  imagPart}}{156}
+\indexentry{conjugate@{\tt  conjugate}}{156}
+\indexentry{mkPolar@{\tt  mkPolar}}{156}
+\indexentry{cis@{\tt  cis}}{156}
+\indexentry{polar@{\tt  polar}}{156}
+\indexentry{magnitude@{\tt  magnitude}}{156}
+\indexentry{phase@{\tt  phase}}{156}
+\indexentry{Num@{\tt  Num} (class)!instance for {\tt Complex}}{157}
+\indexentry{Fractional@{\tt  Fractional} (class)!instance for {\tt Complex}}{157}
+\indexentry{Floating@{\tt  Floating} (class)!instance for {\tt Complex}}{158}
+\indexentry{Numeric@{\tt  Numeric} (module)}{159}
+\indexentry{fromRat@{\tt  fromRat}}{159}
+\indexentry{showSigned@{\tt  showSigned}}{159}
+\indexentry{showIntAtBase@{\tt  showIntAtBase}}{159}
+\indexentry{showInt@{\tt  showInt}}{159}
+\indexentry{showOct@{\tt  showOct}}{159}
+\indexentry{showHex@{\tt  showHex}}{159}
+\indexentry{readSigned@{\tt  readSigned}}{159}
+\indexentry{readInt@{\tt  readInt}}{159}
+\indexentry{readDec@{\tt  readDec}}{159}
+\indexentry{readOct@{\tt  readOct}}{159}
+\indexentry{readHex@{\tt  readHex}}{159}
+\indexentry{showEFloat@{\tt  showEFloat}}{159}
+\indexentry{showFFloat@{\tt  showFFloat}}{159}
+\indexentry{showGFloat@{\tt  showGFloat}}{159}
+\indexentry{showFloat@{\tt  showFloat}}{159}
+\indexentry{floatToDigits@{\tt  floatToDigits}}{159}
+\indexentry{readFloat@{\tt  readFloat}}{159}
+\indexentry{lexDigits@{\tt  lexDigits}}{159}
+\indexentry{Numeric@{\tt  Numeric} (module)}{161}
+\indexentry{Char@{\tt  Char} (module)}{161}
+\indexentry{Ratio@{\tt  Ratio} (module)}{161}
+\indexentry{Array@{\tt  Array} (module)}{161}
+\indexentry{fromRat@{\tt  fromRat}}{162}
+\indexentry{fromRat'@{\tt  fromRat'}}{162}
+\indexentry{scaleRat@{\tt  scaleRat}}{162}
+\indexentry{expt@{\tt  expt}}{162}
+\indexentry{expts@{\tt  expts}}{163}
+\indexentry{integerLogBase@{\tt  integerLogBase}}{163}
+\indexentry{doDiv@{\tt  doDiv}}{163}
+\indexentry{showSigned@{\tt  showSigned}}{163}
+\indexentry{showInt@{\tt  showInt}}{163}
+\indexentry{showOct@{\tt  showOct}}{163}
+\indexentry{showHex@{\tt  showHex}}{163}
+\indexentry{showIntAtBase@{\tt  showIntAtBase}}{163}
+\indexentry{readSigned@{\tt  readSigned}}{163}
+\indexentry{readInt@{\tt  readInt}}{164}
+\indexentry{readDec@{\tt  readDec}}{164}
+\indexentry{readOct@{\tt  readOct}}{164}
+\indexentry{readHex@{\tt  readHex}}{164}
+\indexentry{showEFloat@{\tt  showEFloat}}{164}
+\indexentry{showFFloat@{\tt  showFFloat}}{164}
+\indexentry{showGFloat@{\tt  showGFloat}}{164}
+\indexentry{showFloat@{\tt  showFloat}}{164}
+\indexentry{FFFormat@{\tt  FFFormat} (datatype)}{164}
+\indexentry{formatRealFloat@{\tt  formatRealFloat}}{165}
+\indexentry{roundTo@{\tt  roundTo}}{166}
+\indexentry{floatToDigits@{\tt  floatToDigits}}{166}
+\indexentry{f@{\tt  f}}{167}
+\indexentry{e@{\tt  e}}{167}
+\indexentry{readFloat@{\tt  readFloat}}{168}
+\indexentry{lexDigits@{\tt  lexDigits}}{168}
+\indexentry{nonnull@{\tt  nonnull}}{168}
+\indexentry{Ix@{\tt  Ix} (module)}{169}
+\indexentry{range@{\tt  range}}{169}
+\indexentry{index@{\tt  index}}{169}
+\indexentry{inRange@{\tt  inRange}}{169}
+\indexentry{rangeSize@{\tt  rangeSize}}{169}
+\indexentry{Ix@{\tt  Ix} (class)}{169}
+\indexentry{range@{\tt  range}}{169}
+\indexentry{index@{\tt  index}}{169}
+\indexentry{inRange@{\tt  inRange}}{169}
+\indexentry{Ix@{\tt Ix}!derived instance}{170}
+\indexentry{enumeration}{170}
+\indexentry{Ix@{\tt  Ix}}{171}
+\indexentry{range@{\tt  range}}{171}
+\indexentry{index@{\tt  index}}{171}
+\indexentry{inRange@{\tt  inRange}}{171}
+\indexentry{rangeSize@{\tt  rangeSize}}{171}
+\indexentry{Ix@{\tt  Ix} (module)}{172}
+\indexentry{range@{\tt  range}}{172}
+\indexentry{index@{\tt  index}}{172}
+\indexentry{inRange@{\tt  inRange}}{172}
+\indexentry{rangeSize@{\tt  rangeSize}}{172}
+\indexentry{Ix@{\tt  Ix} (class)}{172}
+\indexentry{Ix@{\tt  Ix} (class)!instance for {\tt Char}}{172}
+\indexentry{Ix@{\tt  Ix} (class)!instance for {\tt Int}}{172}
+\indexentry{Ix@{\tt  Ix} (class)!instance for {\tt Integer}}{172}
+\indexentry{array}{173}
+\indexentry{Array@{\tt  Array} (module)}{173}
+\indexentry{Ix@{\tt  Ix} (module)}{173}
+\indexentry{Ix@{\tt  Ix} (module)}{173}
+\indexentry{"!@{\tt  {\char'041}}}{173}
+\indexentry{//@{\tt  //}}{173}
+\indexentry{array@{\tt  array}}{173}
+\indexentry{listArray@{\tt  listArray}}{173}
+\indexentry{"!@{\tt  {\char'041}}}{173}
+\indexentry{bounds@{\tt  bounds}}{173}
+\indexentry{indices@{\tt  indices}}{173}
+\indexentry{elems@{\tt  elems}}{173}
+\indexentry{assocs@{\tt  assocs}}{173}
+\indexentry{accumArray@{\tt  accumArray}}{173}
+\indexentry{//@{\tt  //}}{173}
+\indexentry{accum@{\tt  accum}}{173}
+\indexentry{ixmap@{\tt  ixmap}}{173}
+\indexentry{Array@{\tt  Array} (datatype)}{174}
+\indexentry{array@{\tt  array}}{174}
+\indexentry{!@{\tt {\char'041}}}{174}
+\indexentry{bounds@{\tt  bounds}}{174}
+\indexentry{indices@{\tt  indices}}{174}
+\indexentry{elems@{\tt  elems}}{174}
+\indexentry{assocs@{\tt  assocs}}{174}
+\indexentry{listArray@{\tt  listArray}}{174}
+\indexentry{array!accumulated}{174}
+\indexentry{accumArray@{\tt  accumArray}}{174}
+\indexentry{//@{\tt  //}}{175}
+\indexentry{accum@{\tt  accum}}{175}
+\indexentry{array!derived}{176}
+\indexentry{fmap@{\tt  fmap}}{176}
+\indexentry{ixmap@{\tt  ixmap}}{176}
+\indexentry{Array@{\tt  Array} (module)}{176}
+\indexentry{Ix@{\tt  Ix} (module)}{176}
+\indexentry{Ix@{\tt  Ix} (module)}{176}
+\indexentry{List@{\tt  List} (module)}{176}
+\indexentry{"!@{\tt  {\char'041}}}{176}
+\indexentry{//@{\tt  //}}{176}
+\indexentry{array@{\tt  array}}{177}
+\indexentry{listArray@{\tt  listArray}}{177}
+\indexentry{"!@{\tt  {\char'041}}}{177}
+\indexentry{bounds@{\tt  bounds}}{177}
+\indexentry{indices@{\tt  indices}}{177}
+\indexentry{elems@{\tt  elems}}{177}
+\indexentry{assocs@{\tt  assocs}}{177}
+\indexentry{//@{\tt  //}}{177}
+\indexentry{accum@{\tt  accum}}{177}
+\indexentry{accumArray@{\tt  accumArray}}{177}
+\indexentry{ixmap@{\tt  ixmap}}{177}
+\indexentry{Functor@{\tt  Functor} (class)!instance for {\tt Array}}{177}
+\indexentry{Eq@{\tt  Eq} (class)!instance for {\tt Array}}{177}
+\indexentry{Ord@{\tt  Ord} (class)!instance for {\tt Array}}{178}
+\indexentry{Show@{\tt  Show} (class)!instance for {\tt Array}}{178}
+\indexentry{Read@{\tt  Read} (class)!instance for {\tt Array}}{178}
+\indexentry{List@{\tt  List} (module)}{180}
+\indexentry{\\@{\tt  {\char'134}{\char'134}}}{180}
+\indexentry{elemIndex@{\tt  elemIndex}}{180}
+\indexentry{elemIndices@{\tt  elemIndices}}{180}
+\indexentry{find@{\tt  find}}{180}
+\indexentry{findIndex@{\tt  findIndex}}{180}
+\indexentry{findIndices@{\tt  findIndices}}{180}
+\indexentry{nub@{\tt  nub}}{180}
+\indexentry{nubBy@{\tt  nubBy}}{180}
+\indexentry{delete@{\tt  delete}}{180}
+\indexentry{deleteBy@{\tt  deleteBy}}{180}
+\indexentry{\\@{\tt  {\char'134}{\char'134}}}{180}
+\indexentry{deleteFirstsBy@{\tt  deleteFirstsBy}}{180}
+\indexentry{union@{\tt  union}}{180}
+\indexentry{unionBy@{\tt  unionBy}}{180}
+\indexentry{intersect@{\tt  intersect}}{181}
+\indexentry{intersectBy@{\tt  intersectBy}}{181}
+\indexentry{intersperse@{\tt  intersperse}}{181}
+\indexentry{transpose@{\tt  transpose}}{181}
+\indexentry{partition@{\tt  partition}}{181}
+\indexentry{group@{\tt  group}}{181}
+\indexentry{groupBy@{\tt  groupBy}}{181}
+\indexentry{inits@{\tt  inits}}{181}
+\indexentry{tails@{\tt  tails}}{181}
+\indexentry{isPrefixOf@{\tt  isPrefixOf}}{181}
+\indexentry{isSuffixOf@{\tt  isSuffixOf}}{181}
+\indexentry{mapAccumL@{\tt  mapAccumL}}{181}
+\indexentry{mapAccumR@{\tt  mapAccumR}}{181}
+\indexentry{unfoldr@{\tt  unfoldr}}{181}
+\indexentry{sort@{\tt  sort}}{181}
+\indexentry{sortBy@{\tt  sortBy}}{181}
+\indexentry{insert@{\tt  insert}}{181}
+\indexentry{insertBy@{\tt  insertBy}}{181}
+\indexentry{maximumBy@{\tt  maximumBy}}{181}
+\indexentry{minimumBy@{\tt  minimumBy}}{181}
+\indexentry{genericLength@{\tt  genericLength}}{181}
+\indexentry{genericTake@{\tt  genericTake}}{181}
+\indexentry{genericDrop@{\tt  genericDrop}}{181}
+\indexentry{genericSplitAt@{\tt  genericSplitAt}}{181}
+\indexentry{genericIndex@{\tt  genericIndex}}{181}
+\indexentry{genericReplicate@{\tt  genericReplicate}}{181}
+\indexentry{zip4@{\tt  zip4}}{181}
+\indexentry{zip5@{\tt  zip5}}{181}
+\indexentry{zip6@{\tt  zip6}}{181}
+\indexentry{zip7@{\tt  zip7}}{181}
+\indexentry{zipWith4@{\tt  zipWith4}}{181}
+\indexentry{zipWith5@{\tt  zipWith5}}{181}
+\indexentry{zipWith6@{\tt  zipWith6}}{181}
+\indexentry{zipWith7@{\tt  zipWith7}}{181}
+\indexentry{unzip4@{\tt  unzip4}}{181}
+\indexentry{unzip5@{\tt  unzip5}}{181}
+\indexentry{unzip6@{\tt  unzip6}}{181}
+\indexentry{unzip7@{\tt  unzip7}}{181}
+\indexentry{elemIndex@{\tt  elemIndex}}{182}
+\indexentry{elemIndices@{\tt  elemIndices}}{182}
+\indexentry{find@{\tt  find}}{182}
+\indexentry{nub@{\tt  nub}}{182}
+\indexentry{delete@{\tt  delete}}{182}
+\indexentry{(\\)@{\tt  (\\)}}{182}
+\indexentry{union@{\tt  union}}{182}
+\indexentry{intersect@{\tt  intersect}}{182}
+\indexentry{intersperse@{\tt  intersperse}}{183}
+\indexentry{transpose@{\tt  transpose}}{183}
+\indexentry{partition@{\tt  partition}}{183}
+\indexentry{sort@{\tt  sort}}{183}
+\indexentry{insert@{\tt  insert}}{183}
+\indexentry{group@{\tt  group}}{183}
+\indexentry{inits@{\tt  inits}}{183}
+\indexentry{tails@{\tt  tails}}{183}
+\indexentry{mapAccumL@{\tt  mapAccumL}}{183}
+\indexentry{mapAccumR@{\tt  mapAccumR}}{183}
+\indexentry{nubBy@{\tt  nubBy}}{184}
+\indexentry{deleteBy@{\tt  deleteBy}}{184}
+\indexentry{deleteFirstsBy@{\tt  deleteFirstsBy}}{184}
+\indexentry{unionBy@{\tt  unionBy}}{184}
+\indexentry{intersectBy@{\tt  intersectBy}}{184}
+\indexentry{groupBy@{\tt  groupBy}}{184}
+\indexentry{sortBy@{\tt  sortBy}}{184}
+\indexentry{insertBy@{\tt  insertBy}}{184}
+\indexentry{maximumBy@{\tt  maximumBy}}{184}
+\indexentry{minimumBy@{\tt  minimumBy}}{184}
+\indexentry{zip4@{\tt  zip4}}{185}
+\indexentry{unzip4@{\tt  unzip4}}{185}
+\indexentry{zipWith4@{\tt  zipWith4}}{185}
+\indexentry{List@{\tt  List} (module)}{186}
+\indexentry{Maybe@{\tt  Maybe} (module)}{186}
+\indexentry{\\@{\tt  {\char'134}{\char'134}}}{186}
+\indexentry{elemIndex@{\tt  elemIndex}}{186}
+\indexentry{elemIndices@{\tt  elemIndices}}{186}
+\indexentry{find@{\tt  find}}{186}
+\indexentry{findIndex@{\tt  findIndex}}{186}
+\indexentry{findIndices@{\tt  findIndices}}{186}
+\indexentry{nub@{\tt  nub}}{186}
+\indexentry{nubBy@{\tt  nubBy}}{187}
+\indexentry{delete@{\tt  delete}}{187}
+\indexentry{deleteBy@{\tt  deleteBy}}{187}
+\indexentry{\\@{\tt  {\char'134}{\char'134}}}{187}
+\indexentry{deleteFirstsBy@{\tt  deleteFirstsBy}}{187}
+\indexentry{union@{\tt  union}}{187}
+\indexentry{unionBy@{\tt  unionBy}}{187}
+\indexentry{intersect@{\tt  intersect}}{187}
+\indexentry{intersectBy@{\tt  intersectBy}}{187}
+\indexentry{intersperse@{\tt  intersperse}}{187}
+\indexentry{transpose@{\tt  transpose}}{187}
+\indexentry{partition@{\tt  partition}}{187}
+\indexentry{group@{\tt  group}}{187}
+\indexentry{groupBy@{\tt  groupBy}}{188}
+\indexentry{inits@{\tt  inits}}{188}
+\indexentry{tails@{\tt  tails}}{188}
+\indexentry{isPrefixOf@{\tt  isPrefixOf}}{188}
+\indexentry{isSuffixOf@{\tt  isSuffixOf}}{188}
+\indexentry{mapAccumL@{\tt  mapAccumL}}{188}
+\indexentry{mapAccumR@{\tt  mapAccumR}}{188}
+\indexentry{unfoldr@{\tt  unfoldr}}{188}
+\indexentry{sort@{\tt  sort}}{188}
+\indexentry{sortBy@{\tt  sortBy}}{188}
+\indexentry{insert@{\tt  insert}}{188}
+\indexentry{insertBy@{\tt  insertBy}}{189}
+\indexentry{maximumBy@{\tt  maximumBy}}{189}
+\indexentry{minimumBy@{\tt  minimumBy}}{189}
+\indexentry{genericLength@{\tt  genericLength}}{189}
+\indexentry{genericTake@{\tt  genericTake}}{189}
+\indexentry{genericDrop@{\tt  genericDrop}}{189}
+\indexentry{genericSplitAt@{\tt  genericSplitAt}}{189}
+\indexentry{genericIndex@{\tt  genericIndex}}{190}
+\indexentry{genericReplicate@{\tt  genericReplicate}}{190}
+\indexentry{zip4@{\tt  zip4}}{190}
+\indexentry{zip5@{\tt  zip5}}{190}
+\indexentry{zip6@{\tt  zip6}}{190}
+\indexentry{zip7@{\tt  zip7}}{190}
+\indexentry{zipWith4@{\tt  zipWith4}}{190}
+\indexentry{zipWith5@{\tt  zipWith5}}{190}
+\indexentry{zipWith6@{\tt  zipWith6}}{190}
+\indexentry{zipWith7@{\tt  zipWith7}}{190}
+\indexentry{unzip4@{\tt  unzip4}}{190}
+\indexentry{unzip5@{\tt  unzip5}}{191}
+\indexentry{unzip6@{\tt  unzip6}}{191}
+\indexentry{unzip7@{\tt  unzip7}}{191}
+\indexentry{Maybe@{\tt  Maybe} (module)}{193}
+\indexentry{isJust@{\tt  isJust}}{193}
+\indexentry{isNothing@{\tt  isNothing}}{193}
+\indexentry{fromJust@{\tt  fromJust}}{193}
+\indexentry{fromMaybe@{\tt  fromMaybe}}{193}
+\indexentry{listToMaybe@{\tt  listToMaybe}}{193}
+\indexentry{maybeToList@{\tt  maybeToList}}{193}
+\indexentry{catMaybes@{\tt  catMaybes}}{193}
+\indexentry{mapMaybe@{\tt  mapMaybe}}{193}
+\indexentry{Maybe@{\tt  Maybe} (module)}{194}
+\indexentry{isJust@{\tt  isJust}}{194}
+\indexentry{isNothing@{\tt  isNothing}}{194}
+\indexentry{fromJust@{\tt  fromJust}}{194}
+\indexentry{fromMaybe@{\tt  fromMaybe}}{194}
+\indexentry{maybeToList@{\tt  maybeToList}}{194}
+\indexentry{listToMaybe@{\tt  listToMaybe}}{194}
+\indexentry{catMaybes@{\tt  catMaybes}}{194}
+\indexentry{mapMaybe@{\tt  mapMaybe}}{194}
+\indexentry{Char@{\tt  Char} (module)}{195}
+\indexentry{isAscii@{\tt  isAscii}}{195}
+\indexentry{isLatin1@{\tt  isLatin1}}{195}
+\indexentry{isControl@{\tt  isControl}}{195}
+\indexentry{isPrint@{\tt  isPrint}}{195}
+\indexentry{isSpace@{\tt  isSpace}}{195}
+\indexentry{isUpper@{\tt  isUpper}}{195}
+\indexentry{isLower@{\tt  isLower}}{195}
+\indexentry{isAlpha@{\tt  isAlpha}}{195}
+\indexentry{isDigit@{\tt  isDigit}}{195}
+\indexentry{isOctDigit@{\tt  isOctDigit}}{195}
+\indexentry{isHexDigit@{\tt  isHexDigit}}{195}
+\indexentry{isAlphaNum@{\tt  isAlphaNum}}{195}
+\indexentry{toUpper@{\tt  toUpper}}{195}
+\indexentry{toLower@{\tt  toLower}}{195}
+\indexentry{digitToInt@{\tt  digitToInt}}{195}
+\indexentry{intToDigit@{\tt  intToDigit}}{195}
+\indexentry{ord@{\tt  ord}}{195}
+\indexentry{chr@{\tt  chr}}{195}
+\indexentry{lexLitChar@{\tt  lexLitChar}}{195}
+\indexentry{readLitChar@{\tt  readLitChar}}{195}
+\indexentry{showLitChar@{\tt  showLitChar}}{195}
+\indexentry{isAscii@{\tt  isAscii}}{195}
+\indexentry{isLatin1@{\tt  isLatin1}}{195}
+\indexentry{isControl@{\tt  isControl}}{195}
+\indexentry{isPrint@{\tt  isPrint}}{195}
+\indexentry{isSpace@{\tt  isSpace}}{195}
+\indexentry{isUpper@{\tt  isUpper}}{195}
+\indexentry{isLower@{\tt  isLower}}{195}
+\indexentry{isAlpha@{\tt  isAlpha}}{195}
+\indexentry{isDigit@{\tt  isDigit}}{195}
+\indexentry{isOctDigit@{\tt  isOctDigit}}{195}
+\indexentry{isHexDigit@{\tt  isHexDigit}}{195}
+\indexentry{isAlphaNum@{\tt  isAlphaNum}}{195}
+\indexentry{toUpper@{\tt  toUpper}}{195}
+\indexentry{toLower@{\tt  toLower}}{195}
+\indexentry{Char@{\tt  Char} (module)}{197}
+\indexentry{Array@{\tt  Array} (module)}{197}
+\indexentry{Numeric@{\tt  Numeric} (module)}{197}
+\indexentry{UnicodePrims@{\tt  UnicodePrims} (module)}{197}
+\indexentry{isAscii@{\tt  isAscii}}{197}
+\indexentry{isLatin1@{\tt  isLatin1}}{197}
+\indexentry{isControl@{\tt  isControl}}{197}
+\indexentry{isPrint@{\tt  isPrint}}{197}
+\indexentry{isSpace@{\tt  isSpace}}{197}
+\indexentry{isUpper@{\tt  isUpper}}{197}
+\indexentry{isLower@{\tt  isLower}}{197}
+\indexentry{isAlpha@{\tt  isAlpha}}{197}
+\indexentry{isDigit@{\tt  isDigit}}{197}
+\indexentry{isOctDigit@{\tt  isOctDigit}}{197}
+\indexentry{isHexDigit@{\tt  isHexDigit}}{197}
+\indexentry{isAlphaNum@{\tt  isAlphaNum}}{197}
+\indexentry{digitToInt@{\tt  digitToInt}}{197}
+\indexentry{intToDigit@{\tt  intToDigit}}{198}
+\indexentry{toUpper@{\tt  toUpper}}{198}
+\indexentry{toLower@{\tt  toLower}}{198}
+\indexentry{ord@{\tt  ord}}{198}
+\indexentry{chr@{\tt  chr}}{198}
+\indexentry{readLitChar@{\tt  readLitChar}}{198}
+\indexentry{readEsc@{\tt  readEsc}}{198}
+\indexentry{match@{\tt  match}}{198}
+\indexentry{showLitChar@{\tt  showLitChar}}{199}
+\indexentry{lexLitChar@{\tt  lexLitChar}}{199}
+\indexentry{Monad@{\tt  Monad} (module)}{202}
+\indexentry{mzero@{\tt  mzero}}{202}
+\indexentry{mplus@{\tt  mplus}}{202}
+\indexentry{MonadPlus@{\tt  MonadPlus} (class)}{202}
+\indexentry{join@{\tt  join}}{202}
+\indexentry{guard@{\tt  guard}}{202}
+\indexentry{when@{\tt  when}}{202}
+\indexentry{unless@{\tt  unless}}{202}
+\indexentry{ap@{\tt  ap}}{202}
+\indexentry{mapAndUnzipM@{\tt  mapAndUnzipM}}{202}
+\indexentry{zipWithM@{\tt  zipWithM}}{202}
+\indexentry{zipWithM{\char '137}@{\tt  zipWithM{\char '137}}}{202}
+\indexentry{foldM@{\tt  foldM}}{202}
+\indexentry{filterM@{\tt  filterM}}{202}
+\indexentry{msum@{\tt  msum}}{202}
+\indexentry{liftM@{\tt  liftM}}{202}
+\indexentry{liftM2@{\tt  liftM2}}{202}
+\indexentry{liftM3@{\tt  liftM3}}{202}
+\indexentry{liftM4@{\tt  liftM4}}{202}
+\indexentry{liftM5@{\tt  liftM5}}{202}
+\indexentry{Monad@{\tt  Monad} (module)}{206}
+\indexentry{mzero@{\tt  mzero}}{206}
+\indexentry{mplus@{\tt  mplus}}{206}
+\indexentry{MonadPlus@{\tt  MonadPlus} (class)}{206}
+\indexentry{Monad@{\tt  Monad} (class)!superclass of {\tt MonadPlus}}{206}
+\indexentry{MonadPlus@{\tt  MonadPlus} (class)!instance for {\tt Maybe}}{206}
+\indexentry{MonadPlus@{\tt  MonadPlus} (class)!instance for {\tt []}}{206}
+\indexentry{msum@{\tt  msum}}{206}
+\indexentry{join@{\tt  join}}{206}
+\indexentry{when@{\tt  when}}{206}
+\indexentry{unless@{\tt  unless}}{206}
+\indexentry{ap@{\tt  ap}}{206}
+\indexentry{guard@{\tt  guard}}{206}
+\indexentry{mapAndUnzipM@{\tt  mapAndUnzipM}}{206}
+\indexentry{zipWithM@{\tt  zipWithM}}{207}
+\indexentry{zipWithM{\char '137}@{\tt  zipWithM{\char '137}}}{207}
+\indexentry{foldM@{\tt  foldM}}{207}
+\indexentry{filterM@{\tt  filterM}}{207}
+\indexentry{liftM@{\tt  liftM}}{207}
+\indexentry{liftM2@{\tt  liftM2}}{207}
+\indexentry{liftM3@{\tt  liftM3}}{207}
+\indexentry{liftM4@{\tt  liftM4}}{207}
+\indexentry{liftM5@{\tt  liftM5}}{207}
+\indexentry{input/output}{210}
+\indexentry{I/O}{210}
+\indexentry{IO@{\tt  IO}}{210}
+\indexentry{IO@{\tt  IO} (module)}{210}
+\indexentry{Ix@{\tt  Ix} (module)}{210}
+\indexentry{Handle@{\tt  Handle} (datatype)}{210}
+\indexentry{Show@{\tt  Show} (class)!instance for {\tt HandlePosn}}{210}
+\indexentry{Show@{\tt  Show} (class)!instance for {\tt HandlePosn}}{210}
+\indexentry{HandlePosn@{\tt  HandlePosn} (datatype)}{210}
+\indexentry{IOMode@{\tt  IOMode} (datatype)}{210}
+\indexentry{BufferMode@{\tt  BufferMode} (datatype)}{210}
+\indexentry{SeekMode@{\tt  SeekMode} (datatype)}{210}
+\indexentry{stdin@{\tt  stdin}}{210}
+\indexentry{stdout@{\tt  stdout}}{210}
+\indexentry{stderr@{\tt  stderr}}{210}
+\indexentry{openFile@{\tt  openFile}}{210}
+\indexentry{hClose@{\tt  hClose}}{210}
+\indexentry{hFileSize@{\tt  hFileSize}}{211}
+\indexentry{hIsEOF@{\tt  hIsEOF}}{211}
+\indexentry{isEOF@{\tt  isEOF}}{211}
+\indexentry{hSetBuffering@{\tt  hSetBuffering}}{211}
+\indexentry{hGetBuffering@{\tt  hGetBuffering}}{211}
+\indexentry{hFlush@{\tt  hFlush}}{211}
+\indexentry{hGetPosn@{\tt  hGetPosn}}{211}
+\indexentry{hSetPosn@{\tt  hSetPosn}}{211}
+\indexentry{hSeek@{\tt  hSeek}}{211}
+\indexentry{hWaitForInput@{\tt  hWaitForInput}}{211}
+\indexentry{hReady@{\tt  hReady}}{211}
+\indexentry{hGetChar@{\tt  hGetChar}}{211}
+\indexentry{hGetLine@{\tt  hGetLine}}{211}
+\indexentry{hLookAhead@{\tt  hLookAhead}}{211}
+\indexentry{hGetContents@{\tt  hGetContents}}{211}
+\indexentry{hPutChar@{\tt  hPutChar}}{211}
+\indexentry{hPutStr@{\tt  hPutStr}}{211}
+\indexentry{hPutStrLn@{\tt  hPutStrLn}}{211}
+\indexentry{hPrint@{\tt  hPrint}}{211}
+\indexentry{hIsOpen@{\tt  hIsOpen}}{211}
+\indexentry{hIsClosed@{\tt  hIsClosed}}{211}
+\indexentry{hIsReadable@{\tt  hIsReadable}}{211}
+\indexentry{hIsWritable@{\tt  hIsWritable}}{211}
+\indexentry{hIsSeekable@{\tt  hIsSeekable}}{211}
+\indexentry{isAlreadyExistsError@{\tt  isAlreadyExistsError}}{211}
+\indexentry{isDoesNotExistError@{\tt  isDoesNotExistError}}{211}
+\indexentry{isAlreadyInUseError@{\tt  isAlreadyInUseError}}{211}
+\indexentry{isFullError@{\tt  isFullError}}{211}
+\indexentry{isEOFError@{\tt  isEOFError}}{211}
+\indexentry{isIllegalOperation@{\tt  isIllegalOperation}}{211}
+\indexentry{isPermissionError@{\tt  isPermissionError}}{211}
+\indexentry{isUserError@{\tt  isUserError}}{211}
+\indexentry{ioeGetErrorString@{\tt  ioeGetErrorString}}{211}
+\indexentry{ioeGetHandle@{\tt  ioeGetHandle}}{211}
+\indexentry{ioeGetFileName@{\tt  ioeGetFileName}}{211}
+\indexentry{try@{\tt  try}}{211}
+\indexentry{bracket@{\tt  bracket}}{211}
+\indexentry{bracket{\char '137}@{\tt  bracket{\char '137}}}{211}
+\indexentry{I/O errors}{212}
+\indexentry{IOError@{\tt  IOError}}{212}
+\indexentry{isAlreadyExistsError@{\tt  isAlreadyExistsError}}{212}
+\indexentry{isDoesNotExistError@{\tt  isDoesNotExistError}}{212}
+\indexentry{isAlreadyInUseError@{\tt  isAlreadyInUseError}}{212}
+\indexentry{isFullError@{\tt  isFullError}}{212}
+\indexentry{isEOFError@{\tt  isEOFError}}{212}
+\indexentry{isIllegalOperation@{\tt  isIllegalOperation}}{212}
+\indexentry{isPermissionError@{\tt  isPermissionError}}{212}
+\indexentry{isUserError@{\tt  isUserError}}{212}
+\indexentry{fail@{\tt  fail}}{212}
+\indexentry{ioeGetHandle@{\tt  ioeGetHandle}}{212}
+\indexentry{ioeGetFileName@{\tt  ioeGetFileName}}{212}
+\indexentry{ioeGetErrorString@{\tt  ioeGetErrorString}}{212}
+\indexentry{file system}{213}
+\indexentry{directories}{213}
+\indexentry{file}{213}
+\indexentry{physical file}{213}
+\indexentry{handles}{213}
+\indexentry{standard handles}{213}
+\indexentry{stdin@{\tt  stdin}}{213}
+\indexentry{stdout@{\tt  stdout}}{213}
+\indexentry{stderr@{\tt  stderr}}{213}
+\indexentry{semi-closed handles}{214}
+\indexentry{hGetContents@{\tt  hGetContents}}{214}
+\indexentry{readFile@{\tt  readFile}}{214}
+\indexentry{writeFile@{\tt  writeFile}}{214}
+\indexentry{opening a file}{214}
+\indexentry{creating a file}{214}
+\indexentry{openFile@{\tt  openFile}}{214}
+\indexentry{IOMode@{\tt  IOMode} (datatype)}{214}
+\indexentry{ReadMode@{\tt  ReadMode}}{214}
+\indexentry{WriteMode@{\tt  WriteMode}}{214}
+\indexentry{AppendMode@{\tt  AppendMode}}{214}
+\indexentry{ReadWriteMode@{\tt  ReadWriteMode}}{214}
+\indexentry{isAlreadyInUseError@{\tt  isAlreadyInUseError}}{215}
+\indexentry{isDoesNotExistError@{\tt  isDoesNotExistError}}{215}
+\indexentry{isPermissionError@{\tt  isPermissionError}}{215}
+\indexentry{closing a file}{215}
+\indexentry{hClose@{\tt  hClose}}{215}
+\indexentry{size of file}{215}
+\indexentry{hFileSize@{\tt  hFileSize}}{215}
+\indexentry{end of file}{215}
+\indexentry{hIsEOF@{\tt  hIsEOF}}{215}
+\indexentry{isEOF@{\tt  isEOF}}{215}
+\indexentry{file buffering}{215}
+\indexentry{hLookAhead@{\tt  hLookAhead}}{216}
+\indexentry{hSetBuffering@{\tt  hSetBuffering}}{216}
+\indexentry{hGetBuffering@{\tt  hGetBuffering}}{217}
+\indexentry{flushing a file buffer}{217}
+\indexentry{hFlush@{\tt  hFlush}}{217}
+\indexentry{random access files}{217}
+\indexentry{seeking a file}{217}
+\indexentry{hGetPosn@{\tt  hGetPosn}}{217}
+\indexentry{hSetPosn@{\tt  hSetPosn}}{217}
+\indexentry{hSeek@{\tt  hSeek}}{217}
+\indexentry{SeekMode@{\tt  SeekMode} (datatype)}{217}
+\indexentry{AbsoluteSeek@{\tt  AbsoluteSeek}}{217}
+\indexentry{RelativeSeek@{\tt  RelativeSeek}}{217}
+\indexentry{SeekFromEnd@{\tt  SeekFromEnd}}{217}
+\indexentry{hIsOpen@{\tt  hIsOpen}}{218}
+\indexentry{hIsClosed@{\tt  hIsClosed}}{218}
+\indexentry{hIsReadable@{\tt  hIsReadable}}{218}
+\indexentry{hIsWritable@{\tt  hIsWritable}}{218}
+\indexentry{hIsSeekable@{\tt  hIsSeekable}}{218}
+\indexentry{reading from a file}{218}
+\indexentry{polling a handle for input}{218}
+\indexentry{hWaitForInput@{\tt  hWaitForInput}}{218}
+\indexentry{hReady@{\tt  hReady}}{218}
+\indexentry{hGetChar@{\tt  hGetChar}}{218}
+\indexentry{hGetLine@{\tt  hGetLine}}{218}
+\indexentry{lookahead}{219}
+\indexentry{hLookAhead@{\tt  hLookAhead}}{219}
+\indexentry{get the contents of a file}{219}
+\indexentry{hGetContents@{\tt  hGetContents}}{219}
+\indexentry{hPutChar@{\tt  hPutChar}}{219}
+\indexentry{hPutStr@{\tt  hPutStr}}{219}
+\indexentry{hPrint@{\tt  hPrint}}{219}
+\indexentry{input/output examples}{219}
+\indexentry{IO@{\tt  IO} (module)}{221}
+\indexentry{try@{\tt  try}}{221}
+\indexentry{bracket@{\tt  bracket}}{221}
+\indexentry{bracket{\char '137}@{\tt  bracket{\char '137}}}{221}
+\indexentry{directories}{224}
+\indexentry{the file system}{224}
+\indexentry{Directory@{\tt  Directory} (module)}{224}
+\indexentry{Time@{\tt  Time} (module)}{224}
+\indexentry{readable@{\tt  readable}}{224}
+\indexentry{writable@{\tt  writable}}{224}
+\indexentry{executable@{\tt  executable}}{224}
+\indexentry{searchable@{\tt  searchable}}{224}
+\indexentry{Permissions@{\tt  Permissions} (datatype)}{224}
+\indexentry{createDirectory@{\tt  createDirectory}}{224}
+\indexentry{removeDirectory@{\tt  removeDirectory}}{224}
+\indexentry{removeFile@{\tt  removeFile}}{224}
+\indexentry{renameDirectory@{\tt  renameDirectory}}{224}
+\indexentry{renameFile@{\tt  renameFile}}{224}
+\indexentry{getDirectoryContents@{\tt  getDirectoryContents}}{224}
+\indexentry{getCurrentDirectory@{\tt  getCurrentDirectory}}{224}
+\indexentry{setCurrentDirectory@{\tt  setCurrentDirectory}}{224}
+\indexentry{doesFileExist@{\tt  doesFileExist}}{224}
+\indexentry{doesDirectoryExist@{\tt  doesDirectoryExist}}{224}
+\indexentry{getPermissions@{\tt  getPermissions}}{224}
+\indexentry{setPermissions@{\tt  setPermissions}}{224}
+\indexentry{getModificationTime@{\tt  getModificationTime}}{224}
+\indexentry{createDirectory@{\tt  createDirectory}}{225}
+\indexentry{removeDirectory@{\tt  removeDirectory}}{225}
+\indexentry{removeFile@{\tt  removeFile}}{225}
+\indexentry{renameDirectory@{\tt  renameDirectory}}{225}
+\indexentry{renameFile@{\tt  renameFile}}{225}
+\indexentry{getDirectoryContents@{\tt  getDirectoryContents}}{225}
+\indexentry{getCurrentDirectory@{\tt  getCurrentDirectory}}{225}
+\indexentry{setCurrentDirectory@{\tt  setCurrentDirectory}}{225}
+\indexentry{path}{225}
+\indexentry{making directories}{225}
+\indexentry{deleting directories}{225}
+\indexentry{removing directories}{225}
+\indexentry{deleting files}{225}
+\indexentry{removing files}{225}
+\indexentry{renaming directories}{225}
+\indexentry{moving directories}{225}
+\indexentry{renaming files}{225}
+\indexentry{moving files}{225}
+\indexentry{reading a directory}{226}
+\indexentry{current directory}{226}
+\indexentry{changing the directory}{226}
+\indexentry{setting the directory}{226}
+\indexentry{System@{\tt  System} (module)}{229}
+\indexentry{ExitCode@{\tt  ExitCode} (datatype)}{229}
+\indexentry{getArgs@{\tt  getArgs}}{229}
+\indexentry{getProgName@{\tt  getProgName}}{229}
+\indexentry{getEnv@{\tt  getEnv}}{229}
+\indexentry{system@{\tt  system}}{229}
+\indexentry{exitWith@{\tt  exitWith}}{229}
+\indexentry{exitFailure@{\tt  exitFailure}}{229}
+\indexentry{ExitCode@{\tt  ExitCode}}{229}
+\indexentry{ExitSuccess@{\tt  ExitSuccess}}{229}
+\indexentry{ExitFailure@{\tt  ExitFailure}}{229}
+\indexentry{getArgs@{\tt  getArgs}}{229}
+\indexentry{getProgName@{\tt  getProgName}}{229}
+\indexentry{getEnv@{\tt  getEnv}}{229}
+\indexentry{system@{\tt  system}}{229}
+\indexentry{exitWith@{\tt  exitWith}}{229}
+\indexentry{exitFailure@{\tt  exitFailure}}{229}
+\indexentry{program arguments}{229}
+\indexentry{program name}{229}
+\indexentry{environment variables}{229}
+\indexentry{operating system commands}{230}
+\indexentry{terminating a program}{230}
+\indexentry{error@{\tt  error}}{230}
+\indexentry{\mbox{$\it \bot$}}{230}
+\indexentry{catch@{\tt  catch}}{230}
+\indexentry{time}{232}
+\indexentry{time of day}{232}
+\indexentry{clock time}{232}
+\indexentry{Time@{\tt  Time} (module)}{232}
+\indexentry{Ix@{\tt  Ix} (module)}{232}
+\indexentry{ClockTime@{\tt  ClockTime} (datatype)}{232}
+\indexentry{Month@{\tt  Month} (datatype)}{232}
+\indexentry{Day@{\tt  Day} (datatype)}{232}
+\indexentry{ctDay@{\tt  ctDay}}{232}
+\indexentry{ctHour@{\tt  ctHour}}{232}
+\indexentry{ctMin@{\tt  ctMin}}{232}
+\indexentry{ctIsDST@{\tt  ctIsDST}}{232}
+\indexentry{CalendarTime@{\tt  CalendarTime} (datatype)}{232}
+\indexentry{tdYear@{\tt  tdYear}}{232}
+\indexentry{tdMonth@{\tt  tdMonth}}{232}
+\indexentry{tdDay@{\tt  tdDay}}{232}
+\indexentry{tdHour@{\tt  tdHour}}{232}
+\indexentry{tdMin@{\tt  tdMin}}{232}
+\indexentry{tdPicosec@{\tt  tdPicosec}}{232}
+\indexentry{TimeDiff@{\tt  TimeDiff} (datatype)}{232}
+\indexentry{getClockTime@{\tt  getClockTime}}{233}
+\indexentry{addToClockTime@{\tt  addToClockTime}}{233}
+\indexentry{diffClockTimes@{\tt  diffClockTimes}}{233}
+\indexentry{toCalendarTime@{\tt  toCalendarTime}}{233}
+\indexentry{toUTCTime@{\tt  toUTCTime}}{233}
+\indexentry{toClockTime@{\tt  toClockTime}}{233}
+\indexentry{calendarTimeToString@{\tt  calendarTimeToString}}{233}
+\indexentry{formatCalendarTime@{\tt  formatCalendarTime}}{233}
+\indexentry{Time@{\tt  Time} (module)}{234}
+\indexentry{Ix@{\tt  Ix} (module)}{234}
+\indexentry{Locale@{\tt  Locale} (module)}{234}
+\indexentry{Char@{\tt  Char} (module)}{234}
+\indexentry{ClockTime@{\tt  ClockTime} (datatype)}{234}
+\indexentry{Month@{\tt  Month} (datatype)}{234}
+\indexentry{Day@{\tt  Day} (datatype)}{234}
+\indexentry{ctDay@{\tt  ctDay}}{234}
+\indexentry{ctHour@{\tt  ctHour}}{234}
+\indexentry{ctMin@{\tt  ctMin}}{234}
+\indexentry{ctIsDST@{\tt  ctIsDST}}{234}
+\indexentry{CalendarTime@{\tt  CalendarTime} (datatype)}{234}
+\indexentry{tdYear@{\tt  tdYear}}{235}
+\indexentry{tdMonth@{\tt  tdMonth}}{235}
+\indexentry{tdDay@{\tt  tdDay}}{235}
+\indexentry{tdHour@{\tt  tdHour}}{235}
+\indexentry{tdMin@{\tt  tdMin}}{235}
+\indexentry{tdPicosec@{\tt  tdPicosec}}{235}
+\indexentry{TimeDiff@{\tt  TimeDiff} (datatype)}{235}
+\indexentry{getClockTime@{\tt  getClockTime}}{235}
+\indexentry{addToClockTime@{\tt  addToClockTime}}{235}
+\indexentry{diffClockTimes@{\tt  diffClockTimes}}{235}
+\indexentry{toCalendarTime@{\tt  toCalendarTime}}{235}
+\indexentry{toUTCTime@{\tt  toUTCTime}}{235}
+\indexentry{toClockTime@{\tt  toClockTime}}{235}
+\indexentry{calendarTimeToString@{\tt  calendarTimeToString}}{235}
+\indexentry{formatCalendarTime@{\tt  formatCalendarTime}}{236}
+\indexentry{to12@{\tt  to12}}{236}
+\indexentry{show2@{\tt  show2}}{237}
+\indexentry{show2'@{\tt  show2'}}{237}
+\indexentry{show3@{\tt  show3}}{237}
+\indexentry{locale}{239}
+\indexentry{Locale@{\tt  Locale} (module)}{239}
+\indexentry{dateTimeFmt@{\tt  dateTimeFmt}}{239}
+\indexentry{dateFmt@{\tt  dateFmt}}{239}
+\indexentry{timeFmt@{\tt  timeFmt}}{239}
+\indexentry{time12Fmt@{\tt  time12Fmt}}{239}
+\indexentry{TimeLocale@{\tt  TimeLocale} (datatype)}{239}
+\indexentry{defaultTimeLocale@{\tt  defaultTimeLocale}}{239}
+\indexentry{Locale@{\tt  Locale} (module)}{240}
+\indexentry{dateTimeFmt@{\tt  dateTimeFmt}}{240}
+\indexentry{dateFmt@{\tt  dateFmt}}{240}
+\indexentry{timeFmt@{\tt  timeFmt}}{240}
+\indexentry{time12Fmt@{\tt  time12Fmt}}{240}
+\indexentry{TimeLocale@{\tt  TimeLocale} (datatype)}{240}
+\indexentry{defaultTimeLocale@{\tt  defaultTimeLocale}}{240}
+\indexentry{CPU time}{241}
+\indexentry{execution time}{241}
+\indexentry{CPUTime@{\tt  CPUTime} (module)}{241}
+\indexentry{getCPUTime@{\tt  getCPUTime}}{241}
+\indexentry{cpuTimePrecision@{\tt  cpuTimePrecision}}{241}
+\indexentry{Random@{\tt  Random} (module)}{244}
+\indexentry{genRange@{\tt  genRange}}{244}
+\indexentry{next@{\tt  next}}{244}
+\indexentry{split@{\tt  split}}{244}
+\indexentry{StdGen@{\tt  StdGen} (datatype)}{244}
+\indexentry{mkStdGen@{\tt  mkStdGen}}{244}
+\indexentry{randomR@{\tt  randomR}}{244}
+\indexentry{random@{\tt  random}}{244}
+\indexentry{randomRs@{\tt  randomRs}}{244}
+\indexentry{randoms@{\tt  randoms}}{244}
+\indexentry{randomRIO@{\tt  randomRIO}}{244}
+\indexentry{randomIO@{\tt  randomIO}}{244}
+\indexentry{newStdGen@{\tt  newStdGen}}{244}
+\indexentry{setStdGen@{\tt  setStdGen}}{244}
+\indexentry{getStdGen@{\tt  getStdGen}}{244}
+\indexentry{getStdRandom@{\tt  getStdRandom}}{244}
+\indexentry{next@{\tt  next}}{245}
+\indexentry{split@{\tt  split}}{245}
+\indexentry{genRange@{\tt  genRange}}{245}
+\indexentry{RandomGen@{\tt  RandomGen}}{245}
+\indexentry{StdGen@{\tt  StdGen}}{246}
+\indexentry{mkStdGen@{\tt  mkStdGen}}{246}
+\indexentry{Random@{\tt  Random}}{247}
+\indexentry{random@{\tt  random}}{247}
+\indexentry{randomR@{\tt  randomR}}{247}
+\indexentry{randoms@{\tt  randoms}}{247}
+\indexentry{randomRs@{\tt  randomRs}}{247}
+\indexentry{randomIO@{\tt  randomIO}}{247}
+\indexentry{randomRIO@{\tt  randomRIO}}{247}
+\indexentry{setStdGen@{\tt  setStdGen}}{248}
+\indexentry{getStdGen@{\tt  getStdGen}}{248}
+\indexentry{newStdGen@{\tt  newStdGen}}{248}
+\indexentry{getStdRandom@{\tt  getStdRandom}}{248}
+\indexentry{application!function|see{function application}}{249}
+\indexentry{application!operator|see{operator application}}{249}
+\indexentry{binding!function|see{function binding}}{249}
+\indexentry{binding!pattern|see{pattern binding}}{249}
+\indexentry{binding!simple pattern|see{simple pattern binding}}{249}
+\indexentry{character set!ASCII|see{ASCII character set}}{249}
+\indexentry{character set!transparent|see{transparent character set}}{249}
+\indexentry{datatype!abstract|see{abstract datatype}}{249}
+\indexentry{datatype!algebraic|see{algebraic datatype}}{249}
+\indexentry{datatype!declaration|see{{\tt data} declaration}}{249}
+\indexentry{datatype!recursive|see{recursive datatype}}{249}
+\indexentry{datatype!renaming|see{{\tt newtype} declaration}}{249}
+\indexentry{declaration!datatype|see{{\tt data} declaration}}{249}
+\indexentry{declaration!class|see{class declaration}}{249}
+\indexentry{declaration!instance|see{instance declaration}}{249}
+\indexentry{declaration!default|see{{\tt default} declaration}}{249}
+\indexentry{declaration!import|see{import declaration}}{249}
+\indexentry{declaration!fixity|see{fixity declaration}}{249}
+\indexentry{environment!class|see{class environment}}{249}
+\indexentry{environment!type|see{type environment}}{249}
+\indexentry{expression!type|see{type expression}}{249}
+\indexentry{expression!conditional|see{conditional expression}}{249}
+\indexentry{expression!unit|see{unit expression}}{249}
+\indexentry{expression!let|see{let expression}}{249}
+\indexentry{expression!case|see{case expression}}{249}
+\indexentry{expression!simple case|see{simple case expression}}{249}
+\indexentry{"@-pattern@{\tt {\char'100}}|see{as-pattern}}{249}
+\indexentry{_@{\tt {\char'137}}|see{wildcard pattern}}{249}
+\indexentry{pattern!"@-pattern@{\tt {\char'100}}|see{as-pattern}}{249}
+\indexentry{pattern!_@{\tt {\char'137}}|see{wildcard pattern}}{249}
+\indexentry{pattern!constructed|see{constructed pattern}}{249}
+\indexentry{pattern!integer|see{integer literal pattern}}{249}
+\indexentry{pattern!floating|see{floating literal pattern}}{249}
+\indexentry{pattern!linear|see{linear pattern}}{249}
+\indexentry{pattern!n+k@\mbox{$\it n\makebox{\tt +}k$}|see{\mbox{$\it n\makebox{\tt +}k$} pattern}}{249}
+\indexentry{pattern!irrefutable|see{irrefutable pattern}}{249}
+\indexentry{pattern!refutable|see{refutable pattern}}{249}
+\indexentry{semantics!formal|see{formal semantics}}{249}
+\indexentry{string!transparent|see{transparent string}}{249}
+\indexentry{type!ambiguous|see{ambiguous type}}{249}
+\indexentry{type!monomorphic|see{monomorphic type}}{249}
+\indexentry{type!principal|see{principal type}}{249}
+\indexentry{type!trivial|see{trivial type}}{249}
+\indexentry{type!numeric|see{numeric type}}{249}
+\indexentry{type!function|see{function type}}{249}
+\indexentry{type!constructed|see{constructed type}}{249}
+\indexentry{type!tuple|see{tuple type}}{249}
+\indexentry{type!list|see{list type}}{249}
+\indexentry{type renaming|see{{\tt newtype} declaration}}{249}
+\indexentry{type signature!for an expression|see{expression type-signature}}{249}
+\indexentry{(aaa)@{\tt ()}|see{trivial type and unit expression}}{249}
+\indexentry{-@{\tt -}|hseealso{negation}}{249}
+\indexentry{+@{\tt +}|hseealso{\mbox{$\it n\makebox{\tt +}k$} pattern}}{249}
+\indexentry{\\@{\tt {\char'134}}|see{lambda abstraction}}{249}
+\indexentry{~@{\tt {\char'176}}|see{irrefutable pattern}}{249}
+\indexentry{derived instance|hseealso{instance declaration}}{249}
+\indexentry{if-then-else expression|see{conditional expression}}{249}
+\indexentry{instance declaration|hseealso{derived instance}}{249}
+\indexentry{layout|hseealso{off-side rule}}{249}
+\indexentry{off-side rule|hseealso{layout}}{249}
+\indexentry{method|see{class method}}{249}
+\indexentry{overloaded pattern|see{pattern-matching}}{249}
+\indexentry{precedence|hseealso{fixity}}{249}
+\indexentry{section|hseealso{operator application}}{249}
+\indexentry{signature|see{type signature}}{249}
+\indexentry{standard prelude|hseealso{{\tt Prelude}}}{249}
+\indexentry{synonym|see{type synonym}}{249}
+\indexentry{type class|see{class}}{249}
+\indexentry{type synonym|hseealso{datatype}}{249}
+\indexentry{unit datatype|see{trivial type}}{249}
+\indexentry{name!qualified|see{qualified name}}{249}
+\indexentry{name!special|see{special name}}{249}
