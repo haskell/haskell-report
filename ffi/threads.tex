@@ -18,9 +18,9 @@
 %	NS: set of native threads
 \newcommand{\HS}{{\cal H}}
 %	HS: set of Haskell threads
-\newcommand{\hcall}{HCALL}
-\newcommand{\fcall}[2]{FCALL^{#1}~#2}
-\newcommand{\ret}[1]{RET~#1}
+\newcommand{\hcall}{H}
+\newcommand{\fcall}[2]{F^{#1}~#2}
+\newcommand{\ret}[1]{R~#1}
 
 
 \begin{document}
@@ -38,6 +38,12 @@
 \emph{Insert the foreign-thread justification here.}
 
 Simon and I are confused by what it means. This is our attempt to specify it precisely.
+
+We do not claim that the system accurately describes either of the two proposals on
+the table, but we think that it can be adjusted until it is.  Our main goal is to
+provide a precise framework in which to discuss teh design tradeoffs.
+
+
 
 \section{State}
 
@@ -60,18 +66,19 @@ if a native thread acts as its execution engine.
 The syntax of a native thread is this:
 $$
 \begin{array}{lrcll}
-\mbox{Native thread} &  t & ::= & N[stk] \\
+\mbox{Native thread} &  t & ::= & N[S] \\
 \\
-\mbox{Native thread stack} &  stk & ::= & \epsilon & \mbox{Empty}\\
-	& & | & \hcall : stk  & \mbox{Executing Haskel} \\
-	& & | & \fcall{si}{h} : stk & \mbox{Executing foreign code}\\
+\mbox{Native thread stack} &  S & ::= & \epsilon & \mbox{Empty}\\
+	& & | & \hcall : S  & \mbox{Executing Haskel} \\
+	& & | & \fcall{si}{h} : S & \mbox{Executing foreign code}\\
+	& & | & \bullet & \mbox{Unknown}\\
 \\
 \mbox{Safety indicator} &  si & ::= & u & \mbox{Unsafe} \\
 	& & | & s & \mbox{Safe} \\
 	& & | & t & \mbox{Thread-safe} \\
 \end{array}
 $$
-A native thread of form $N[stk]$ has thread-id $N$, while $stk$ is
+A native thread of form $N[S]$ has thread-id $N$, while $S$ is
 an abstraction of its call stack.  If $\hcall$ is on top of the stack,
 the thread is willing to execute a Haskell thread.  If $\fcall{si}{h}$ is
 on top of the stack, the thread is in the process of dealing with a call
@@ -80,17 +87,17 @@ $h$.  The safety-indicator $si$ is from teh FFI spec.
 
 The syntax of a Haskell thread is this:
 $$
-\begin{array}{lrcl}
+\begin{array}{lrcll}
 \mbox{Haskell thread} &  h & ::= & (a)_{bt} \\
 \\
-\mbox{Haskell action} &  a & ::= & pa ~@>>@~ a \\
-	& & | & @ret@ \\
+\mbox{Haskell action} &  a & ::= & p ~@>>@~ a  & \mbox{Sequence} \\
+	& & | & \ret{N}  & \mbox{Return to native thread $N$} \\
 \\
-\mbox{Primitive action} &  a & ::= & \tau \\
-	& & | & \fcall{si}{f} \\
+\mbox{Primitive action} &  p & ::= & \tau & \mbox{Internal action} \\
+	& & | & \fcall{si}{f} & \mbox{Foreign call} \\
 \\
-\mbox{Bound task id} & bt & ::= & \epsilon \\
-	& & | & N
+\mbox{Bound thread id} & bt & ::= & \epsilon & \mbox{Not bound} \\
+	& & | & N & \mbox{Bound to native thread N}
 \end{array}
 $$
 A Haskell thread $h$ of form $(a)_{bt}$ has action $a$.  The indicator
@@ -128,51 +135,90 @@ $$
 These standard rules allow us to write the interesting transitions with less cluter.
 $$
 \begin{array}{rcll}
-T[\hcall:stk]; (\tau~@>>@~a)_{bt} 
+N[\hcall:S]; (\tau~@>>@~a)_{bt} 
 	& \Rightarrow 
-	& T[\hcall:stk]; (a)_{bt} & (INT) \\
+	& N[\hcall:S]; (a)_{bt} & (INT) \\
 \\
-T[\hcall]; (\fcall{si}{f}~@>>@~a)_{\epsilon} 
+N[\hcall]; (\fcall{si}{f}~@>>@~a)_{\epsilon} 
 	& \Rightarrow 
-	& T[\fcall{si}{a_\epsilon},\hcall];  & (FCALL1) \\
+	& N[\fcall{si}{a_\epsilon},\hcall];  & (FCALL1) \\
 
 \\
-T[\hcall:stk]; (@fcall@~f~@>>@~a)_T 
+N[\hcall:S]; (\fcall{si}{f}@>>@~a)_N 
 	& \Rightarrow 
-	& T[\fcall{si}{a_T}:stk];  & (FCALL2) \\
+	& N[\fcall{si}{a_N}:S];  & (FCALL2) \\
 \\
-T[\fcall{si}{a_{bt}}:stk];  
+N[\fcall{si}{a_{bt}}:S];  
 	& \Rightarrow 
-	& T[stk]; a_{bt} & (FRET) \\
+	& N[S]; a_{bt} & (FRET) \\
 \\
-% empty %
+N[\bullet];
 	& \Rightarrow 
-	& \nu(~T[\hcall];  (f ~@>>@~ \ret{T})_{bt}) & (HCALL1) \\
-	& \multicolumn{2}{l}{\mbox{where} bt \begin{array}[t]{ll}
-		\epsilon & \mbox{if $f$ is a non-bound foreign export} \\
-		T & \mbox{if $f$ is a bound foreign export}
+	& N[\hcall:\bullet];  (f ~@>>@~ \ret{N})_{bt} & (HCALL1) \\
+	& \multicolumn{2}{l}{\mbox{where}~ bt \begin{array}[t]{ll}
+		= \epsilon & \mbox{if $f$ is a non-bound foreign export} \\
+		= N & \mbox{if $f$ is a bound foreign export}
 	   \end{array}} \\
 \\
-T[\fcall{si}{a_{bt}} : stk]; 
+N[\fcall{si}{a_{bt}} : S]; 
 	& \Rightarrow 
-	& T[\hcall : \fcall{si}{a_{bt}} : stk]; ~ (f ~@>>@~ \ret{T})_{bt} & (HCALL2) \\
+	& N[\hcall : \fcall{si}{a_{bt}} : S]; ~ (f ~@>>@~ \ret{N})_{bt} & (HCALL2) \\
 	& \multicolumn{2}{l}{\mbox{where}~si \in \{s,t\}} \\
-	& \multicolumn{2}{l}{\mbox{and} bt \begin{array}[t]{ll}
-		\epsilon & \mbox{if $f$ is a non-bound foreign export} \\
+	& \multicolumn{2}{l}{\mbox{and}~ bt \begin{array}[t]{ll}
+		= \epsilon & \mbox{if $f$ is a non-bound foreign export} \\
 
-		T & \mbox{if $f$ is a bound foreign export}
+		= N & \mbox{if $f$ is a bound foreign export}
 	   \end{array}} \\
 \\
-T[\hcall : stk]; \ret{T} 
+N[\hcall : S]; \ret{N} 
 	& \Rightarrow 
-	& T[stk]; & (HRET) \\
+	& N[S]; & (HRET) \\
 \\
-% empay $
+(nothing)
 	& \Rightarrow 
-	& \nu{ T[\hcall]; ) & (SPAWN) \\
+	& N[\hcall]; & (WKR) \\
+	& \multicolumn{2}{l}{\mbox{where $N$ is fresh}} \\
+\\
+(nothing)
+	& \Rightarrow 
+	& N[\bullet]; & (EXT) \\
+	& \multicolumn{2}{l}{\mbox{where $N$ is fresh}} \\
 \end{array}
 $$
 Here is what the rules mean:
 \begin{itemize}
-\item 
+\item (INT) says that an internal action of a Haskell thread 
+can be executed by any native thread that 
+is in the Haskell state; that is, has $H$ on top of its stack.  This is true
+even if the native thread has called a bound foreign export, and that 
+Haskell function is still running.
+
+\item On the other hand, (FCALL1) says that only a vanilla worker thread $N[H]$ (i.e. with
+nothing on its stack except $H$) can execute an unbound foreign call.  Similarly (FCALL2) says
+that only native thread $N$ can execute a foreign call from a Haskell thread bound to $N$.
+(This is under the proposal that foriegn imports are not labelled bound/unbound.)
+
+\item In either (FCALL) case, the Haskell thread is removed from the pool, and captured in the
+native thread's stack.  The rule (FRET) reinstates the Haskell thread (bound or otherwise)
+when the native thread decides to return from the call.
+
+\item Rules (HCALL1) and (HCALL2) deal with foreign code calling Haskell. (HCALL1) 
+starts with a native thread that comes ``out of the blue'' with an unknown stack $\bullet$.
+It just puts a new Haskell thread into the pool, bound or otherwise depending on 
+whether the foreign export being called is labelled as bound.
+
+(HCALL2) is similar, except that we aren't allowed to make such a call if
+the native thread is in the middle of an unsafe foreign call.  The difference
+between (HCALL1) and (HCALL2) looks very unsavoury.
+
+\item (HRET) deals with returning from a completed Haskell thread to the appropriate
+calling native thread.  Notice that even an unbound Haskell thread must return its result
+to the right calling native thread, hence the ``return action'' $\ret{t}$ tacked onto
+the end of the Haskell thread.
+
+\item (WKR) and (EXT) allow new native threads to enter the system.
+
+\end{itemize}
+
+
 \end{document}
