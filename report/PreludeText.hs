@@ -1,8 +1,8 @@
 module PreludeText (
     ReadS, ShowS,
     Read(readsPrec, readList),
-    Show(showsPrec, showList),
-    reads, shows, show, read, lex,
+    Show(showsPrec, show, showList),
+    reads, shows, read, lex,
     showChar, showString, readParen, showParen ) where
 
 -- The instances of Read and Show for

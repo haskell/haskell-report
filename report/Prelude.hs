@@ -10,8 +10,8 @@ module Prelude (
 --      are denoted by built-in syntax, and cannot legally
 --      appear in an export list.
 --  List type: []((:), [])
---  Tuple types: (,), (,,), etc.
---  Trivial type: ()
+--  Tuple types: (,)((,)), (,,)((,,)), etc.
+--  Trivial type: ()(())
 --  Functions: (->)
 
     Eq((==), (/=)),

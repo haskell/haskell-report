@@ -15,7 +15,7 @@ import Numeric (readDec, readOct, lexDigits, readHex)
 import UnicodePrims  -- Source of primitive Unicode functions.
 
 -- Character-testing operations
-isAscii, isControl, isPrint, isSpace, isUpper, isLower,
+isAscii, isLatin1, isControl, isPrint, isSpace, isUpper, isLower,
  isAlpha, isDigit, isOctDigit, isHexDigit, isAlphaNum :: Char -> Bool
 
 isAscii c                =  c < '\x80'

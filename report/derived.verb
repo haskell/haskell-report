@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/derived.verb,v 1.7 2001/11/02 16:26:48 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/derived.verb,v 1.8 2002/01/29 09:46:41 simonpj Exp $
 %
 % The paragraph describing the formats of standard representations might
 % be deleted, since the info is already in the Prelude.  
@@ -117,11 +117,12 @@ through "u_k".
 %% @@
 %% \eprog
 When inferring the context for the derived instances, type synonyms
-must be expanded out first.\index{type synonym}
-Free names in the declarations $d$ are all
-defined in the Prelude; the qualifier `@Prelude.@' is
-implicit here.  The remaining details of the derived
+in the constructors' argument types must be expanded out first.\index{type synonym}
+
+The remaining details of the derived
 instances for each of the derivable Prelude classes are now given.
+Free variables and constructors used in these translations
+always refer to entities defined by the @Prelude@.
 
 \subsection{Derived instances of @Eq@ and @Ord@.}
 \indexdi{Eq}

@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/exps.verb,v 1.14 2001/12/21 16:00:24 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/exps.verb,v 1.15 2002/01/29 09:46:41 simonpj Exp $
 %
 %*section 3
 %**<title>The Haskell 98 Report: Expressions</title>
@@ -193,6 +193,7 @@ only suggestions; implementations may choose to display more or less
 information when an error occurs.
 
 \subsection{Variables, Constructors, Operators, and Literals}
+\label{vars-and-lits}
 %
 @@@
 aexp 	->  qvar				& (\tr{variable})
@@ -1198,24 +1199,15 @@ succeed}, returning a binding for each variable in the pattern; or it
 may {\em diverge} (i.e.~return "\bot").  Pattern matching proceeds
 from left to right, and outside to inside, according to the following rules:
 \begin{enumerate}
-\item Matching a value "v" against the irrefutable pattern
-\index{irrefutable pattern}
-"var" always succeeds and binds "var" to "v".  
-Similarly, matching "v" against the irrefutable pattern "@~@apat" always succeeds.  
-The free
-variables in "apat" are bound to the appropriate values if matching
-"v" against "apat" would otherwise succeed, and to "\bot" if matching
-"v" against "apat" fails or diverges.  (Binding does {\em
+\item Matching the pattern "var" 
+against a value "v" always succeeds and binds "var" to "v".
+
+\item
+Matching the pattern "@~@apat" against a value "v" always succeeds.
+The free variables in "apat" are bound to the appropriate values if matching
+"apat" against "v" would otherwise succeed, and to "\bot" if matching
+"apat" against "v" fails or diverges.  (Binding does {\em
 not} imply evaluation.)
-
-Matching any value against the wildcard pattern @_@ always succeeds
-and no binding is done.
-
-% Matching a value "con v" against the pattern "con apat" where "con" is an
-% abstract datatype constructor and "apat" is irrefutable always succeeds
-% and binds "var" to "v".  Matching "\bot" against the pattern "con apat" where
-% "con" is an abstract datatype constructor and "apat" is irrefutable always
-% succeeds and matches "\bot" to "apat".  
 
 Operationally, this means that no matching is done on an
 irrefutable pattern until one of the variables in the pattern is used.
@@ -1223,45 +1215,54 @@ At that point the entire pattern is matched against the value, and if
 the match fails or diverges, so does the overall computation.
 
 \item
-Matching a value "con v" against the pattern "con pat", where "con" is a
-constructor defined by @newtype@, is equivalent to matching "v"
-against the pattern "pat".   That is, constructors associated with
+Matching the wildcard pattern @_@ agains any value always succeeds,
+and no binding is done.
+
+\item
+Matching the pattern "con pat" against a value, where "con" is a
+constructor defined by @newtype@, depends on the value:
+\begin{itemize}
+\item If the value is of the form "con v", the result is result of matching "pat" against "v".
+\item If the value is "\bot", the result is the result of matching "pat" against "\bot".
+\end{itemize}
+That is, constructors associated with
 @newtype@ serve only to change the type of a value.\index{newtype declaration@@{\tt newtype} declaration}
 
-\item Matching "\bot" against a refutable pattern always diverges.
-\index{refutable pattern}
-
-\item Matching a non-"\bot" value can occur against three kinds of
-refutable patterns:
-\begin{enumerate}
-\item Matching a non-"\bot" value against a pattern whose outermost
-component is a constructor defined by @data@ 
-\index{constructed pattern}
-fails if the value being matched was created by a 
-different constructor.  If the constructors are
-the same, the result of the match is the result of matching the
-sub-patterns left-to-right against the components of the data value:
+\item
+Matching the pattern "con pat_1 \ldots pat_n" against a value, where "con" is a
+constructor defined by @data@, depends on the value:
+\begin{itemize}
+\item If the value is of the form "con v_1 \ldots v_n", 
+the result of the match is the result of matching the
+sub-patterns left-to-right against the components of the data value;
 if all matches succeed, the overall match
 succeeds; the first to fail or diverge causes the overall match to
 fail or diverge, respectively.  
 
-%Also, literals (characters, positive and
-%negative integers, and the unit value @()@) are treated as nullary
-%constructors.
-\item Numeric literals are matched using the overloaded @==@ function.  
-The behavior of numeric patterns depends entirely on the definition of
-@==@ and @fromInteger@ (integer literals) or @fromRational@ (floating point literals)
-for the type of object being matched.
+\item If the value is of the form "con' v_1 \ldots v_m", where "con" is a different 
+constructor to "con'", the match fails.
 
-\item Matching a non-"\bot" value "x" against a pattern of the form
-"n@+@k"
+\item If the value is "\bot", the match diverges.
+\end{itemize}
+
+
+\item Matching a numeric integer literal pattern "k" against a value "v"
+\index{literal pattern}
+succeeds if "v ~@==@ ~(@fromInteger@~k)", where both @==@ and @fromInteger@
+are overloaded based on the type of the pattern.  The match diverges if
+this test diverges.
+
+Matching a floating-point literal is similar, except that @fromRational@ is used,
+as in the case of literals in expressions (Section~\ref{vars-and-lits}).
+
+\item Matching an "n@+@k" pattern (where "n" is a variable and "k" is a 
+positive integer literal) against a value "v" 
 \index{n+k pattern@@"n@+@k" pattern}
-(where "n" is a variable and "k" is a positive integer
-literal) succeeds if "x>=k", resulting in the binding of "n" to "x-k",
-and fails if "x<k".  The behavior of "n@+@k" patterns depends entirely
-on the underlying definitions of @>=@, @fromInteger@, and @-@ for the
-type of the object being matched.
-\end{enumerate}
+succeeds if "x ~@>=@ ~(@fromInteger@ k)", resulting in the binding 
+of "n" to "x~@-@~(@fromInteger@~k)",
+and fails otherwise.  Again, the functions @>=@, @fromInteger@, and @-@, are all
+overloaded, depending on the type of the pattern.
+The match diverges if the comparison diverges.
 
 \item
 Matching against a constructor using labeled fields is the same as
@@ -1272,10 +1273,10 @@ more than once.  Fields not named by the pattern are ignored (matched
 against @_@).
 
 \item
-The result of matching a value "v" against an as-pattern "var"{\tt @@}"apat" is
+Matching an as-pattern "var"{\tt @@}"apat" against a value "v" is
 \index{as-pattern ({\tt {\char'100}})}
-the result of matching "v" against "apat" augmented with the binding of
-"var" to "v".  If the match of "v" against "apat" fails or diverges,
+the result of matching "apat" against "v", augmented with the binding of
+"var" to "v".  If the match of "apat" against "v" fails or diverges,
 then so does the overall match.
 \end{enumerate}
 
@@ -1492,11 +1493,12 @@ $e'$ @ }@ \\
 (q)&@case (@$K$@ @$e_1$@ @$\ldots$@ @$e_n$@) of { @$K$@ @$x_1$@ @$\ldots$@ @$x_n$@ -> @$e$@; _ -> @$e'$@ }@\\
 &$=$@  case @$e_1$@ of { @$x'_1$@ -> @$\ldots$@  case @$e_n$@ of { @$x'_n$@ -> @$e[x'_1/x_1 \ldots x'_n/x_n]$@ }@$\ldots$@}@\\
 &{\rm where $K$ is a constructor of arity $n$; $x'_1 \ldots x'_n$ are new variables}\\[4pt]
-%(l)&@case (@$A$@ @$ e_1$@) of {@$A$@ @$ x_1$@ -> @$e$@; _ -> @$e'$@ }@\\
-%&$=$@ case @$e1$@ of { @$x_1$@ -> @$e$@ }@\\
-%&{\rm where $A$ is constructor defined by @newtype@}\\
-(r)&@case @$v$@ of { @$x$@+@$k$@ -> @$e$@; _ -> @$e'$@ }@\\
-&$=$@ if @$v$@ >= @$k$@ then let {@$x'$@ = @$v$@-@$k$@} in @$e[x'/x]$@ else @$e'$\\
+
+(r)&@case@~$\bot$~@of { @$K$@ @$x_1$@ @$\ldots$@ @$x_n$@ -> @$e$@; _ -> @$e'$@ }@ ~$=$~ $\bot$ \\
+&{\rm where $K$ is a constructor of arity $n$; $x'_1 \ldots x'_n$ are new variables}\\[4pt]
+
+(s)&@case @$v$@ of { @$x$@+@$k$@ -> @$e$@; _ -> @$e'$@ }@\\
+&$=$@ if @$v$@ >= @$k$@ then @(\$x'$@ -> @$e[x'/x]$)~($v$@-@$k$)@ else @$e'$\\
 &{\rm where $k$ is a numeric literal, and $x'$ is a new variable}\\
 \end{tabular}
 }
@@ -1545,7 +1547,7 @@ meaning of pattern matching against overloaded constants.
 %% expressions, but doing so 
 %% would clutter the identities, which are intended only to convey the semantics.
 
-These identities all preserve the static semantics.  Rules~(d),~(e), and~(j)
+These identities all preserve the static semantics.  Rules~(d),~(e), (j), and~(s)
 use a lambda rather than a @let@; this indicates that variables bound
 by @case@ are monomorphically typed (Section~\ref{type-semantics}).
 \index{monomorphic type variable}

@@ -242,12 +242,35 @@ with the following:
 </pre>
 (The previous example use boolean and, which is non-strict in its second argument!)
 
+<p><li> [Jan 2002] <strong>Page 31, Section 3.17.2, Informal Semantics of Case Expressions.</strong>
+Reword the entire numbered list giving the informal semantics, so that:
+<ul>
+<li> It is clearly classified by pattern.
+<li> The semantics of matching a newtype pattern against bottom is given.
+<li> A literal and n+k pattern may not diverge even if the value matched is bottom; it
+depends on the definition of <tt>==</tt> and <tt>&gt;=</tt> respectively.
+</ul>
+
 <p><li> [Apr 2001] <strong>Page 31,33, Figures 3 and 4, Semantics of Case Expressions.</strong>
 Replace "completely new variable" by "new variable" in these two figures.  (Some clauses
 said "new" and some "completely new" which is misleadingly inconsistent.)
 
 <p><li> [Apr 2001] <strong>Page 33, Figure 4, Semantics of Case Expressions Part 2.</strong>
 In clause (r) replace "e0" by "v" throughout.
+
+<p><li> [Jan 2002] <strong>Page 33, Figure 4, Semantics of Case Expressions Part 2.</strong>
+<ul>
+<li> Insert new clause (r):
+<pre>
+	case _|_ of { K x1 ... xn -> e; _ -> e' } = _|_
+	where K is a data constructor of arity n
+</pre>
+<li> Rename old clause (r) as clause (s).
+<li> Use lambda instead of let in the new clause (s), so as to avoid the suggestion
+of polymorphism (just as in other clauses.
+<li> In the accompanying text, final paragaph, add clause (s) to the list of 
+clauses that use lambda to avoid suggesting polymorphism.
+</ul>
 
 <p><li> [Sept 2001] <strong>Page 36, Section 4.1.2, Syntax of Types.</strong>
 First paragraph, last sentence.  After "infix type constructors are not allowed",
@@ -841,6 +864,10 @@ Replace the definitions of <tt>take</tt>, <tt>drop</tt>, and <tt>splitAt</tt> wi
 The effect is that all three functions are defined on negative arguments.  This
 is a semantic change.
 
+<p><li> [Jan 2002] <strong>Page 113, header for PreludeText</strong>.
+Remove <tt>show</tt> from the export list, and re-insert it as an exported
+operation of class <tt>Show</tt>.
+
 <p><li> [Nov 2001] <strong>Page 114, definition of lex</strong>. 
 Change the line that currently reads
 <pre>
@@ -1252,6 +1279,10 @@ consistent with the other "By" functions, and with the signatures given on page 
 
 <p><li> [Dec 2001] <strong>Page 41, Sections 9, Character utilities</strong>.
 Add an explanation of <tt>lexLitChar</tt>, and an example.
+
+<p><li> [Jan 2002] <strong>Page 43, Sections 9.1, Character utilities</strong>.
+Add <tt>isLatin1</tt> to the list of variables in the type signature 
+for "character-testing operations".
 
 <p><li><strong>Page 48, Sections 10.3, Monads</strong>.
 In the definition of <tt>listFile</tt> replace "<tt>openFile</tt>" by "<tt>readFile</tt>".
