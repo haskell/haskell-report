@@ -2,7 +2,8 @@
 <!entity  ghc         "<application>GHC</application>">
 <!entity  nhc         "<application>Nhc98</application>">
 <!entity  hugs        "<application>Hugs</application>">
-<!entity  hps        "<application>HPS</application>">
+<!entity  hps         "<application>HPS</application>">
+<!entity  tool        "<application>tool</application>">
 <!entity  autoconf    "<application>autoconf</application>">
 <!entity  impl        "Haskell Implementation">
 <!entity  impls       "Haskell Implementations">
@@ -22,7 +23,7 @@
 <!entity  hc-pkg     "<command>hc-pkg</command>">
 ]>
  
-<!-- Look for FIX too -->
+<!-- Look for items marked "FIX" -->
 
 <!-- ToDo: -->
 
@@ -63,7 +64,7 @@
 	package is, how these packages interact with the language,
 	and what Haskell implementations must to do to support packages.
 	The &hps; also specifies some infrastructure (code) that makes
-	it easy for library authors to build and distribute conforming packages.
+	it easy for &tool; authors to build and distribute conforming packages.
 	</para>
       <para>The &hps; is only one contribution to the Library Infrastructure project.
 	In particular, the &hps; says nothing about more global issues such as
@@ -82,13 +83,13 @@
 <sect1 id=hli-goals><title>The Haskell Package System: goals</title>
 
 <para>The Haskell Package System (&hps;) has the following main goal:
-to specify a standard way in which a Haskell library can be packaged, so that it is
+to specify a standard way in which a Haskell &tool; can be packaged, so that it is
 easy for consumers to use it, or re-package it, 
 regardless of the Haskell implementation or installation platform.</para>  
 
 <para>The &hps; also
-supports library authors by providing an infrastructure that automates the
-process of building and packaging simple libraries.  It is not necessary to use
+supports &tool; authors by providing an infrastructure that automates the
+process of building and packaging simple &tool;s.  It is not necessary to use
 this code&mdash;indeed complex libraries may exceed its abilities&mdash;but it should
 handle many cases with no trouble.</para>
 
@@ -116,12 +117,12 @@ he needs to know about his Haskell compiler's <option>-package</option> flag (se
 	    </para>
 	  </listitem>
 <listitem><para>
- <emphasis>Angela Author</emphasis> wants to write a simple Haskell library, and distribute it with 
+ <emphasis>Angela Author</emphasis> wants to write a simple Haskell &tool;, and distribute it with 
 minimum fuss, in such a way that all the above folk can easily use it.
 	    </para>
 	  </listitem>
 <listitem><para>
- <emphasis>Marcus Makefile</emphasis> is like Angela, but more sophisticated.  He has a complicated library,
+ <emphasis>Marcus Makefile</emphasis> is like Angela, but more sophisticated.  He has a complicated &tool;,
 and uses makefiles.  Still, he wants to arrange that Roland, Donald, Bob, Sam, and Joe don't need to know
 about his internal complexity.
 	    </para>
@@ -169,9 +170,9 @@ from the library <literal>Distribution.Simple</literal>.  This library implement
   ./Setup.lhs build
   ./Setup.lhs src-dist
 </programlisting>
-The first line readies the system to build the library using &ghc;; for example, it checks that &ghc; exists on the system.
+The first line readies the system to build the &tool; using &ghc;; for example, it checks that &ghc; exists on the system.
 The second line checks that
-the library does indeed build flawlessly.  (At this point she can write and execute tests, as we discuss later.)
+the &tool; does indeed build flawlessly.  (At this point she can write and execute tests, as we discuss later.)
 The third line wraps up the package as a source distribution, making the file <filename>~/coll/angela-coll-1.tar.gz</filename>.
 </para>
 <para>
@@ -235,7 +236,7 @@ is rather like using an explicit export list on a Haskell module.</para>
 </itemizedlist>
 The first two components can be combined to form a single text string called the <emphasis>package ID</emphasis>, 
 using a hyphen to separate the version
-from the name, and dots to separate the version components.  For example, "hunit-2.3".
+from the name, and dots to separate the version components.  For example, "hunit=2.3".
 </para>
 
 </sect2>
@@ -306,7 +307,7 @@ linkend="ipd">.</para>
 <itemizedlist>
 <listitem><para>
 A <emphasis>&hps; source distribution</emphasis> is a tree of files (tar-ball, zip file etc)
-containing the library sources, which may need to be
+containing the &tool;'s sources, which may need to be
 compiled before being installed.  The same source tarball may well be installable for several
 Haskell implementations, OSs, and platforms.
 	    </para>
@@ -315,14 +316,14 @@ tests and design notes may be omitted.  It may also contain some derived files, 
 the developer's repository; for example, ones made by a somewhat exotic pre-processor where it
 seems simpler to ship the derived file than to ensure that all consumers have the pre-processor.</para></listitem>
 <listitem><para>
-A <emphasis>&hps; binary distribution</emphasis> is a tree of files that contains a pre-compiled library, ready
+A <emphasis>&hps; binary distribution</emphasis> is a tree of files that contains a pre-compiled &tool;, ready
 for installation.  The pre-compilation means that the distribution will be Haskell-compiler-specific, and certain 
 "looser" dependencies (<literal>hunit > 2.3</literal>) will now be precisely fixed (<literal>hunit == 2.4</literal>).
 	    </para>
 	  </listitem>
 
 <listitem><para>
-The package may be wrapped up as an <emphasis>RPM</emphasis>, <emphasis>Debian</emphasis> distribution, 
+The package may be wrapped up as an <emphasis>RPM</emphasis>, <emphasis>Debian</emphasis> package, 
 or <emphasis>Windows installer</emphasis> (this list is not exhaustive).
 In that case, the way it is installed is prescribed by the respective distribution mechanism;
 the only role of the &hps; is to make it easy to construct such distributions. All three are
@@ -473,7 +474,7 @@ User packages <emphasis>shadow</emphasis> global packages, in the following sens
 	same compiler version, unless they can guarantee that the
 	different installations are binary compatible, such as if they
 	were installed from identical binary distributions.</para>
-      </sect3>
+	</sect3>
 
 <sect3><title>Exposed packages and hidden packages</title>
 
@@ -481,11 +482,11 @@ User packages <emphasis>shadow</emphasis> global packages, in the following sens
 An installed package can be <emphasis>exposed</emphasis> or <emphasis>hidden</emphasis>.  An exposed package
 populates the module name space, while a hidden package does not.  Hidden packages are nevertheless necessary.
 For example, the user might use
-package A-2.1 and B-1.0; 
-but B-1.0 might depend on A-1.9. So the latter must be installed (else B-1.0 could not be installed), but
-should be hidden, so that user imports see A-2.1. (However, note that the 
-whole-program invariant described in <xref linkend="packages-and-haskell"> implies that a program using B-1.0 could
-not also use A-2.1, because then both A-2.1 and A-1.9 would form part of the program, and they almost certainly 
+package A=2.1 and B=1.0; 
+but B=1.0 might depend on A=1.9. So the latter must be installed (else B=1.0 could not be installed), but
+should be hidden, so that user imports see A=2.1. (However, note that the 
+whole-program invariant described in <xref linkend="packages-and-haskell"> implies that a program using B=1.0 could
+not also use A=2.1, because then both A=2.1 and A=1.9 would form part of the program, and they almost certainly 
 use the same module names.)
 </para>
 <para>The registration program &hc-pkg; provides operations to expose or hide an 
@@ -532,8 +533,8 @@ check that no user has a user package depending on P.</para>
       same name.</para>
 
       <para>Later options override earlier ones, so that for example
-      <literal>-package hunit-1.2 -package hunit-1.3</literal> will
-      result in <literal>hunit-1.3</literal> being exposed.</para>
+      <literal>-package hunit=1.2 -package hunit=1.3</literal> will
+      result in <literal>hunit=1.3</literal> being exposed.</para>
 
       <para>Additionally, compilers should provide a
       <option>-hide-package</option> flag, which does the opposite of
@@ -557,7 +558,7 @@ fields.</para>
 <para>Each Haskell implementation <command>hc</command> must provide an associated program &hc-pkg; which 
 allows a user to make a new package known to the compiler, and to ask what packages it knows. Here is a summary of its interface
 
-<note><para>Some of these commands (unregister, hide, and describe) make sense for package IDs which offer a range, such as "hc-pkg unregister "hmake<2.3".</para></note>
+<note><para>Some of these commands (unregister, hide, and describe) make sense for package IDs which offer a range, such as "hc-pkg unregister hunit&lt;2.3".</para></note>
 
      <table frame=all><title>&hc-pkg; interface</title>
 
@@ -608,7 +609,7 @@ allows a user to make a new package known to the compiler, and to ask what packa
 
      </tbody></tgroup>
      </table>
-A <replaceable>pkg</replaceable> argument can be a package ID, such as "<literal>hunit-2.3</literal>", or just a package name, 
+     A <replaceable>pkg</replaceable> argument can be a package ID, such as "<literal>hunit=2.3</literal>", or just a package name, 
 such as "<literal>hunit</literal>".  To determine which package is meant, &hc-pkg; searches first the
 registered user packages and then the global packages.  If no such package exists, the command fails; that is, it does nothing, 
 returning a non-zero error code.
@@ -745,12 +746,10 @@ on Windows it will be <filename>Program Files</filename>.  The setup script will
         </itemizedlist>
 
 	<para>It is OK for these flags to be "baked into" the compiled
-        library.  In particular, the build system may bake the
+        &tool;.  In particular, the build system may bake the
         installation path into the compiled files.  There is no
-        provision for installing the compiled files anywhere other
-        than the place specified in the <option>--prefix</option>
-        flag.</para>
-    </sect3>
+        provision for changing these baked-into values after
+        configuration.</para> </sect3>
 
       <sect3><title><option>build</option></title>
 	
@@ -823,7 +822,7 @@ on Windows it will be <filename>Program Files</filename>.  The setup script will
         uninstall</literal>, which is fairly non-standard and
         difficult to get right.  In the majority of cases, we expect
         libraries to be installed via a package manager (eg. RPM,
-        Debian apt), which already provide uninstallation
+        Debian APT), which already provide uninstallation
         services.</para>
       </sect3>
 
@@ -960,9 +959,11 @@ to explain to the simple build infrastructure how to build the package.  This se
 	    </listitem>
 <listitem><para><literal>hidden:</literal> Hidden (or internal) modules</para>
 	    </listitem>
+<listitem><para><literal>main modules:</literal> Which modules should be built into an executable</para></listitem>
 <listitem><para><literal>ghc-flags:</literal>,<literal>hugs-flags:</literal>,<literal>nhc-flags:</literal>  
 		Extra compiler flags for &ghc;, &hugs;, &nhc;.</para>
 	    </listitem>
+
 <listitem><para> <emphasis>What else?</emphasis></para>
 	  </listitem></itemizedlist></para>
 
@@ -984,7 +985,7 @@ It supports all the commands described in <xref linkend=setup-spec>, and in addi
      <tgroup cols=2 align=left colsep=1 rowsep=1>     <tbody>
 
      <row><Entry><command>./Setup.lhs woggle </command></entry>
-         <Entry><para> Blurgh </para></entry></row>
+         <Entry><para> Blurgh (FIX)</para></entry></row>
 
      </tbody></tgroup>
      </table>
@@ -1001,9 +1002,11 @@ script that immediately shells out into <literal>make</literal>, which does all 
 simply parses the command line arguments and shells out into <literal>make</literal>.  Marcus uses the following
 <filename>Setup.lhs</filename>
 <programlisting>
-  module Main where
-  import Distribution.Make
-  main = setup
+  #!runhugs
+
+  > module Main where
+  > import Distribution.Make (setup)
+  > main = setup
 </programlisting>
 All the package description information is assumed to be known to the makefile system, and so does not
 appear in the setup script.
