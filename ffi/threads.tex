@@ -1,0 +1,126 @@
+\documentclass{article}
+
+\usepackage{proof}
+\usepackage{code}
+
+\sloppy
+\setlength{\parskip}{0.5\baselineskip plus 0.2\baselineskip minus 0.1\baselineskip}
+\setlength{\parsep}{\parskip}
+\setlength{\topsep}{0cm}
+\setlength{\parindent}{0cm}
+\renewcommand{\textfraction}{0}
+\renewcommand{\topfraction}{1}
+\renewcommand{\floatpagefraction}{0.8}
+\renewcommand{\dblfloatpagefraction}{0.8}
+
+
+\newcommand{\NS}{{\cal N}}
+%	NS: set of native threads
+\newcommand{\HS}{{\cal H}}
+%	HS: set of Haskell threads
+\newcommand{\hcall}{HCALL}
+\newcommand{\fcall}[1]{FCALL~#1}
+
+
+\begin{document}
+
+
+\title{A semantics for foreign threads}
+
+\author{Simon Peyton Jones \and Simon Marlow}
+
+
+\makeatactive
+
+\section{Introduction}
+
+\emph{Insert the foreign-thread justification here.}
+
+Simon and I are confused by what it means. This is our attempt to specify it precisely.
+
+\section{State}
+
+The state of the system is represented by a pair
+$$\NS ; \HS$$
+where 
+\begin{itemize}
+\item $\NS = \{t_1, \ldots ,t_n\}$ is a set of \emph{native threads}.
+A native thread is directly supported by the underlying operating
+system, and may have some thread-local state. It may therefore
+be important which native thread executes foreign
+(non-Haskell) code.
+
+\item $\HS = \{h_1, \ldots ,h_n\}$ is a set of \emph{Haskell threads}.
+Haskell threads are supposed to be extremely lightweight, and
+can be created very cheaply. A Haskell thread can only make progress
+if a native thread acts as its execution engine.
+\end{itemize}
+
+The syntax of a native thread is this:
+$$
+\begin{array}{lrcl}
+\mbox{Native thread} &  t & ::= & N[stk] \\
+\\
+\mbox{Native thread stack} &  stk & ::= & \epsilon \\
+	& & | & \hcall : stk \\
+	& & | & \fcall{f} : stk
+\end{array}
+$$
+A native thread of form $N[stk]$ has thread-id $N$, while $stk$ is
+an abstraction of its call stack.  If $\hcall$ is on top of the stack,
+the thread is willing to execute a Haskell thread.  If $\fcall{f}$ is
+on top of the stack, the thread is in the process of dealing with a call
+to the foreign function $f$.  
+
+The syntax of a Haskell thread is this:
+$$
+\begin{array}{lrcl}
+\mbox{Haskell thread} &  h & ::= & (a)_{bt} \\
+\\
+\mbox{Haskell action} &  a & ::= & pa ~@>>@~ a \\
+	& & | & @ret@ \\
+\\
+\mbox{Primitive action} &  a & ::= & \tau \\
+	& & | & @fcall@~f \\
+\\
+\mbox{Bound task id} & bt & ::= & \epsilon \\
+	& & | & N
+\end{array}
+$$
+A Haskell thread $h$ of form $(a)_{bt}$ has action $a$.  The indicator
+$bt$ tells whether the Haskell thread is \emph{bound to} a native
+thread.  If $bt$ is $\epsilon$, the Haskell thread is not bound to a
+native thread; if $bt$ is $N$, the Haskell thread is bound to native
+thread $N$.  Specifing exactly what it means for a Haskell thread to
+be bound to a native thread is the main purpose of this document.
+
+An action $a$ is a sequence of primitive actions, finishing with a 
+return of some kind.  A primitive action is either some internal Haskell
+thing (such as performing a bit of evaluation, or operating on an @MVar@),
+or else it is a call to a foreign function $f$.
+
+We do not model the data passed to, or returned from, a foreign call, nor
+any details of what ``internal Haskell'' operations are.  
+
+\section{Evolution}
+
+We describe how the system evolves in a very standard way, using 
+transition rules, of form
+$$
+\NS ; \HS ~\Rightarrow~ \NS' ; \HS'
+$$
+The structural rules are these:
+$$
+\begin{array}{c}
+\infer{\NS \cup \{t\} ; \HS ~\Rightarrow~ \NS'  \cup \{t\}; \HS'}
+	{\NS ; \HS ~\Rightarrow~ \NS' ; \HS'}
+\qquad
+\infer{\NS ; \HS  \cup \{h\} ~\Rightarrow~ \NS'; \HS'   \cup \{h\}}
+	{\NS ; \HS ~\Rightarrow~ \NS' ; \HS'}
+\end{array}
+$$
+These standard rules allow us to write the interesting transitions with less cluter.
+$$
+\begin{arary}{rcl}
+
+\end{document}
