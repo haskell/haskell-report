@@ -1,8 +1,8 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/syntax-lexical.verb,v 1.5 2001/09/11 16:19:17 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/syntax-lexical.verb,v 1.6 2001/11/02 16:26:48 simonpj Exp $
 % 
 
-@@@
+@@@ 
 
 program		-> \{ lexeme | whitespace \}
 lexeme          -> qvarid | qconid | qop | literal | special | reservedop | reservedid
@@ -49,7 +49,7 @@ uniDigit        -> \tr{any Unicode decimal digit}
 octit   -> @0@ | @1@ | ... | @7@
 hexit   -> digit | @A@ | ... | @F@ | @a@ | ... | @f@
 
-@@@
+@@@ 
 
 \indexsyn{program}%
 \indexsyn{lexeme}%

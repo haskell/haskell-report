@@ -577,6 +577,17 @@ to and from strings." add the sentence:
 precedence of the enclosing context (see Appendix D.4)."
 (Clarification only.)
 
+<p><li> [Nov 2001] <strong> Page 79, Section 6.3.4, Class Enum; 
+Page 19, Section 3.10 Arithmetic Sequences; and Appendix D.2, Derived instances of Enum.</strong>
+<ul>
+<li> Move the specification of the <tt>Int</tt> and <tt>Integer</tt> instances of
+<tt>Enum</tt> 3.10 to 6.3.4.
+<li> Specify that, for bounded types, <tt>succ</tt> and <tt>pred</tt> should fail 
+when applied to <tt>maxBound</tt> and <tt>minBound</tt> resp.
+<li> Specify that the <tt>enum</tt> functions on numeric types are strict.
+<li> Remove material from D.2 so that it describes only the derived instances.
+</ul>
+
 <p><li><strong>Page 80, Section 6.3.6, Class Monad.</strong>
 Right at the bottom of the page, replace "However, for IO, the fail
 method invokes error." by "For IO, the fail method raises a user
@@ -855,30 +866,38 @@ doing it by hand.  In particular, an error will be raised if y is zero.
 <ul>
 <li> Add specifications for the functions exported by the Numeric library.
 
-<p><li>In <tt>formatRealFloat</tt>, add the following local definitions:
+<p><li>In <tt>formatRealFloat</tt>, replace the entire case alternative
+starting <tt>FFFixed</tt> with the following:
 <pre>
-    mk0 "" = "0"            -- Used to ensure we print 34.0, not 34.
-    mk0 s  = s              -- and 0.34 not .34
+          FFFixed ->
+            case decs of
+               Nothing 	-- Always prints a decimal point
+                 | e > 0     -> take e (ds ++ repeat '0')
+                                ++ '.' : mk0 (drop e ds)
+                 | otherwise -> "0." ++ mk0 (replicate (-e) '0' ++ ds)
+              
+               Just dec ->  -- Print decimal point iff dec > 0
+                 let dec' = max dec 0 in
+                 if e >= 0 then
+                   let (ei, is') = roundTo base (dec' + e) is
+                       (ls, rs)  = splitAt (e+ei) 
+                                              (map intToDigit is')
+                   in  mk0 ls ++ mkdot0 rs
+                 else
+                   let (ei, is') = roundTo base dec' 
+                                           (replicate (-e) 0 ++ is)
+                       d : ds = map intToDigit 
+                                    (if ei > 0 then is' else 0:is')
+                   in  d : mkdot0 ds
+            where   
+              mk0 "" = "0"        -- Print 0.34, not .34
+              mk0 s  = s  
     
-    mkdot0 "" = ""          -- Used to ensure we print 34, not 34.
-    mkdot0 s  = '.' : s
+              mkdot0 "" = ""       -- Print 34, not 34.
+              mkdot0 s  = '.' : s  -- when the format specifies no
+			           -- digits after the decimal point
 </pre>
-    
-<li> In the definition of <tt>formatRealFloat</tt>,
-<ul> 
-<li> in the definition of <tt>doFmt</tt>,
-<li> in the <tt>FFFixed</tt> branch of "<tt>case fmt of ...</tt>",
-<li> in the <tt>Nothing</tt> branch of "<tt>case  decs of ...</tt>",
-replace the entire branch "<tt>Nothing -> ...</tt>" with
-<pre>
-       Nothing | e >= 0    -> take e (ds ++ repeat '0') ++ mkdot0 (drop e ds)
-	       | otherwise -> '0' : mkdot0 (replicate (-e) '0' ++ ds)
-</pre>
-<li> in the <tt>Just dec</tt> branch, replace "<tt>(if null ls then "0" else ls) ++ (if null rs then "" else '.' : rs)</tt>"
-by "<tt>mk0 ls ++ mkdot0 rs</tt>".
-
-<li> also in the <tt>Just dec</tt> branch, replace "<tt>d : '.' : ds</tt>" by "<tt>d : mkdot0 ds</tt>".
-</ul>
+(This fixes an infinite loop.)
 
 <p><li>In the definition of <tt>k</tt> in <tt>floatToDigits</tt> replace "<tt>fromInt e</tt>" by "<tt>fromIntegral e</tt>".
 (<tt>fromInt</tt> no longer exists.)

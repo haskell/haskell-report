@@ -6,9 +6,10 @@ module Numeric(fromRat,
                showEFloat, showFFloat, showGFloat, showFloat, 
                readFloat, lexDigits) where
 
-import Char
-import Ratio
-import Array
+import Char   ( isDigit, isOctDigit, isHexDigit
+              , digitToInt, intToDigit )
+import Ratio  ( (%), numerator, denominator )
+import Array  ( (!), Array, array )
 
 -- This converts a rational to a floating.  This should be used in the
 -- Fractional instances of Float and Double.
@@ -116,7 +117,7 @@ readInt radix isDig digToInt s =
 
 -- Unsigned readers for various bases
 readDec, readOct, readHex :: (Integral a) => ReadS a
-readDec = readInt 10 isDigit digitToInt
+readDec = readInt 10 isDigit    digitToInt
 readOct = readInt  8 isOctDigit digitToInt
 readHex = readInt 16 isHexDigit digitToInt
 
@@ -149,12 +150,6 @@ formatRealFloat fmt decs x
         else 
             doFmt fmt (floatToDigits (toInteger base) x)
     
-    mk0 "" = "0"            -- Used to ensure we print 34.0, not 34.
-    mk0 s  = s              -- and 0.34 not .34
-    
-    mkdot0 "" = ""          -- Used to ensure we print 34, not 34.
-    mkdot0 s  = '.' : s
-    
     doFmt fmt (is, e)
       = let 
            ds = map intToDigit is
@@ -183,12 +178,12 @@ formatRealFloat fmt decs x
           
           FFFixed ->
             case decs of
-               Nothing 
+               Nothing 	-- Always prints a decimal point
                  | e > 0     -> take e (ds ++ repeat '0')
-                                ++ mkdot0 (drop e ds)
-                 | otherwise -> '0' : mkdot0 (replicate (-e) '0' ++ ds)
+                                ++ '.' : mk0 (drop e ds)
+                 | otherwise -> "0." ++ mk0 (replicate (-e) '0' ++ ds)
               
-               Just dec ->
+               Just dec ->  -- Print decimal point iff dec > 0
                  let dec' = max dec 0 in
                  if e >= 0 then
                    let (ei, is') = roundTo base (dec' + e) is
@@ -201,6 +196,14 @@ formatRealFloat fmt decs x
                        d : ds = map intToDigit 
                                     (if ei > 0 then is' else 0:is')
                    in  d : mkdot0 ds
+            where   
+              mk0 "" = "0"        -- Print 0.34, not .34
+              mk0 s  = s  
+    
+              mkdot0 "" = ""       -- Print 34, not 34.
+              mkdot0 s  = '.' : s  -- when the format specifies no
+			           -- digits after the decimal point
+    
 
 roundTo :: Int -> Int -> [Int] -> (Int, [Int])
 roundTo base d is = case f d is of

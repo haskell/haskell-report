@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/derived.verb,v 1.6 2001/08/14 07:48:24 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/derived.verb,v 1.7 2001/11/02 16:26:48 simonpj Exp $
 %
 % The paragraph describing the formats of standard representations might
 % be deleted, since the info is already in the Prelude.  
@@ -159,18 +159,7 @@ These examples illustrate this property:
 \subsection{Derived instances of @Enum@}
 \indexdi{Enum}
 Derived instance declarations for the class @Enum@ are only
-possible for enumerations.
-@Enum@ introduces the class methods
-@succ@\indextt{succ},
-@pred@\indextt{pred},
-@toEnum@\indextt{toEnum},
-@fromEnum@\indextt{fromEnum},
-@enumFrom@\indextt{enumFrom},
-@enumFromThen@\indextt{enumFromThen},
-@enumFromTo@\indextt{enumFromTo}, and
-@enumFromThenTo@\indextt{enumFromThenTo}.
-The latter four are used to define arithmetic sequences as described
-in Section~\ref{arithmetic-sequences}. 
+possible for enumerations (data types with only nullary constructors).
 
 The nullary constructors are assumed to be
 numbered left-to-right with the indices 0 through $n-1\/$.
@@ -180,18 +169,21 @@ an error to apply @succ@ to the maximum element, or @pred@ to the minimum
 element.
 
 The @toEnum@ and @fromEnum@ operators map enumerated values to and
-from the @Int@ type.
+from the @Int@ type; @toEnum@ raises a runtime error if the @Int@ argument
+is not the index of one of the constructors.
 
-@enumFrom n@ returns a list corresponding to the complete enumeration
-of @n@'s type starting at the value @n@.
-Similarly, @enumFromThen n n'@ is the enumeration starting at @n@, but
-with second element @n'@, and with subsequent elements generated at a
-spacing equal to the difference between @n@ and @n'@.
-@enumFromTo@ and @enumFromThenTo@ are as defined by the
-default class methods
-\index{default class method}
-for @Enum@ (see Figure~\ref{standard-classes},
-page~\pageref{standard-classes}).
+The definitions of the remaining methods are 
+\bprog
+@
+  enumFrom x           = enumFrom x maxBound
+  enumFromThen x y     = enumFromThenTo x y bound
+		       where
+			 bound | fromEnum y >= fromEnum x = maxBound
+			       | otherwise		  = minBound
+  enumFromTo x y       = map toEnum [fromEnum x .. fromEnum y]
+  enumFromThenTo x y z = map toEnum [fromEnum x, fromEnum y .. fromEnum z]
+@
+\eprog
 For example,
 given the datatype:
 \bprog

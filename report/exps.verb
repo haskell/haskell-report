@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/exps.verb,v 1.12 2001/11/01 13:43:43 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/exps.verb,v 1.13 2001/11/02 16:26:48 simonpj Exp $
 %
 %*section 3
 %**<title>The Haskell 98 Report: Expressions</title>
@@ -607,54 +607,9 @@ are class methods in the class @Enum@ as defined in the Prelude
 }
 
 The semantics of arithmetic sequences therefore depends entirely
-on the instance declaration for the type "t".  We give here the
-semantics for @Prelude@ types, and indications of the expected semantics
-for other, user-defined, types.
-
-For the types @Int@ and @Integer@, arithmetic sequences have the following
-meaning:
-\begin{itemize}
-\item The sequence "@[@e_1@..]@" is the list "@[@e_1@,@e_1+1@,@e_1+2@,@...@]@".
-
-\item The sequence "@[@e_1@,@e_2@..]@" is the list "@[@e_1@,@e_1+i@,@e_1+2i@,@...@]@",
-where the increment, "i", is "e_2-e_1".  The increment may be zero or negative.
-If the increment is zero, all the list elements are the same.
-
-\item The sequence "@[@e_1@..@e_3@]@" is the list "@[@e_1@,@e_1+1@,@e_1+2@,@...e_3@]@".
-The list is empty if "e_1 > e_3".
-
-\item The sequence "@[@e_1@,@e_2@..@e_3@]@" 
-is the list "@[@e_1@,@e_1+i@,@e_1+2i@,@...e_3@]@",
-where the increment, "i", is "e_2-e_1".  If the increment 
-is positive or zero, the list terminates when the next element would
-be greater than "e_3"; the list is empty if "e_1 > e_3".
-If the increment is negative, the list terminates when the next element would
-be less than "e_3"; the list is empty if "e1 < e_3".
-\end{itemize}
-For other {\em discrete} @Prelude@ types "t" that 
-are instances of @Enum@, namely @()@, @Bool@, @Char@ and @Ordering@,
-the semantics is given by mapping the "e_i" to @Int@ using @fromEnum@,
-using the above rules, and then mapping back to "t" with @toEnum@.
-
-Where the type is also an instance of class @Bounded@ 
-and "e_3" is omitted, an implied "e_3" is added
-of @maxBound@ (if the increment is positive) or @minBound@ (resp. negative).
-For example, @['a'..'z']@ denotes
-the list of lowercase letters in alphabetical order, and @[LT..]@ is the
-list @[LT,EQ,GT]@.
-
-For {\em continuous} @Prelude@ types that are instances of @Enum@,
-namely @Float@ and @Double@, the semantics is given by the rules for @Int@,
-except that the list terminates when the elements become greater than
-"e_3+i/2" for positive increment "i", or when they become less than 
-"e_3+i/2" for negative "i".
-
-See Figure~\ref{standard-classes}%
-%*ignore
-, page~\pageref{standard-classes}
-%*endignore
- and Section~\ref{derived-decls} for more details of which @Prelude@
-type are in @Enum@.
+on the instance declaration for the type "t".  
+Section~\ref{enum-class} for more details of which @Prelude@
+type are in @Enum@ and their semantics.
 
 
 \subsection{List Comprehensions}

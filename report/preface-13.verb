@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/preface-13.verb,v 1.10 2001/11/01 13:43:43 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/preface-13.verb,v 1.11 2001/11/02 16:26:48 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Preface</title>
 %*section
@@ -147,8 +147,8 @@ and, like type signatures, bind to an entity rather than to its name.
 Version~1.4 of the report made the following relatively minor changes to the
 language:
 \begin{itemize}
-\item The character set has been changed to Unicode\index{Unicode
-character set}.
+\item The character set has been changed to 
+Unicode\index{Unicode character set}.
 \item List comprehensions have been generalized to arbitrary
 monads.\index{list comprehension}
 \item Import and export of class methods and constructors is no longer
@@ -298,7 +298,7 @@ Sandra Loosemore,
 Pablo Lopez,
 Olaf Lubeck, 
 Ian Lynagh,
-Christian Maeder
+Christian Maeder,
 Ketil Malde,
 Simon Marlow,
 Michael Marte,

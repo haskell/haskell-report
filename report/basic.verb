@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/basic.verb,v 1.9 2001/10/02 09:09:26 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/basic.verb,v 1.10 2001/11/02 16:26:48 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Basic Types and Classes</title>
 %*section 6
@@ -61,8 +61,9 @@ characters is defined in Section~\ref{lexemes-char}; character
 literals are nullary constructors in the datatype @Char@.  Type @Char@
 is an instance of the classes @Read@, @Show@, @Eq@, @Ord@, 
 @Enum@, and @Bounded@.  The @toEnum@ and @fromEnum@ functions,
-standard functions over bounded enumerations, map characters onto
-@Int@ values in the range "[ 0 , 2^{16}-1 ]".
+standard functions from class @Enum@, map characters to and from the
+@Int@ type.
+% @Int@ values in the range "[ 0 , 2^{16}-1 ]".
 
 Note that ASCII control characters each have several representations
 in character literals: numeric escapes, ASCII mnemonic escapes,
@@ -445,6 +446,7 @@ input from a string, which must be completely consumed by the input
 process.  The @lex@ function used by @read@ is also part of the Prelude.
 
 \subsubsection{The Enum Class}
+\label{enum-class}
 \indexclass{Enum}
 \indextt{toEnum}
 \indextt{fromEnum}
@@ -469,20 +471,88 @@ class  Enum a  where
 Class @Enum@ defines operations on sequentially ordered types.
 The functions @succ@ and @pred@ return the successor and predecessor,
 respectively, of a value.
-The @toEnum@ and @fromEnum@ functions map values from a type in
-@Enum@ onto @Int@.  These functions are not meaningful for all
-instances of @Enum@: floating
-point values or @Integer@ may not be mapped onto an @Int@.  A
-runtime error occurs if either @toEnum@ or @fromEnum@ is given a value
-not mappable to the result type.  
-
+The functions @fromEnum@ and @toEnum@ map values from a type in
+@Enum@ to and from @Int@.  
 The @enumFrom@... methods are used when translating arithmetic
-sequences (Section~\ref{arithmetic-sequences}), and should
-obey the specification given in there.
+sequences (Section~\ref{arithmetic-sequences}).
 
-Instances of @Enum@ may be derived
-for any enumeration type (types whose constructors have no fields).
-There are also @Enum@ instances for floats.  
+Instances of @Enum@ may be derived for any enumeration type (types
+whose constructors have no fields); see Appendix~\ref{derived-appendix}.
+
+For any type that is an instance of class @Bounded@, the following
+should hold:
+\begin{itemize}
+\item The calls @succ maxBound@ and @pred minBound@ should result in
+a runtime error.
+
+\item @fromEnum@ and @toEnum@ should give a runtime error if the 
+result value is not representable in the result type.  For example,
+@toEnum 7 :: Bool@ is an error.
+
+\item @enumFrom@ and @enumFromThen@ should be defined with 
+an implicit bound, thus:
+\bprog
+@
+  enumFrom     x   = enumFromTo     x maxBound
+  enumFromThen x y = enumFromThenTo x y bound
+    where
+      bound = if fromEnum y >= fromEnum x then
+                 maxBound
+              else
+                 minBound
+@
+\eprog
+\end{itemize}
+
+The following @Prelude@ types are instances of @Enum@: 
+\begin{itemize}
+\item Enumeration types: @()@, @Bool@, and @Ordering@. The
+semantics of these instances is given by Appendix~\ref{derived-appendix}.
+For example, @[LT..]@ is the list @[LT,EQ,GT]@.
+
+\item @Char@: the instance is given in Appendix~\ref{stdprelude}, based 
+on the primitive functions that convert between a @Char@ and an @Int@.
+For example, @enumFromTo 'a' 'z'@ denotes
+the list of lowercase letters in alphabetical order.
+
+\item Numeric types: @Int@, @Integer@, @Float@, @Double@.  The semantics
+of these instances is given next.
+\end{itemize}
+For all four numeric types, @succ@ adds 1; and @pred@ subtracts 1.
+The conversions @fromEnum@ and @toEnum@ convert between the type and @Int@.
+in the case of @Float@ and @Double@, the digits after the decimal point may be lost.
+It is implementation-dependent what @fromEnum@ returns when applied to 
+a value that is too large to fit in an @Int@.
+
+For the types @Int@ and @Integer@, the enumeration functions 
+have the following meaning:
+\begin{itemize}
+\item The sequence "@enumFrom@~e_1" is the list "@[@e_1@,@e_1+1@,@e_1+2@,@...@]@".
+
+\item The sequence "@enumFromThen@~e_1~e_2@" is the list "@[@e_1@,@e_1+i@,@e_1+2i@,@...@]@",
+where the increment, "i", is "e_2-e_1".  The increment may be zero or negative.
+If the increment is zero, all the list elements are the same.
+
+\item The sequence "@enumFromTo@~e_1~e_3" is 
+the list "@[@e_1@,@e_1+1@,@e_1+2@,@...e_3@]@".
+The list is empty if "e_1 > e_3".
+
+\item The sequence "@enumFromThenTo~e_1~e_2~e_3" 
+is the list "@[@e_1@,@e_1+i@,@e_1+2i@,@...e_3@]@",
+where the increment, "i", is "e_2-e_1".  If the increment 
+is positive or zero, the list terminates when the next element would
+be greater than "e_3"; the list is empty if "e_1 > e_3".
+If the increment is negative, the list terminates when the next element would
+be less than "e_3"; the list is empty if "e1 < e_3".
+\end{itemize}
+For @Float@ and @Double@, the semantics of the @enumFrom@ family is
+given by the rules for @Int@ above, except that the list terminates
+when the elements become greater than "e_3+i/2" for positive increment
+"i", or when they become less than "e_3+i/2" for negative "i".
+@fromEnum@ and @toEnum@ convert between the type and @Int@.
+
+For all four of these Prelude numeric types, all of the @enumFrom@ 
+family of functions are strict in all their arguments.
 
 \subsubsection{Class @Functor@}
 \indexclass{Functor}
