@@ -15,16 +15,22 @@
 
 % Changes since RC5:
 % * Author list: changed Alastair Reid's institution
+% * 1.4:   Clarified the wording
 % * 4.1.1: Removed [lib] from impent syntax and discussion
 % * 4.1.3: Added parentheses round FunPtr ft to make it easier to 
 %          understand a tolerably complex type.
-% * 4.1.4: Removed all mention of library objects
+% * 4.1.4: Removed all mention of library objects; clarified that header files
+%          do not impact the semantics of foreign calls, but may be required
+%          for correct code generation by some systems
+% * 5.5:   Finalisers must be external functions to facilitate the
+%          implementation on Haskell systems that do not support pre-emptive
+%          concurrency
 % * 6:     Specified that HsBool==int in table2
 %          Relabelled column 1 in table 3 (C symbol -> CPP symbol)
 %          Replaced 0 and 1 with HS_BOOL_FALSE/TRUE
-
+%
 % Changes since RC4:
-% * 5.6: Clarified documentation of `StablePtr's
+% * 5.6: Clarified documentation of `StablePtr's (RC 5)
 %
 % Changes between RC2 and RC4:
 %
@@ -43,8 +49,16 @@
 %   C bindings.
 
 % TODO:
+% * see pending emails in +todo [chak]
+% * shift and rotate with positive arg shift left [pending approval by ffi
+%   list]
+% * proposal to amend hs_init() & friends [if no objections to message on ffi
+%   list]
+% * Explicitly say that `nullPtr' is NULL in C.  Add Ian Lynagh
+%   <igloo@earth.li> to ack list.
 % * Revise layout of the front page.
-% * Implement HTMLization.
+% * Implement HTMLization.  (Malcolm suggests using
+%   <http://pauillac.inria.fr/~maranget/hevea/>)
 
 % TODO after Version 1.0:
 %
@@ -76,7 +90,7 @@
     \\
     \textbf{--- DRAFT ---}\\[1ex]
     \ttfamily\scriptsize
-    $\relax$Id: ffi.tex,v 1.28 2002/08/09 11:32:44 reid Exp $\relax$%
+    $\relax$Id: ffi.tex,v 1.29 2002/09/10 12:23:04 chak Exp $\relax$%
     \ignorespaces}
   }
 \end{DRAFT}
@@ -266,15 +280,21 @@ convention.
 
 Given that many external languages support static types, the question arises
 whether the consistency of Haskell types with the types of the external
-language can be enforced for foreign functions.  Unfortunately, this is in
-general not possible with reasonable effort (i.e., without implementing a
-dedicated type checker).  For example, in the case of the C calling
-convention, the only feasible approach would be to generate a C prototype from
-the Haskell type and leave it to the C compiler to match this prototype with
-the prototype that is specified in a C header file for the imported function.
-However, the Haskell type is lacking some information that would be required
-to pursue this route.  In particular, the Haskell type does not contain any
-information as to when \code{const} modifiers have to be emitted.
+language can be enforced for foreign functions.  Unfortunately, this is, in
+general, not possible without a significant investment on the part of the
+implementor of the Haskell system (i.e., without implementing a dedicated type
+checker).  For example, in the case of the C calling convention, the only
+other approach would be to generate a C prototype from the Haskell type and
+leave it to the C compiler to match this prototype with the prototype that is
+specified in a C header file for the imported function.  However, the Haskell
+type is lacking some information that would be required to pursue this route.
+In particular, the Haskell type does not contain any information as to when
+\code{const} modifiers have to be emitted.  
+
+As a consequence, this report does not require the Haskell system to check
+consistency with foreign types.  Nevertheless, Haskell systems are encouraged
+to provide any cross language consistency checks that can be implemented with
+reasonable effort.
 
 
 \newpage
@@ -764,10 +784,15 @@ specification of external entities unambiguous.
 The specification of include files has been kept to a minimum on purpose.
 Libraries often require a multitude of include directives, some of which may
 be system-dependent.  Any design that attempts to cover all possible
-configurations would introduce significant complexity.  Moreover, using the
-simple design, a custom include file can be specified that uses the standard C
-preprocessor features to include all relevant headers.
-  
+configurations would introduce significant complexity.  Moreover, in the
+current design, a custom include file can be specified that uses the standard
+C preprocessor features to include all relevant headers.
+
+Header files have no impact on the semantics of a foreign call, and whether an
+implementation uses the header file or not is implementation-defined.
+However, as some implementations may require a header file that supplies a
+correct prototype for external functions in order to generate correct code,
+portable FFI code must include suitable header files.
 
 \subsubsection{C Argument Promotion}
 
@@ -1181,21 +1206,24 @@ the following signature and purpose:
   the plain pointers that can be obtained with \code{foreignPtrToPtr} from
   those foreign pointers.
   
-\item[newForeignPtr ::\ Ptr a -> IO () -> IO (ForeignPtr a)] Turn a plain
-  memory reference into a foreign object by associating a finalizer---given by
-  the monadic operation---with the reference. The finalizer will be executed
-  after the last reference to the foreign object is dropped. Note that there
-  is no guarantee on how soon the finalizer is executed after the last
-  reference was dropped; this depends on the details of the Haskell storage
-  manager. The only guarantee is that the finalizer runs before the program
-  terminates.  
+\item[newForeignPtr ::\ Ptr a -> FunPtr (Ptr a -> IO ()) -> IO (ForeignPtr a)]
+  Turn a plain memory reference into a foreign object by associating a
+  finalizer with the reference.  The finalizer is represented by a pointer to
+  an external function, which will be executed after the last reference to the
+  foreign object is dropped.  On invocation, the finalizer receives a pointer
+  to the associated foreign object as an argument.  Note that there is no
+  guarantee on how soon the finalizer is executed after the last reference was
+  dropped; this depends on the details of the Haskell storage manager. The
+  only guarantee is that the finalizer runs before the program terminates.
+
+  Whether a finaliser may call back into the Haskell system is system
+  dependent.  Portable code may not rely on such call backs.
   
-\item[addForeignPtrFinalizer ::\ ForeignPtr a -> IO () -> IO ()] Add another
-  finalizer to the given foreign object. No guarantees are made on the order
-  in which multiple finalizers for a single object are run.
+\item[addForeignPtrFinalizer ::\ ForeignPtr a -> FunPtr (Ptr a -> IO ()) -> IO
+  ()] Add another finalizer to the given foreign object. No guarantees are
+  made on the order in which multiple finalizers for a single object are run.
 
 \item[withForeignPtr ::\ ForeignPtr a -> (Ptr a -> IO b) -> IO b]
-  
   This is a way to obtain the pointer living inside a foreign object. This
   function takes a function which is applied to that pointer. The resulting
   \code{IO} action is then executed. The foreign object is kept alive at least
