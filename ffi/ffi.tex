@@ -13,7 +13,10 @@
 % does not claim to be a definition of the Haskell 98 Foreign Function
 % Interface. 
 
-% Changes since RC2:
+% Changes since RC4:
+% * 5.6: Clarified documentation of `StablePtr's
+%
+% Changes between RC2 and RC4:
 %
 % * 5.8: Clarified documentation for `MarshalAlloc.free'.
 % * 5.8: Added `MarshalAlloc.realloc'.
@@ -63,7 +66,7 @@
     \\
     \textbf{--- DRAFT ---}\\[1ex]
     \ttfamily\scriptsize
-    $\relax$Id: ffi.tex,v 1.26 2002/04/26 07:40:17 chak Exp $\relax$%
+    $\relax$Id: ffi.tex,v 1.27 2002/06/14 08:38:02 chak Exp $\relax$%
     \ignorespaces}
   }
 \end{DRAFT}
@@ -1283,7 +1286,9 @@ purpose:
   
 \item[deRefStablePtr ::\ StablePtr a -> IO a] Obtain the Haskell value
   referenced by a stable pointer, i.e., the same value that was passed to the
-  corresponding call to \code{makeStablePtr}.
+  corresponding call to \code{makeStablePtr}.  If the argument to
+  \code{deRefStablePtr} has already been freed using \code{freeStablePtr}, the
+  behaviour of \code{deRefStablePtr} is undefined.
   
 \item[freeStablePtr ::\ StablePtr a -> IO ()] Dissolve the association between
   the stable pointer and the Haskell value. Afterwards, if the stable pointer
@@ -1291,8 +1296,8 @@ purpose:
   undefined.  However, the stable pointer may still be passed to
   \code{castStablePtrToPtr}, but the \code{Ptr ()} value returned by
   \code{castStablePtrToPtr}, in this case, is undefined (in particular, it may
-  be \code{Ptr.nullPtr}).  Nevertheless, the call is guaranteed not to
-  diverge.
+  be \code{Ptr.nullPtr}).  Nevertheless, the call to \code{castStablePtrToPtr}
+  is guaranteed not to diverge.
   
 \item[castStablePtrToPtr ::\ StablePtr a -> Ptr ()] Coerce a stable pointer to
   an address. No guarantees are made about the resulting value, except that
@@ -1311,7 +1316,8 @@ sp == castPtrToStablePtr (castStablePtrToPtr sp)
   \end{quote}
   %
   for any stable pointer \code{sp} on which \code{freeStablePtr} has not been
-  executed yet.
+  executed yet.  Moreover, \code{castPtrToStablePtr} may only be applied to
+  pointers that have been produced by \code{castStablePtrToPtr}.
 \end{codedesc}
 
 It is important to free stable pointers that are no longer required by using
