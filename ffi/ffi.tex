@@ -14,7 +14,6 @@
 % Interface. 
 
 % TODO:
-% * Integrate Rationale into text?
 % * Have an appendix with the module names under the new library naming
 %   scheme?  I'd say, no.  (Rather have it in the Libraries Addendum.)
 
@@ -48,7 +47,7 @@
     \\
     \textbf{--- DRAFT ---}\\[1ex]
     \ttfamily\scriptsize
-    $\relax$Id: ffi.tex,v 1.17 2001/10/28 15:01:21 chak Exp $\relax$%
+    $\relax$Id: ffi.tex,v 1.18 2001/10/29 08:07:11 chak Exp $\relax$%
     \ignorespaces}
   }
 \end{DRAFT}
@@ -219,6 +218,20 @@ a result Haskell threads can access data in external contexts and invoke
 functions that are executed in an external context as well as vice versa.  In
 the rest of this report, external contexts are usually identified by a calling
 convention. 
+
+\subsection{Cross Language Type Consistency}
+
+Given that many external languages support static types, the question arises
+whether the consistency of Haskell types with the types of the external
+language can be enforced for foreign functions.  Unfortunately, this is in
+general not possible with reasonable effort (i.e., without implementing a
+dedicated type checker).  For example, in the case of the C calling convention
+the only feasible approach would be to generate a C prototype from the Haskell
+type and leave it to the C compiler to match this prototype with the prototype
+for the imported function specified in the C header file.  However, the
+Haskell type is lacking some information that would be required to pursue this
+route.  In particular, the Haskell type does not contain any information as to
+when \code{const} modifiers have to be emitted.
 
 
 \newpage
@@ -507,23 +520,34 @@ clearly, the syntax of the specification of an external entity depends on the
 calling convention and may be non-trivial.
 
 Consequently, the FFI does not fix a general syntax for denoting external
-entities, but requires \gnterm{entity} to appear as a Haskell \gnterm{string}
-literal.  The formation rules for the values of these strings depend on the
-calling convention and a Haskell system implementing a particular calling
-convention will have to parse these strings in accordance with the calling
-convention.
+entities, but requires \gnterm{entity} to take the form of a Haskell
+\gnterm{string} literal.  The formation rules for the values of these strings
+depend on the calling convention and a Haskell system implementing a
+particular calling convention will have to parse these strings in accordance
+with the calling convention.
 
-Generally, for more complex calling conventions, there is a choice between the
-user-level syntax for identifying entities (e.g., Java or C{+}{+}) and the
-system-level syntax (e.g., the type syntax of JNI or mangled C{+}{+},
-respectively).  If such a choice exists, the user-level syntax is to be
-preferred.  Not only because it is more user friendly, but also because the
-system-level syntax may not be entirely independent of the particular
-implementation of the foreign language.
+The separation of all formation rules that are dependent on the calling
+convention by requiring \gnterm{entity} to take the form of a \gnterm{string},
+implies that all information that is needed to statically analyse the Haskell
+program is separated from the information needed to generate the code
+interacting with the foreign language.  This is, in particular, helpful for
+tools processing Haskell source code.  When ignoring the information provided
+by \gnterm{entity}, foreign import and export declarations are still
+sufficient to infer identifier definition and use information as well as type
+information.
+
+For more complex calling conventions, there is a choice between the user-level
+syntax for identifying entities (e.g., Java or C{+}{+}) and the system-level
+syntax (e.g., the type syntax of JNI or mangled C{+}{+}, respectively).  If
+such a choice exists, the user-level syntax is preferred.  Not only because it
+is more user friendly, but also because the system-level syntax may not be
+entirely independent of the particular implementation of the foreign language.
 
 The following defines the syntax for specifying external entities and their
-semantics for each of the standard calling conventions listed in
-Table~\ref{tab:callconv}.
+semantics for the calling conventions \code{ccall} and \code{stdcall}.  Other
+calling conventions from Table~\ref{tab:callconv} are expected to be defined
+in future version of this report.
+
 
 \subsection{Standard C Calls}
 \label{sec:ccall}
@@ -634,6 +658,36 @@ the following.
 \begin{verbatim}
 FIXME: Add one example for each item in the preceding description list.
 \end{verbatim}
+
+\subsubsection{Specification of Header Files and Library Objects}
+
+C header files are always included by \gterm{\#include "\gnterm{fname}"}.
+There is no explicit support for \gterm{\#include <\gnterm{fname}>} style
+inclusion.  The ISO C99~\cite{C99} standard guarantees that any search path
+that would be used for a \gterm{\#include <\gnterm{fname}>} is also used for
+\gterm{\#include "\gnterm{fname}"} and it is guaranteed that these paths are
+searched after all paths that are unique to \gterm{\#include
+  "\gnterm{fname}"}.  Furthermore, we require that \gnterm{fname} ends on
+\code{.h} to make parsing of the specification of external entities
+unambiguous.
+  
+The specification of include files has been kept to a minimum on purpose.
+Libraries often require a multitude of include directives, some of which may
+be system-dependent.  Any design that attempts to cover all possible
+configurations would introduce significant complexity.  Moreover, using the
+simple design, a custom include file can be specified that uses the standard C
+preprocessor features to include all relevant headers.
+  
+Similarly, there is only minimal support for link information (such as, for
+example, the name of a library archive), as comprehensive support would have
+made the design significantly more complex.  In fact, as in contrast to
+include files, simple support that offloads the complexity to standard C
+mechanisms seems not to be possible here, we would have delegated the handling
+of link information to the package management system of the Haskell
+implementation if it had not been for multi-language intermediate forms, such
+as ILX for Microsoft's .NET, which requires simple link information.  The
+option to associate the name of a library archive with an external function
+simplifies the generation of such intermediate code.
 
 \subsection{Win32 API Calls}
 
@@ -1973,86 +2027,6 @@ to the standard retry loop for interrupted POSIX system calls.
   \combineitems Instantiate \code{throwErrnoIf} and \code{throwErrnoIfRetry}
   with the predicate \code{(== Ptr.nullPtr)}.
 \end{codedesc}
-
-
-\appendix
-\newpage
-\section{Rationale}
-
-The following includes a justification of design decisions whose virtue may
-not be appreciated without further explanation.  The content is sorted by
-section numbers.
-%
-\begin{description}
-\item[\ref{sec:foreign-types}] 
-\item[\ref{sec:import}] It might appear as if it were feasible to
-  require an automatic consistency check between the Haskell type given in an
-  import declaration and the argument and result types of the imported
-  external entity.  Unfortunately, this is in general not possible with
-  reasonable effort.  For example, in the case of the C calling convention the
-  only feasible approach would be to generate a C prototype from the Haskell
-  type and leave it to the C compiler to match this prototype about the
-  prototype for the imported function specified in the C header file.
-  However, the Haskell type is lacking some information that would be required
-  to pursue this route.  In particular, the Haskell type does not contain any
-  information as to when \code{const} modifiers have to be emitted.
-\item[\ref{sec:extent}] A foreign declaration specifies all calling-convention
-  dependent information in a string.  The idea here is to separate out the
-  information that is needed to statically analyse the Haskell program from
-  information needed to generate the code interacting with the foreign
-  language.  This is, in particular, expected to be helpful for tools
-  processing Haskell source code.
-
-  The following information is provided outside of the
-  string specifying the external entity.  This information is sufficient for
-  the front-end of a Haskell compiler or other Haskell tools (like a
-  documentation tool) to infer identifier definition and use information as
-  well as type information.
-  %
-  \begin{itemize}
-  \item What Haskell function is being defined or used.
-  \item What the Haskell type of that function is.
-  \item Whether the function is being \emph{defined} (e.g., foreign import) or
-    \emph{used} (e.g., foreign export).
-  \item The calling convention.
-  \end{itemize}
-  %
-  All further information (i.e., the information contained in the string
-  specifying the external entity) is merely needed by a code generator
-  supporting the specified calling convention.
-  
-  Moreover, as variation of the supported calling convention determines the
-  exact syntax supported in the specification of the external entity, we
-  ensure that the first-level grammar is implementation independent.
-\item[\ref{sec:ccall}] C header files are always included by \gterm{\#include
-    "\gnterm{fname}"}.  There is no explicit support for \gterm{\#include
-    <\gnterm{fname}>} style inclusion.  The ISO C99~\cite{C99} standard
-  guarantees that any search path that would be used for a \gterm{\#include
-    <\gnterm{fname}>} is also used for \gterm{\#include "\gnterm{fname}"} and
-  it is guaranteed that these paths are searched after all paths that are
-  unique to \gterm{\#include "\gnterm{fname}"}.
-  
-  We require that \gnterm{fname} ends on \code{.h} to make parsing of the
-  specification of external entities unambiguous.
-  
-  The specification of include files has been kept to a minimum on purpose.
-  Libraries often require a multitude of include directives, some of which may
-  be system-dependent.  Any design that attempts to cover all possible
-  configurations would introduce significant complexity.  Moreover, using the
-  simple design, a custom include file can be specified that uses the standard
-  C preprocessor features to include all relevant headers.
-  
-  Similarly, there is only minimal support for link information (such as, for
-  example, the name of a library archive), as comprehensive support would have
-  made the design significantly more complex.  In fact, as in contrast to
-  include files, simple support that offloads the complexity to standard C
-  mechanisms seems not to be possible here, we would have delegated the
-  handling of link information to the package management system of the Haskell
-  implementation if it had not been for multi-language intermediate forms,
-  such as ILX for Microsoft's .NET, which requires simple link information.
-  The option to associate the name of a library archive with an external
-  function simplifies the generation of such intermediate code.
-\end{description}
 
 
 \bibliographystyle{plain}
