@@ -3,21 +3,24 @@
 
 SOURCE FILES
 
-    report/		The Language Report
+    report/		The Language and Libraries Reports (now together
+			in a single document)
     
-    libraries/		The Libraries Report
+    libraries/		OUT OF DATE (from Dec 2002): ignore this directory
     
     tools/		Tools needed to build the Reports
 		    	(cd into here and type make)
     
     Makefile		Build a distribution of the Reports
 
-    haskell98-bugs.html	A list of all the changes from the original
-			Haskell 98 Report to the July 2001 revision.
+    report/h98-revised.html	A summary page to glue all the outputs together
+
+    report/haskell98-bugs.html	A list of all the changes from the original
+			Haskell 98 Report to the Dec 2002 revised version.
 			Covers both the Language and Library report.
     
 	    
-    h98.gif		A GIF for a Haskell 98 logo
+    report/h98.gif	A GIF for a Haskell 98 logo
 
 
 OUTPUT FILES
