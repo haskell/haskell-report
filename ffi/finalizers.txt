@@ -164,10 +164,6 @@ Rationale
    1. MarshalAlloc has to export a FunPtr version of free, so that it
       can be used in a finalizer.
 
-      Balanced against this, we will later see that Haskell finalizers
-      require a synchronization mechanism to allow finalizers to
-      safely access mutable Haskell state.
-      
    2. A general point: the philosophy of the FFI is to move as much
       marshalling machinery into Haskell as possible, on the grounds
       that we believe Haskell is likely to be more expressive than the
@@ -183,53 +179,17 @@ Rationale
   Manipulating mutable Haskell state
   ----------------------------------
 
-    IORefs are not a standard part of Haskell and are not required by
-    the FFI specification.  Nevertheless, there are three reasons why
-    we should consider them when designing the FFI.
+    There are significant problems when one wants to manipulate
+    mutable Haskell state from a finalizer.  This is discussed in the
+    section on mutable state, below.
 
-    1) They are widely implemented and heavily used.
+  Concurrency
+  -----------
 
-    2) If absent, they can be implemented (perhaps in an ad hoc way)
-       using mutable C state and StablePtrs.
-
-    3) Since the purpose of finalizers is to cleanup (mutable) state,
-       one of the strongest motivations for writing a finalizer in 
-       Haskell instead of C is that the finalizer's job is to cleanup
-       mutable Haskell state involving the C object.
-
-    Haskell finalizers introduce the possibility of the main program
-    being preempted by a Haskell finalizer after it reads the value of
-    an IORef but before it writes a new value into the IORef.  Thus,
-    using IORefs (or rolling an ad hoc equivalent) to provide mutable
-    Haskell state which is accessede by finalizers introduces race
-    conditions.
-
-    To avoid this problem, execution of finalizers could be restricted
-    to 'safe' points in the IO monad.  For example, the programmer
-    could explicitly call a function 'runFinalizers' or we could agree
-    the certain IO operations constitute 'safe' points.  This runs the
-    risk of starvation: the finalizer may never be run if the program
-    spends all its time executing pure (non-IO) code or fails to call
-    runFinalizers often enough.  It is also rather vulnerable to
-    differences between garbage collectors in different systems: at
-    the time that a call to runFinalizers is made, a compiler with a
-    simple 2-space collector might have identified a ForeignPtr as
-    garbage and the finalizer will be run whilst a compiler with a
-    sophisticated generational collector might not yet have identified
-    the ForeignPtr as garbage and 'miss the boat'.  This may lead to
-    starvation since the 'boat' may never come back.
-
-
-  Communicating with other threads
-  --------------------------------
-
-    Simon says: When other extensions such as concurrency are factored
-    in, there are plenty of good examples where Haskell finalizers are
-    necessary.  I assume this point is uncontested; please correct me
-    if I'm wrong.
-
-    Alastair replies: I don't see how adding concurrency strengthens
-    the argument for Haskell finalizers.
+    If the implementation supports preemptive concurrency, then the
+    problems with mutable state are easily solved.  With concurrency
+    *and* mutable state, there are plenty of good reasons for wanting
+    Haskell finalizers.
     
 
   Arguments against
@@ -271,9 +231,6 @@ Rationale
 
        These must be specified in the FFI spec and, of course, implemented.
 
-    5. The complexities introduced seem out of line with the problem
-       being solved.
- 
 
 
 Implementations
@@ -296,9 +253,9 @@ Implementations
     and then recursively invoke the evaluator to run the finalizer.
     The effect is that the finalizer can "preempt" any running Haskell
     computation, and finalizers can even preempt each other.
-    Unfortunately, the patch does nothing to protect against race
-    conditions in finalizers that manipulate IORefs and it is believed
-    that finalizers that manipulate MVars could crash or deadlock.
+
+    The patch does not address any of the issues described in the
+    section on mutable state, below.
 
     An alternative implementation would be to piggyback on Hugs's
     cooperative concurrency and place finalizers into the "thread
@@ -316,22 +273,38 @@ Implementations
     discussed below).
 
         
-Implications of allowing Haskell finalizers in non-concurrent systems
-=====================================================================
+Further Implications
+====================
 
   Implementing Haskell finalizers is not the end of the story.  Since,
   using the implementation techniques described above, a Haskell
   finalizer can pre-empt the currently running Haskell computation,
-  other issues arise.
+  other issues arise...
 
-  Mutable state
-  -------------
+Mutable State in Haskell Finalizers
+===================================
 
-    If the finalizer shares mutable state with the rest of the Haskell
-    program, race conditions arise.  The usual solution is to use
-    synchronization primitives to fix race conditions, but we aren't
-    proposing to add any, and we certainly don't want to require
-    concurrency in order to implement the FFI.  
+    IORefs are not a standard part of Haskell and are not required by
+    the FFI specification.  Nevertheless, there are three reasons why
+    we should consider them when designing the FFI.
+
+    1) They are widely implemented and heavily used.
+
+    2) If absent, they can be implemented (perhaps in an ad hoc way)
+       using mutable C state and StablePtrs.
+
+    3) Since the purpose of finalizers is to cleanup (mutable) state,
+       one of the strongest motivations for writing a finalizer in 
+       Haskell instead of C is that the finalizer's job is to cleanup
+       mutable Haskell state involving the C object.
+
+    We want to be able to use mutable Haskell state from a Haskell
+    finalizer, but we clearly can't use IORefs.  Finalizers which
+    modify IORefs will always contain race conditions.
+
+    The usual solution to this problem is to use appropriate
+    synchronisation primitives, but we don't necessarily have
+    concurrency available.
 
     Indeed, attempting to use synchronization (i.e. MVars) from a
     finalizer in Hugs using the implementation outlined above will
@@ -344,44 +317,61 @@ Implications of allowing Haskell finalizers in non-concurrent systems
     MVars, the code will work in GHC, will deadlock in Hugs, and won't
     work at all in NHC (no MVars).
 
-    One solution is to simply say that using mutable state from a
-    finalizer is not supported.  Since mutable state (i.e. IORef or
-    MVar) isn't part of the Haskell 98 standard or the FFI, it would
-    appear that this conveniently sidesteps the issue.  There are two
-    problems with trying to define away the problem in this way:
+    Solution 1 - safe points
+    ------------------------
 
-    1) Most implementations use mutable state internally in their
-       libraries, so this might entail some implementation effort to make
-       these libraries finalizer-safe.  Without any synchronization
-       primitives, making the libraries safe might be tricky or
-       impossible (although you could back off and simply say that
-       certain library calls cannot be invoked from a finalizer).  Again,
-       this leads to portability problems and is bound to result in
-       subtle race conditions - a highly undesirable situation!
+      To avoid this problem, execution of finalizers could be restricted
+      to 'safe' points in the IO monad.  For example, the programmer
+      could explicitly call a function 'runFinalizers' or we could agree
+      the certain IO operations constitute 'safe' points.  This runs the
+      risk of starvation: the finalizer may never be run if the program
+      spends all its time executing pure (non-IO) code or fails to call
+      runFinalizers often enough.  It is also rather vulnerable to
+      differences between garbage collectors in different systems: at
+      the time that a call to runFinalizers is made, a compiler with a
+      simple 2-space collector might have identified a ForeignPtr as
+      garbage and the finalizer will be run whilst a compiler with a
+      sophisticated generational collector might not yet have identified
+      the ForeignPtr as garbage and 'miss the boat'.  This may lead to
+      starvation since the 'boat' may never come back.
 
-       We don't have any idea about how widespread this problem is
-       likely to be, without someone looking through the libraries.
-       SimonM had a cursory look through Hugs's IO library (actually
-       before I submitted the patch to implement Haskell finalizers)
-       and didn't see any problems.  GHC's IO library is affected; but
-       then it requires various other extensions, including Weak
-       references (which provide Haskell finalizers for Haskell
-       objects), anyhow.
+    Solution 2 - we just don't support it
+    -------------------------------------
 
-    2) More seriously, since the primary goal of finalizers is to
-       modify mutable state, Haskell finalizers which do not modify
-       mutable Haskell state will be of little use.  All they will be
-       able to do is lookup objects in immutable Haskell state and
-       invoke C finalizers to do their work - a significant
-       limitation.
+      One solution is to simply say that using mutable state from a
+      finalizer is not supported.  Since mutable state (i.e. IORef or
+      MVar) isn't part of the Haskell 98 standard or the FFI, it would
+      appear that this conveniently sidesteps the issue.  There are two
+      problems with trying to define away the problem in this way:
+      
+      Most implementations use mutable state internally in their
+      libraries, so this might entail some implementation effort to make
+      these libraries finalizer-safe.  Without any synchronization
+      primitives, making the libraries safe might be tricky or
+      impossible (although you could back off and simply say that
+      certain library calls cannot be invoked from a finalizer).  Again,
+      this leads to portability problems and is bound to result in
+      subtle race conditions - a highly undesirable situation!
+      
+      We don't have any idea about how widespread this problem is
+      likely to be, without someone looking through the libraries.
+      SimonM had a cursory look through Hugs's IO library (actually
+      before I submitted the patch to implement Haskell finalizers)
+      and didn't see any problems.  GHC's IO library is affected; but
+      then it requires various other extensions, including Weak
+      references (which provide Haskell finalizers for Haskell
+      objects), anyhow.
+      
+    Solution 3 - find an appropriate synchronisation mechanism
+    ----------------------------------------------------------
 
-    Another solution is to find an appropriate synchronization
-    mechanism.  A problem is to find something which doesn't impose an
-    excessive burden to implement (e.g., Hugs and NHC developers
-    consider adding the mechanisms of preemptive concurrency (multiple
-    stacks, etc.) to be too much) but which will work well in code
-    which already supports preemptive concurrency.  Discussion didn't
-    go very far.
+      Another solution is to find an appropriate synchronization
+      mechanism.  A problem is to find something which doesn't impose an
+      excessive burden to implement (e.g., Hugs and NHC developers
+      consider adding the mechanisms of preemptive concurrency (multiple
+      stacks, etc.) to be too much) but which will work well in code
+      which already supports preemptive concurrency.  Discussion didn't
+      go very far.
 
 
   Issues with C concurrency
@@ -402,8 +392,8 @@ Implications of allowing Haskell finalizers in non-concurrent systems
     of foreign languages which interact with Haskell.
 
   
-  Interaction with co-operative concurrency
-  -----------------------------------------
+Interaction with co-operative concurrency
+=========================================
 
     Earlier we mentioned that it may be possible to implement Haskell
     finalizers using Hugs's co-operative concurrency.  Forgetting for
