@@ -314,6 +314,9 @@ exported.  For example, a field name <tt>f</tt> from data type <tt>T</tt> may be
 or as an implicitly-named member (<tt>T(..)</tt> item(2)); or by exporting an entire
 module (<tt>module M</tt>, item (5) or (6)).  
 <p>
+Exports lists are cumulative: the set of entities exported by an export
+list is the union of the entities exported by the individual items of the list.
+<p>
 The <em>unqualified</em> names of the entities exported by a module must all be distinct
 (within their respective namespace).  For example
 <pre>

@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/modules.verb,v 1.10 2001/09/11 13:04:28 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/modules.verb,v 1.11 2001/09/13 13:29:08 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Modules</title>
 %*section 5
@@ -225,6 +225,9 @@ imported from @Mod2@ but not those imported from @Mod3@.  Note that
 It is an error to use "@module@~M" in an export list unless $M$ is the
 module bearing the export list, or $M$ is imported
 by at least one @import@ declaration (qualified or unqualified).
+
+Exports lists are cumulative: the set of entities exported by an export
+list is the union of the entities exported by the individual items of the list.
 
 It makes no difference to an importing module how an entity was 
 exported.  For example, a field name @f@ from data type @T@ may be exported individually
