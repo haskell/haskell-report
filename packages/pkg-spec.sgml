@@ -538,7 +538,8 @@ allows a user to make a new package known to the compiler, and to ask what packa
      <row><Entry><cmdsynopsis><command>hc-pkg register</command> <group choice=req>
 		      <arg><replaceable>filename</replaceable></arg>
 		      <arg><option>-</option></arg></group>
-		  <arg choice=opt><option>-user</option></arg>
+		  <group choice=opt><arg>--user</arg><arg>--global</arg>
+		    </group>
 		</cmdsynopsis></entry>
                     <Entry><para>Register the package using the specified installed package description.
 		  The syntax for the latter is given in <xref linkend="ipd">.</para></entry></row>
@@ -587,7 +588,7 @@ If only a name is specified, &hc-pkg; fails
 unless the name identifies a unique package among the user packages, or among the shared packages.  As usual, the
 user packages win.
       </para>
-<note><para>Can we give the <option>-user</option> flag to <command>hide</command>, <command>expose</command>,
+<note><para>Can we give the <option>--user</option> flag to <command>hide</command>, <command>expose</command>,
 <command>describe</command>?  Can we register a package that is already registered?  What if it's registered
 as a shared package and we register it as a user package?</para>
       </note>
@@ -754,12 +755,20 @@ on Windows it will be <filename>Program Files</filename>.  The setup script will
 	    </para>
 	  </listitem>
 
-          <listitem>
-	    <para><option>--shared</option>: if present, this flag is
-            passed to &hc-pkg; so that the package is
-            registered as shared.  This flag has no effect if
+	  <listitem>
+	    <para><option>--user</option>: if present, this flag is
+            passed to &hc-pkg; so that the package is registed for the
+            current user only.  This flag has no effect if
             <function>--install-prefix</function> is used, because in
             that case &hc-pkg; is not called.</para>
+	  </listitem>
+
+          <listitem>
+	    <para><option>--global</option>: if present, this flag is
+            passed to &hc-pkg; so that the package is registed
+            globally (this is the default if neither
+            <option>--user</option> or <option>--global</option> are
+            given).</para>
 	  </listitem>
 	</itemizedlist>
 
@@ -800,9 +809,12 @@ on Windows it will be <filename>Program Files</filename>.  The setup script will
 
 	<itemizedlist>
 	  <listitem>
-	    <para><option>--shared</option>: registers/un-registers a
-            shared package as shared.  The default is to treat the
-            package as a user package.</para>
+	    <para><option>--global</option>: registers/un-registers a
+            package as global.  This is the default.</para>
+	  </listitem>
+	  <listitem>
+	    <para><option>--user</option>: registers/un-registers a
+            package for the current user only.</para>
 	  </listitem>
 	</itemizedlist>
       </sect3>
@@ -817,11 +829,11 @@ He downloads the source distribution and unpacks it into a temporary directory,
 <programlisting>
   ./Setup.lhs configure --ghc
   ./Setup.lhs build
-  ./Setup.lhs install
+  ./Setup.lhs install --user
 </programlisting>
 Similarly, Sam Sysadmin does exactly the same, except that he says 
 <programlisting>
-  ./Setup.lhs install --shared
+  ./Setup.lhs install --global
 </programlisting>
 in the final step, so that the package is installed where all users will see it.
       </para>
