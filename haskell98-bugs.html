@@ -41,7 +41,7 @@ that have become popular
 in functional programming.  In this Report, the meaning of such
 syntactic sugar is given by translation into simpler constructs.
 If these translations are applied exhaustively, the result is a program
-written in a small subset of Haskell that we call the Haskell <em>kernel</em>.
+written in a small subset of Haskell that we call the Haskell <em>kernel</em>."
 <p>
 "Although the kernel is not formally specified, it is essentially a
 slightly sugared variant of the lambda calculus with a straightforward
@@ -61,6 +61,11 @@ here, and item 2 of the list (which is related).
 Instead, amplify the remarks in Section 2.4 and 3.2.  This is a presentational
 change only.
 
+<p><li> [Sept 2002] <strong>Page 4, Section 2.1, Notational conventions.</strong>
+Remove the second-last paragraph altogether, which begins "Haskell uses a pre-processor...".
+(No implementation does this, and the reference to escapes in identifiers is inconsistent
+with the lexical syntax.)
+
 <p><li> [Late Dec 2001] <strong>Page 5, Section 2.2, Lexical program structure; and Appendix B.2, p120.</strong>
 Replace the production for "comment" with:
 <pre>
@@ -74,6 +79,22 @@ Replace the production for "comment" with:
 <pre>
  lexeme -> qvarid | qconid | qvarsym | qconsym | literal | special | reservedop | reservedid
 </pre>
+
+<p> <li> [March 02] Change the productions for <em>whitechar</em>  and <em>newline</em> to:
+<pre>
+  whitechar -> newline | vertab | space | tab | uniWhite
+  newline   -> return linefeed | return | linefeed | formfeed
+</pre>
+(This means that CR, LF, or CRLF (remember maximal munch), are all valid 'newline' separators,
+and the same sequence of characters should therefore work on any
+Haskell implementation.)
+
+<p> <li> [March 02] Change the production for <em>ANY</em> to
+<pre>
+  ANY -> graphic | whitechar
+</pre>
+(This is nicely similar to the production for "any".)
+
 <p> <li> Change the production for <em>uniDigit</em> to
 <pre>
   uniDigit -> any Unicode decimal digit
@@ -89,6 +110,17 @@ Replace the production for "comment" with:
 </ul>
 (These changes, and the next one, justify the productions for <em>program</em> which claims that a program is
 a sequence of lexemes and white space.)
+
+<p><li> [Feb 2002] <strong>Page 6, Section 2.2, Lexical program structure.</strong>
+In the first paragraph, delete the phrase ", using a context-independent 
+deterministic lexical analysis (i.e.~no lookahead beyond the current character is 
+required)". 
+<p>
+(The maximal munch rule is correct, but it's not true that it only takes one character
+of lookahead.  Consider
+"F. 9. 0o 0x 9.0e+f", which 
+should lex as "F . 9 . 0 o 0 x 9.0 e + f" but that needs up to two additional characters
+of lookahead.)
 
 <p><li> <strong>Page 7, Section 2.4, Identifiers and operators; and Appendix B.2, p121.</strong>
 Add <em>dashes</em> to <em>reservedop</em> in the exclusion set of the
@@ -166,10 +198,50 @@ comprehension is used."
 <p>
 (Clarification only.)
 
+<p><li> [May 2002] <strong>Page 12, Section 3, Expressions; also Page 17, Section 3.5; 
+also Page 128, Appendix B, Syntax.</strong>  
+Add the following two extra productions for <em>aexp</em>:
+<pre>
+	|   '(' lexp(i) qop(l,i) ')'        left section
+        |   '(' qop(r,i)<sub>&lt;<tt>-</tt>&gt;</sub> rexp(i) ')'        right section
+</pre>
+and change the othe right-section production to:
+<pre>
+        |   '(' qop(a,i)<sub>&lt;<tt>-</tt>&gt;</sub> exp(i+1) ')'        right section
+</pre>
+(This brings the formal syntax into line with the 
+words in Section 3.5.  The grammar now follows the way that qfunlhs is defined.
+There is no ambiguity, because an exp(i+1) is not an lexp(i).)
+<p>
+The exclusion of "<tt>-</tt>" from right sections is also new [May 2002]; it is necessary
+to prevent overlap with the unary-minus syntax. 
+
 <p><li> [Aug 2001] <strong>Page 13, Section 3, Expressions.</strong>
 Remove Table 1, and the associated paragraph beginning "As an aid to
 understanding...".  (The table causes more confusion than it clears up.)
 
+<p><li> [March 2002] <strong>Page 14, Section 3, Expressions.</strong>
+After the sample parses, add the following paragraphs:
+<p>
+<em>A note about parsing.</em>  Expressions that involve the interaction 
+of fixities with the let/lambda meta-rule
+may be hard to parse.  For example, the expression
+<pre>
+  let x = True in x == x == True
+</pre>
+cannot possibly mean
+<pre>
+  let x = True in (x == x == True)
+</pre>
+because <tt>(==)</tt> is a non-associative operator; so the expression must parse thus:
+<pre>
+  (let x = True in (x == x)) == True
+</pre>
+However, implementations may well use a post-parsing pass to deal with fixities,
+so they may well incorrectly deliver the former parse.  Programmers are advised
+to avoid constructs whose parsing involves an interaction of (lack of) associativity
+with the let/lambda meta-rule.
+  
 <p><li> [Nov 2001] <strong>Page 13, Section 3 Expressions.</strong>
 Replace the curly braces by angle brackets, in the subscript of "aexp" in the last production of "aexp".
 Similarly, on Page 26, Section 3.15.3; and Page 128, Appendix B.4.
@@ -180,6 +252,28 @@ the section, after "indistinguishable" add "by a Haskell program".
 <p><li> [Apr 2001] <strong>Page 15, Section 3.2, Variables, Constructors, Operators, and Literals.</strong>  
 Remove the paragraph starting "Qualified names may only ...", and the following example, and the
 concluding paragraph starting "incorrectly uses a qualifier". (This is all covered in 2.4 and 5.5.1.)
+
+<p><li> [May 2002] <strong>Page 17, Section 3.5, Sections.</strong>
+Append the following to the paragraph beginning "Syntactic precedence rules apply to sections as follows."
+<p>
+"As another example, the expression
+<pre>
+  (let x = 10 in x +)
+</pre>
+is invalid because, by the let/lambda meta-rule (Section 3)
+the expression
+<pre>
+  (let n = 10 in n + x)
+</pre>
+parses as
+<pre>
+  (let n = 10 in (n + x))
+</pre>
+rather than
+<pre>
+  ((let n = 10 in n) + x)
+</pre>
+"
 
 <p><li> [Oct 2001] <strong>Page 18, Section 3.7, Lists.</strong>
 After the sentence starting "The constructor ":" is reserved solely for list construction...", 
@@ -206,6 +300,23 @@ and no qualifier is empty.  The translation lower down page 23 is then
 not utterly rigorous, because Q can be empty, and when it is there is no preceding
 comma, but I reckon it would make matters worse to "fix" it.
 
+<p><li> [March 2002] <strong>Page 22, Section 3.13, Case Expressions</strong>.
+To the end of the section, add the following paragraphs:
+<p>
+<em>A note about parsing</em>.  The (type-incorrect) expression
+<pre>
+  case x of { (a,_) | let b = not a in b :: Bool -> a }
+</pre>
+is tricky to parse correctly.  It has a single unambiguous parse, namely
+<pre>
+  case x of { (a,b) | (let b = not a in b :: Bool) -> a }
+</pre>
+However, the phrase <tt>Bool -> a</tt> is syntactically valid as a type, and
+parsers with limited lookahead may incorrectly commit to this choice, and hence
+reject the program.  Programmers are advised, therefore, to avoid guards that
+end with a type signature --- indeed that is why a "gd" contains 
+an "exp^0" not an "exp".
+
 <p><li> [Apr 2001] <strong>Page 23, Section 3.14, Do Expressions; 
 and Page 128, Appendix B.4, Context Free Syntax.</strong>
 <ul>
@@ -222,6 +333,17 @@ followed by a semicolon.
 <p><li> [Aug 2001] <strong>Page 24, Section 3.15, Datatypes with Field Labels.</strong>.
 Add an example to illustrate the final point in para 2.
 
+<p><li> [Feb 2002] <strong>Page 25, Section 3.15.2, Construction Using Field Labels</strong>.
+At the end of the section add the sentence:
+<p>
+The expression <tt>F&nbsp;{}</tt>, where <tt>F</tt> is a data constructor, is legal 
+<I>whether or not </I><tt>F</tt><I> was declared with record syntax</I>, provided 
+<tt>F</tt> has no strict fields; it denotes 
+<tt>F</tt><I> _|_</I><sub><I>1</I></sub><I> ... _|_</I><sub><I>n</I></sub>, 
+where <I>n</I> is the arity of <tt>F</tt>.
+<p>
+(This matches the dual for pattern matching, in Section 4.2.1.)
+
 <p><li> [Aug 2001] <strong>Page 26, Section 3.15.3, Updates Using Field Labels</strong>.
 In the translation box: 
 <ul>
@@ -233,6 +355,15 @@ In the translation box:
 <p><li> [Aug 2001] <strong>Page 28, Section 3.17.1, Patterns.</strong>.
 Give an example to illustrate an illegal non-linear pattern.
 
+<p><li> [Jan 2002] <strong>Page 29, Section 3.17.2, Informal Semantics of Case Expressions.</strong>
+Reword the entire numbered list giving the informal semantics, so that:
+<ul>
+<li> It is clearly classified by pattern.
+<li> The semantics of matching a newtype pattern against bottom is given.
+<li> A literal and n+k pattern may not diverge even if the value matched is bottom; it
+depends on the definition of <tt>==</tt> and <tt>&gt;=</tt> respectively.
+</ul>
+
 <p><li> [Aug 2001] <strong>Page 31, Section 3.17.2, Informal Semantics of Case Expressions.</strong>
 Replace the example at the foot of Page 31, following the paragraph "The guard semantics...",
 with the following:
@@ -241,15 +372,6 @@ with the following:
     f ~(x,y,z) [a] | (a == y) = 1
 </pre>
 (The previous example use boolean and, which is non-strict in its second argument!)
-
-<p><li> [Jan 2002] <strong>Page 31, Section 3.17.2, Informal Semantics of Case Expressions.</strong>
-Reword the entire numbered list giving the informal semantics, so that:
-<ul>
-<li> It is clearly classified by pattern.
-<li> The semantics of matching a newtype pattern against bottom is given.
-<li> A literal and n+k pattern may not diverge even if the value matched is bottom; it
-depends on the definition of <tt>==</tt> and <tt>&gt;=</tt> respectively.
-</ul>
 
 <p><li> [Apr 2001] <strong>Page 31,33, Figures 3 and 4, Semantics of Case Expressions.</strong>
 Replace "completely new variable" by "new variable" in these two figures.  (Some clauses
@@ -267,10 +389,22 @@ In clause (r) replace "e0" by "v" throughout.
 </pre>
 <li> Rename old clause (r) as clause (s).
 <li> Use lambda instead of let in the new clause (s), so as to avoid the suggestion
-of polymorphism (just as in other clauses.
+of polymorphism (just as in other clauses).
 <li> In the accompanying text, final paragaph, add clause (s) to the list of 
 clauses that use lambda to avoid suggesting polymorphism.
 </ul>
+
+<p><li> [May 2002] <strong>Page 34, Section 4, Declarations and Bindings; 
+		       and Page 44, Section 4.3.1, Class Declarations.</strong>
+In the production for <tt>class</tt>, replace
+<pre>
+	class [scontext =>] simpleclass [where decls]
+</pre>
+by
+<pre>
+	class [scontext =>] tycls tyvar [where decls]
+</pre>
+
 
 <p><li> [Sept 2001] <strong>Page 36, Section 4.1.2, Syntax of Types.</strong>
 First paragraph, last sentence.  After "infix type constructors are not allowed",
@@ -458,12 +592,17 @@ legal
 </ul>
 (These changes clarify the scope rules for export lists.  Much email discussion during Dec 2001.)
 
-<p><li> [Oct 2001] <strong>Page 64, Section 5.2, Export declarations, numbered items 5 and 6.</strong>
+<p>
+<li> [March 02] In point (2) delete the sentence "The qcnamei must not conatin duplications.".
+Make a similar change in point (4). 
+
+<p><li> [Oct 2001, modified Nov 2002] <strong>Page 64, Section 5.2, Export declarations, numbered items 5 and 6.</strong>
 Replace both items with the following:
 <p>
-"The form `<tt>module M</tt>' abbreviates the set of all entities whose
-<em>unqualified</em> name, <em>e</em>, is in scope, and for which the <em>qualified</em> name
-<em>M.e</em> is also in scope and refers to the same entity as <em>e</em>.  This set
+The form "<tt>module M</tt>" names the set of all entities that are in
+scope with both an unqualified name "<tt>e</tt>" and a qualified name
+"<tt>M.e</tt>".
+This set
 may be empty.
 For example:
 <pre>
@@ -514,6 +653,11 @@ There are name clashes in the export list
 between <tt>C.g</tt> and <tt>g</tt>, 
 and between <tt>module B</tt> and <tt>C.f</tt> (assuming <tt>B.f</tt> and <tt>C.f</tt> are different entities), 
 even though there are no name clashes within module <tt>A</tt> itself.  
+
+<p><li> [Feb 2002] <strong>Page 65, Section 5.3, Import Declarations, syntax; also page 125, Appendix B.4.</strong>
+In the second production for "import", namely "tycon [ [(..)] | (cname1, ..., cnamen)]"
+replace "n&gt;=1" by "n&gt;=0".  (There is no need to require one or more constructors, and 
+in <tt>hiding</tt> clauses it may be useful to hide the type constructor only.)
 
 <p><li> [Nov 2001] <strong>Page 65, Section 5.3, Import Declarations, last line.</strong>
 Before "Exactly which entities are to be imported..." add a new paragraph:
@@ -594,9 +738,9 @@ with an explicit <tt>import</tt> declaration. This provision for explicit
 import allows entities defined in the Prelude to be selectively imported,
 just like those from any other module."
 
-<p><li> <strong>Page 71, Section 5.6.2, Shadowing Prelude Names.</strong> 
-Replace the example at the beginning of the section, and the entire
-following paragraph, with the following
+<p><li> [May 2002] <strong>Page 71, Section 5.6.2, Shadowing Prelude Names.</strong> 
+Replace the entire section with the following, which clarifies matters considerably
+compared to the original Haskell 98 Report.
 "<pre>
   module A( null, nonNull ) where
     import Prelude hiding( null ) 
@@ -611,7 +755,36 @@ The latter would be ambiguous without the "<tt>hiding(null)</tt>" on the
 Every module that imports <tt>A</tt> unqualified, and then makes an unqualified
 reference to <tt>null</tt> must also resolve the ambiguous use of <tt>null</tt>
 just as <tt>A</tt> does.  Thus there is little danger of accidentally shadowing 
-Prelude names."
+Prelude names.
+<p>
+"It is possible to construct and use a different module to serve in
+place of the Prelude.  Other than the fact that it is implicitly
+imported, the Prelude is an ordinary Haskell module; it is special
+only in that some objects in the Prelude are referenced by special
+syntactic constructs.  Redefining names used by the Prelude does not
+affect the meaning of these special constructs.  For example, in
+<pre>
+  module B where
+    import Prelude()
+    import MyPrelude
+    f x = (x,x)
+    g x = (,) x x
+    h x = [x] ++ []
+</pre>
+the explicit <tt>import Prelude()</tt> declaration prevents the automatic
+import of <tt>Prelude</tt>, while the declaration <tt>import MyPrelude</tt> brings the
+non-standard prelude into scope.  
+The special syntax for tuples (such as <tt>(x,x)</tt> and <tt>(,)</tt>) and lists
+(such as <tt>[x]</tt> and <tt>[]</tt>) continues to refer to the tuples and lists
+defined by the standard <tt>Prelude</tt>;
+there is no way to redefine the meaning of <tt>[x]</tt>, for example, in terms of a
+different implementation of lists.
+On the other hand, the use of <tt>++</tt> is not special syntax, so it refers
+to <tt>++</tt> imported from <tt>MyPrelude</tt>.
+<p>
+"It is not possible, however, to hide <tt>instance</tt> declarations in the
+<tt>Prelude</tt>.  For example, one cannot define a new instance for <tt>Show Char</tt>."
+
 
 <p><li> [Aug 2001]  <strong>Page 74, Section 6.1.3, Lists.</strong>  In the last sentence,
 after "<tt>Monad</tt>" add ", <tt>Functor</tt>".  (The list type is an instance of <tt>Functor</tt>.)
@@ -662,6 +835,17 @@ to and from strings." add the sentence:
 precedence of the enclosing context (see Appendix D.4)."
 (Clarification only.)
 
+<p><li> [May 2002] <strong> Page 79, Section 6.3.3, The Read and Show Classes.</strong>
+Add documentation for the function <tt>lex</tt>:
+<p>
+"The function <tt>lex :: ReadS String</tt>, used by <tt>read</tt>, is also part of the Prelude.
+It reads a single lexeme from the input, discarding initial white space, and
+returning the characters that constitute the lexeme.  If the input string contains
+only white space, <tt>lex</tt> returns a single successful ``lexeme'' consisting of the
+empty string.  (Thus <tt>lex ""</tt> = <tt>[("","")]</tt>.)  If there is no legal lexeme at the
+beginning of the input string, <tt>lex</tt> fails (i.e. returns <tt>[]</tt>)."
+
+
 <p><li> [Nov 2001] <strong> Page 79, Section 6.3.4, Class Enum; 
 Page 19, Section 3.10 Arithmetic Sequences; and Appendix D.2, Derived instances of Enum.</strong>
 <ul>
@@ -708,6 +892,22 @@ There was a lot of email on the Haskell mailing list in Dec 2001 about the latte
 In the section "Input functions" replace "the <tt>IOError</tt> value associated
 with end-of-file is defined in a library" by "a predicate <tt>isEOFError</tt> that 
 identifies this exception is defined in the <tt>IO</tt> library".
+
+<p><li> [May 2002] <strong>Page 88, Section 7.1, Standard I/O functions.</strong>
+In the section "Input functions", 
+<ul>
+<li> Change "Both <tt>getChar</tt> and <tt>getLine</tt> raise an exception on end-of-file;" to
+"The <tt>getChar</tt> operation raises an exception on end-of-file;".
+<li> After that sentence, add the further sentence "The <tt>getLine</tt> operation raises 
+an exception under the same circumstances as <tt>hGetLine</tt>, defined the <tt>IO</tt> library."
+</ul>
+(This change goes along with a more precise description of the behaviour of hGetLine.)
+
+<p><li> [Sept 2002] <strong>Page 88, Section 7.1, Standard I/O functions.</strong>
+Remove the paragraph "By default, these input functions echo to standard output."
+(There was a lot of discussion on the Haskell mailing list on this point, in Sept 2002.
+The conclusion was that the sentence should go, though it would have been better
+to craft something more detailed.)
 
 <p><li><strong>Page 90, Section 7.3, Exception handling in the IO monad.</strong>
 After the first paragraph give the following type signature:
@@ -802,6 +1002,17 @@ Replace "<tt>1.0</tt>" by "<tt>0.95</tt>".
 <p><li> [Aug 2001] <strong>Page 101, Appendix A, instance of <tt>Monad IO</tt>.</strong>
 Delete defintion for <tt> >> </tt>.  (The default definition will do.)
 
+<p> <li> [Oct 2002] <strong>Page 103, Appendix A.1, line 19.</strong>
+In the definition of <tt>numericFromThenTo</tt> replace "<tt>n' > n</tt>" by
+"<tt>n' >= n</tt>".  So the definition now reads:
+<pre>
+numericEnumFromThenTo n n' m = takeWhile p (numericEnumFromThen n n')
+                             where
+                               p | n' >= n   = (<= m + (n'-n)/2)
+                                 | otherwise = (>= m + (n'-n)/2)
+</pre>
+(This change makes the code agree with the last bullet in (the revised version of) 6.3.4.)
+
 <p> <li> [Apr 2001] <strong>Page 105, Appendix A.1, line 11.</strong>
 In the module header for <tt>PreludeList</tt> replace "<tt>Sum</tt>" by "<tt>sum</tt>".
 
@@ -864,7 +1075,7 @@ Replace the definitions of <tt>take</tt>, <tt>drop</tt>, and <tt>splitAt</tt> wi
 The effect is that all three functions are defined on negative arguments.  This
 is a semantic change.
 
-<p><li> [Jan 2002] <strong>Page 113, header for PreludeText</strong>.
+<p><li> [Jan 2002] <strong>Page 112, header for PreludeText</strong>.
 Remove <tt>show</tt> from the export list, and re-insert it as an exported
 operation of class <tt>Show</tt>.
 
@@ -895,6 +1106,18 @@ Replace the instances for <tt>Show Int</tt> and <tt>Read Int</tt> with
 </pre>
 The previous definitions (which are simply specifications, remember) failed on minInt.
 
+<p><li> [July 2002]
+<strong>Page 115, instances <tt>Read Float</tt> and <tt>Read Double</tt></strong>. 
+These two instance declarations should read:
+<pre>
+    instance  Read Float  where
+	readsPrec p         = readSigned readFloat
+    
+    instance  Read Double  where
+	readsPrec p         = readSigned readFloat
+</pre>
+(Adding the 'readSigned' call.)
+
 <p><li> [Late Dec 2001] <strong>Page 118, defn of <tt>interact</tt></strong>. 
 Replace the definition of <tt>interact</tt> with the following.
 <pre>
@@ -918,18 +1141,26 @@ next lexeme if there is one, or "0" if the end of file has been reached."
 
 <p><li>Replace the third dashed item in the first bullet item by:
 <p>
-"Where the start of a token does not follow any complete token on the
+"Where the start of a token is preceded only by white space on
    same line, this token is preceded by "&lt;n&gt;" where "n"
    is the indentation of the token, provided that it is not,
    as a consequence of the first two rules, preceded by "{n}".
 <p>
 (This addresses the question of empty lines (no layout token) and string-gap tokens
-(no layout token in the middle of them).
+(no layout token in the middle of them).  I have added a clarifying example as well.)
 </ul>
 
 <p><li> [Nov 2001]  <strong>Page 122, Appendix B.3, Layout</strong>. 
 In the paragraph following the bullets, add the sentence:
 "The characters "newline", "return", "linefeed", and "formfeed", all start a new line."
+
+<p><li> [Sept 2002]  <strong>Page 122, Appendix B.3, Layout</strong>. 
+After the sentence "For the purposes of the layout rule, Unicode characters in a source program
+are considered to be of the same, fixed, width as an ASCII character." add the clarifying sentence
+<p>
+"However, to avoid visual confusion, programmers should avoid writing programs in which 
+the meaning of implicit layout depends on the width of non-space characters."
+
 
 <p><li> [Oct 2001]  <strong>Page 123, Appendix B.3, Layout</strong>. 
 In the first line of the definition of L, replace "if parse-error(t)" by
@@ -963,6 +1194,26 @@ that the tokens "&lt;n&gt;" and "{n}" are never passed to "parse-error".)
 Near the end of the sub-section, delete from "Another place where..." to the end of the 
 sub-section.  (Note 5 covers the top-level case.)
 
+<p><li> [May 2002] <strong>Page 124, Appendix B.3, Layout</strong>
+To the very end of B.3, append the following:
+<p>
+"The parse-error rule is hard to implement in its full generality, because 
+doing so involves fixities.  For example, the expression
+<pre>
+  do a == b == c
+</pre>
+has a single unambiguous (albeit probably type-incorrect) parse, namely
+<pre>
+  (do { a == b }) == c
+</pre>
+because <tt>(==)</tt> is non-associative.   Programmers are therefore advised to avoid
+writing code that requires the parser to insert a closing brace in such
+situations."
+
+<p><li> [Sept 2002]  <strong>Page 130, Appendix C, Literate comments</strong>. 
+Move Appendix C (Literate comments) into Appendix B (Syntax), just after the section on Layout.
+(This structure makes more sense when the report appears as a book.)
+
 <p><li> [Oct 2001]  <strong>Page 130, Appendix C, Literate comments</strong>. 
 In paragraph 2, replace 
 "The program text is recovered
@@ -989,13 +1240,95 @@ In numbered item 3, replace
 ``(all constructors must by nullary)'' with 
 ``(all constructors must be nullary)''.
 
+<p><li> [Jan 2002]  <strong>Page 132, Appendix D, Specification of Derived Instances</strong>. 
+Mention that computing the context for the derived instance declaration may involve
+a fixpoint calculation.
+
+<p><li> [Feb 2002, modified Oct 2002]  <strong>Page 133, Appendix D.1, Derived Instances of Eq and Ord</strong>. 
+Add the final sentence: 
+<p>
+All derived operations of class <tt>Eq</tt> and <tt>Ord</tt> are strict in both arguments.
+For example, <tt>False &lt;=</tt> _|_ is _|_ , even though <tt>False</tt> is the first constructor
+of the <tt>Bool</tt> type.
+
+<p><li> [Oct 2002] <strong>Page 134, Appendix D.4, Derived instances of Read and Show</strong>.
+<ul>
+<li> In para 2, replace "10" by "11".  Thus "(a number from 0 to 11)".
+
+<li> In para 3 replace "...if <tt>d</tt> is 10 it is always surrounded
+in parentheses, unless it is an atomic expression." by:
+"if <tt>d</tt> is 11 it is always surrounded in parentheses, unless it is an
+atomic expression (recall that function application has precedence 10)."
+</ul>
+
+
 <p><li> [June 2001] <strong>Page 134, Appendix D.4, Derived instances of Read and Show</strong>.
 In the displayed equation starting <tt>fst (head (...)) == x</tt>, replace "<tt>r</tt>" by
 the empty string, resulting in the following:
-<pre>
-  head (readsPrec d (showsPrec d x "")) == (x,"")
-</pre>
+<p>
+<center>
+  <tt>(x,"")</tt> is an element of <tt>(readsPrec d (showsPrec d x ""))</tt>
+</center>
+<p>
 (The old, stronger, equation is simply false.)
+
+<p><li> [Oct 2002] <strong>Page 135, Appendix D.4, Derived instances of Read and Show</strong>.
+In para 1, replace "<tt>readsPrec</tt> will parse any valid representation of the standard types 
+apart from lists, for
+which only the bracketed form [...] is accepted." by:
+<p>
+"<tt>readsPrec</tt> will parse any valid representation of the standard types 
+apart from strings, for which only quoted strings are accepted, and other lists,
+for which only the bracketed form [...] is accepted."
+
+
+<p><li> [May 2002] <strong>Page 135, Appendix D.4, Derived instances of Read and Show</strong>.
+Replace the paragraph starting "A precise description of the derived...", and all the following
+bullets, with the following 
+(the main change is to make Show ignore associativity, so that
+a simple derived parser will terminate even on left-recursive inputs):
+
+<p>
+The result of <tt>show</tt> is a syntactically correct Haskell expression
+containing only constants, given the fixity declarations in force at
+the point where the type is declared.  It contains only the
+constructor names defined in the data type, parentheses, and
+spaces. When labelled constructor fields are used, braces, commas,
+field names, and equal signs are also used.  Parentheses
+are only added where needed, ignoring associativity.  No line breaks
+are added. The result of <tt>show</tt> is readable by <tt>read</tt> if all component
+types are readable.  (This is true for all instances defined in the
+Prelude but may not be true for user-defined instances.)
+<p>
+Derived instances of <tt>Read</tt> make the following assumptions, 
+which derived instances of <tt>Show</tt> obey:
+<ul>
+<li> If the constructor is defined to be an infix operator, then 
+the derived <tt>Read</tt> instance will parse only infix applications of the 
+constructor (not the prefix form).
+
+<li> Associativity is not used to reduce the occurrence of 
+parentheses, although precedence may be. For example, given
+<pre>
+  infixr :$
+  data T = Int :$ T  |  NT
+</pre>
+then:
+<ul>
+<li> <tt>show (1 :$ 2 :$ NT)</tt> produces the string <tt>"1 :$ (2 :$ NT)"</tt>.
+<li> <tt>read "1 :$ (2 :$ NT)"</tt> succeeds, with the obvious result.
+<li> <tt>read "1 :$ 2 :$ NT"</tt> fails.
+</ul>
+
+<li>
+If the constructor is defined using record syntax, the derived <tt>Read</tt> 
+will parse only the record-syntax form, and furthermore, the fields must be 
+given in the same order as the original declaration.
+
+<li> The derived <tt>Read</tt> instance allows arbitrary Haskell whitespace between 
+tokens of the input string.  Extra parenthese are also allowed."
+</ul>
+
 
 <p><li> [Aug 2001]  <strong>Page 138, Appendix E, Compiler pragmas</strong>.
 <ul>
@@ -1031,6 +1364,13 @@ Haskell 98 Programming Language, 1 February 1999".
 <li> Correct type of <tt>getLine</tt> to <tt>IO String</tt>
 <li> [Jan 2002] Correct type of <tt>map</tt> and add entry for <tt>fmap</tt>.
 <li> [Jan 2002] Add entry for <tt>filter</tt>
+<li> [Feb 2002] The equations given for foldl and foldr were wrong. They
+should be
+<pre>
+    foldl (+) 0 [a,b,c] = ((0+a)+b)+c
+    foldr (+) 0 [a,b,c] = a+(b+(c+0))
+</pre>
+Furthermore, the function name was misspelled in the equation for foldr1.
 </ul>
 </ul>
 
@@ -1060,6 +1400,34 @@ Replace the definition of <tt>recip</tt> on line 3 by the following
 </pre>
 The effect of this change is to use the "smart constructor", <tt>%</tt>, instead
 doing it by hand.  In particular, an error will be raised if y is zero.
+
+<p><li>  [Oct 2002] <strong>Page 5, Section 2.1, Library <tt>Ratio</tt></strong>.
+Add the following definitions to the instance for <tt>Enum</tt>.
+<pre>
+    succ x           =  x+1
+    pred x           =  x-1
+</pre>
+(This makes succ/pred behave in the same way for Ratio as they do for Float and Double.
+Of course, it is still highly dubious having these fractional types in Enum at all,
+but that is another matter.)
+
+<p><li>  [July 2002] <strong>Page 5, Section 2.1, Library <tt>Ratio</tt></strong>.
+Modify the <tt>Read</tt> and <tt>Show</tt> instances of <tt>Ratio</tt> as follows:
+<pre>
+  instance  (Read a, Integral a)  => Read (Ratio a)  where
+    readsPrec p  =  readParen (p > prec)
+                              (\r -> [(x%y,u) | (x,s)   <- readsPrec (prec+1) r,
+                                                ("%",t) <- lex s,
+                                                (y,u)   <- readsPrec (prec+1) t ])
+
+  instance  (Integral a)  => Show (Ratio a)  where
+    showsPrec p (x:%y)  =  showParen (p > prec)
+                               (showsPrec (prec+1) x . 
+			        showString " % " . 
+				showsPrec (prec+1) y)
+
+</pre>
+(It is important that the recursive calls carry the appropriate precedence.)
 
 <p><li> [Nov 2001] <strong>Page 9, Numeric library</strong>.
 <ul>
@@ -1148,6 +1516,10 @@ of <tt>readFloat</tt>, after "... <tt>(k,t) <- readExp s]</tt>" add
 (This makes <tt>readFloat</tt> able to read "Infinity" and "NaN", which <tt>formatRealFloat</tt>
 can produce.)
 
+<p><li> [May 2002] <strong>Page 9, Section 4, Numeric library</strong>.  In the type for
+<tt>readFloat</tt> replace "<tt>(RealFloat a)</tt>" by "<tt>(RealFrace a)</tt>".
+(This makes it possible to read a Rational number using readFloat.)
+
 <p><li> <strong>Page 17, Section 5, first text line</strong>.  Replace "continuous" by "contiguous".
 
 <p><li> [May 2001] <strong>Page 17, Section 5, Indexing operations</strong>.  
@@ -1164,8 +1536,9 @@ change is visible to the programmer, all existing Haskell 98
 programs will continue to work.
 
 <ul>
-<li>  <strong>Page 17, Section 5, Indexing operations, boxed text</strong>. Replace the <tt>Ix</tt>
-change the class declaration, and the type signature for <tt>rangeSize</tt> with:
+<li>  <strong>Page 17, Section 5, Indexing operations, boxed text</strong>. 
+Replace the <tt>Ix</tt>
+class declaration, and the type signature for <tt>rangeSize</tt> with:
 <pre>
   class Ord a => Ix a where
     range     :: (a,a) -> [a]
@@ -1192,6 +1565,7 @@ class declaration, and the <tt>rangeSize</tt> declaration, with:
 </pre>
 (Note: the comment has changed too; it was misleading before.)
 </ul>
+(Note: an earlier proposal to remove the Ord superclass was rejected.)
 
 <p><li> [July 2001] <strong>Page 17, Section 5.1, Derived instances of <tt>Ix</tt></strong>.
 Replace the first paragraph with the following:
@@ -1216,11 +1590,35 @@ In the definition of <tt>diag</tt>, delete the guard ``<tt>| l==l' &amp;&amp; u=
 (The original intent was presumably to check for a square array, but
  simply makes the definition recursive and hence divergent.)
 
+<p><li>  [July 2002] <strong>Page 24, Section 6.4, Library <tt>Array</tt></strong>.
+Use the following <tt>Read</tt> and <tt>Show</tt> instances for <tt>Array</tt>:
+<pre>
+  instance  (Ix a, Show a, Show b) => Show (Array a b)  where
+    showsPrec p a = showParen (p > arrPrec) (
+                    showString "array " .
+                    showsPrec (arrPrec+1) (bounds a) . showChar ' ' .
+                    showsPrec (arrPrec+1) (assocs a)                  )
+
+  instance  (Ix a, Read a, Read b) => Read (Array a b)  where
+    readsPrec p = readParen (p > arrPrec)
+           (\r -> [ (array b as, u) 
+                  | ("array",s) <- lex r,
+                    (b,t)       <- readsPrec (arrPrec+1) s,
+                    (as,u)      <- readsPrec (arrPrec+1) t ])
+
+  -- Precedence of the 'array' function is that of application itself
+  arrPrec = 10
+</pre>
+(It is important that the recursive calls use the appropriate precedence.)
+
 <p><li> <strong>Page 29, Section 7.2</strong>.  Add a new bullet for <tt>nub</tt>.
 Add an index entry for <tt>nub</tt>.
 
 <p><li> <strong>Page 29, Section 7.2, second bullet</strong>.  
 Introduce a new bullet just before "<tt>union</tt> is list union".
+
+<p><li> [July 2002] <strong>Page 29, Section 7.2, third bullet</strong>.  
+Remove the first <tt>intersect</tt> in the displayed equation.
 
 <p><li> <strong>Page 30, Section 7.3</strong>.  Add a bullet for <tt>insert</tt>.
 
@@ -1236,6 +1634,15 @@ example:
 In some cases, <tt>unfoldr</tt> can undo a <tt>foldr</tt> operation:"
 <p>
 (Followed by the existing displayed equation.)
+
+<p><li> [Feb 2002] <strong>Page 31, Section 7.6, The "By" operations</strong>.
+Change the defintion of <tt>nub</tt> to:
+<pre>
+  nub        :: (Eq a) => [a] -> [a]
+  nub []     =  []
+  nub (x:xs) =  x : nub (filter (\y -> not (x == y)) xs)
+</pre>
+(This eliminates a conflict with the definition in Section 7.8.)
 
 <p><li> [Apr 2001] <strong>Page 31, Section 7.7, Library List</strong>.
 Add a new subsection "The zip operations" to document zip4, zip5, etc.
@@ -1280,9 +1687,32 @@ consistent with the other "By" functions, and with the signatures given on page 
 <p><li> [Dec 2001] <strong>Page 41, Sections 9, Character utilities</strong>.
 Add an explanation of <tt>lexLitChar</tt>, and an example.
 
-<p><li> [Jan 2002] <strong>Page 43, Sections 9.1, Character utilities</strong>.
+<p><li> [Jan 2002] <strong>Page 43, Sections 9.1, Library Char</strong>.
 Add <tt>isLatin1</tt> to the list of variables in the type signature 
 for "character-testing operations".
+
+<p><li> [May 2002] <strong>Page 45, Sections 9.1, Library Char</strong>.
+Replace the first equation for <tt>lexLitChar</tt> with the following
+<pre>
+  lexLitChar ('\\':s) =  map (prefix '\\') (lexEsc s)
+        where
+          lexEsc (c:s)     | c `elem` "abfnrtv\\\"'" = [([c],s)]
+          lexEsc ('^':c:s) | c >= '@' && c <= '_'    = [(['^',c],s)]
+
+	  -- Numeric escapes
+	  lexEsc ('o':s)   	       = [prefix 'o' (span isOctDigit s)]
+	  lexEsc ('x':s)   	       = [prefix 'x' (span isHexDigit s)]
+          lexEsc s@(d:_)   | isDigit d = [span isDigit s]
+
+          -- Very crude approximation to \XYZ.  
+          lexEsc s@(c:_)   | isUpper c = [span isCharName s]
+          lexEsc _                     = []
+
+          isCharName c   = isUpper c || isDigit c
+	  prefix c (t,s) = (c:t, s)
+</pre>
+(The effect is to allow octal and hexadecimal escapes in lexLitChar, just
+as in readLitChar.)
 
 <p><li><strong>Page 48, Sections 10.3, Monads</strong>.
 In the definition of <tt>listFile</tt> replace "<tt>openFile</tt>" by "<tt>readFile</tt>".
@@ -1334,6 +1764,17 @@ consumed.  It follows that an attempt to write to a file (using <tt>writeFile</t
 that was earlier opened by <tt>readFile</tt> will usually result in 
 failure with <tt>isAlreadyInUseError</tt>."
 
+<p><li> [Sept 2002] <strong>Page 58, Section 11.3.2 Closing Files</strong>.
+Replace the sentence "If the operation fails for any reason ... successfully closed."
+by
+<p>
+"Performing <tt>hClose</tt> on a handle that has already been closed has no effect; 
+doing so not an error.  All other operations on a closed handle will fail.
+If <tt>hClose</tt> fails for any reason, any further operations (apart from <tt>hClose</tt>) on the 
+handle will still fail as if "hdl" had been successfully closed."
+<p>
+(The significant change here is that it is not an error to hClose a handle twice.)
+
 <p><li> [May 2001] <strong>Page 59, Section 11.4.2</strong>.
 Before "The buffer is emptied as soon as it has been written out." add: 
 "An implementation is free to flush the buffer more frequently, but not 
@@ -1344,6 +1785,21 @@ specified above."  (Clarification only.)
 In the second no-buffering bullet (sixth bullet in the sub-section) add the
 sentence: "The <tt>hLookAhead</tt> operation implies that
 even a no-buffered handle may require a one-character buffer. "  (Clarification only.)
+
+<p><li>[May 2002] <strong>Page 60, Section 11.7.1, Checking for input</strong>.
+<ul>
+<li> Split this section into two: 11.7.1 Checking for input (describing
+<tt>hWaitForInput</tt> and <tt>hReady</tt>), and 11.7.2 Reading input (describing
+<tt>hGetChar</tt> and <tt>hGetLine</tt>).
+<p>
+<li> To the new section 11.7.2, add the following description of <tt>hGetLine</tt>
+exception behaviour:
+<p>
+"The <tt>hGetLine</tt> fails with <tt>isEOFError</tt> if the end of file is encountered
+when reading the <em>first</em> character of the line. If <tt>hGetLine</tt> encounters
+end-of-file at any other point while reading in a line, it is treated as
+a line terminator and the (partial) line is returned."
+</ul>
 
 <p><li><strong>Page 62, Section 11.7.2</strong>.
 <ul>

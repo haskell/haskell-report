@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/preface-13.verb,v 1.11 2001/11/02 16:26:48 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/preface-13.verb,v 1.12 2002/12/02 11:22:02 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Preface</title>
 %*section
@@ -229,6 +229,15 @@ Haskell 1.4.
 \item Contributed Haskell tools and libraries.
 \item Applications of Haskell.
 \end{itemize}
+Particularly relevant to this Report are the following two papers:
+\begin{itemize}
+\item ``A static semantics for Haskell'' (Faxen) gives a formal presentation
+of Haskell's type system \cite{faxen:static}.
+\item 
+``Typing Haskell in Haskell'' (Jones) gives a type inference algorithm for Haskell,
+written in Haskell \cite{jones:thih}.
+\end{itemize}
+
 We welcome your comments, suggestions, and criticisms on the language
 or its presentation in the report, via the Haskell mailing list.
 
@@ -267,6 +276,7 @@ Thomas Hallgren,
 Matt Harden,
 Klemens Hemm,
 Fergus Henderson,
+Dean Herington,
 Ralf Hinze,
 Bob Hiromoto,
 Nic Holt,
@@ -317,7 +327,7 @@ Bjarte M. {\O}stvold,
 Paul Otto, 
 Sven Panne,
 Dave Parrott,
-Ross Patterson,
+Ross Paterson,
 Larne Pekowsky,
 Rinus Plasmeijer,
 Ian Poole,

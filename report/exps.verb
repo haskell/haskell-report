@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/exps.verb,v 1.15 2002/01/29 09:46:41 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/exps.verb,v 1.16 2002/12/02 11:22:01 simonpj Exp $
 %
 %*section 3
 %**<title>The Haskell 98 Report: Expressions</title>
@@ -58,7 +58,9 @@ aexp 	->  qvar				& (\tr{variable})
 	|   @[@ exp_1 [@,@ exp_2] @..@ [exp_3] @]@ & (\tr{arithmetic sequence})
 	|   @[@ exp @|@ qual_1 @,@ ... @,@ qual_n @]@	& (\tr{list comprehension}, n>=1)
 	|   @(@ exp^{i+1} qop^{(a,i)} @)@        & (\tr{left section})
-        |   @(@ qop^{(a,i)} exp^{i+1} @)@        & (\tr{right section})
+	|   @(@ lexp^{i} qop^{(l,i)} @)@        & (\tr{left section})
+        |   @(@ qop^{(a,i)}_{\langle@-@\rangle}  exp^{i+1} @)@        & (\tr{right section})
+        |   @(@ qop^{(r,i)}_{\langle@-@\rangle}  rexp^{i} @)@        & (\tr{right section})
         |   qcon @{@ fbind_1 @,@ ... @,@ fbind_n @}@ & (\tr{labeled construction}, n>=0)
         |   aexp_{\langle{}qcon\rangle{}} @{@ fbind_1 @,@ ... @,@ fbind_n @}@ & (\tr{labeled update}, n >= 1)
 
@@ -114,14 +116,6 @@ aexp 	->  qvar				& (\tr{variable})
 % \label{syntax-precedences}
 % \end{table}
 
-The grammar is ambiguous regarding the extent of lambda abstractions,
-let expressions, and conditionals.  The ambiguity is resolved by the
-meta-rule that each of these constructs extends as far to the right as
-possible.  As a consequence, each of these constructs has two precedences,
-one to its left, which is the precedence used in the grammar; and
-one to its right, which is obtained via the meta-rule.  See the sample
-parses below.
-
 Expressions involving infix operators are disambiguated by the
 operator's fixity (see Section~\ref{fixity}).  Consecutive
 unparenthesized operators with the same precedence must both be either
@@ -132,11 +126,12 @@ z"'' when "i=j" unless "a=b={\rm l}" or "a=b={\rm r}".
 
 Negation\index{negation} is the only prefix operator in
 \Haskell{}; it has the same precedence as the infix @-@ operator
-defined in the Prelude (see Figure~\ref{prelude-fixities}%
-%*ignore
-, page~\pageref{prelude-fixities}%
-%*endignore
-).
+defined in the Prelude (see Section~\ref{fixity}, Figure~\ref{prelude-fixities}).
+
+The grammar is ambiguous regarding the extent of lambda abstractions,
+let expressions, and conditionals.  The ambiguity is resolved by the
+meta-rule that each of these constructs extends as far to the right as
+possible.  
 
 % 	I can't make head or tail of this para, so
 %	I'm just deleting it.  SLPJ Dec 98
@@ -158,6 +153,31 @@ This                           	    & Parses as                             \\
 @\ x -> a+b :: Int@                 & @\ x -> ((a+b) :: Int@)               \\
 \hline\et\]
 
+{\em A note about parsing.}  Expressions that involve the interaction 
+of fixities with the let/lambda meta-rule
+may be hard to parse.  For example, the expression
+\bprog
+@
+  let x = True in x == x == True
+@
+\eprog
+cannot possibly mean
+\bprog
+@
+  let x = True in (x == x == True)
+@
+\eprog
+because @(==)@ is a non-associative operator; so the expression must parse thus:
+\bprog
+@
+  (let x = True in (x == x)) == True
+@
+\eprog
+However, implementations may well use a post-parsing pass to deal with fixities,
+so they may well incorrectly deliver the former parse.  Programmers are advised
+to avoid constructs whose parsing involves an interaction of (lack of) associativity
+with the let/lambda meta-rule.
+  
 For the sake of clarity, the rest of this section shows the syntax of
 expressions without their precedences.
 
@@ -165,7 +185,7 @@ expressions without their precedences.
 \label{basic-errors}\index{error}
 Errors during expression evaluation, denoted by "\bot"\index{"\bot"},
 are indistinguishable by a Haskell program from non-termination.  Since \Haskell{} is a
-lazy language, all \Haskell{} types include "\bot".  That is, a value
+non-strict language, all \Haskell{} types include "\bot".  That is, a value
 of any type may be bound to a computation that, when demanded, results
 in an error.  When evaluated, errors cause immediate program
 termination and cannot be caught by the user.  The Prelude provides
@@ -398,8 +418,10 @@ The following identities hold:
 \label{sections}
 %
 @@@
-aexp	->  @(@ exp qop @)@ 
-	|   @(@ qop exp @)@
+aexp	->  @(@ exp^{i+1} qop^{(a,i)} @)@        & (\tr{left section})
+	|   @(@ lexp^{i} qop^{(l,i)} @)@        & (\tr{left section})
+        |   @(@ qop^{(a,i)}_{\langle@-@\rangle}  exp^{i+1} @)@        & (\tr{right section})
+        |   @(@ qop^{(r,i)}_{\langle@-@\rangle}  rexp^{i} @)@        & (\tr{right section})
 @@@
 \indexsyn{aexp}%
 
@@ -415,6 +437,34 @@ and similarly for  "@(@e~op@)@".
 For example, @(*a+b)@ is syntactically invalid, but @(+a*b)@ and
 @(*(a+b))@ are valid.  Because @(+)@ is left associative, @(a+b+)@ is syntactically correct,
 but @(+a+b)@ is not; the latter may legally be written as @(+(a+b))@.
+As another example, the expression
+\bprog
+@
+  (let x = 10 in x +)
+@
+\eprog
+is invalid because, by the let/lambda meta-rule (Section~\ref{expressions}),
+the expression
+\bprog
+@
+  (let n = 10 in n + x)
+@
+\eprog
+parses as
+\bprog
+@
+  (let n = 10 in (n + x))
+@
+\eprog
+rather than
+\bprog
+@
+  ((let n = 10 in n) + x)
+@
+\eprog
+% This observation makes it easier to implement the let/lambda meta-rule
+% (Section~\ref{expressions}) because once the operator has been seen it is clear that any
+% legal parse must include the operator in the body of the @let@.
 
 Because @-@ is treated specially in the grammar,
 "@(-@ exp@)@" is not a section, but an application of prefix
@@ -423,6 +473,7 @@ described in the preceding section.  However, there is a @subtract@
 function defined in the Prelude such that
 "@(subtract@ exp@)@" is equivalent to the disallowed section.
 The expression "@(+ (-@ exp@))@" can serve the same purpose.
+
 
 % Changed to allow postfix operators.  That is, in (op x), we no
 % longer add a \x -> which would require op to be binary instead
@@ -610,7 +661,7 @@ are class methods in the class @Enum@ as defined in the Prelude
 The semantics of arithmetic sequences therefore depends entirely
 on the instance declaration for the type "t".  
 See Section~\ref{enum-class} for more details of which @Prelude@
-type are in @Enum@ and their semantics.
+types are in @Enum@ and their semantics.
 
 
 \subsection{List Comprehensions}
@@ -813,14 +864,34 @@ against the individual alternatives.  The alternatives are tried
 sequentially, from top to bottom.  If "e" matches the pattern in the
 alternative, the guards for that alternative are tried sequentially
 from top to bottom, in the environment of the case expression extended
-by the bindings created during the matching of the pattern and by the
-"decls_i" associated with that alternative.  If one of the guards
-evaluates to @True@, the corresponding right-hand side is evaluated.
+first by the bindings created during the matching of the pattern, and then 
+by the "decls_i" in the @where@ clause associated with that alternative.  
+If one of the guards
+evaluates to @True@, the corresponding right-hand side is evaluated in the
+same environment as the guard.
 If all the guards evaluate to @False@, matching continues with the
 next alternative.  If no match succeeds, the result is "\bot".
 Pattern matching is described in Section~\ref{pattern-matching}, with
 the formal semantics of case expressions in
 Section~\ref{case-semantics}.
+
+{\em A note about parsing}. The expression
+\bprog
+@
+  case x of { (a,_) | let b = not a in b :: Bool -> a }
+@
+\eprog
+is tricky to parse correctly.  It has a single unambiguous parse, namely
+\bprog
+@
+  case x of { (a,_) | (let b = not a in b :: Bool) -> a }
+@
+\eprog
+However, the phrase "@Bool -> a@" is syntactically valid as a type, and
+parsers with limited lookahead may incorrectly commit to this choice, and hence
+reject the program.  Programmers are advised, therefore, to avoid guards that
+end with a type signature --- indeed that is why a "gd" contains 
+an "exp^0" not an "exp".
 
 \subsection{Do Expressions}
 \index{do expression}
@@ -893,10 +964,8 @@ and are thus monomorphic.
 \index{data declaration@@{\tt data} declaration}
 \index{label}
 \index{field label|see{label}}
-A datatype declaration may optionally include field labels for some or
-all of the components of the type (see Section~\ref{datatype-decls}).
-Readers unfamiliar with datatype declarations in \Haskell{} may wish
-to read Section \ref{datatype-decls} first.
+A datatype declaration may optionally define field labels
+(see Section~\ref{datatype-decls}).
 These field labels can be used to 
 construct, select from, and update fields in a manner
 that is independent of the overall structure of the datatype.
@@ -969,6 +1038,10 @@ mentioned.
 whose declared types are prefixed by @!@) are omitted during
 construction.  Strict fields are discussed in Section~\ref{strictness-flags}.
 \end{itemize}
+The expression @F {}@, where @F@ is a data constructor, is legal 
+{\em whether or not @F@ was declared with record syntax} (provided @F@ has no strict
+fields --- see the third bullet above); 
+it denotes "@F@ \bot_1 ... \bot_n", where "n" is the arity of @F@.
 
 \outline{
 \paragraph*{Translation:} 
@@ -989,6 +1062,7 @@ The auxiliary function "pick^C_i bs d" is defined as follows:
     the default value "d".
 \end{quote}
 }
+
 \subsubsection{Updates Using Field Labels}
 \label{record-update}
 \index{field label!update}
@@ -1179,18 +1253,6 @@ case e of { [x,y,z]  ->  if x==0 then True else False }
 %This translation is also 
 %assumed prior to the semantics given below.
 
-In the pattern matching rules given below we distinguish two kinds of
-patterns: an {\em irrefutable pattern}
-\index{irrefutable pattern}
-is: a variable, a wildcard, "N apat" where "N" is a constructor
-defined by @newtype@ and "apat" is irrefutable (see
-Section~\ref{datatype-renaming}), 
-\index{newtype declaration@@{\tt newtype} declaration} 
-"var"{\tt @@}"apat" where "apat" is irrefutable,
-or of the form "@~@apat" (whether or not "apat" is irrefutable).
-All other patterns are {\em refutable}.
-\index{refutable pattern}
-
 \subsubsection{Informal Semantics of Pattern Matching}
 
 Patterns are matched against values.  Attempting to match a pattern
@@ -1209,21 +1271,21 @@ The free variables in "apat" are bound to the appropriate values if matching
 "apat" against "v" fails or diverges.  (Binding does {\em
 not} imply evaluation.)
 
-Operationally, this means that no matching is done on an
-irrefutable pattern until one of the variables in the pattern is used.
+Operationally, this means that no matching is done on a
+"@~@apat" pattern until one of the variables in "apat" is used.
 At that point the entire pattern is matched against the value, and if
 the match fails or diverges, so does the overall computation.
 
 \item
-Matching the wildcard pattern @_@ agains any value always succeeds,
+Matching the wildcard pattern @_@ against any value always succeeds,
 and no binding is done.
 
 \item
 Matching the pattern "con pat" against a value, where "con" is a
 constructor defined by @newtype@, depends on the value:
 \begin{itemize}
-\item If the value is of the form "con v", the result is result of matching "pat" against "v".
-\item If the value is "\bot", the result is the result of matching "pat" against "\bot".
+\item If the value is of the form "con v", then "pat" is matched against "v".
+\item If the value is "\bot", then "pat" is matched against "\bot".
 \end{itemize}
 That is, constructors associated with
 @newtype@ serve only to change the type of a value.\index{newtype declaration@@{\tt newtype} declaration}
@@ -1233,8 +1295,7 @@ Matching the pattern "con pat_1 \ldots pat_n" against a value, where "con" is a
 constructor defined by @data@, depends on the value:
 \begin{itemize}
 \item If the value is of the form "con v_1 \ldots v_n", 
-the result of the match is the result of matching the
-sub-patterns left-to-right against the components of the data value;
+sub-patterns are matched left-to-right against the components of the data value;
 if all matches succeed, the overall match
 succeeds; the first to fail or diverge causes the overall match to
 fail or diverge, respectively.  
@@ -1245,32 +1306,36 @@ constructor to "con'", the match fails.
 \item If the value is "\bot", the match diverges.
 \end{itemize}
 
-
-\item Matching a numeric integer literal pattern "k" against a value "v"
-\index{literal pattern}
-succeeds if "v ~@==@ ~(@fromInteger@~k)", where both @==@ and @fromInteger@
-are overloaded based on the type of the pattern.  The match diverges if
-this test diverges.
-
-Matching a floating-point literal is similar, except that @fromRational@ is used,
-as in the case of literals in expressions (Section~\ref{vars-and-lits}).
-
-\item Matching an "n@+@k" pattern (where "n" is a variable and "k" is a 
-positive integer literal) against a value "v" 
-\index{n+k pattern@@"n@+@k" pattern}
-succeeds if "x ~@>=@ ~(@fromInteger@ k)", resulting in the binding 
-of "n" to "x~@-@~(@fromInteger@~k)",
-and fails otherwise.  Again, the functions @>=@, @fromInteger@, and @-@, are all
-overloaded, depending on the type of the pattern.
-The match diverges if the comparison diverges.
-
-\item
+\item 
 Matching against a constructor using labeled fields is the same as
 matching ordinary constructor patterns except that the fields are
 matched in the order they are named in the field list.  All fields
 listed must be declared by the constructor; fields may not be named
 more than once.  Fields not named by the pattern are ignored (matched
 against @_@).
+
+\item Matching a numeric, character, or string literal pattern "k" against a value "v"
+\index{literal pattern}
+succeeds if "v ~@==@ ~k", where @==@
+is overloaded based on the type of the pattern.  The match diverges if
+this test diverges.
+
+The interpretation of numeric literals is exactly as described in Section~\ref{vars-and-lits};
+that is, the overloaded function @fromInteger@ or @fromRational@ is 
+applied to an @Integer@ or @Rational@ literal (resp)
+to convert it to the appropriate type.
+
+\item Matching an "n@+@k" pattern (where "n" is a variable and "k" is a 
+positive integer literal) against a value "v" 
+\index{n+k pattern@@"n@+@k" pattern}
+succeeds if "x ~@>=@ ~k", resulting in the binding 
+of "n" to "x~@-@~k",
+and fails otherwise.  Again, the functions @>=@ and @-@ are 
+overloaded, depending on the type of the pattern.
+The match diverges if the comparison diverges.
+
+The interpretation of the literal "k" is the same as in numeric literal
+patterns, except that only integer literals are allowed.
 
 \item
 Matching an as-pattern "var"{\tt @@}"apat" against a value "v" is
@@ -1282,21 +1347,41 @@ then so does the overall match.
 
 Aside from the obvious static type constraints (for
 example, it is a static error to match a character against a
-boolean), the following static class constraints hold: an integer
+boolean), the following static class constraints hold: 
+\begin{itemize}
+\item An integer
 literal pattern
 \index{integer literal pattern}
 can only be matched against a value in the class
-@Num@ and a floating literal pattern
+@Num@.
+\item A floating literal pattern
 \index{floating literal pattern}
 can only be matched against a value
 in the class @Fractional@.
-A "n@+@k" pattern
+\item An "n@+@k" pattern
 \index{n+k pattern@@"n@+@k" pattern}
 can only be matched
 against a value in the class @Integral@.
+\end{itemize}
 
 Many people feel that "n@+@k" patterns should not be used.  These
 patterns may be removed or changed in future versions of \Haskell{}. 
+
+It is sometimes helpful to distinguish two kinds of
+patterns.  Matching an {\em irrefutable pattern}
+\index{irrefutable pattern}
+is non-strict: the pattern matches even if the value to be matched is "\bot".
+Matching a {\em refutable} pattern is strict: if the value to be matched
+\index{refutable pattern}
+is "\bot" the match diverges.
+The irrefutable patterns are as follows:
+a variable, a wildcard, "N apat" where "N" is a constructor
+defined by @newtype@ and "apat" is irrefutable (see
+Section~\ref{datatype-renaming}), 
+\index{newtype declaration@@{\tt newtype} declaration} 
+"var"{\tt @@}"apat" where "apat" is irrefutable,
+or of the form "@~@apat" (whether or not "apat" is irrefutable).
+All other patterns are {\em refutable}.
 
 Here are some examples:
 \begin{enumerate}
@@ -1331,6 +1416,26 @@ matching:
 (\ ~(x:xs) -> x:x:xs) @"\bot"@   @"\Rightarrow"@   @"\bot"@:@"\bot"@:@"\bot"@
 @
 \eprogNoSkip
+
+\item 
+Consider the following declarations:
+\bprog
+@
+  newtype N = N Bool
+  data    D = D !Bool
+@
+\eprog
+These examples illustrate the difference in pattern matching
+between types defined by @data@ and @newtype@:
+\bprog
+@
+(\  (N True) -> True) @"\bot"@     @"\Rightarrow"@    @"\bot"@
+(\  (D True) -> True) @"\bot"@     @"\Rightarrow"@    @"\bot"@
+(\ ~(D True) -> True) @"\bot"@     @"\Rightarrow"@    True
+@
+\eprog
+Additional examples may be found in Section~\ref{datatype-renaming}.
+
 \end{enumerate}
 \nopagebreak[4]
 % \bprog
@@ -1358,8 +1463,6 @@ matching:
 % @@
 % \eprogNoSkip
 % \end{enumerate}
-Additional examples illustrating some of the subtleties of pattern matching
-may be found in Section~\ref{datatype-renaming}.
 
 Top level patterns in case
 expressions and the set of top level patterns in function or pattern
@@ -1427,10 +1530,9 @@ would generate rather inefficient code.
    &@         _ -> @$y$@ }}@\\[4pt]
 %\\
 (d)&@case @$v$@ of { ~@$p$@ -> @$e$@; _ -> @$e'$@ }@\\
-&$=$@ (\@$x'_1$ $\ldots$ $x'_n$ @->@ $e_1$ @) (case @$v$@ of { @$p$@->@ 
+&$=$@ (\@$x_1$ $\ldots$ $x_n$ @->@ $e$ @) (case @$v$@ of { @$p$@->@ 
 $x_1$@ })@ $\ldots$ @(case @$v$@ of { @$p$@ -> @$x_n$@})@\\
-&{\rm where $e_1$ = $e\,[x'_1/x_1, \ldots, x'_n/x_n]$}\\[2pt]
-&{\rm $x_1, \ldots, x_n$ are all the variables in $p\/$; $x'_1, \ldots, x'_n$ are new variables}\\[4pt]
+&{\rm where $x_1, \ldots, x_n$ are all the variables in $p\/$}\\[4pt]
 %\\
 (e)&@case @$v$@ of { @$x${\tt @@}$p$@ -> @$e$@; _ -> @$e'$@ }@\\
 &$=$@  case @$v$@ of { @$p$@ -> ( \ @$x$@ -> @$e$@ ) @$v$@ ; _ -> @$e'$@ }@\\[4pt]
@@ -1455,7 +1557,7 @@ $x_1$@ })@ $\ldots$ @(case @$v$@ of { @$p$@ -> @$x_n$@})@\\
 &{\rm at least one of $p_1, \ldots, p_n$ is not a variable; $x_1, \ldots, x_n$ are new variables}\\[4pt]
 %\\
 (h)&@case @$v$@ of { @$k$@ -> @$e$@; _ -> @$e'$@ } @$=$@ if (@$v$@==@$k$@) then @$e$@ else @$e'$ \\
-&{\rm where $k$ is a character, string, or numeric literal.} \\[4pt]
+&{\rm where $k$ is a numeric, character, or string literal.} \\[4pt]
 %\\
 (i)&@case @$v$@ of { @$x$@ -> @$e$@; _ -> @$e'$@ } @$=$@ case @$v$@ of { @$x$@ -> @$e$@ }@\\[4pt]
 %\\
@@ -1491,15 +1593,15 @@ $e'$ @ }@ \\
 &{\rm where $K$ and $K'$ are distinct @data@ constructors of arity $n$ and $m$, respectively}\\[4pt]
 %\\
 (q)&@case (@$K$@ @$e_1$@ @$\ldots$@ @$e_n$@) of { @$K$@ @$x_1$@ @$\ldots$@ @$x_n$@ -> @$e$@; _ -> @$e'$@ }@\\
-&$=$@  case @$e_1$@ of { @$x'_1$@ -> @$\ldots$@  case @$e_n$@ of { @$x'_n$@ -> @$e[x'_1/x_1 \ldots x'_n/x_n]$@ }@$\ldots$@}@\\
-&{\rm where $K$ is a constructor of arity $n$; $x'_1 \ldots x'_n$ are new variables}\\[4pt]
+&$=~(@\@x_1 \ldots x_n@ -> @e)~e_1 ~\ldots~ e_n$\\
+&{\rm where $K$ is a @data@ constructor of arity $n$}\\[4pt]
 
 (r)&@case@~$\bot$~@of { @$K$@ @$x_1$@ @$\ldots$@ @$x_n$@ -> @$e$@; _ -> @$e'$@ }@ ~$=$~ $\bot$ \\
-&{\rm where $K$ is a constructor of arity $n$; $x'_1 \ldots x'_n$ are new variables}\\[4pt]
+&{\rm where $K$ is a @data@ constructor of arity $n$}\\[4pt]
 
 (s)&@case @$v$@ of { @$x$@+@$k$@ -> @$e$@; _ -> @$e'$@ }@\\
-&$=$@ if @$v$@ >= @$k$@ then @(\$x'$@ -> @$e[x'/x]$)~($v$@-@$k$)@ else @$e'$\\
-&{\rm where $k$ is a numeric literal, and $x'$ is a new variable}\\
+&$=$@ if @$v$@ >= @$k$@ then @(@\@$x$@ -> @$e$)~($v$@-@$k$)@ else @$e'$\\
+&{\rm where $k$ is a numeric literal}\\
 \end{tabular}
 }
 %**<div align=center> <h4>Figure 4</h4> </div>
@@ -1547,7 +1649,7 @@ meaning of pattern matching against overloaded constants.
 %% expressions, but doing so 
 %% would clutter the identities, which are intended only to convey the semantics.
 
-These identities all preserve the static semantics.  Rules~(d),~(e), (j), and~(s)
+These identities all preserve the static semantics.  Rules~(d),~(e), (j), (q), and~(s)
 use a lambda rather than a @let@; this indicates that variables bound
 by @case@ are monomorphically typed (Section~\ref{type-semantics}).
 \index{monomorphic type variable}

@@ -6,7 +6,7 @@ module PreludeText (
     showChar, showString, readParen, showParen ) where
 
 -- The instances of Read and Show for
---      Bool, Char, Maybe, Either, Ordering
+--      Bool, Maybe, Either, Ordering
 -- are done via "deriving" clauses in Prelude.hs
 
 import Char(isSpace, isAlpha, isDigit, isAlphaNum,
@@ -147,13 +147,13 @@ instance  Show Float  where
     showsPrec p         = showFloat
            
 instance  Read Float  where
-    readsPrec p         = readFloat
+    readsPrec p         = readSigned readFloat
 
 instance  Show Double  where
     showsPrec p         = showFloat
 
 instance  Read Double  where
-    readsPrec p         = readFloat
+    readsPrec p         = readSigned readFloat
 
 instance  Show ()  where
     showsPrec p () = showString "()"

@@ -151,10 +151,10 @@ class                             #TShow a       #S6.3.3
 #VfloatRange       :: RealFloat a => a -> (Int, Int) 
 #Vfloor            :: (RealFrac a, Integral b) => a -> b 
 #Vfmap             :: Functor f => (a -> b) -> f a -> f b
-#Vfoldl            :: (a -> b -> a) -> a -> [b] -> a #&foldl (+) 0 [a,b,c] = ((a+b)+c)+0
+#Vfoldl            :: (a -> b -> a) -> a -> [b] -> a #&foldl (+) 0 [a,b,c] = ((0+a)+b)+c
 #Vfoldl1           :: (a -> a -> a) -> [a] -> a #&foldl1 (+) [a,b,c] = (a+b)+c
-#Vfoldr            :: (a -> b -> b) -> b -> [a] -> b #&foldr (+) 0 [a,b,c] = 0+(a+(b+c))
-#Vfoldr1           :: (a -> a -> a) -> [a] -> a #&foldr (+) [a,b,c] = a+(b+c)
+#Vfoldr            :: (a -> b -> b) -> b -> [a] -> b #&foldr (+) 0 [a,b,c] = a+(b+(c+0))
+#Vfoldr1           :: (a -> a -> a) -> [a] -> a #&foldr1 (+) [a,b,c] = a+(b+c)
 #VfromEnum         :: Enum a => a -> Int 
 #VfromInteger      :: Num a => Integer -> a #&#S3.2
 #VfromIntegral     :: (Integral a, Num b) => a -> b

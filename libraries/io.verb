@@ -259,7 +259,9 @@ permission to open the file.
 Computation @hClose@~"hdl"\indextt{hClose} makes handle "hdl" closed.  Before the
 computation finishes, if "hdl" is writable its buffer is flushed as
 for @hFlush@.
-If the operation fails for any reason, any further operations on the 
+Performing @hClose@ on a handle that has already been closed has no effect; 
+doing so not an error.  All other operations on a closed handle will fail.
+If @hClose@ fails for any reason, any further operations (apart from @hClose@) on the 
 handle will still fail as if "hdl" had been successfully closed.
 
 \subsection{Determining the Size of a File}
@@ -478,16 +480,27 @@ within "t" milliseconds.
 Computation @hReady@~"hdl"\indextt{hReady} indicates whether at least one item is
 available for input from handle "hdl".
 
+{\em Error reporting}.
+The @hWaitForInput@ and @hReady@ computations fail with
+@isEOFError@ if the end of file has been reached.
+
+\subsubsection{Reading Input}
+
 Computation @hGetChar@~"hdl"\indextt{hGetChar} reads a character from
 the file or channel managed by "hdl".
 
-Computation @hGetLine@~"hdl"\indextt{hGetLine} reads a line from
-the file or channel managed by "hdl", similar to @getLine@ in the
-Prelude. 
-
-{\em Error reporting}:
-the @hWaitForInput@, @hReady@ and @hGetChar@ computations may fail with:
+Computation @hGetLine@~"hdl"\indextt{hGetLine} reads a line from the file or
+channel managed by "hdl". The Prelude's @getLine@ is a shorthand
+for @hGetLine stdin@.
+ 
+{\em Error reporting}.
+The @hGetChar@ computation fails with
 @isEOFError@ if the end of file has been reached.
+The @hGetLine@ fails with @isEOFError@ if the end of file is encountered
+when reading the {\em first} character of the line. If @hGetLine@ encounters
+end-of-file at any other point while reading in a line, it is treated as
+a line terminator and the (partial) line is returned.
+
 
 \subsubsection{Reading Ahead}
 \label{hLookAhead}

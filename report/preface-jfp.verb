@@ -46,7 +46,7 @@ functional programming language called \Haskell{},
 named after the logician Haskell B.~Curry\index{Curry, Haskell B.}
 whose work provides the logical basis for much of ours.
 
-\subsection{Goals}
+\section*{Goals}
 
 The committee's primary goal was to design a language that
 satisfied these constraints:
@@ -62,41 +62,41 @@ satisfied these constraints:
       programming languages.
 \end{enumerate}
 
-\subsection{Haskell 98: language and libraries}
+\section*{\Haskell{} 98: language and libraries}
 
 The committee intended that \Haskell{} would serve as a basis for
 future research in language design, and hoped that extensions or
 variants of the language would appear, incorporating experimental
 features.
 
-Haskell has indeed evolved continuously since its original publication.
+\Haskell{} has indeed evolved continuously since its original publication.
 By the middle of 1997, there had been four iterations of the language design
-(the latest at that point being Haskell 1.4).  At the 1997 Haskell Workshop 
-in Amsterdam, it was decided that a stable variant of Haskell was needed;
-this stable language is the subject of this Report, and is called ``Haskell 98''.
+(the latest at that point being \Haskell{} 1.4).  At the 1997 \Haskell{} Workshop 
+in Amsterdam, it was decided that a stable variant of \Haskell{} was needed;
+this stable language is the subject of this Report, and is called ``\Haskell{} 98''.
 
-Haskell 98 was conceived as a relatively minor tidy-up of Haskell 1.4, making
+\Haskell{} 98 was conceived as a relatively minor tidy-up of \Haskell{} 1.4, making
 some simplifications, and removing some pitfalls for the unwary. It is intended to
 be a ``stable'' language in sense the {\em implementors are committed to supporting
-Haskell 98 exactly as specified, for the foreseeable future}.
+\Haskell{} 98 exactly as specified, for the foreseeable future}.
 
-The original Haskell Report covered only the language, together with a
-standard library called the @Prelude@.  By the time Haskell 98 was
+The original \Haskell{} Report covered only the language, together with a
+standard library called the @Prelude@.  By the time \Haskell{} 98 was
 stabilised, it had become clear that many programs need access to a
 larger set of library functions (notably concerning input/output and
 simple interaction with the operating system).  If these program were
 to be portable, a set of libraries would have to be standardised too.
 A separate effort was therefore begun by a distinct (but overlapping)
-committee to fix the Haskell 98 Libraries.  
+committee to fix the \Haskell{} 98 Libraries.  
 
-The Hsakell 98 Language and Library Reports were published in February 1999.
+The \Haskell{} 98 Language and Library Reports were published in February 1999.
 
-\subsection{Revising the Haskell 98 Reports}
+\section*{Revising the \Haskell{} 98 Reports}
 
 After a year or two, many typographical errors and infelicities had been
 spotted.  I took on the role of gathering and acting on these corrections,
 with the following goals:
-\begim{itemize}
+\begin{itemize}
 \item Correct typographical errors.
 \item Clarify obscure passages.
 \item Resolve ambiguities.
@@ -104,28 +104,28 @@ with the following goals:
 consistent.
 \end{itemize}
 This task turned out to be much, much larger than I had anticipated.
-As Haskell becomes more widely used, the Report has been scrutinised by more
+As \Haskell{} becomes more widely used, the Report has been scrutinised by more
 and more people, and I have adopted hundreds of (mostly small) changes as 
 a result of their feedback.
-The original committees ceased to exist when the original Haskell 98 Reports were 
-published, so every change was instead proposed to the entire Haskell mailing list.
+The original committees ceased to exist when the original \Haskell{} 98 Reports were 
+published, so every change was instead proposed to the entire \Haskell{} mailing list.
 
 This document is the outcome of this process of refinement.
-It includes both the Haskell 98 Language Report and the Libraries Report,
+It includes both the \Haskell{} 98 Language Report and the Libraries Report,
 and constitutes the official specification of both.
 It is {\em not} a tutorial on programming in
 \Haskell{} such as the `Gentle Introduction' \cite{tutorial}, and some
 familiarity with functional languages is assumed. 
 
-The entire text of both Reports is available online (see Section~\ref{sect:resources}).
+The entire text of both Reports is available online (see ``\Haskell{} resources'' below).
 
 
-\subsection{Extensions to Haskell 98}
+\section*{Extensions to \Haskell{} 98}
 
-Haskell continues to evolve, going well beyond Haskell 98.  For example, at the
-time of writing there are Haskell implementations that support:
+\Haskell{} continues to evolve, going well beyond \Haskell{} 98.  For example, at the
+time of writing there are \Haskell{} implementations that support:
 \begin{description}
-\item[Syntactic sugar, including:]
+\item[Syntactic sugar,] including:
 \begin{itemize}
 \item pattern guards; 
 \item recursive do-notation;
@@ -133,7 +133,7 @@ time of writing there are Haskell implementations that support:
 \item meta-programming facilities;
 \end{itemize}
 
-\item[Type system innovations, including:]
+\item[Type system innovations,] including:
 \begin{itemize}
 \item multi-parameter type classes;
 \item functional dependencies;
@@ -141,7 +141,7 @@ time of writing there are Haskell implementations that support:
 \item local universal polymorphism and arbitrary rank-types;
 \end{itemize}
 
-\item[Control extensions, including:]
+\item[Control extensions,] including:
 \begin{itemize}
 \item monadic state;
 \item exceptions;
@@ -149,17 +149,15 @@ time of writing there are Haskell implementations that support:
 \end{itemize}
 \end{description}
 
-There is more besides.  Haskell 98 does not impede these developments.
+There is more besides.  \Haskell{} 98 does not impede these developments.
 Instead, it provides a stable point of reference, so that those who
-wish to write text books, or use Haskell for teaching, can do so in
-the knowledge that Haskell 98 will continue to exist.  On the few
-occasions when we refer to the evolving, future version of Haskell, we
-call it ``Haskell 2''.
+wish to write text books, or use \Haskell{} for teaching, can do so in
+the knowledge that \Haskell{} 98 will continue to exist.  
 
-\subsection{\Haskell{} Resources}
+\section*{\Haskell{} Resources}
 \label{sect:resources}
 
-The Haskell web site
+The \Haskell{} web site
 \bprog
 @
 	http://haskell.org
@@ -168,20 +166,20 @@ The Haskell web site
 gives access to many useful resources, including:
 \begin{itemize}
 \item Online versions of the language and library definitions, including
-a complete list of all the differences between Haskell 98 as published in February 1999
+a complete list of all the differences between \Haskell{} 98 as published in February 1999
 and this revised version. 
-\item Tutorial material on Haskell.
-\item Details of the Haskell mailing list.
-\item Implementations of Haskell.
-\item Contributed Haskell tools and libraries.
-\item Applications of Haskell.
+\item Tutorial material on \Haskell{}.
+\item Details of the \Haskell{} mailing list.
+\item Implementations of \Haskell{}.
+\item Contributed \Haskell{} tools and libraries.
+\item Applications of \Haskell{}.
 \end{itemize}
-We welcome your comments, suggestions, and criticisms on the language
-or its presentation in the report, via the Haskell mailing list.
+You are welcome to comment on, suggest improvements to, and criticise the language
+or its presentation in the report, via the \Haskell{} mailing list.
 
-\subsection{Building the language}
+\section*{Building the language}
 
-Haskell was created, and continues to be sustained, by an active community of 
+\Haskell{} was created, and continues to be sustained, by an active community of 
 researchers and application programmers.  Those who served on the Language and
 Library committees, in particular, devoted a huge amount of time and energy to the
 language.  Here they are, with their affiliation(s) for the relevant period:
@@ -194,14 +192,14 @@ Brian Boutel (Victoria University of Wellington) \\
 Warren Burton (Simon Fraser University) \\
 Jon Fairbairn (University of Cambridge) \\
 Joseph Fasel (Los Alamos National Laboratory) \\
-Andy Gordon (University of Cambridge?) \\
+Andy Gordon (University of Cambridge) \\
 Maria Guzman (Yale University) \\
 Kevin Hammond (Uniiversity of Glasgow) \\
-Ralf Hinze {University of Bonn) \\
+Ralf Hinze (University of Bonn) \\
 Paul Hudak [editor] (Yale University) \\
 John Hughes [editor] (University of Glasgow; Chalmers University) \\
 Thomas Johnsson (Chalmers University) \\
-Mark Jones (Nottingham University) \\
+Mark Jones (Yale University, University of Nottingham, Oregon Graduate Institute) \\
 Dick Kieburtz (Oregon Graduate Institute) \\
 John Launchbury (University of Glasgow; Oregon Graduate Institute) \\
 Erik Meijer (Utrecht University) \\
@@ -251,13 +249,14 @@ Thomas Hallgren,
 Matt Harden,
 Klemens Hemm,
 Fergus Henderson,
+Dean Herington,
 Ralf Hinze,
 Bob Hiromoto,
 Nic Holt,
 Ian Holyer, 
 Randy Hudson,
 Alexander Jacobson,
-Patrick Jansson,
+Patrik Jansson,
 Robert Jeschofnik,
 Orjan Johansen,
 Simon B.~Jones, 
@@ -266,7 +265,7 @@ Mike Joy,
 Stefan Kahrs,
 Antti-Juhani Kaijanaho,
 Jerzy Karczmarczuk,
-Wolfram Karl,
+Wolfram Kahl,
 Kent Karlsson,
 Richard Kelsey,
 Siau-Cheng Khoo, 
@@ -277,7 +276,8 @@ Marcin Kowalczyk,
 Jose Labra,
 Jeff Lewis,
 Mark Lillibridge,
-Bjorn Lisper,
+% The doubled "" is turned into one by the verbatim preprocessor
+Bj\""{o}rn Lisper,
 Sandra Loosemore,
 Pablo Lopez,
 Olaf Lubeck, 
@@ -289,12 +289,12 @@ Michael Marte,
 Jim Mattson,
 John Meacham,
 Sergey Mechveliani,
-Erik Meijer,
 Gary Memovich,
 Randy Michelsen, 
 Rick Mohr,
 Andy Moran,
 Graeme Moss,
+Henrik Nilsson,
 Arthur Norman,
 Nick North,
 Chris Okasaki,
@@ -302,7 +302,7 @@ Bjarte M. {\O}stvold,
 Paul Otto, 
 Sven Panne,
 Dave Parrott,
-Ross Patterson,
+Ross Paterson,
 Larne Pekowsky,
 Rinus Plasmeijer,
 Ian Poole,
@@ -319,6 +319,7 @@ Libor Skarvada,
 Jan Skibinski,
 Lauren Smith, 
 Raman Sundaresh,
+Josef Svenningsson,
 Ken Takusagawa,
 Satish Thatte,
 Simon Thompson,
@@ -338,28 +339,20 @@ Stuart Wray,
 and Bonnie Yantis.
 
 Finally, aside from the important foundational work laid by Church,
-Rosser, Curry, and others on the lambda calculus, we wish to
+Rosser, Curry, and others on the lambda calculus, it is right to
 acknowledge the influence of many noteworthy programming languages
 developed over the years.  Although it is difficult to pinpoint the
-origin of many ideas, we particularly wish to acknowledge the
-influence of Lisp (and its modern-day incarnations Common Lisp and
+origin of many ideas, the following languages were particularly influential:
+Lisp (and its modern-day incarnations Common Lisp and
 Scheme); Landin's ISWIM; APL; Backus's FP
 \cite{back78}; ML and Standard ML; Hope and Hope$^{+}$; Clean; Id; Gofer;
 Sisal; and Turner's series of languages culminating in 
-Miranda.\footnote{{\rm Miranda} is a trademark of Research
-Software Ltd.} Without these forerunners \Haskell{} would not have
+Miranda\footnote{{\rm Miranda} is a trademark of Research
+Software Ltd.}. Without these forerunners \Haskell{} would not have
 been possible.
 
-\subsection{Copyright}
+\vspace{1in}
 
-The publisher intends this Report to belong to the entire Haskell
-community, and grants permission to copy and distribute it for any
-\emph{non-commercial} purpose, provided that it is reproduced in its
-entirety, including this Notice. Modified versions of this Report may
-also be copied and distributed for any \emph{non-commercial} purpose,
-provided that the modified version is clearly presented as such, and
-that it does not claim to be a definition of the language Haskell 98.
-
-Where a commercial purpose is involved, contact Cambridge University Press.
-
+Simon Peyton Jones \\
+Cambridge, September 2002
 %**~sfooter

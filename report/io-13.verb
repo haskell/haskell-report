@@ -103,8 +103,11 @@ the user's terminal).
 \indextt{getChar}%
 \indextt{getLine}%
 \indextt{getContents}%
-Both @getChar@ and @getLine@ raise an exception (Section~\ref{io-exceptions}) on end-of-file; a 
+The @getChar@ operation raises an exception (Section~\ref{io-exceptions}) on end-of-file; a 
 predicate @isEOFError@ that identifies this exception is defined in the @IO@ library.
+The @getLine@ operation raises an exception under the same circumstances as @hGetLine@, 
+defined the @IO@ library.
+
 The @getContents@ operation returns all user input as a single
 string, which is read lazily as it is needed.  The @interact@
 function takes a function of type 
@@ -119,7 +122,8 @@ except that it signals parse failure to the I/O monad instead of
 terminating the program.  The @readLn@ function combines @getLine@ and
 @readIO@.
 
-By default, these input functions echo to standard output.  
+% Removed after extended debate on the Haskell mailing list.
+% By default, these input functions echo to standard output.  
 
 % Functions in the I/O library provide full control over echoing.
 % Lies, all lies

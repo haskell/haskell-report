@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/derived.verb,v 1.8 2002/01/29 09:46:41 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/derived.verb,v 1.9 2002/12/02 11:22:01 simonpj Exp $
 %
 % The paragraph describing the formats of standard representations might
 % be deleted, since the info is already in the Prelude.  
@@ -13,6 +13,8 @@
 
 \section{Specification of Derived Instances}
 \label{derived-appendix}
+\index{derived instance}
+
 A {\em derived instance} is an instance declaration that is generated
 automatically in conjunction with a @data@ or @newtype@ declaration.
 The body of a derived instance declaration is derived syntactically from
@@ -80,12 +82,11 @@ omitted or the form @deriving ()@ may be used.
 
 Each derived instance declaration will have the form:
 \[
-"@instance (@cx@,@ C'_1 u'_1@,@ ...@,@ C'_j u'_j @) =>@ C_i (T u_1 ... u_k) @where@ @{@ d @}@"
+"@instance (@cx@, @cx'@) =>@ C_i (T u_1 ... u_k) @where@ @{@ d @}@"
 \]
 where "d" is derived automatically depending on "C_i" and the data
 type declaration for "T" (as will be described in the remainder of
-this section), and "u'_1" through "u'_j" form a subset of "u_1"
-through "u_k".
+this section).
 %% Yale nuked this:
 %% The class assertions "C' u'" are constraints on "T"'s
 %% type variables that are inferred from the instance declarations of the
@@ -116,8 +117,10 @@ through "u_k".
 %% instance (Ord a) => Eq (T1 a) where (C1 x) == (C1 y)  =  x == y
 %% @@
 %% \eprog
-When inferring the context for the derived instances, type synonyms
-in the constructors' argument types must be expanded out first.\index{type synonym}
+
+The context "cx'" is the smallest context satisfying point (2) above.
+For mutually recusive data types, the compiler may need to perform a
+fixpoint calculation to compute it.
 
 The remaining details of the derived
 instances for each of the derivable Prelude classes are now given.
@@ -152,10 +155,13 @@ Derived comparisons always traverse constructors from left to right.
 These examples illustrate this property:
 \bprog
 @
-(1,undefined) == (2,undefined) @"\Rightarrow"@    False
-(undefined,1) == (undefined,2) @"\Rightarrow"@    @"\bot"@
+  (1,undefined) == (2,undefined) @"\Rightarrow"@    False
+  (undefined,1) == (undefined,2) @"\Rightarrow"@    @"\bot"@
 @
 \eprog
+All derived operations of class @Eq@ and @Ord@ are strict in both arguments.
+For example, "@False <=@ \bot" is "\bot", even though @False@ is the first constructor
+of the @Bool@ type.
 
 \subsection{Derived instances of @Enum@}
 \indexdi{Enum}
@@ -176,27 +182,29 @@ is not the index of one of the constructors.
 The definitions of the remaining methods are 
 \bprog
 @
-  enumFrom x           = enumFrom x maxBound
+  enumFrom x           = enumFromTo x lastCon
   enumFromThen x y     = enumFromThenTo x y bound
-		       where
-			 bound | fromEnum y >= fromEnum x = maxBound
-			       | otherwise		  = minBound
+                       where
+                         bound | fromEnum y >= fromEnum x = lastCon
+                               | otherwise                = firstCon
   enumFromTo x y       = map toEnum [fromEnum x .. fromEnum y]
   enumFromThenTo x y z = map toEnum [fromEnum x, fromEnum y .. fromEnum z]
 @
 \eprog
+where @firstCon@ and @lastCon@ are respectively the first and last
+constructors listed in the @data@ declaration.
 For example,
 given the datatype:
 \bprog
 @
-data  Color = Red | Orange | Yellow | Green  deriving (Enum)
+  data  Color = Red | Orange | Yellow | Green  deriving (Enum)
 @
 \eprog
 we would have:
 \bprog
 @
-[Orange ..]         ==  [Orange, Yellow, Green]
-fromEnum Yellow     ==  2
+  [Orange ..]         ==  [Orange, Yellow, Green]
+  fromEnum Yellow     ==  2
 @
 \eprog
 
@@ -213,15 +221,15 @@ constructor, the constructor is applied to the bounds for the
 constituent types.  For example, the following datatype:
 \bprog
 @
-data  Pair a b = Pair a b deriving Bounded
+  data  Pair a b = Pair a b deriving Bounded
 @
 \eprog
 would generate the following @Bounded@ instance:
 \bprog
 @
-instance (Bounded a,Bounded b) => Bounded (Pair a b) where
-  minBound = Pair minBound minBound
-  maxBound = Pair maxBound maxBound
+  instance (Bounded a,Bounded b) => Bounded (Pair a b) where
+    minBound = Pair minBound minBound
+    maxBound = Pair maxBound maxBound
 @
 \eprog
 
@@ -237,17 +245,18 @@ They are used to coerce values into strings and parse strings into
 values.
 
 The function @showsPrec d x r@ accepts a precedence level @d@
-(a number from @0@ to @10@), a value @x@, and a string @r@.
+(a number from @0@ to @11@), a value @x@, and a string @r@.
 It returns a string representing @x@ concatenated to @r@.
 @showsPrec@ satisfies the law:
 \[
 "@showsPrec d x r ++ s  ==  showsPrec d x (r ++ s)@"
 \]
 The representation will be enclosed in parentheses if the precedence
-of the top-level constructor operator in @x@ is less than @d@.  Thus,
+of the top-level constructor in @x@ is less than @d@.  Thus,
 if @d@ is @0@ then the result is never surrounded in parentheses; if
-@d@ is @10@ it is always surrounded in parentheses, unless it is an
-atomic expression.  The extra parameter @r@ is essential if tree-like
+@d@ is @11@ it is always surrounded in parentheses, unless it is an
+atomic expression (recall that function application has precedence @10@).
+The extra parameter @r@ is essential if tree-like
 structures are to be printed in linear time rather than time quadratic
 in the size of the tree.
 
@@ -255,12 +264,13 @@ The function @readsPrec d s@ accepts a precedence level @d@ (a number
 from @0@ to @10@) and a string @s@, and attempts to parse a value 
 from the front of the string, returning a list of (parsed value, remaining string) pairs.
 If there is no successful parse, the returned list is empty.
+Parsing of an un-parenthesised infix operator application succeeds only 
+if the precedence of the operator is greater than or equal to @d@.
+
 It should be the case that
-\bprog
-@
-  head (readsPrec d (showsPrec d x "")) == (x,"")
-@
-\eprog
+\begin{center}
+@(x,"")@  is an element of  @(readsPrec d (showsPrec d x ""))@
+\end{center}
 That is, @readsPrec@ should be able to parse the string produced
 by @showsPrec@, and should deliver the value that @showsPrec@ started
 with.
@@ -302,40 +312,82 @@ using non-standard denotations.  This is especially useful for strings
 %shows a positive exponent without a sign.
 
 @readsPrec@ will parse any valid representation of the standard types 
-apart from lists, for
-which only the bracketed form @[@\ldots@]@ is accepted. See
+apart from strings, for which only quoted strings are accepted, and other lists,
+for which only the bracketed form @[@\ldots@]@ is accepted. See
 Appendix~\ref{stdprelude} for full details.
 
-A precise definition of the derived @Read@ and @Show@ instances for
-general types is beyond the scope of this report.  However, the
-derived @Read@ and @Show@ instances have the following properties:
+The result of @show@ is a syntactically correct \Haskell{} expression
+containing only constants, given the fixity declarations in force at
+the point where the type is declared.  It contains only the
+constructor names defined in the data type, parentheses, and
+spaces. When labelled constructor fields are used, braces, commas,
+field names, and equal signs are also used.  Parentheses
+are only added where needed, {\em ignoring associativity}.  No line breaks
+are added. The result of @show@ is readable by @read@ if all component
+types are readable.  (This is true for all instances defined in the
+Prelude but may not be true for user-defined instances.)
+
+Derived instances of @Read@ make the following assumptions, 
+which derived instances of @Show@ obey:
 \begin{itemize}
-\item The result of @show@ is a syntactically correct \Haskell{}
-      expression containing only constants
-      given the fixity declarations in force at the point where
-      the type is declared.
-\item The result of @show@ is readable by @read@ if all component
-      types are readable.  (This is true for all instances defined in
-      the Prelude but may not be true for user-defined instances.)
-\item The instance generated by @Read@ allows arbitrary whitespace
-      between tokens on the input string.  Extra parentheses are also 
-      allowed.
-\item The result of @show@ contains only the constructor names defined
-      in the data type, parentheses, and spaces.  When labelled
-      constructor fields are used, braces, commas, field names, and
-      equal signs are also used.
-      Spaces and parentheses are only added where
-      needed.  No line breaks are added.
-\item If a constructor is defined using labelled field syntax then the derived
-      @show@ for that constructor will use this same
-      syntax; the fields will be in the order declared in the
-      @data@ declaration.  The derived @Read@ instance will use
-      this same syntax: all fields must be present and the declared order
-      must be maintained.
-\item If a constructor is defined in the infix style, the derived @Show@
-      instance will also use infix style.  The derived @Read@ instance will
-      require that the constructor be infix.
+\item If the constructor is defined to be an infix operator, then 
+the derived @Read@ instance will parse only infix applications of the 
+constructor (not the prefix form).
+
+\item Associativity is not used to reduce the occurrence of 
+parentheses, although precedence may be. For example, given
+\bprog
+@
+  infixr 4 :$
+  data T = Int :$ T  |  NT
+@
+\eprog
+then:
+\begin{itemize}
+\item @show (1 :$ 2 :$ NT)@ produces the string @"1 :$ (2 :$ NT)"@.
+\item @read "1 :$ (2 :$ NT)"@ succeeds, with the obvious result.
+\item @read "1 :$ 2 :$ NT"@ fails.
 \end{itemize}
+
+\item 
+If the constructor is defined using record syntax, the derived @Read@ 
+will parse only the record-syntax form, and furthermore, the fields must be 
+given in the same order as the original declaration.
+
+\item The derived @Read@ instance allows arbitrary Haskell whitespace between 
+tokens of the input string.  Extra parentheses are also allowed.
+\end{itemize}
+
+
+% However, the
+% derived @Read@ and @Show@ instances have the following properties:
+% \begin{itemize}
+% \item The result of @show@ is a syntactically correct \Haskell{}
+%       expression containing only constants
+%       given the fixity declarations in force at the point where
+%       the type is declared.
+% \item The result of @show@ is readable by @read@ if all component
+%       types are readable.  (This is true for all instances defined in
+%       the Prelude but may not be true for user-defined instances.)
+% \item The instance generated by @Read@ allows arbitrary whitespace
+%       between tokens on the input string.  Extra parentheses are also 
+%       allowed.
+% \item The result of @show@ contains only the constructor names defined
+%       in the data type, parentheses, and spaces.  When labelled
+%       constructor fields are used, braces, commas, field names, and
+%       equal signs are also used.
+%       Spaces and parentheses are only added where
+%       needed.  No line breaks are added.
+% \item If a constructor is defined using labelled field syntax then the derived
+%       @show@ for that constructor will use this same
+%       syntax; the fields will be in the order declared in the
+%       @data@ declaration.  The derived @Read@ instance will use
+%       this same syntax: all fields must be present and the declared order
+%       must be maintained.
+% \item If a constructor is defined in the infix style, the derived @Show@
+%       instance will also use infix style.  The derived @Read@ instance will
+%       require that the constructor be infix.
+% \end{itemize}
 
 The derived @Read@ and @Show@ instances may be unsuitable for some
 uses.  Some problems include:
@@ -403,8 +455,8 @@ As a complete example, consider a tree datatype:\nopagebreak
 %Since there is no @deriving@ clause, this is shorthand for:\nopagebreak
 \bprog
 @
-data Tree a = Leaf a | Tree a :^: Tree a
-     deriving (Eq, Ord, Read, Show)
+  data Tree a = Leaf a | Tree a :^: Tree a
+       deriving (Eq, Ord, Read, Show)
 @
 \eprog
 Automatic derivation of
@@ -423,7 +475,7 @@ the class declaration shown in Figure~\ref{standard-classes}
 \begin{figure}[tb]
 \outlinec{
 @
-infix 5 :^:
+infixr 5 :^:
 data Tree a =  Leaf a  |  Tree a :^: Tree a
 
 instance (Eq a) => Eq (Tree a) where
@@ -439,28 +491,33 @@ instance (Ord a) => Ord (Tree a) where
 
 instance (Show a) => Show (Tree a) where
 
-        showsPrec d (Leaf m) = showParen (d >= 10) showStr
+        showsPrec d (Leaf m) = showParen (d > app_prec) showStr
           where
-             showStr = showString "Leaf " . showsPrec 10 m
+             showStr = showString "Leaf " . showsPrec (app_prec+1) m
 
-        showsPrec d (u :^: v) = showParen (d > 4) showStr
+        showsPrec d (u :^: v) = showParen (d > up_prec) showStr
           where
-             showStr = showsPrec 5 u . 
-                       showString " :^: " .
-                       showsPrec 5 v
+             showStr = showsPrec (up_prec+1) u . 
+                       showString " :^: "      .
+                       showsPrec (up_prec+1) v
+                -- Note: right-associativity of :^: ignored
 
 instance (Read a) => Read (Tree a) where
 
-        readsPrec d r =  readParen (d > 4)
+        readsPrec d r =  readParen (d > up_prec)
                          (\r -> [(u:^:v,w) |
-                                 (u,s) <- readsPrec 5 r,
+                                 (u,s) <- readsPrec (up_prec+1) r,
                                  (":^:",t) <- lex s,
-                                 (v,w) <- readsPrec 5 t]) r
+                                 (v,w) <- readsPrec (up_prec+1) t]) r
 
-                      ++ readParen (d > 9)
+                      ++ readParen (d > app_prec)
                          (\r -> [(Leaf m,t) |
                                  ("Leaf",s) <- lex r,
-                                 (m,t) <- readsPrec 10 s]) r
+                                 (m,t) <- readsPrec (app_prec+1) s]) r
+
+up_prec  = 5    -- Precedence of :^:
+app_prec = 10   -- Application has precedence one more than
+		-- the most tightly-binding operator
 @
 }
 %**<div align=center> <h4>Figure 8</h4> </div>

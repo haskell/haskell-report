@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/basic.verb,v 1.11 2001/12/21 16:00:24 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/basic.verb,v 1.12 2002/12/02 11:22:01 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Basic Types and Classes</title>
 %*section 6
@@ -236,7 +236,8 @@ not the same as @\x -> @ "\bot", since @seq@ can be used to distinguish them.
 For the same reason, the existence of @seq@ weakens Haskell's parametricity properties.
 
 The operator @$!@ is strict (call-by-value) application, and is defined
-in terms of @seq@.  The Prelude also defines the @$@ operator to perform lazy application.
+in terms of @seq@.  The Prelude also defines the @$@ operator to perform 
+non-strict application.
 \bprog
 @
   infixr 0 $, $!
@@ -245,7 +246,7 @@ in terms of @seq@.  The Prelude also defines the @$@ operator to perform lazy ap
    f $! x   =  x `seq` f x
 @
 \eprog
-The lazy application operator @$@ may appear redundant, since 
+The non-strict application operator @$@ may appear redundant, since 
 ordinary application @(f x)@ means the same as @(f $ x)@.
 However, @$@ has low, right-associative binding precedence,
 so it sometimes allows parentheses to be omitted; for example:
@@ -431,7 +432,16 @@ read s  =  case [x | (x,t) <- reads s, ("","") <- lex t] of
 \indextt{shows}\indextt{reads}\indextt{show}\indextt{read}
 @shows@ and @reads@ use a default precedence of 0.  The @read@ function reads
 input from a string, which must be completely consumed by the input
-process.  The @lex@ function used by @read@ is also part of the Prelude.
+process.  
+
+\indextt{lex}
+The function @lex :: ReadS String@, used by @read@, is also part of the Prelude.
+It reads a single lexeme from the input, discarding initial white space, and
+returning the characters that constitute the lexeme.  If the input string contains
+only white space, @lex@ returns a single successful ``lexeme'' consisting of the
+empty string.  (Thus @lex ""@ = @[("","")]@.)  If there is no legal lexeme at the
+beginning of the input string, @lex@ fails (i.e. returns @[]@).
+
 
 \subsubsection{The Enum Class}
 \label{enum-class}
@@ -539,7 +549,7 @@ when the elements become greater than "e_3+i/2" for positive increment
 For all four of these Prelude numeric types, all of the @enumFrom@ 
 family of functions are strict in all their arguments.
 
-\subsubsection{Class @Functor@}
+\subsubsection{The Functor Class}
 \indexclass{Functor}
 \indextt{fmap}
 \index{functor}
@@ -547,7 +557,7 @@ family of functions are strict in all their arguments.
 \bprog
 @
 class  Functor f  where
-    fmap    :: (a -> b) -> (f a -> f b)
+    fmap    :: (a -> b) -> f a -> f b
 @
 \eprog
 The @Functor@
@@ -562,7 +572,7 @@ Instances of @Functor@ should satisfy the following laws:
 All instances of @Functor@ defined in the Prelude satisfy these laws.
 
 
-\subsubsection{Class @Monad@}
+\subsubsection{The Monad Class}
 \label{monad-class}
 \indexclass{Monad}
 \indextt{return}

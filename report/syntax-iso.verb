@@ -1,10 +1,10 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/syntax-iso.verb,v 1.8 2001/12/21 16:00:25 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/syntax-iso.verb,v 1.9 2002/12/02 11:22:02 simonpj Exp $
 %
 %**<title>Haskell 98 Syntax</title>
 %*section B
 %**~header
-\section{Syntax}
+\section{Syntax Reference}
 \label{syntax}
 \index{syntax}
 
@@ -161,11 +161,19 @@ the token "\{n\}" is inserted after the keyword, where "n" is the indentation of
 next lexeme if there is one, or "0" if the end of file has been reached.
 \item If the first lexeme of a module is not @{@ or @module@, 
 then it is preceded by "\{n\}" where "n" is the indentation of the lexeme. 
-\item Where the start of a lexeme does not follow a complete lexeme on the
+\item Where the start of a lexeme is preceded only by white space on the
    same line, this lexeme is preceded by "<n>" where "n"
    is the indentation of the lexeme, provided that it is not,
    as a consequence of the first two rules, preceded by "\{n\}".
-   (A string literal may span multiple lines -- Section~\ref{lexemes-char}.)
+   (NB: a string literal may span multiple lines -- Section~\ref{lexemes-char}.  So in the fragment
+\bprog
+@
+  f = ("Hello \
+          \Bill", "Jake")
+@
+\eprog
+There is no "<n>" inserted before the "@\Bill@", because it is not the beginning of
+a complete lexeme; nor before the "@,@", because it is not preceded only by white space.)
 \end{itemize}
 
 \item A stack of ``layout contexts'', in which each element is either:
@@ -191,6 +199,8 @@ enough spaces to align the current position with the next tab stop.
 \end{itemize}
 For the purposes of the layout rule, Unicode characters in a source program
 are considered to be of the same, fixed, width as an ASCII character.
+However, to avoid visual confusion, programmers should avoid writing programs in which 
+the meaning of implicit layout depends on the width of non-space characters.
 
 The application
 \[
@@ -309,6 +319,106 @@ is valid, because it translates to
 @
 \eprog
 The close brace is inserted due to the parse error rule above.
+The parse-error rule is hard to implement in its full generality, because 
+doing so involves fixities.  For example, the expression
+\bprog
+@
+  do a == b == c
+@
+\eprog
+has a single unambiguous (albeit probably type-incorrect) parse, namely
+\bprog
+@
+  (do { a == b }) == c
+@
+\eprog
+because @(==)@ is non-associative.   Programmers are therefore advised to avoid
+writing code that requires the parser to insert a closing brace in such
+situations.
+
+
+\startnewsection
+\subsection{Literate comments}
+\label{literate}
+\index{literate comments}
+
+The ``literate comment''
+convention, first developed by Richard Bird and Philip Wadler for
+Orwell, and inspired in turn by Donald Knuth's ``literate
+programming'', is an alternative style for encoding \Haskell{} source
+code. 
+The literate style encourages comments by making them the default.  A
+line in which ``@>@'' is the first character is treated as part of the
+program; all other lines are comment.
+
+The program text is recovered
+by taking only those lines beginning with ``@>@'', 
+and replacing the leading ``@>@'' with a space.
+Layout and comments apply
+exactly as described in Appendix~\ref{syntax} in the resulting text.
+
+To capture some cases where one omits an ``@>@'' by mistake, it is an
+error for a program line to appear adjacent to a non-blank comment line,
+where a line is taken as blank if it consists only of whitespace.
+
+By convention, the style of comment is indicated by the file
+extension, with ``@.hs@'' indicating a usual Haskell file and
+``@.lhs@'' indicating a literate Haskell file.  Using this style, a
+simple factorial program would be:
+\bprog
+@
+   This literate program prompts the user for a number
+   and prints the factorial of that number:
+
+> main :: IO ()
+
+> main = do putStr "Enter a number: "
+>           l <- readLine
+>           putStr "n!= "
+>           print (fact (read l))
+          
+  This is the factorial function.
+
+> fact :: Integer -> Integer
+> fact 0 = 1
+> fact n = n * fact (n-1)
+@
+\eprog
+
+
+An alternative style of literate programming is particularly
+suitable for use with the LaTeX text processing system.
+In this convention, only those parts of the literate program that are
+entirely enclosed between @\begin{code}@$\ldots$@\end{code}@ delimiters are
+treated as program text; all other lines are comment.  More precisely:
+\begin{itemize}
+\item Program code begins on the first line following a line that begins @\begin{code}@.
+\item Program code ends just before a subsequent line that begins @\end{code}@ (ignoring
+string literals, of course).
+\end{itemize}
+It is not necessary
+to insert additional blank lines before or after these delimiters, though
+it may be stylistically desirable.  For example,
+\bprog
+@
+\documentstyle{article}
+
+\begin{document}
+
+\section{Introduction}
+
+This is a trivial program that prints the first 20 factorials.
+
+\begin{code}
+main :: IO ()
+main =  print [ (n, product [1..n]) | n <- [1..20]]
+\end{code}
+
+\end{document}
+@
+\eprog
+This style uses the same file extension.  It is not advisable to mix
+these two styles in the same file.
 
 \startnewsection
 \subsection{Context-Free Syntax}
@@ -346,7 +456,7 @@ impspec   -> @(@ import_1 @,@ ... @,@ import_n [ @,@ ] @)@ & (n>=0)
              |  @hiding@ @(@ import_1 @,@ ... @,@ import_n [ @,@ ] @)@ &  (n>=0)
 
 import    -> var
-	  |  tycon [ @(..)@ | @(@ cname_1 @,@ ... @,@ cname_n @)@] & (n>=1)
+	  |  tycon [ @(..)@ | @(@ cname_1 @,@ ... @,@ cname_n @)@] & (n>=0)
 	  |  tycls [@(..)@ | @(@ var_1 @,@ ... @,@ var_n @)@] & (n>=0)
 cname     -> var | con
 @@@
@@ -517,7 +627,9 @@ aexp 	->  qvar				& (\tr{variable})
 	|   @[@ exp_1 [@,@ exp_2] @..@ [exp_3] @]@ & (\tr{arithmetic sequence})
 	|   @[@ exp @|@ qual_1 @,@ ... @,@ qual_n @]@	& (\tr{list comprehension}, n>=1)
 	|   @(@ exp^{i+1} qop^{(a,i)} @)@        & (\tr{left section})
-        |   @(@ qop^{(a,i)} exp^{i+1} @)@        & (\tr{right section})
+	|   @(@ lexp^{i} qop^{(l,i)} @)@        & (\tr{left section})
+        |   @(@ qop^{(a,i)}_{\langle@-@\rangle}  exp^{i+1} @)@        & (\tr{right section})
+        |   @(@ qop^{(r,i)}_{\langle@-@\rangle}  rexp^{i} @)@        & (\tr{right section})
         |   qcon @{@ fbind_1 @,@ ... @,@ fbind_n @}@ & (\tr{labeled construction}, n>=0)
         |   aexp_{\langle{}qcon\rangle{}} @{@ fbind_1 @,@ ... @,@ fbind_n @}@ & (\tr{labeled update}, n >= 1)
 @@@
@@ -539,7 +651,7 @@ stmts -> stmt_1 ... stmt_n exp [@;@]  &  (n>=0)
 stmt -> exp @;@
       | pat @<-@ exp @;@
       | @let@ decls @;@
-      | @;@			& (empty statment)
+      | @;@			& (empty statement)
 
 fbind   ->  qvar @=@ exp
         

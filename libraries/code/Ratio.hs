@@ -5,7 +5,7 @@ module  Ratio (
 
 infixl 7  %
 
-prec = 7 :: Int
+ratPrec = 7 :: Int
 
 data  (Integral a)      => Ratio a = !a :% !a  deriving (Eq)
 type  Rational          =  Ratio Integer
@@ -58,6 +58,8 @@ instance  (Integral a)  => RealFrac (Ratio a)  where
                             where (q,r) = quotRem x y
 
 instance  (Integral a)  => Enum (Ratio a)  where
+    succ x           =  x+1
+    pred x           =  x-1
     toEnum           =  fromIntegral
     fromEnum         =  fromInteger . truncate	-- May overflow
     enumFrom         =  numericEnumFrom		-- These numericEnumXXX functions
@@ -66,14 +68,16 @@ instance  (Integral a)  => Enum (Ratio a)  where
     enumFromThenTo   =  numericEnumFromThenTo
 
 instance  (Read a, Integral a)  => Read (Ratio a)  where
-    readsPrec p  =  readParen (p > prec)
-                              (\r -> [(x%y,u) | (x,s)   <- reads r,
+    readsPrec p  =  readParen (p > ratPrec)
+                              (\r -> [(x%y,u) | (x,s)   <- readsPrec (ratPrec+1) r,
                                                 ("%",t) <- lex s,
-                                                (y,u)   <- reads t ])
+                                                (y,u)   <- readsPrec (ratPrec+1) t ])
 
 instance  (Integral a)  => Show (Ratio a)  where
-    showsPrec p (x:%y)  =  showParen (p > prec)
-                               (shows x . showString " % " . shows y)
+    showsPrec p (x:%y)  =  showParen (p > ratPrec)
+                               (showsPrec (ratPrec+1) x . 
+			        showString " % " . 
+				showsPrec (ratPrec+1) y)
 
 
 

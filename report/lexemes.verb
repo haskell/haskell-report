@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/lexemes.verb,v 1.10 2001/12/21 16:00:25 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/lexemes.verb,v 1.11 2002/12/02 11:22:02 simonpj Exp $
 %
 %*section 2
 %**<title>Haskell 98 Lexical Structure</title>
@@ -71,12 +71,13 @@ However, source
 programs are currently biased toward the ASCII character set
 \index{ASCII character set} used in earlier versions of \Haskell{}.
 
-Haskell uses a pre-processor to convert non-Unicode character sets into
-Unicode.  This pre-processor converts all characters to Unicode and
-uses the escape sequence @\u@"hhhh", where the @"h"@ are hex digits,
-to denote escaped Unicode characters.  Since this translation occurs
-before the program is compiled, escaped Unicode characters may appear in
-identifiers and any other place in the program.
+%	Removed Sept 02
+% Haskell uses a pre-processor to convert non-Unicode character sets into
+% Unicode.  This pre-processor converts all characters to Unicode and
+% uses the escape sequence @\u@"hhhh", where the @"h"@ are hex digits,
+% to denote escaped Unicode characters.  Since this translation occurs
+% before the program is compiled, escaped Unicode characters may appear in
+% identifiers and any other place in the program.
 
 This syntax depends on properties of the Unicode characters as defined
 by the Unicode consortium. 
@@ -89,12 +90,15 @@ new versions of Unicode as they are made available.
 
 \input{syntax-lexical}
 
-Lexical analysis should use the ``maximal munch'' rule.
-At each point, the longest possible lexeme
-satisfying the "lexeme" production is read, 
+Lexical analysis should use the ``maximal munch'' rule:
+at each point, the longest possible lexeme
+satisfying the "lexeme" production is read.
 \index{maximal munch rule}
-using a context-independent deterministic lexical analysis
-(i.e.~no lookahead beyond the current character is required).
+% using a context-independent deterministic lexical analysis
+% (i.e.~no lookahead beyond the current character is required).
+% Not so -- consider the input "F. 9. 0o 0x 9.0e+f", which 
+% should lex as "F . 9 . 0 o 0 x 9.0 e + f" but that needs up 
+% to 2 additional characters of lookahead.  
 So, although @case@ is a reserved word, @cases@ is not.
 Similarly, although @=@ is reserved, @==@ and @~=@ are
 not.  

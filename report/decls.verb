@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/decls.verb,v 1.14 2001/12/21 16:00:24 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/decls.verb,v 1.15 2002/12/02 11:22:01 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Declarations</title>
 %*section 4
@@ -26,7 +26,7 @@ topdecls -> topdecl_1 @;@ ... @;@ topdecl_n 	& (n>=1)
 topdecl	-> @type@ simpletype @=@ type
 	|  @data@ [context @=>@] simpletype @=@ constrs [deriving]
         |  @newtype@ [context @=>@] simpletype @=@ newconstr [deriving]
-	|  @class@ [scontext @=>@] simpleclass [@where@ cdecls]
+	|  @class@ [scontext @=>@] tycls tyvar [@where@ cdecls]
 	|  @instance@ [scontext @=>@] qtycls inst [@where@ idecls]
 	|  @default@ @(@type_1 @,@ ... @,@ type_n@)@ & \qquad (n>=0)
 	|  decl
@@ -576,8 +576,8 @@ useful to assign "field labels" to the components of a data object.
 This allows a specific field to be referenced independently of its
 location within the constructor.
 
-A constructor definition in a @data@ declaration using the record
-syntax (@C { ... }@) assigns labels to the components of the constructor.
+A constructor definition in a @data@ declaration may assign labels to the
+fields of the constructor, using the record syntax (@C { ... }@).
 Constructors using field labels may be freely mixed with constructors
 without them. 
 A constructor with associated field labels may still be used as an
@@ -631,7 +631,7 @@ every occurrence of "K" in an expression by
 \[
 "@(\ @x_1 ... x_n @->@ ( ((K op_1 x_1) op_2 x_2) ... ) op_n x_n)"
 \]
-where "op_i" is the lazy apply function @$@ if "s_i" is of the form "t_i",
+where "op_i" is the non-strict apply function @$@ if "s_i" is of the form "t_i",
 and "op_i" is the strict apply function @$!@ (see
 Section~\ref{strict-eval}) if "s_i" is of the form "@!@ t_i".  Pattern
 matching on "K" is not affected by strictness flags.
@@ -793,7 +793,7 @@ brings into scope both a constructor and a de-constructor:
 \label{class-decls}
 
 @@@
-topdecl	-> @class@ [scontext @=>@] simpleclass [@where@ cdecls]
+topdecl	-> @class@ [scontext @=>@] tycls tyvar [@where@ cdecls]
 scontext -> simpleclass
         |  @(@ simpleclass_1 @,@ ... @,@ simpleclass_n @)@		& (n>=0)
 simpleclass -> qtycls tyvar			
@@ -969,16 +969,15 @@ binding for a class method that is not in scope, but the name under
 which it is in scope is immaterial; in particular, it may be a qualified
 name.  (This rule is identical to that used for subordinate names in
 export lists --- Section~\ref{export}.)
-For example, this is legal, even though @return@ is in scope only
-with the qualified name @Monad.return@.
+For example, this is legal, even though @range@ is in scope only
+with the qualified name @Ix.range@.
 \bprog
 @
   module A where
-    import qualified Monad
+    import qualified Ix
 
-    instance Monad.Monad T where
-      return = ...
-      (>>=)  = ...
+    instance Ix.Ix T where
+      range = ...
 @
 \eprog
 The declarations may not contain any type

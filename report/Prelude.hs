@@ -525,7 +525,7 @@ numericEnumFromThen n m =  iterate (+(m-n)) n
 numericEnumFromTo n m   =  takeWhile (<= m+1/2) (numericEnumFrom n)
 numericEnumFromThenTo n n' m = takeWhile p (numericEnumFromThen n n')
                              where
-                               p | n' > n    = (<= m + (n'-n)/2)
+                               p | n' >= n   = (<= m + (n'-n)/2)
                                  | otherwise = (>= m + (n'-n)/2)
 
 -- Lists

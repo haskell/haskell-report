@@ -69,13 +69,17 @@ instance  (Ix a, Ord b) => Ord (Array a b)  where
     a <= a' =  assocs a <= assocs a'
 
 instance  (Ix a, Show a, Show b) => Show (Array a b)  where
-    showsPrec p a = showParen (p > 9) (
+    showsPrec p a = showParen (p > arrPrec) (
                     showString "array " .
-                    shows (bounds a) . showChar ' ' .
-                    shows (assocs a)                  )
+                    showsPrec (arrPrec+1) (bounds a) . showChar ' ' .
+                    showsPrec (arrPrec+1) (assocs a)                  )
 
 instance  (Ix a, Read a, Read b) => Read (Array a b)  where
-    readsPrec p = readParen (p > 9)
-           (\r -> [(array b as, u) | ("array",s) <- lex r,
-                                     (b,t)       <- reads s,
-                                     (as,u)      <- reads t   ])
+    readsPrec p = readParen (p > arrPrec)
+           (\r -> [ (array b as, u) 
+                  | ("array",s) <- lex r,
+                    (b,t)       <- readsPrec (arrPrec+1) s,
+                    (as,u)      <- readsPrec (arrPrec+1) t ])
+
+-- Precedence of the 'array' function is that of application itself
+arrPrec = 10

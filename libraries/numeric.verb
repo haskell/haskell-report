@@ -67,13 +67,19 @@ then the following properties hold:
 \item @readSigned :: (Real a) => ReadS a -> ReadS a@ \\ 
 reads a {\em signed} @Real@ value,
 given a reader for an unsigned value.
-\item @readInt :: (Integral a) => a -> (Char->Bool) -> (Char->Int) -> ReadS a@
+
+\item @readInt :: (Integral a) => a -> (Char->Bool) -> (Char->Int) -> ReadS a@ \\
 reads an {\em unsigned} @Integral@ value in an arbitrary base.  In the call "(@readInt@~ base ~isdig ~d2i)",
 "base" is the base, "isdig" is a predicate distinguishing valid digits in this base, and "d2i" converts
 a valid digit character to an @Int@.
+
+\item @readFloat :: (RealFrac a) => ReadS a@ \\ 
+reads an {\em unsigned} @RealFrac@ value, expressed in decimal scientific notation.
+
 \item @readDec, readOct, readHex :: (Integral a) => ReadS a@  \\
 each read an unsigned number, in decimal, octal, and hexadecimal notation respectively.
 In the hexadecimal case, both upper or lower case letters are allowed.
+
 \item @lexDigits :: ReadS String@ reads a non-empty string of decimal digits.
 \end{itemize}
 (NB: @readInt@ is the ``dual'' of @showIntAtBase@, and @readDec@ is the ``dual'' of @showInt@.

@@ -1,10 +1,13 @@
 # Makefile for the Haskell Report
 # read the README file before you start!
+#
+#	Target 'jfp' copies stuff into $(JFP_DIR) for the JFP book
+#	you need to do the same in the libraries directory
 
 ##########################################
 # What to make if you type 'make'
 
-default: haskell.ps.gz html
+default: haskell.ps html
 
 # Begin by saying
 #	touch haskell.idx
@@ -38,8 +41,10 @@ EXPAND = expand
 #########################################
 
 RELEASE_DIR = ../haskell98-revised
+JFP_DIR = ../jfp-release
 
-PARTS =		preface-13.tex iso-chars.tex \
+PARTS =		preface-jfp.tex $(PARTS_NO_PREFACE)
+PARTS_NO_PREFACE = iso-chars.tex \
 		intro.tex lexemes.tex  exps.tex \
 		decls.tex  modules.tex  basic.tex  io-13.tex \
 		derived.tex \
@@ -162,6 +167,14 @@ release: haskell.ps html
 publish-pdf: report.pdf
 	gzip < report.pdf > y:Haskell/haskell98-report/report.pdf.gz
 
+jfp: h98-book.tex preface-jfp.tex ${PARTS_NO_PREFACE} $(SYNTAX) ${PRELUDE}
+	-mkdir $(JFP_DIR)
+	for n in h98-book.tex preface-jfp.tex \
+		${PARTS_NO_PREFACE} $(SYNTAX) ${PRELUDE} ; do  \
+		../tools/subsection < $$n >  $(JFP_DIR)/$$n ; done 
+	cp classes.eps $(JFP_DIR)
+	cp  haskell.bbl $(JFP_DIR)/h98-book.bbl
+	cp Makefile-jfp-book $(JFP_DIR)/Makefile
 
 #########################################
 #	Suffix rules

@@ -978,6 +978,7 @@ texCommands = [("\\",doEol),
 -- For the tutorial:
                ("see",doSee),
 -- For mpj:
+	       ("in", emitSymc 8712),
                ("ts",ignore 0),
                ("la",use "<"),
                ("ra",use ">"),

@@ -29,5 +29,5 @@ showFloat      :: (RealFloat a) => a -> ShowS
 
 floatToDigits  :: (RealFloat a) => Integer -> a -> ([Int], Int)
 
-readFloat      :: (RealFloat a) => ReadS a
+readFloat      :: (RealFrac a) => ReadS a
 lexDigits      :: ReadS String 

@@ -20,6 +20,11 @@ L.~Damas and R.~Milner.
 \newblock In {\em Proceedings of the 9th ACM Symposium on Principles of
   Programming Languages}, pages 207--212, Albuquerque, N.M., January 1982.
 
+\bibitem{faxen:static}
+K-F. Fax\'en
+\newblock A static semantics for Haskell
+\newblock {\em Journal of Functional Programming}, 2002.
+
 \bibitem{hindley69}
 J.R.~Hindley.
 \newblock The principal type scheme of an object in combinatory logic.
@@ -37,16 +42,16 @@ Mark~P. Jones.
   higher-order polymorphism.
 \newblock {\em Journal of Functional Programming}, 5(1), January 1995.
 
+\bibitem{jones:thih}
+Mark~P. Jones.
+\newblock Typing Haskell in Haskell.
+\newblock {\em Haskell Workshop}, Paris, October 1999.
+
 \bibitem{penfield:complex-apl}
 P.~Penfield, Jr.
 \newblock Principal values and branch cuts in complex {APL}.
 \newblock In {\em APL '81 Conference Proceedings}, pages 248--256, San
   Francisco, September 1981.
-
-\bibitem{libraries}
-Simon Peyton Jones (editor).
-\newblock {S}tandard {L}ibraries for the {H}askell 98 {P}rogramming {L}anguage, 
-\newblock 2001.
 
 \bibitem{peyton-jones:book}
 S.L. Peyton~Jones.

@@ -6,7 +6,7 @@ module Char (
     ord, chr,
     readLitChar, showLitChar, lexLitChar,
 
-	-- ...and what the Prelude exports
+        -- ...and what the Prelude exports
     Char, String
     ) where
 
@@ -27,11 +27,11 @@ isControl c              =  c < ' ' || c >= '\DEL' && c <= '\x9f'
 isPrint                  =  primUnicodeIsPrint
 
 isSpace c                =  c `elem` " \t\n\r\f\v\xA0"
-	-- Only Latin-1 spaces recognized
+        -- Only Latin-1 spaces recognized
 
-isUpper                  =  primUnicodeIsUpper	-- 'A'..'Z'
+isUpper                  =  primUnicodeIsUpper  -- 'A'..'Z'
 
-isLower                  =  primUnicodeIsLower	-- 'a'..'z'
+isLower                  =  primUnicodeIsLower  -- 'a'..'z'
 
 isAlpha c                =  isUpper c || isLower c
 
@@ -61,52 +61,52 @@ intToDigit i
 
 
 -- Case-changing operations
-toUpper                  :: Char -> Char
-toUpper                  =  primUnicodeToUpper
-
-toLower                  :: Char -> Char
-toLower                  =  primUnicodeToLower
+toUpper :: Char -> Char
+toUpper =  primUnicodeToUpper
+        
+toLower :: Char -> Char
+toLower =  primUnicodeToLower
 
 -- Character code functions
-ord                     :: Char -> Int
-ord                     =  fromEnum
-
-chr                     :: Int  -> Char
-chr                     =  toEnum
+ord  :: Char -> Int
+ord  =  fromEnum
+     
+chr  :: Int  -> Char
+chr  =  toEnum
 
 -- Text functions
-readLitChar             :: ReadS Char
-readLitChar ('\\':s)    =  readEsc s
-        where
-        readEsc ('a':s)  = [('\a',s)]
-        readEsc ('b':s)  = [('\b',s)]
-        readEsc ('f':s)  = [('\f',s)]
-        readEsc ('n':s)  = [('\n',s)]
-        readEsc ('r':s)  = [('\r',s)]
-        readEsc ('t':s)  = [('\t',s)]
-        readEsc ('v':s)  = [('\v',s)]
-        readEsc ('\\':s) = [('\\',s)]
-        readEsc ('"':s)  = [('"',s)]
-        readEsc ('\'':s) = [('\'',s)]
-        readEsc ('^':c:s) | c >= '@' && c <= '_'
-                         = [(chr (ord c - ord '@'), s)]
-        readEsc s@(d:_) | isDigit d
-                         = [(chr n, t) | (n,t) <- readDec s]
-        readEsc ('o':s)  = [(chr n, t) | (n,t) <- readOct s]
-        readEsc ('x':s)  = [(chr n, t) | (n,t) <- readHex s]
-        readEsc s@(c:_) | isUpper c
-                         = let table = ('\DEL', "DEL") : assocs asciiTab
-                           in case [(c,s') | (c, mne) <- table,
-                                             ([],s') <- [match mne s]]
-                              of (pr:_) -> [pr]
-                                 []     -> []
-        readEsc _        = []
+readLitChar          :: ReadS Char
+readLitChar ('\\':s) =  readEsc s
+readLitChar (c:s)    =  [(c,s)]
 
-	match                         :: (Eq a) => [a] -> [a] -> ([a],[a])
-	match (x:xs) (y:ys) | x == y  =  match xs ys
-	match xs     ys               =  (xs,ys)
+readEsc          :: ReadS Char
+readEsc ('a':s)  = [('\a',s)]
+readEsc ('b':s)  = [('\b',s)]
+readEsc ('f':s)  = [('\f',s)]
+readEsc ('n':s)  = [('\n',s)]
+readEsc ('r':s)  = [('\r',s)]
+readEsc ('t':s)  = [('\t',s)]
+readEsc ('v':s)  = [('\v',s)]
+readEsc ('\\':s) = [('\\',s)]
+readEsc ('"':s)  = [('"',s)]
+readEsc ('\'':s) = [('\'',s)]
+readEsc ('^':c:s) | c >= '@' && c <= '_'
+                 = [(chr (ord c - ord '@'), s)]
+readEsc s@(d:_) | isDigit d
+                 = [(chr n, t) | (n,t) <- readDec s]
+readEsc ('o':s)  = [(chr n, t) | (n,t) <- readOct s]
+readEsc ('x':s)  = [(chr n, t) | (n,t) <- readHex s]
+readEsc s@(c:_) | isUpper c
+                 = let table = ('\DEL', "DEL") : assocs asciiTab
+                   in case [(c,s') | (c, mne) <- table,
+                                     ([],s') <- [match mne s]]
+                      of (pr:_) -> [pr]
+                         []     -> []
+readEsc _        = []
 
-readLitChar (c:s)       =  [(c,s)]
+match                         :: (Eq a) => [a] -> [a] -> ([a],[a])
+match (x:xs) (y:ys) | x == y  =  match xs ys
+match xs     ys               =  (xs,ys)
 
 showLitChar               :: Char -> ShowS
 showLitChar c | c > '\DEL' =  showChar '\\' . 
@@ -135,15 +135,22 @@ asciiTab = listArray ('\NUL', ' ')
             "SP"] 
 
 lexLitChar          :: ReadS String
-lexLitChar ('\\':s) =  [('\\':esc, t) | (esc,t) <- lexEsc s]
+lexLitChar ('\\':s) =  map (prefix '\\') (lexEsc s)
         where
           lexEsc (c:s)     | c `elem` "abfnrtv\\\"'" = [([c],s)]
-          lexEsc s@(d:_)   | isDigit d               = lexDigits s
           lexEsc ('^':c:s) | c >= '@' && c <= '_'    = [(['^',c],s)]
-          -- Very crude approximation to \XYZ.  Let readers work this out.
-          lexEsc s@(c:_)   | isUpper c               = [span isCharName s]
-          lexEsc _                                   = []
-          isCharName c = isUpper c || isDigit c
+
+          -- Numeric escapes
+          lexEsc ('o':s)               = [prefix 'o' (span isOctDigit s)]
+          lexEsc ('x':s)               = [prefix 'x' (span isHexDigit s)]
+          lexEsc s@(d:_)   | isDigit d = [span isDigit s]
+
+          -- Very crude approximation to \XYZ.
+          lexEsc s@(c:_)   | isUpper c = [span isCharName s]
+          lexEsc _                     = []
+
+          isCharName c   = isUpper c || isDigit c
+          prefix c (t,s) = (c:t, s)
 
 lexLitChar (c:s)    =  [([c],s)]
 lexLitChar ""       =  []

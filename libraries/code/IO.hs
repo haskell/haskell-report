@@ -1,6 +1,6 @@
 module IO {- export list omitted -} where
 
--- Just provide an implementation of the system-indendent
+-- Just provide an implementation of the system-independent
 -- actions that IO exports.
 
 try            :: IO a -> IO (Either IOError a)

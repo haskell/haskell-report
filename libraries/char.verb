@@ -59,7 +59,7 @@ a single digit @Char@ and the corresponding @Int@.
 @digitToInt@ operates fails unless its argument satisfies @isHexDigit@,
 but recognises both upper and lower-case hexadecimal digits (i.e. @'0'@..@'9'@,
 @'a'@..@'f'@, @'A'@..@'F'@).  @intToDigit@ fails unless its argument is in the range
-@0@..@15@, and generates lower-case hexadecmial digits.
+@0@..@15@, and generates lower-case hexadecimal digits.
 
 The @isSpace@ function recognizes only white characters in the Latin-1
 range.
@@ -74,7 +74,7 @@ to the character that it encodes.  For example:
 @
   showLitChar '\n' s       =  "\\n" ++ s
   lexLitChar  "\\nHello"   =  [("\\n", "Hello")]
-  readLitChar "\\nHello"   =  [("\n", "Hello")]
+  readLitChar "\\nHello"   =  [('\n', "Hello")]
 @
 \eprog
 

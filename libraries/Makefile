@@ -40,6 +40,7 @@ EXPAND = expand
 # generator so I'm changing the .verb files to lower case  -- jcp
 
 RELEASE_DIR = ../haskell98-revised
+JFP_DIR = ../jfp-release
 
 PARTS =		library.tex introduction.tex ratio.tex complex.tex ix.tex \
                 numeric.tex \
@@ -140,6 +141,12 @@ release: library.ps html
 publish-pdf: library.pdf
 	gzip < library.pdf > y:Haskell/haskell98-library/library.pdf.gz
 
+jfp: ${PARTS} ${CODE} ${HEADERS} index-intro.tex
+	-mkdir $(JFP_DIR)
+	-mkdir $(JFP_DIR)/code
+	-mkdir $(JFP_DIR)/headers
+	for n in ${PARTS}  ${CODE}  ${HEADERS}; do  \
+		../tools/subsection < $$n >  $(JFP_DIR)/$$n ; done 
 
 #########################################
 #	Suffix rules

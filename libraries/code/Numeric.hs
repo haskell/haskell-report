@@ -313,7 +313,7 @@ floatToDigits base x =
 -- This floating point reader uses a less restrictive syntax for floating
 -- point than the Haskell lexer.  The `.' is optional.
 
-readFloat     :: (RealFloat a) => ReadS a
+readFloat     :: (RealFrac a) => ReadS a
 readFloat r    = [(fromRational ((n%1)*10^^(k-d)),t) | (n,d,s) <- readFix r,
                                                        (k,t)   <- readExp s] ++
                  [ (0/0, t) | ("NaN",t)      <- lex r] ++

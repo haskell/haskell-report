@@ -32,8 +32,9 @@ or Nothing, if there is no such element.
 
 There are a number of ``set'' operations defined over the @List@ type.
 @nub@ (meaning ``essence'') removes duplicates elements from a list.
-@delete@, @(\\)@, @union@ and @intersect@ preserve the invariant that 
-lists don't contain duplicates, provided that their first argument
+@delete@, @(\\)@, @union@ and @intersect@ (and their @By@ variants) 
+preserve the invariant their result
+does not contain duplicates, provided that their first argument
 contains no duplicates.
 
 \begin{itemize}
@@ -72,7 +73,7 @@ has been removed from @xs@.  Thus, @(xs ++ ys) \\ xs == ys@.
 @intersect@\indextt{intersect} is list intersection, e.g.,  
 \bprog
 @
-  intersect [1,2,3,4] `intersect` [2,4,6,8] == [2,4]
+  [1,2,3,4] `intersect` [2,4,6,8] == [2,4]
 @
 \eprog
 \end{itemize}
@@ -194,18 +195,18 @@ counterpart whose name is suffixed with ``@By@''.  For example, the
 function @nub@ could be defined as follows:
 \bprog
 @
-  nub                     :: (Eq a) => [a] -> [a]
-  nub []                  =  []
-  nub (x:xs)              =  x : nub (filter (\y -> x /= y) xs)
+  nub              :: (Eq a) => [a] -> [a]
+  nub []           =  []
+  nub (x:xs)       =  x : nub (filter (\y -> not (x == y)) xs)
 @
 \eprog
 However, the equality method may not be appropriate in all situations.
 The function:
 \bprog
 @
-  nubBy                   :: (a -> a -> Bool) -> [a] -> [a]
-  nubBy eq []             =  []
-  nubBy eq (x:xs)         =  x : nubBy eq (filter (\y -> not (eq x y)) xs)
+  nubBy            :: (a -> a -> Bool) -> [a] -> [a]
+  nubBy eq []      =  []
+  nubBy eq (x:xs)  =  x : nubBy eq (filter (\y -> not (eq x y)) xs)
 @
 \eprog
 allows the programmer to supply their own equality test.
@@ -249,7 +250,7 @@ a generalised version of a @Prelude@ function.  For example,
   genericLength       :: Integral a => [b] -> a
 @ 
 \eprog
-is a generalised verion of @length@.
+is a generalised version of @length@.
 
 The ``@generic@'' operations are as follows:
 @genericLength@, @genericTake@, @genericDrop@,

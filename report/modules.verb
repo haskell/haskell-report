@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/modules.verb,v 1.16 2001/12/21 16:00:25 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/modules.verb,v 1.17 2002/12/02 11:22:02 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Modules</title>
 %*section 5
@@ -75,7 +75,7 @@ beginning with a capital letter; i.e.~"modid").
 There is one distinguished module, @Prelude@, which is imported into
 all modules by default (see Section~\ref{standard-prelude}), plus a
 set of standard library modules that may be imported as required
-(see the \Haskell{} Library Report\cite{libraries}).
+(see the \Haskell{} Library Report).
 
 \subsection{Module Structure} 
 \label{module-implementations}
@@ -163,7 +163,8 @@ construction of abstract datatypes (see Section~\ref{abstract-types}).
 \item
 The form $T@(@c_1@,@\ldots@,@c_n@)@$, 
 names the type and some or all of its constructors and field names.  
-The subordinate names $c_i$ must not contain duplicates.  
+% Restriction removed March 02:
+% The subordinate names $c_i$ must not contain duplicates.  
 \item
 The abbreviated form "T@(..)@" names the type 
 and all its constructors and field names that are currently in scope
@@ -199,7 +200,9 @@ declared in a @class@ declaration may be named in one of three ways:
 The form "C" names the class {\em but not the class methods}.
 \item
 The form $C@(@f_1@,@\ldots@,@f_n@)@$, names the class and some or all
-of its methods.  The subordinate names $f_i$ must not contain duplicates.
+of its methods.  
+% Restriction removed March 02:
+% The subordinate names $f_i$ must not contain duplicates.
 \item
 The abbreviated form $C@(..)@$ names the class and all its methods
 that are in scope (whether qualified or not).
@@ -211,10 +214,10 @@ is in scope in the module body regardless of whether it is in scope
 under a qualified or unqualified name.
 
 \item
-The form ``@module M@'' abbreviates the set of all entities whose
-{\em unqualified} name, $e$, is in scope, and for which the {\em qualified} name
-$M.e$ is also in scope and refers to the same entity as $e$.  This set
-may be empty.
+The form ``@module M@'' names the set of all entities that are in
+scope with both an unqualified name ``@e@'' and a qualified name
+``@M.e@''.
+This set may be empty.
 For example:
 \bprog
 @
@@ -263,11 +266,11 @@ The {\em unqualified} names of the entities exported by a module must all be dis
   g = f True
 @
 \eprog
-There are name clashes in the export list 
-between @C.g@ and @g@, 
-and between @module B@ and @C.f@ (assuming @B.f@ and @C.f@ are different entities), 
-even though there are no name clashes within module @A@ itself.  
-
+There are no name clashes within module @A@ itself, 
+but there are name clashes in the export list between @C.g@ and @g@
+(assuming @C.g@ and @g@ are different entities -- remember, modules
+can import each other recursively), and between @module B@ and @C.f@
+(assuming @B.f@ and @C.f@ are different entities).
 
 \subsection{Import Declarations}
 \label{import}
@@ -280,7 +283,7 @@ impspec   -> @(@ import_1 @,@ ... @,@ import_n [ @,@ ] @)@ & (n>=0)
              |  @hiding@ @(@ import_1 @,@ ... @,@ import_n [ @,@ ] @)@ & (n>=0)
 
 import    -> var
-	  |  tycon [ @(..)@ | @(@ cname_1 @,@ ... @,@ cname_n @)@] &  (n>=1)
+	  |  tycon [ @(..)@ | @(@ cname_1 @,@ ... @,@ cname_n @)@] &  (n>=0)
 	  |  tycls [@(..)@ | @(@ var_1 @,@ ... @,@ var_n @)@] & (n>=0)
 cname     -> var | con
 @@@
@@ -383,11 +386,11 @@ name as a qualified import:
 \bprog
 @
   module Ring where
-  import qualified Prelude  -- All Prelude names must be qualified
+  import qualified Prelude    -- All Prelude names must be qualified
   import List( nub )
 
-  l1 + l2 = l1 ++ l2        -- This + differs from the one in the Prelude
-  l1 * l2 = nub (l1 + l2)   -- This * differs from the one in the Prelude
+  l1 + l2 = l1 Prelude.++ l2  -- This + differs from the one in the Prelude
+  l1 * l2 = nub (l1 + l2)     -- This * differs from the one in the Prelude
 
   succ = (Prelude.+ 1)
 @
@@ -450,7 +453,7 @@ Import declaration & Names brought into scope \\
   @import qualified A hiding ()@	& @A.x@, @A.y@ \\
   @import qualified A hiding (x)@	& @A.y@ \\
   @import A as B@		& @x@, @y@, @B.x@, @B.y@ \\
-  @import A as B(x)@		& @B.x@ \\
+  @import A as B(x)@		& @x@, @B.x@ \\
   @import qualified A as B@	& @B.x@, @B.y@ \\
 \hline
 \end{tabular}
@@ -584,7 +587,7 @@ the following module is legal:
 The local declaration for @sin@ is
 legal, even though the Prelude function @sin@ is implicitly in
 scope. The references to @Prelude.sin@ and @F.sin@ must both be qualified
-to make it unambigous which @sin@ is meant. However, the unqualified
+to make it unambiguous which @sin@ is meant. However, the unqualified
 name "@sin@" in the type signature in the first line of @F@ unambiguously
 refers to the local declaration for @sin@.
 
@@ -653,8 +656,8 @@ many predefined library modules, which provide less frequently used
 functions and types.  For example, arrays, 
 tables, and most of the input/output are all part of the standard
 libraries.    These are 
-defined in the Haskell Library Report\cite{libraries},
-a separate document.  Separating
+defined in the Haskell Library Report.
+Separating
 libraries from the Prelude has the advantage of reducing the size and
 complexity of the Prelude, allowing it to be more easily assimilated,
 and increasing the space of useful names available to the programmer.
@@ -728,20 +731,23 @@ affect the meaning of these special constructs.  For example, in
 \bprog
 @
   module B where
-    import qualified Prelude
+    import Prelude()
     import MyPrelude
-      ...
+    f x = (x,x)
+    g x = (,) x x
+    h x = [x] ++ []
 @
 \eprog
-@B@ imports nothing from @Prelude@, but the
-explicit @import qualified Prelude@ declaration prevents the automatic
-import of 
-@Prelude@.  @import MyPrelude@ brings the
-non-standard prelude into scope.  As before, the
-standard prelude names are hidden explicitly.  Special
-syntax, such as lists or tuples, always refers to prelude entities:
-there is no way to redefine the meaning of @[x]@ in terms of a
+the explicit @import Prelude()@ declaration prevents the automatic
+import of @Prelude@, while the declaration @import MyPrelude@ brings the
+non-standard prelude into scope.  
+The special syntax for tuples (such as @(x,x)@ and @(,)@) and lists
+(such as @[x]@ and @[]@) continues to refer to the tuples and lists
+defined by the standard @Prelude@;
+there is no way to redefine the meaning of @[x]@, for example, in terms of a
 different implementation of lists.
+On the other hand, the use of @++@ is not special syntax, so it refers
+to @++@ imported from @MyPrelude@.
 
 It is not possible, however, to hide @instance@ declarations in the
 @Prelude@.  For example, one cannot define a new instance for @Show Char@.
