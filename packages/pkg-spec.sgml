@@ -183,7 +183,7 @@ driven by their module name: <filename>~/coll/Data/Set.hs</filename>,
 Next, she writes
 a <emphasis>package description</emphasis>, which she puts in <filename>~/coll/</filename>&pkg-desc;:
 <programlisting>
-Name: angela-col
+Name: angela-coll
 Version: 0.1.1.1.1-foo-bar-bang
 License: LGPL
 Copyright: Copyright (c) 2004, Angela Author
@@ -203,7 +203,7 @@ This library implements the &hps; simple build infrastructure.</para>
 <para>The first line arranges that when Angela, (or Joe, or Sam, etc.)
 executes <filename>Setup.lhs</filename> as a shell script, the shell
 will invoke <command>runhugs</command>, which will in turn run
-<literal>main</literal> imported from the library
+<literal>mainn</literal> imported from the library
 <literal>Distribution.Simple</literal>.  </para>
 
 <para>It is not necessary that the script be run this way, it is just
@@ -1368,15 +1368,6 @@ invokes
 
 <para>Marcus simply arranges that when his makefiles build a distribution, they include this simple setup script in
 the root of the distribution, where the Bob the Builder expects to find it.</para>
-
-<note><para> Isaac isn't sure that we can provide much value here
-beside providing a standard command-line parser (which is pretty good
-at least).  I think it might be good to offer a boilerplate Setup.lhs
-file for makefiles, but implementing it in a library is a bit
-overkill.  Perhaps in the future, if the build system is delivered w/
-fptools or something, we could provide an API to wrap
-that. </para> <para>Simon says: fine -- but we should make it easy for Marcus Makefile.  What do we offer?</para></note>
-
 
 </sect2>
 
