@@ -14,6 +14,9 @@
 % Interface. 
 
 % Changes since RC6:
+% * In `ForeignPtr', added `mallocForeignPtrArray' and `mallocForeignPtrArray0'
+% * Clarified spec of allocations functions adding constraints taken from the
+%   corresponding C routines
 % * `mallocBytes' and `allocaBytes' must align memory sufficiently for any
 %   basic foreign type that fits into the allocated block
 % * Removed typos in the description of the module `ForeignPtr'
@@ -76,6 +79,8 @@
 %   C bindings.
 
 % TODO:
+% * "Foreign Proxy" discussion not finished yet
+% * mallocForeignPtrArray and related issues
 % * Revise layout of the front page.
 % * Implement HTMLization.  (Malcolm suggests using
 %   <http://pauillac.inria.fr/~maranget/hevea/>)
@@ -110,7 +115,7 @@
     \\
     \textbf{--- DRAFT ---}\\[1ex]
     \ttfamily\scriptsize
-    $\relax$Id: ffi.tex,v 1.38 2003/01/14 12:21:00 chak Exp $\relax$%
+    $\relax$Id: ffi.tex,v 1.39 2003/01/22 05:47:14 chak Exp $\relax$%
     \ignorespaces}
   }
 \end{DRAFT}
@@ -1262,13 +1267,21 @@ the following signature and purpose:
   \emph{not} guaranteed that the block of memory was allocated by
   \code{MarshalAlloc.malloc}; so, \code{MarshalAlloc.realloc} must not be
   applied to the resulting pointer.
-  
+
 \item[mallocForeignPtrBytes ::\ Int -> IO (ForeignPtr a)] Allocate a block of
   memory of the given number of bytes with a finalizer attached that frees the
   block of memory as soon as all references to that block of memory have
   been dropped.  As for \code{mallocForeignPtr}, \code{MarshalAlloc.realloc}
   must not be applied to the resulting pointer.
 
+\item[mallocForeignPtrArray~ ::\ Storable a => Int -> IO (ForeignPtr a)]
+\item[mallocForeignPtrArray0 ::\ Storable a => Int -> IO (ForeignPtr a)]%
+  \combineitems These functions correspond to \code{MarshalArray}'s
+  \code{mallocArray} and \code{mallocArray0}, respectively, but yield a memory
+  area that has a finalizer attached that releases the memory area.  As with
+  the previous two functions, it is not guaranteed that the block of memory
+  was allocated by \code{MarshalAlloc.malloc}.
+  
 \item[withForeignPtr ::\ ForeignPtr a -> (Ptr a -> IO b) -> IO b]
   This is a way to obtain the pointer living inside a foreign pointer. This
   function takes a function which is applied to that pointer. The resulting
@@ -1505,10 +1518,16 @@ storage space for such an array can be allocated by the following functions:
   
 \item[realloc ::\ Storable b => Ptr a -> IO (Ptr b)] Resize a memory area that
   was allocated with \code{malloc} or \code{mallocBytes} to the size needed to
-  store values of type \code{b}.
+  store values of type \code{b}.  The returned pointer may refer to an
+  entirely different memory area, but will be suitably aligned to hold values
+  of type \code{b}.  The contents of the referenced memory area will be the
+  same as of the original pointer up to the minimum of the size of values of
+  type \code{a} and \code{b}.  If the argument to \code{realloc} is
+  \code{Ptr.nullPtr}, \code{realloc} behaves like \code{malloc}.
   
 \item[reallocBytes ::\ Ptr a -> Int -> IO (Ptr a)] As \code{realloc}, but
-  allocate a memory area of the given size.
+  allocate a memory area of the given size.  In addition, if the requested size
+  is 0, \code{reallocBytes} behaves like \code{free}.
   
 \item[free ::\ Ptr a -> IO ()] Free a block of memory that was allocated with
   \code{malloc}, \code{mallocBytes}, \code{realloc}, \code{reallocBytes}, or
@@ -1522,7 +1541,9 @@ with \code{alloca} or \code{allocaBytes}, the behaviour is undefined.
 However, \code{reallocBytes} may be used on such memory areas.  Any further
 access to memory areas allocated with \code{alloca} or \code{allocaBytes},
 after the computation that was passed to the allocation function has
-terminated, leads to undefined behaviour.
+terminated, leads to undefined behaviour.  Any further access to the memory
+area referenced by a pointer passed to \code{realloc}, \code{reallocBytes}, or
+\code{free} entails undefined behaviour.
 
 \subsection{\code{MarshalArray}}
 \label{sec:MarshalArray}
