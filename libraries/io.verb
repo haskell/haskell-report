@@ -160,30 +160,31 @@ handles are initially open.
 \label{SemiClosed}
 \index{semi-closed handles}
 
-The operation "@hGetContents@ hdl"\indextt{hGetContents} 
+The operation "@hGetContents@ hdl"\indextt{hGetContents} (Section~\ref{hGetContents})
 puts a handle "hdl" into an intermediate
 state, {\em semi-closed}.  In this state, "hdl" is effectively closed,
 but items are read from "hdl" on demand and accumulated in a special
-stream returned by @hGetContents@~"hdl".
+list returned by @hGetContents@~"hdl".
  
 Any operation that fails because a handle is
 closed, also fails if a handle is semi-closed. The only exception is @hClose@.
-A semi-closed handle
-becomes closed:
+A semi-closed handle becomes closed:
 \begin{itemize}
 \item
 if  @hClose@ is applied to it;
 \item
-if an I/O error occurs when reading an item from the
-file item from the stream;
+if an I/O error occurs when reading an item from the handle;
 \item
-or once the entire contents of the file has been read.
+or once the entire contents of the handle has been read.
 \end{itemize}
 
 Once a semi-closed handle becomes closed, the contents of the
-associated stream becomes fixed, and is the list of those items which
-were successfully read from that handle. Any I/O errors encountered while
-a handle is semi-closed are simply discarded.
+associated list becomes fixed.  The contents of this final list is
+only partially specified: it will contain at least all the items of
+the stream that were evalutated prior to the handle becoming closed.
+
+Any I/O errors encountered while a handle is semi-closed are simply
+discarded.
  
 \subsubsection{File locking}
 
@@ -300,22 +301,24 @@ except that it works only on @stdin@.
 
 Three kinds of buffering are supported: line-buffering, 
 block-buffering or no-buffering.  These modes have the following effects.
-For output, items are written out from the internal buffer 
+For output, items are written out, or \emph{flushed}, from the internal buffer 
 according to the buffer mode:
 \begin{itemize}
 \item
 {\bf line-buffering:}
-the entire buffer is written out whenever a newline is output, the
-buffer overflows, a flush is issued, or the handle is closed.
+the entire buffer is flushed whenever a newline is output, the
+buffer overflows, a @hFlush@ is issued, or the handle is closed.
 \item
 {\bf block-buffering:}
-the entire buffer is written out whenever it overflows, a flush is
+the entire buffer is written out whenever it overflows, a @hFlush@ is
 issued, or the handle is closed.
 \item
 {\bf no-buffering:}
 output is written immediately, and never stored in the buffer.
 \end{itemize}
-The buffer is emptied as soon as it has been written out.
+An implementation is free to flush the buffer more frequently, but not 
+less frequently, than
+specified above.  The buffer is emptied as soon as it has been written out.
 
 Similarly, input occurs according to the buffer mode for handle "hdl".
 \begin{itemize}
@@ -331,7 +334,9 @@ when the buffer for "hdl" becomes empty, the
 next block of data is read into the buffer.
 \item
 {\bf no-buffering:} 
-the next input item is read and returned.
+the next input item is read and returned.  The @hLookAhead@\indextt{hLookAhead} 
+operation (Section~\ref{hLookAhead})implies that
+even a no-buffered handle may require a one-character buffer.
 \end{itemize}
 
 For most implementations, physical files will normally be block-buffered 
@@ -494,7 +499,7 @@ Computation @hLookAhead@~"hdl"\indextt{hLookAhead} returns the next character fr
 character is available.
 
 {\em Error reporting}:
-the @hLookahead@ computation may fail with:
+the @hLookAhead@ computation may fail with:
 @isEOFError@ if the end of file has been reached.
 
 \subsubsection{Reading The Entire Input}

@@ -48,15 +48,15 @@ should be
   size :: Stack a -> Int
 </pre>
 
-<p><li> [Apr 20001] <strong>Page 14, Section 3.1, Errors.</strong>  In the first sentence of
+<p><li> [Apr 2001] <strong>Page 14, Section 3.1, Errors.</strong>  In the first sentence of
 the section, after "indistinguishable" add "by a Haskell program".
 
-<p><li> [Apr 20001] <strong>Page 20, Section 3.10, Arithmetic sequences.</strong>
+<p><li> [Apr 2001] <strong>Page 20, Section 3.10, Arithmetic sequences.</strong>
 In the second paragraph, in the sentence "For the type <tt>Integer</tt>,
 arithmetic sequences have the following meaning...", replace "<tt>Integer</tt>"
 with "<tt>Int</tt>".
 
-<p><li> [Apr 20001] <strong>Page 21, Section 3.11, List Comprehensions; and Page 128.</strong> 
+<p><li> [Apr 2001] <strong>Page 21, Section 3.11, List Comprehensions; and Page 128.</strong> 
 <ul> <li> In the production for "aexp", change the "n >= 0" to "n >= 1".
 <li> Remove the production for (empty qualifier)
 </ul>
@@ -65,7 +65,7 @@ and no qualifier is empty.  The translation lower down page 23 is then
 not utterly rigorous, because Q can be empty, and when it is there is no preceding
 comma, but I reckon it would make matters worse to "fix" it.
 
-<p><li> [Apr 20001] <strong>Page 23, Section 3.14, Do Expressions; 
+<p><li> [Apr 2001] <strong>Page 23, Section 3.14, Do Expressions; 
 and Page 128, Appendix B.4, Context Free Syntax.</strong>
 <ul>
 <li>
@@ -78,11 +78,11 @@ Change the production for <em>stmts</em> to read:
 That is, every list of statements must end in an expression, optionally
 followed by a semicolon.
 
-<p><li> [Apr 20001] <strong>Page 31,33, Figures 3 and 4, Semantics of Case Expressions.</strong>
+<p><li> [Apr 2001] <strong>Page 31,33, Figures 3 and 4, Semantics of Case Expressions.</strong>
 Replace "completely new variable" by "new variable" in these two figures.  (Some clauses
 said "new" and some "completely new" which is misleadingly inconsistent.)
 
-<p><li> [Apr 20001] <strong>Page 33, Figure 4, Semantics of Case Expressions Part 2.</strong>
+<p><li> [Apr 2001] <strong>Page 33, Figure 4, Semantics of Case Expressions Part 2.</strong>
 In clause (r) replace "e0" by "v" throughout.
 
 <p><li> <strong>Page 40, Section 4.2.1, Algebraic Datatype Declarations.</strong>
@@ -117,7 +117,7 @@ The new phrase is "if v appears only in constraints of the
 form (C v) where C is a class".  Without this condition the rest of the
 sentence does not make sense.
 
-<p><li> [Apr 20001] <strong>Page 53, Section 4.3.3.</strong>  Replace "For example, these two function
+<p><li> [Apr 2001] <strong>Page 53, Section 4.3.3.</strong>  Replace "For example, these two function
 definitions are equivalent:", and the two lines of code that follow by:
 <br>
 "For example, these three function definitions are all equivalent:
@@ -129,7 +129,7 @@ definitions are equivalent:", and the two lines of code that follow by:
 (This change makes explicit that an infix operator with more than two arguments
 can have all of them on the LHS.)
 
-<p><li> [Apr 20001] <strong>Page 54, Section 4.4.3, subsection Function Bindings.</strong>
+<p><li> [Apr 2001] <strong>Page 54, Section 4.4.3, subsection Function Bindings.</strong>
 In the first translation scheme ("The general binding form for functions..."), 
 the <em>xn</em> should be <em>xk</em> (suitably subscripted in both cases!),
 and all three <em>m</em> subscripts should be <em>n</em>.
@@ -144,6 +144,17 @@ is wrong; it should read
 <pre>
       f x y = return x == y
 </pre>
+
+<p><li> [May 2001] <strong>Page 62, Section 5, Modules.</strong>
+In paragraph 4, add a footnote to the sentence "A multi-module Haskell
+program can be converted into a single-module program by ...", namely:
+<p>
+"There are two minor exceptions to this statement.
+First, <tt>default</tt> declarations scope over a single module (Section 4.3.4).
+Second, Rule 2 of the monomorphism restriction (Section 4.5.5)
+is affected by module boundaries."
+<p>
+This footnote qualifies the otherwise over-strong statement.
 
 <p><li> <strong>Page 66, Section 5.3, Import Declarations, numbered item 2.</strong>
 Start a new paragraph before the sentence "The hiding clause only applies to unqualified
@@ -197,6 +208,25 @@ Every module that imports <tt>A</tt> unqualified, and then makes an unqualified
 reference to <tt>null</tt> must also resolve the ambiguous use of <tt>null</tt>
 just as <tt>A</tt> does.  Thus there is little danger of accidentally shadowing 
 Prelude names."
+
+<p><li> [May 2001]  <strong>Page 74, Section 6.1.6, Tuples.</strong>
+Replace the first paragraph of this section with:
+<p>
+"Tuples are algebraic datatypes with special syntax, as defined
+in Section 3.8.  Each tuple type has a single constructor.
+All tuples are instances of <tt>Eq</tt>, <tt>Ord</tt>, <tt>Bounded</tt>, <tt>Read</tt>,
+and <tt>Show</tt> (provided, of course, that all their component types are).
+Classes defined in the libraries may also supply
+instances for tuple types.
+<p>
+There is no upper bound on the size of a tuple, but some Haskell
+implementations may restrict the size of tuples, and limit the
+instances associated with larger tuples.  However, every Haskell
+implementation must support tuples up to size 7, and their instances
+for <tt>Eq</tt>, <tt>Ord</tt>, <tt>Bounded</tt>, <tt>Read</tt>, and <tt>Show</tt>.  The Prelude and
+libraries define tuple functions such as <tt>zip</tt> for tuples up to a size
+of 7."
+
 
 <p><li> [Apr 2001]  <strong>Page 74, Section 6.1.6, Function Types.</strong>
 Delete the sentence "Functions are an instance of the <tt>Show</tt> class but not <tt>Read</tt>".
@@ -324,7 +354,24 @@ Replace the definitions of <tt>take</tt>, <tt>drop</tt>, and <tt>splitAt</tt> wi
 The effect is that all three functions are defined on negative arguments.  This
 is a semantic change.
 
-<p><li> [May 2000.]  <strong>Page 132, Appendix D, Specification of Derived Instances</strong>. 
+<p><li> [May 2001]  <strong>Page 115, instances <tt>Show Int</tt> and <tt>Read Int</tt></strong>. 
+Replace the instances for <tt>Show Int</tt> and <tt>Read Int</tt> with
+<pre>
+    instance  Show Int  where
+	showsPrec           = showsPrec . toInteger
+	    -- Converting to Integer avoids
+	    -- possible difficulty with minInt
+    
+    instance  Read Int  where
+      readsPrec p r = (fromInteger i, t)
+		    where
+		      (i,t) = readsPrec p r
+	    -- Reading at the Integer type avoids
+	    -- possible difficulty with minInt
+</pre>
+The previous definitions (which are simply specifications, remember) failed on minInt.
+
+<p><li> [May 2001]  <strong>Page 132, Appendix D, Specification of Derived Instances</strong>. 
 In numbered item 3, replace 
 ``(all constructors must by nullary)'' with 
 ``(all constructors must be nullary)''.
@@ -373,24 +420,14 @@ doing it by hand.  In particular, an error will be raised if y is zero.
 
 <p><li> <strong>Page 17, Section 5, first text line</strong>.  Replace "continuous" by "contiguous".
 
-<p><li>  [Apr 2001] <strong>Page 19, Section 5.2, comment on <tt>rangeSize</tt></strong>.  Replace whole comment by
-<pre>
-	-- NB: replacing "null (range b)" by  "not (l <= h)"
-	-- fails if the bounds are tuples.  For example,
-	-- 	(1,2) <= (2,1)
-	-- but the range is nevertheless empty
-	--	range ((1,2),(2,1)) = []
-</pre>
-(This simply fixes a misleading comment.)
-
-<p><li> [May 2000] <strong>Page 17, Section 5, Indexing operations</strong>.  
+<p><li> [May 2001] <strong>Page 17, Section 5, Indexing operations</strong>.  
 Add the following equation to the laws listed just before Section 5.1:
 <pre>
   map index (range (l,u)) == [0..rangeSize (l,u)]
 </pre>
 This documents an invariant that was previously only implicit.
 
-<p><li> [May 2000] <strong>Page 17, Section 5, Indexing operations</strong>.
+<p><li> [May 2001] <strong>Page 17, Section 5, Indexing operations</strong>.
 This significant item (a) removes <tt>Ord</tt> from <tt>Ix</tt>'s superclasses, and
 (b) make <tt>rangeSize</tt> into a method of <tt>Ix</tt> rather than a free-standing declaration.
 Though these changes are 
@@ -421,12 +458,13 @@ class declaration, and the <tt>rangeSize</tt> declaration, with:
 	-- but the range is nevertheless empty
 	--	range ((1,2),(2,1)) = []
 </pre>
+(Note: the comment has changed too; it was misleading before.)
 </ul>
 
 <p><li> <strong>Page 22, Section 6.3; and Page 23, Fig 3</strong>:
 Replace "<tt>map</tt>" by "<tt>fmap</tt>" (two occurrences in 6.3, one in Fig 3).
 
-<p><li> [May 2000] <strong>Page 23, Figure 3</strong>.
+<p><li> [May 2001] <strong>Page 23, Figure 3</strong>.
 In the definition of <tt>diag</tt>, delete the guard ``<tt>| l==l' &amp;&amp; u==u'</tt>''.
 (The original intent was presumably to check for a square array, but
  simply makes the definition recursive and hence divergent.)
@@ -473,6 +511,16 @@ The signature for <tt>try</tt> should be
   try :: IO a -> IO (Either IOError a)
 </pre>
 
+<p><li> [May 2001] <strong>Page 57, Section 11.2.1 Semi-closed handles</strong>.
+Replace the sentence "Once a semi-closed handle becomes closed..." with
+"Once a semi-closed handle becomes closed, the contents of the
+associated list becomes fixed.  The contents of this final list is
+only partially specified: it will contain at least all the items of
+the stream that were evalutated prior to the handle becoming closed."
+<p>
+This change attempts to clarify the (murky) meaning of <tt>hGetContents</tt> followed by
+<tt>hClose</tt>.
+
 <p><li> [Apr 2001] <strong>Page 56-58, Section 11.2, Files and Handles</strong>.
 Add a section 11.2.3 to clarify the file-locking issue.  It says:
 <p>
@@ -493,6 +541,17 @@ holds a semi-closed handle on the file until the entire contents of the file hav
 consumed.  It follows that an attempt to write to a file (using <tt>writeFile</tt>, for example)
 that was earlier opened by <tt>readFile</tt> will usually result in 
 failure with <tt>isAlreadyInUseError</tt>."
+
+<p><li> [May 2001] <strong>Page 59, Section 11.4.2</strong>.
+Before "The buffer is emptied as soon as it has been written out." add: 
+"An implementation is free to flush the buffer more frequently, but not 
+less frequently, than
+specified above."  (Clarification only.)
+
+<p><li> [May 2001] <strong>Page 59, Section 11.4.2</strong>.
+In the second no-buffering bullet (sixth bullet in the sub-section) add the
+sentence: "The <tt>hLookAhead</tt> operation implies that
+even a no-buffered handle may require a one-character buffer. "  (Clarification only.)
 
 <p><li><strong>Page 62, Section 11.7.2</strong>.
 <ul>

@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/libraries/library.verb,v 1.2 2001/05/29 15:39:59 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/libraries/library.verb,v 1.3 2001/05/30 10:59:06 simonpj Exp $
 %
 % NOTE:--------------------------------------------------------------
 % The formatting of this report and the ``new font selection scheme''
@@ -419,13 +419,13 @@
 \begin{center} \large
 \begin{tabular}{l@@{\hspace{5mm}}l}
 Simon Peyton Jones$^8$ [editor] & John Hughes$^3$ [editor] \\
-Lennart Augustsson$^3$		& Dave Barton$^7$ \\
+Lennart Augustsson$^9$		& Dave Barton$^7$ \\
 Brian Boutel$^4$ 		& Warren Burton$^5$ \\
 Joseph Fasel$^6$ 		& Kevin Hammond$^2$ \\
 Ralf Hinze$^{12}$ 		& Paul Hudak$^1$ \\
-Thomas Johnsson$^3$ 		& Mark Jones$^9$ \\
+Thomas Johnsson$^3$ 		& Mark Jones$^14$ \\
 John Launchbury$^{14}$ 		& Erik Meijer$^{10}$ \\
-John Peterson$^1$		& Alastair Reid$^1$ \\
+John Peterson$^1$		& Alastair Reid$^{15}$ \\
 Colin Runciman$^{13}$ 		& Philip Wadler$^{11}$
 \end{tabular}
 \end{center}
@@ -441,12 +441,13 @@ Authors' affiliations:
 (6)~Los Alamos National Laboratory
 (7)~Intermetrics
 (8)~Microsoft Research, Cambridge
-(9)~University of Nottingham
-(10)~Utrecht University
-(11)~Bell Labs
+(9)~Sandburst Corporation
+(10)~Microsoft Corporation
+(11)~Avaya Labs
 (12)~University of Bonn
 (13)~York University
 (14)~Oregon Graduate Institute
+(15)~University of Utah
 \end{quotation}
 \vspace{.2in}
 \begin{center}
