@@ -34,6 +34,16 @@ pattern, not the declaration.  Thus, the Report can be clarified by
 changing the end of the first sentence above to read "the order they
 are named in the pattern field list".
 
+<p><li> [July 2004] <strong>Page 32, Section 3.17.2, Informal Semantics of
+Pattern-Matching, case #6.</strong>
+Case 6 begins: "Matching against a constructor using labeled fields is
+..."  To some readers, this could appear to invert the sense of
+matching, which in all other places is used consistently to mean
+matching a pattern against a value, not a value against a pattern.
+
+<p>The proposed fix is to change the start of the sentence to read:
+"Matching a constructor pattern using labeled fields is ..."
+
 <p><li> [July 2004] <strong>Page 55, Section 4.4.2, Fixity
 Declarations.</strong> The operator <tt>=&lt;&lt;</tt> defined
 in the Prelude is missing from Table 4.1 - it has precedence 1,
