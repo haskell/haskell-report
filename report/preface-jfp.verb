@@ -1,0 +1,365 @@
+
+%**<title>Preface</title>
+%*section
+%**~sheader
+\markboth{PREFACE}{PREFACE}
+\begin{center}
+{\Large \bf Preface}
+\end{center}
+
+\vspace{.2in}
+
+\begin{quote}
+``{\em Some half dozen persons have written technically on combinatory
+logic, and most of these, including ourselves, have published
+something erroneous.  Since some of our fellow sinners are among the
+most careful and competent logicians on the contemporary scene, we
+regard this as evidence that the subject is refractory.  Thus fullness
+of exposition is necessary for accuracy; and excessive condensation
+would be false economy here, even more than it is ordinarily.}''
+\begin{flushright}
+Haskell B.~Curry and Robert Feys \\
+in the Preface to {\em Combinatory Logic} \cite{curry&feys:book}, May 31, 1956
+\end{flushright}
+\end{quote}
+
+\vspace{.2in}
+
+\noindent
+In September of 1987 a meeting was held at the conference on
+Functional Programming
+Languages and Computer Architecture (FPCA~'87) in
+Portland, Oregon, to discuss an unfortunate situation
+in the functional programming community: there had come into being
+more than a dozen non-strict, purely functional programming languages,
+all similar in expressive power and semantic underpinnings.  There
+was a strong consensus at this meeting that more widespread use of
+this class of functional languages\index{functional language} was
+being hampered by the lack of a common language.  It was decided
+that a committee should be formed to design such a language, providing
+faster communication of new ideas, a stable foundation for real
+applications development, and a vehicle through which others
+would be encouraged to use functional languages.  This
+document describes the result of that committee's efforts: a purely
+functional programming language called \Haskell{},
+\index{Haskell@@\Haskell{}}
+named after the logician Haskell B.~Curry\index{Curry, Haskell B.}
+whose work provides the logical basis for much of ours.
+
+\subsection{Goals}
+
+The committee's primary goal was to design a language that
+satisfied these constraints:
+\begin{enumerate}
+\item It should be suitable for teaching, research, and applications,
+      including building large systems.
+\item It should be completely described via the publication of a formal
+      syntax and semantics.
+\item It should be freely available.  Anyone should be permitted to
+      implement the language and distribute it to whomever they please.
+\item It should be based on ideas that enjoy a wide consensus.  
+\item It should reduce unnecessary diversity in functional 
+      programming languages.
+\end{enumerate}
+
+\subsection{Haskell 98: language and libraries}
+
+The committee intended that \Haskell{} would serve as a basis for
+future research in language design, and hoped that extensions or
+variants of the language would appear, incorporating experimental
+features.
+
+Haskell has indeed evolved continuously since its original publication.
+By the middle of 1997, there had been four iterations of the language design
+(the latest at that point being Haskell 1.4).  At the 1997 Haskell Workshop 
+in Amsterdam, it was decided that a stable variant of Haskell was needed;
+this stable language is the subject of this Report, and is called ``Haskell 98''.
+
+Haskell 98 was conceived as a relatively minor tidy-up of Haskell 1.4, making
+some simplifications, and removing some pitfalls for the unwary. It is intended to
+be a ``stable'' language in sense the {\em implementors are committed to supporting
+Haskell 98 exactly as specified, for the foreseeable future}.
+
+The original Haskell Report covered only the language, together with a
+standard library called the @Prelude@.  By the time Haskell 98 was
+stabilised, it had become clear that many programs need access to a
+larger set of library functions (notably concerning input/output and
+simple interaction with the operating system).  If these program were
+to be portable, a set of libraries would have to be standardised too.
+A separate effort was therefore begun by a distinct (but overlapping)
+committee to fix the Haskell 98 Libraries.  
+
+The Hsakell 98 Language and Library Reports were published in February 1999.
+
+\subsection{Revising the Haskell 98 Reports}
+
+After a year or two, many typographical errors and infelicities had been
+spotted.  I took on the role of gathering and acting on these corrections,
+with the following goals:
+\begim{itemize}
+\item Correct typographical errors.
+\item Clarify obscure passages.
+\item Resolve ambiguities.
+\item With reluctance, make small changes to make the overall language more
+consistent.
+\end{itemize}
+This task turned out to be much, much larger than I had anticipated.
+As Haskell becomes more widely used, the Report has been scrutinised by more
+and more people, and I have adopted hundreds of (mostly small) changes as 
+a result of their feedback.
+The original committees ceased to exist when the original Haskell 98 Reports were 
+published, so every change was instead proposed to the entire Haskell mailing list.
+
+This document is the outcome of this process of refinement.
+It includes both the Haskell 98 Language Report and the Libraries Report,
+and constitutes the official specification of both.
+It is {\em not} a tutorial on programming in
+\Haskell{} such as the `Gentle Introduction' \cite{tutorial}, and some
+familiarity with functional languages is assumed. 
+
+The entire text of both Reports is available online (see Section~\ref{sect:resources}).
+
+
+\subsection{Extensions to Haskell 98}
+
+Haskell continues to evolve, going well beyond Haskell 98.  For example, at the
+time of writing there are Haskell implementations that support:
+\begin{description}
+\item[Syntactic sugar, including:]
+\begin{itemize}
+\item pattern guards; 
+\item recursive do-notation;
+\item lexically scoped type variables;
+\item meta-programming facilities;
+\end{itemize}
+
+\item[Type system innovations, including:]
+\begin{itemize}
+\item multi-parameter type classes;
+\item functional dependencies;
+\item existential types;
+\item local universal polymorphism and arbitrary rank-types;
+\end{itemize}
+
+\item[Control extensions, including:]
+\begin{itemize}
+\item monadic state;
+\item exceptions;
+\item concurrency;
+\end{itemize}
+\end{description}
+
+There is more besides.  Haskell 98 does not impede these developments.
+Instead, it provides a stable point of reference, so that those who
+wish to write text books, or use Haskell for teaching, can do so in
+the knowledge that Haskell 98 will continue to exist.  On the few
+occasions when we refer to the evolving, future version of Haskell, we
+call it ``Haskell 2''.
+
+\subsection{\Haskell{} Resources}
+\label{sect:resources}
+
+The Haskell web site
+\bprog
+@
+	http://haskell.org
+@
+\eprog
+gives access to many useful resources, including:
+\begin{itemize}
+\item Online versions of the language and library definitions, including
+a complete list of all the differences between Haskell 98 as published in February 1999
+and this revised version. 
+\item Tutorial material on Haskell.
+\item Details of the Haskell mailing list.
+\item Implementations of Haskell.
+\item Contributed Haskell tools and libraries.
+\item Applications of Haskell.
+\end{itemize}
+We welcome your comments, suggestions, and criticisms on the language
+or its presentation in the report, via the Haskell mailing list.
+
+\subsection{Building the language}
+
+Haskell was created, and continues to be sustained, by an active community of 
+researchers and application programmers.  Those who served on the Language and
+Library committees, in particular, devoted a huge amount of time and energy to the
+language.  Here they are, with their affiliation(s) for the relevant period:
+
+\begin{center}
+Arvind (MIT) \\
+Lennart Augustsson (Chalmers University) \\
+Dave Barton (Mitre Corp) \\
+Brian Boutel (Victoria University of Wellington) \\
+Warren Burton (Simon Fraser University) \\
+Jon Fairbairn (University of Cambridge) \\
+Joseph Fasel (Los Alamos National Laboratory) \\
+Andy Gordon (University of Cambridge?) \\
+Maria Guzman (Yale University) \\
+Kevin Hammond (Uniiversity of Glasgow) \\
+Ralf Hinze {University of Bonn) \\
+Paul Hudak [editor] (Yale University) \\
+John Hughes [editor] (University of Glasgow; Chalmers University) \\
+Thomas Johnsson (Chalmers University) \\
+Mark Jones (Nottingham University) \\
+Dick Kieburtz (Oregon Graduate Institute) \\
+John Launchbury (University of Glasgow; Oregon Graduate Institute) \\
+Erik Meijer (Utrecht University) \\
+Rishiyur Nikhil (MIT) \\
+John Peterson (Yale University) \\
+Simon Peyton Jones [editor] (University of Glasgow; Microsoft Research Ltd) \\
+Mike Reeve (Imperial College) \\
+Alastair Reid (University of Glasgow) \\
+Colin Runciman (University of York) \\
+Philip Wadler [editor] (University of Glasgow) \\
+David Wise (Indiana University) \\
+Jonathan Young (Yale University)
+\end{center}
+Those marked [editor] served as the co-ordinating editor for one or more
+revisions of the language.
+
+In addition, dozens of other people made helpful contributions, some small but
+many substantial.  They are as follows:
+Kris Aerts,
+Hans Aberg,
+Sten Anderson,
+Richard Bird,
+Stephen Blott,
+Tom Blenko,
+Duke Briscoe,
+Paul Callaghan,
+Magnus Carlsson,
+Mark Carroll,
+Manuel Chakravarty,
+Franklin Chen,
+Olaf Chitil,
+Chris Clack,
+Guy Cousineau,
+Tony Davie,
+Craig Dickson,
+Chris Dornan,
+Laura Dutton,
+Chris Fasel,
+Pat Fasel, 
+Sigbjorn Finne,
+Michael Fryers,
+Andy Gill, 
+Mike Gunter,
+Cordy Hall,
+Mark Hall,
+Thomas Hallgren,
+Matt Harden,
+Klemens Hemm,
+Fergus Henderson,
+Ralf Hinze,
+Bob Hiromoto,
+Nic Holt,
+Ian Holyer, 
+Randy Hudson,
+Alexander Jacobson,
+Patrick Jansson,
+Robert Jeschofnik,
+Orjan Johansen,
+Simon B.~Jones, 
+Stef Joosten, 
+Mike Joy,
+Stefan Kahrs,
+Antti-Juhani Kaijanaho,
+Jerzy Karczmarczuk,
+Wolfram Karl,
+Kent Karlsson,
+Richard Kelsey,
+Siau-Cheng Khoo, 
+Amir Kishon, 
+Feliks Kluzniak,
+Jan Kort,
+Marcin Kowalczyk,
+Jose Labra,
+Jeff Lewis,
+Mark Lillibridge,
+Bjorn Lisper,
+Sandra Loosemore,
+Pablo Lopez,
+Olaf Lubeck, 
+Ian Lynagh,
+Christian Maeder,
+Ketil Malde,
+Simon Marlow,
+Michael Marte,
+Jim Mattson,
+John Meacham,
+Sergey Mechveliani,
+Erik Meijer,
+Gary Memovich,
+Randy Michelsen, 
+Rick Mohr,
+Andy Moran,
+Graeme Moss,
+Arthur Norman,
+Nick North,
+Chris Okasaki,
+Bjarte M. {\O}stvold,
+Paul Otto, 
+Sven Panne,
+Dave Parrott,
+Ross Patterson,
+Larne Pekowsky,
+Rinus Plasmeijer,
+Ian Poole,
+Stephen Price,
+John Robson, 
+Andreas Rossberg,
+George Russell,
+Patrick Sansom,
+Felix Schroeter,
+Julian Seward,
+Nimish Shah,
+Christian Sievers,
+Libor Skarvada,
+Jan Skibinski,
+Lauren Smith, 
+Raman Sundaresh,
+Ken Takusagawa,
+Satish Thatte,
+Simon Thompson,
+Tom Thomson,
+Tommy Thorn,
+Dylan Thurston,
+Mike Thyer,
+Mark Tullsen,
+David Tweed,
+Pradeep Varma,
+Malcolm Wallace,
+Keith Wansbrough,
+Tony Warnock,
+Michael Webber,
+Carl Witty,
+Stuart Wray,
+and Bonnie Yantis.
+
+Finally, aside from the important foundational work laid by Church,
+Rosser, Curry, and others on the lambda calculus, we wish to
+acknowledge the influence of many noteworthy programming languages
+developed over the years.  Although it is difficult to pinpoint the
+origin of many ideas, we particularly wish to acknowledge the
+influence of Lisp (and its modern-day incarnations Common Lisp and
+Scheme); Landin's ISWIM; APL; Backus's FP
+\cite{back78}; ML and Standard ML; Hope and Hope$^{+}$; Clean; Id; Gofer;
+Sisal; and Turner's series of languages culminating in 
+Miranda.\footnote{{\rm Miranda} is a trademark of Research
+Software Ltd.} Without these forerunners \Haskell{} would not have
+been possible.
+
+\subsection{Copyright}
+
+The publisher intends this Report to belong to the entire Haskell
+community, and grants permission to copy and distribute it for any
+\emph{non-commercial} purpose, provided that it is reproduced in its
+entirety, including this Notice. Modified versions of this Report may
+also be copied and distributed for any \emph{non-commercial} purpose,
+provided that the modified version is clearly presented as such, and
+that it does not claim to be a definition of the language Haskell 98.
+
+Where a commercial purpose is involved, contact Cambridge University Press.
+
+%**~sfooter
