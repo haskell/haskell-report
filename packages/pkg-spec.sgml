@@ -86,8 +86,6 @@ to specify a standard way in which a Haskell library can be packaged, so that it
 easy for consumers to use it, or re-package it, 
 regardless of the Haskell implementation or installation platform.</para>  
 
-  <note><para>Would some name other than "Haskell Package System" be better?</para></note>
-
 <para>The HPS also
 supports library authors by providing an infrastructure that automates the
 process of building and packaging simple libraries.  It is not necessary to use
@@ -100,7 +98,7 @@ handle many cases with no trouble.</para>
 <itemizedlist>
 <listitem><para>
  <emphasis>Joe User</emphasis> is simply a Haskell user.  He does not download new packages.  Nevertheless,
-he needs to know about his Haskell compiler's <function>-package</function> flag (see <xref linkend="compiler-reqts">).
+he needs to know about his Haskell compiler's <option>-package</option> flag (see <xref linkend="compiler-reqts">).
 	    </para>
 	  </listitem>
 <listitem><para>
@@ -189,9 +187,11 @@ modules <literal>Data.Set</literal> and <literal>Data.Bag</literal>. He does not
 to &ghc; to tell it to look for Angela's modules; they are there automatically.
 If Angela used the same module names as someone else, Bob may need finer control: see <xref linkend="compiler-reqts">.</para>
 <para>
-If Angela wrote her modules in Haskell 98, Bob could also have said <option>--hugs</option> or
-<option>--nhc</option> in his <option>configure</option> line, and the package would have been
-built and installed for those compilers instead.
+If Angela wrote her modules in a suitably portable variant of Haskell,
+Bob could also have said <option>--hugs</option> or
+<option>--nhc</option> in his <option>configure</option> line, and the
+package would have been built and installed for those compilers
+instead.
       </para>
     </sect2>
   </sect1>
@@ -222,7 +222,7 @@ package authors can go to register a package name. </para>
 </para></listitem>
 
 <listitem><para>
-<emphasis>A list of explicit dependencies</emphasis> on other packages.  These are typically not exact; e.g. "I need <function>hunit</function> version
+<emphasis>A list of explicit dependencies</emphasis> on other packages.  These are typically not exact; e.g. "I need <literal>hunit</literal> version
 greater than 2.4".
 	    </para>
 	  </listitem>
@@ -270,28 +270,35 @@ implementations.  Hence a conservative starting point.</para>
 HPS requires that a conforming Haskell compiler is somewhat package aware.
 In summary, the requirements are these:
 <itemizedlist>
-<listitem><para>Each compiler <function>hc</function> must provide an associated package-management
-program &hc-pkg;.  A compiler user installs a package by placing the package's 
-supporting files somewhere, and then using &hc-pkg; to make the compiler aware
-of the new package.  This step is called <emphasis>registering the package with the compiler</emphasis>.
-</para></listitem>
-<listitem><para>To register a package, &hc-pkg; takes as input
-an <emphasis>installed package description (IPD)</emphasis>, 
-which describes the installed form of the package in detail.  
-The format of an IPD is given in <xref linkend="ipd">.</para>
+<listitem><para>Each compiler <command>hc</command> must provide an
+associated package-management program &hc-pkg;.  A compiler user
+installs a package by placing the package's supporting files
+somewhere, and then using &hc-pkg; to make the compiler aware of the
+new package.  This step is called <emphasis>registering the package
+with the compiler</emphasis>.  </para></listitem> <listitem><para>To
+register a package, &hc-pkg; takes as input an <emphasis>installed
+package description (IPD)</emphasis>, which describes the installed
+form of the package in detail.  The format of an IPD is given in <xref
+linkend="ipd">.</para>
 	  </listitem>
 
-<listitem><para>Subsequent invocations of <function>hc</function> will include modules from the
-new package in the module name space (i.e. visible to <function>import</function> statements).
-</para></listitem>
-<listitem><para>
-The compiler should support a <function>-package</function> flag for finer-grain control
-of package visibility.
-</para></listitem>
-</itemizedlist>
-A complete specification of these requirements is given in <xref linkend="compiler-reqts">.
-</para> 
-</sect2>
+	  <listitem>
+	    <para>Subsequent invocations of <command>hc</command>
+            will include modules from the new package in the module
+            name space (i.e. visible to <literal>import</literal>
+            statements).</para>
+	  </listitem>
+	  <listitem>
+	    <para>The compiler should support
+            <option>-package</option> and
+            <option>-hide-package</option> flags for finer-grain
+            control of package visibility.</para>
+	  </listitem>
+	</itemizedlist>
+
+        A complete specification of these requirements is given in
+        <xref linkend="compiler-reqts">.</para>
+    </sect2>
 
 <sect2><title>Package distributions</title>
 
@@ -333,16 +340,16 @@ her consumers (Bob, Sam, Willie, etc) can conveniently use it?</para>
 <para>Answer: she provides a tree of files, with two specific files in the
 root directory of the tree:  
 <itemizedlist>
-<listitem><para><function>pkg.desc</function> contains a short description of the package:
+<listitem><para><filename>pkg.desc</filename> contains a short description of the package:
 specifically, the package name, version, and dependencies.  It may also contain further information
 specific to the particular build system.  The syntax of the package description file
 is given in <xref linkend="pkg-desc">.
 	    </para>
 	  </listitem>
 <listitem><para>
-<function>Setup.lhs</function> is an executable Haskell program 
+<filename>Setup.lhs</filename> is an executable Haskell program 
 which conforms to a particular specification, given in detail in <xref linkend="setup">.
-In summary, though, <function>Setup.lhs</function> allows a consumer to configure, build,
+In summary, though, <filename>Setup.lhs</filename> allows a consumer to configure, build,
 test, install, register, and un-register a package.  </para>
 	  </listitem>
 	</itemizedlist>
@@ -355,7 +362,7 @@ all the work.  The simple build infrastructure, which was used for the example i
 
 <!-- Why Haskell ---------------------------- -->
 
-<para>In principle, the <function>Setup</function> script
+<para>In principle, the <literal>Setup</literal> script
 could be written in any language; so why do we use Haskell?
 <itemizedList>
 
@@ -389,13 +396,13 @@ the past.</para></listItem>
 develop, is a healthy policy.</para></listItem>
 
 </itemizedList>
-It is convenient for consumers to execute <function>Setup.lhs</function> directly, thus:
+It is convenient for consumers to execute <filename>Setup.lhs</filename> directly, thus:
 <programlisting>
   ./Setup.lhs ...
 </programlisting>
-This can be achieved by starting <function>Setup.lhs</function> with "<function>#! runhugs</function>"
-or "<function>#! runghc</function>" .
-Since it's a literate Haskell script (<function>.lhs</function> file), the Haskell compiler will ignore
+This can be achieved by starting <filename>Setup.lhs</filename> with "<literal>#! runhugs</literal>"
+or "<literal>#! runghc</literal>" .
+Since it's a literate Haskell script (<literal>.lhs</literal> file), the Haskell compiler will ignore
 this line.
 However, nothing stops a consumer from running the script interactively, or compiling it and running 
 the compiled binary.  Any implementation of Haskell should suffice to run the script, provided 
@@ -441,13 +448,13 @@ This section documents those requirements</para>
 
 <para>
 A package can be registered either as a <emphasis>shared package</emphasis> or as a <emphasis>user package</emphasis>.
-The former means that anyone invoking <function>hc</function> will see the new package.  The latter means
+The former means that anyone invoking <command>hc</command> will see the new package.  The latter means
 that only the user who installed the package will see it.
 </para>
 <para>
 User packages <emphasis>shadow</emphasis> shared packages, in the following sense:
 	  <itemizedlist><listitem><para>
-		A Haskell <function>import</function> for module M will seek M in a user package first.
+		A Haskell <literal>import</literal> for module M will seek M in a user package first.
 	      </para>
 	    </listitem><listitem><para>
 		The &hc-pkg; commands that take package IDs will look for a user package first.
@@ -505,28 +512,32 @@ check that no user has a user package depending on P.</para>
       </sect3>
     </sect2
 
-<sect2><title>The <function>-package</function> compiler flag</title>
+    <sect2>
+      <title>The <option>-package</option> compiler flag</title>
 
-<para>
-By default, the module namespace is populated only by the exposed modules of exposed packages.
-This can be overridden using the <function>-package</function> flag, which temporarily exposes a
-particular package, hiding any other packages of the same name.</para>  
-<note><para>Question: what does <function>-package hunit-1.2 -package hunit-1.3</function> do?
-Does the second override the first?  Or are they both in scope?  I think the former.</para>
-<para>Question: what if the -package flag breaks the registration invariants?  For example, the
-newly-exposed package might expose a module that clashes with an existing one.  Maybe the
-second registration invariant should be checked for each run of the compiler, rather than
-by hc-pkg?</para></note>
-</sect2>
+      <para>By default, the module namespace is populated only by the
+      exposed modules of exposed packages.  This can be overridden
+      using the <option>-package</option> flag, which temporarily
+      exposes a particular package, hiding any other packages of the
+      same name.</para> <note><para>Question: what does
+      <literal>-package hunit-1.2 -package hunit-1.3</literal> do?
+      Does the second override the first?  Or are they both in scope?
+      I think the former.</para> <para>Question: what if the -package
+      flag breaks the registration invariants?  For example, the
+      newly-exposed package might expose a module that clashes with an
+      existing one.  Maybe the second registration invariant should be
+      checked for each run of the compiler, rather than by
+      hc-pkg?</para></note>
+    </sect2>
 
-<sect2><title>The interface to <function>X-pkg</function></title>
+<sect2><title>The interface to &hc-pkg;</title>
 
 <para>Registering a package with a compiler records the package information in some
 implementation-specific way; how it does so is not constrained by the HPS.
 Much of an IPD is independent of the compiler, but it may also include compiler-specific
 fields.</para>
 
-<para>Each Haskell implementation <function>hc</function> must provide an associated program &hc-pkg; which 
+<para>Each Haskell implementation <command>hc</command> must provide an associated program &hc-pkg; which 
 allows a user to make a new package known to the compiler, and to ask what packages it knows. Here is a summary of its interface
 
 <note><para>Some of these commands (unregister, hide, and describe) make sense for package IDs which offer a range, such as "hc-pkg unregister "hmake<2.3".</para></note>
@@ -580,8 +591,8 @@ allows a user to make a new package known to the compiler, and to ask what packa
 
      </tbody></tgroup>
      </table>
-A <replaceable>pkg</replaceable> argument can be a package ID, such as "<function>hunit-2.3</function>", or just a package name, 
-such as "<function>hunit</function>".  To determine which package is meant, &hc-pkg; searches first the
+A <replaceable>pkg</replaceable> argument can be a package ID, such as "<literal>hunit-2.3</literal>", or just a package name, 
+such as "<literal>hunit</literal>".  To determine which package is meant, &hc-pkg; searches first the
 registered user packages and then the shared packages.  If no such package exists, the command fails; that is, it does nothing, 
 returning a non-zero error code.
 If only a name is specified, &hc-pkg; fails
@@ -607,8 +618,8 @@ as a shared package and we register it as a user package?</para>
 
 <para>
 The sole requirement of an HPS package is that it should contain,
-in the root of its file structure, (a) a package description file <function>pkg.desc</function>,
-and (b) a setup script, <function>Setup.lhs</function>.
+in the root of its file structure, (a) a package description file <filename>pkg.desc</filename>,
+and (b) a setup script, <filename>Setup.lhs</filename>.
 This section
 specifies the syntax of the package description, and the command-line interface for the setup script.
 </para>
@@ -631,7 +642,7 @@ is given in <xref linkend="sbi-pkg-desc">.
   deps:    [ "foogle > 2.9", "bargle = 2.5.1" ]
 </programlisting>
 If not, how can a program that doesn't understand a particular field safely ignore it?  Skip to end of line?
-But there may be many lines in fields like <function>deps</function>.
+But there may be many lines in fields like <literal>deps</literal>.
 <emphasis>ToDo: pick a syntax, provide a parser in the Distribution
 libraries somewhere.</emphasis>
 </para>
@@ -667,7 +678,7 @@ libraries somewhere.</emphasis>
 	      </cmdsynopsis>
 	      </entry>
                     <Entry><para>Register (or un-register) this package with the
-                    compiler.  (NB: registration is also done automatically by <function>install</function>.)
+                    compiler.  (NB: registration is also done automatically by <literal>install</literal>.)
 		</para></entry></row>
 
      <row><Entry><command>./Setup.lhs test</command></entry>
@@ -685,7 +696,7 @@ libraries somewhere.</emphasis>
       <sect3>
 	<title><option>configure</option></title>
 
-	<para>The command <function>./Setup.lhs configure</function>
+	<para>The command <literal>./Setup.lhs configure</literal>
         prepares to build the package.  For sophisticated packages,
         the configure step may perform elaborate checks, to gather
         information about the target system.  It may write a file to
@@ -702,10 +713,10 @@ specifies which compiler to use.  At most one of the value of these flags may be
 The configure step checks
 that the compiler is available, in a sufficiently up-to-date form for the package, and that the package
 expects to work with that compiler.  If the compiler name
-is not specified, <function>setup</function> will choose one; some packages will come with one compiler baked in.
+is not specified, <literal>setup</literal> will choose one; some packages will come with one compiler baked in.
 </para>
 	  </listitem>
-<listitem><para><function>--prefix=</function><replaceable>path</replaceable>: specifies where the installed files
+<listitem><para><option>--prefix=</option><replaceable>path</replaceable>: specifies where the installed files
 for the package should be installed.  Typically on Unix this will be <filename>/usr/local</filename> and
 on Windows it will be <filename>Program Files</filename>.  The setup script will use a sensible default
 (often platform-specific) if the flag is not specified.
@@ -759,7 +770,7 @@ on Windows it will be <filename>Program Files</filename>.  The setup script will
 	    <para><option>--user</option>: if present, this flag is
             passed to &hc-pkg; so that the package is registed for the
             current user only.  This flag has no effect if
-            <function>--install-prefix</function> is used, because in
+            <option>--install-prefix</option> is used, because in
             that case &hc-pkg; is not called.</para>
 	  </listitem>
 
@@ -803,9 +814,9 @@ on Windows it will be <filename>Program Files</filename>.  The setup script will
 	<title><option>register</option> and
 	<option>unregister</option></title>
 
-	<para>The command <function>./Setup.lhs register</function>
+	<para>The command <literal>./Setup.lhs register</literal>
         registers the now-installed package with the compiler.
-        Similarly, <function>./Setup.lhs unregister</function>
+        Similarly, <literal>./Setup.lhs unregister</literal>
         un-registers the package.</para>
 
 	<itemizedlist>
@@ -826,7 +837,7 @@ on Windows it will be <filename>Program Files</filename>.  The setup script will
 
 <para>Bob the Builder can install a HPS source distribution thus.
 He downloads the source distribution and unpacks it into a temporary directory,
-<function>cd</function>'s to that directory, and says
+<literal>cd</literal>'s to that directory, and says
 <programlisting>
   ./Setup.lhs configure --ghc
   ./Setup.lhs build
@@ -868,7 +879,7 @@ In many cases, a Haskell package will consist of nothing more than a bunch of Ha
 with perhaps the odd C file.  In that case, the HPS provides a <emphasis>simple build infrastructure</emphasis> that
 fulfils the specification of <xref linkend=setup>, and provides some modest further facilities besides.</para>
 <para>This simple build infrastructure is meant to automate the common case.
-(Think <function>hmake</function>.)  The emphasis is on ``simple'': 
+(Think <command>hmake</command>.)  The emphasis is on ``simple'': 
 if you want something more elaborate, you can (a) modify the simple build infrastructure (which is written in Haskell)
 (b) use makefiles, or (c) implement something else entirely.
 </para>
@@ -876,14 +887,14 @@ if you want something more elaborate, you can (a) modify the simple build infras
 <sect2><title>Overview</title>
 <para>
 The simple build infrastructure works as follows.  First, Angela puts the following Haskell 
-file <function>Setup.lhs</function> in the
+file <filename>Setup.lhs</filename> in the
 root of her tree:
 <programlisting>
   #! runghc
 
   > import Distribution.Simple
 </programlisting>
-Second, she writes a package description <function>pkg.desc</function> in the syntax of <xref linkend="sbi-pkg-desc">,
+Second, she writes a package description <filename>pkg.desc</filename> in the syntax of <xref linkend="sbi-pkg-desc">,
 which describes the package and gives extra information to the simple build infrastructure.
 </para><para>
 Now Angela can build her package by saying
@@ -903,26 +914,26 @@ The full details are given in <xref linkend="sbi-setup">.
 </para><para>
 It is no coincidence that the interface is very similar to that for the setup script
 for an HPS package distribution (<xref linkend="setup">).
-In fact, <function>Distribution.Simple.defaultMain</function> conforms to the specification of <xref linkend="setup-spec">, and when it builds
-a distribution, it includes <function>./Setup.lhs</function> in the tarball, ready to be run by Bob the Builder.
-However, <function>Distribution.Simple.defaultMain</function> of course implements a richer interface than that required by
+In fact, <literal>Distribution.Simple.defaultMain</literal> conforms to the specification of <xref linkend="setup-spec">, and when it builds
+a distribution, it includes <filename>./Setup.lhs</filename> in the tarball, ready to be run by Bob the Builder.
+However, <literal>Distribution.Simple.defaultMain</literal> of course implements a richer interface than that required by
 <xref linkend="setup-spec">, because it's intended to support Angela as well as Bob.
 The full specification is in <xref linkend="sbi-setup">.
 </para>
     </sect2>
 <sect2 id=sbi-pkg-desc><title>Package description in the simple build infrastructure</title>
 
-<para>When using the simple build infrastructure, the package description file <function>pkg.desc</function>
+<para>When using the simple build infrastructure, the package description file <filename>pkg.desc</filename>
 contains not only the name of the package, its version and dependencies, but also a collection of information 
 to explain to the simple build infrastructure how to build the package.  This section gives the syntax.</para>
 
 <para>For now, we just have a checklist of what must be there
 <itemizedlist>
-<listitem><para><function>exposed:</function> Exposed modules</para>
+<listitem><para><literal>exposed:</literal> Exposed modules</para>
 	    </listitem>
-<listitem><para><function>hidden:</function> Hidden (or internal) modules</para>
+<listitem><para><literal>hidden:</literal> Hidden (or internal) modules</para>
 	    </listitem>
-<listitem><para><function>ghc-flags:</function>,<function>hugs-flags:</function>,<function>nhc-flags:</function>  
+<listitem><para><literal>ghc-flags:</literal>,<literal>hugs-flags:</literal>,<literal>nhc-flags:</literal>  
 		Extra compiler flags for &ghc;, &hugs;, &nhc;.</para>
 	    </listitem>
 <listitem><para> <emphasis>What else?</emphasis></para>
@@ -937,9 +948,9 @@ and (b) to enable a build system or programming environment to find the source f
 	</para>
 </sect2>
 
-<sect2 id="sbi-setup"><title><function>Distribution.Simple</function></title>
+<sect2 id="sbi-setup"><title><literal>Distribution.Simple</literal></title>
 
-<para>This section gives the command line interface supported by <function>Distribution.Simple.main</function>.
+<para>This section gives the command line interface supported by <literal>Distribution.Simple.main</literal>.
 It supports all the commands described in <xref linkend=setup-spec>, and in addition the following:
      <table frame=all><title>Extra commands supported by the simple build infrastructure setup script</title>
 
@@ -957,11 +968,11 @@ It supports all the commands described in <xref linkend=setup-spec>, and in addi
 
 <para>The Haskell libraries that support the simple build infrastructure can, of course, also
 be re-used to make setup scripts that work quite differently.  At one extreme is a setup
-script that immediately shells out into <function>make</function>, which does all the work.</para>
+script that immediately shells out into <literal>make</literal>, which does all the work.</para>
 
-<para>To support this, HPS provides a trivial setup library <function>Distribution.Make</function>, which
-simply parses the command line arguments and shells out into <function>make</function>.  Marcus uses the following
-<function>Setup.lhs</function>
+<para>To support this, HPS provides a trivial setup library <literal>Distribution.Make</literal>, which
+simply parses the command line arguments and shells out into <literal>make</literal>.  Marcus uses the following
+<filename>Setup.lhs</filename>
 <programlisting>
   module Main where
   import Distribution.Make
@@ -978,9 +989,9 @@ invokes
   ./configure --with-hc=ghc
 </programlisting>
 Similarly
-<function>setup build</function>
+<literal>setup build</literal>
 invokes
-<function>make all</function> And so on.</para>
+<literal>make all</literal> And so on.</para>
 
 <para>Marcus simply arranges that when his makefiles build a distribution, they include this simple setup script in
 the root of the distribution, where the Bob the Builder expects to find it.</para>
