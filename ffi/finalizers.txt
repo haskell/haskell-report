@@ -132,10 +132,14 @@ Rationale
     'hooks' into the Haskell runtime system to allow the foreign GC to
     communicate with the Haskell GC.
 
-    George Russell believes he has an example where it is also
-    necessary for the foreign GC to invoke Haskell finalizers, but I
-    haven't yet got my head around it properly.  George - please fill
-    in the details).
+    George Russell claimed to have an example where it is also
+    necessary for the foreign GC to invoke Haskell finalizers, but 
+    on closer examination it became clear that what is needed is the
+    ability to call hs_freeStablePtr and a richer interface to the 
+    garbage collector to deal with cycles that span both the Haskell and
+    the foreign heap.  In the end, no need for Haskell finalizers was
+    demonstrated.
+
 
   Expressing liveness dependencies between ForeignPtrs
   ----------------------------------------------------
@@ -158,6 +162,7 @@ Rationale
     moment, although you can achieve the desired effect using Weak
     pointers).
 
+
   Other cleanups
   --------------
 
@@ -176,12 +181,91 @@ Rationale
       of what syntactic convenience and typechecking C affords us.
 
 
+  Accessing immutable Haskell state
+  ---------------------------------
+
+    There are significant implementation problems if the finalizer
+    has to evaluate a thunk (unevaluated expression) currently being
+    evaluated by the main program. 
+
+    A pure graph reduction machine performs evaluation using a series
+    of small, atomic, non-overlapping reduction steps.  Context
+    switches between threads may be made between any two reductions.
+    Unfortunately, no Haskell compiler implements pure graph reduction.
+
+    Hugs and (I believe) NHC are based on variants of the G-machine.
+    An important property of the G-machine is that reduction steps are
+    not small, not atomic and may overlap.  Making context switches
+    'between' reductions isn't feasible because there are no gaps
+    between reductions and making context switches during reductions
+    is hard because the heap isn't in a consistent state - some of the
+    essential state of the evaluation is in the stack (where it is
+    hard to access).
+
+    GHC is based on the STG-machine.  Like the G-machine, the STG
+    machine has large, non-atomic, overlapping reductions but two
+    techniques have been developed which allow context switches in
+    'the middle' of a reduction step.
+
+    1) When a thunk is being evaluated, the thunk is overwritten with
+       a 'blocking queue'.  If a thread tries to evaluate a blocking
+       queue, the thread is blocked (put to sleep, removed from the
+       running queue) and added to the queue to be restarted when the
+       thread reawakens.  (Deadlock may result in some circumstances -
+       this is handled by a generic deadlock-detection mechanism.)
+
+       A worthwhile variant of this is to delay overwriting the thunks
+       until a context switch happens.
+
+       Obviously, the use of blocking queues relies on being able to
+       block a thread.
+
+    2) The STG machine also provides a way to abandon evaluation with
+       the possibility of later choosing to evaluate it again using
+       resumable black holes.
+
+          A. Reid, 
+          Putting the Spine back in the Spineless Tagless G-machine: 
+           An Implementation of Resumable Blackholes.
+          Proceedings of Implementation of Functional Languages (IFL98), 
+          Lecture Notes in Computer Science, volume 1595, pp 189-202, 
+          Springer Verlag, 1999
+          http://www.reid-consulting-uk.ltd.uk/alastair/publications/ifl98.ps.gz
+
+       This mechanism allows the thread state on the stack to be
+       transferred back onto the heap.  That is, it is another
+       mechanism with which threads may be blocked.  Thus, on
+       encountering a thunk which is already being evaluated, we could
+       abandon evaluation of this thread and restart it later.  A
+       difficult question is how we would know when it was safe to try
+       again.
+
+       Implicit in the title of the paper is the idea that this
+       technique is only necessary in the _Spineless_ Tagless
+       G-machine but it is not actually known whether a similar
+       technique is needed in the G-machine as well.
+
+    Both techniques rely on an important detail of GHC's
+    implementation: the evaluation stack is explcitly managed by the
+    Haskell compiler.  This means that the Haskell compiler is free to
+    change and/or exploit the layout to make blocking threads or
+    construction of resumable black holes possible.
+
+    In contrast, Hugs' implementation is such that the evaluation
+    stack is managed by the C compiler severely limiting our ability
+    to implement blocking.  (NHC's implementation is currently
+    unknown.)  One possibility is to use setjmp/longjmp to discard
+    segments of the C stack (as is used to implement exception
+    handlers) to abandon evaluation until a later date.    
+
+
   Manipulating mutable Haskell state
   ----------------------------------
 
     There are significant problems when one wants to manipulate
     mutable Haskell state from a Haskell finalizer.  This is discussed in the
     section on mutable state, below.
+
 
   Concurrency
   -----------
@@ -199,8 +283,8 @@ Rationale
     buffer needed to be flushed no matter what.)
 
 
-  Arguments against
-  -----------------
+Arguments against
+=================
 
     Apart from awkward interactions with mutable state and possible
     implementation problems (both discussed below), the reasons for
@@ -265,7 +349,9 @@ Implementations
 
     The patch does not address any of the issues described in the
     section on mutable state, below and it is believed that deadlock
-    could result if the finalizers used MVars.
+    could result if the finalizers used MVars.  More seriously, the
+    patch does not deal with the problems discussed in the section on
+    immutable state, above.
 
     An alternative implementation would be to piggyback on Hugs'
     cooperative concurrency and place finalizers into the "thread
@@ -281,6 +367,9 @@ Implementations
     implemented in NHC.  As far as we know, there are no further
     issues here (except those relevant to both Hugs & NHC, which are
     discussed below).
+
+    [Closer examination suggests that NHC probably suffers from the
+    problems discussed in the section on immutable state, above.]
 
         
 Further Implications
