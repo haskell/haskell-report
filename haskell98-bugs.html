@@ -216,6 +216,11 @@ Replace the definition of <tt>(!!)</tt> with the following:
 (The original version had the property that <tt>([] !! -100)</tt>
 reported "index too large".)
 
+<p><li> [May 2000.]  <strong>Page 132, Appendix D, Specification of Derived Instances</strong>. 
+In numbered item 3, replace 
+``(all constructors must by nullary)'' with 
+``(all constructors must be nullary)''.
+
 <p><li> <strong>Page 141, Bibliograpy</strong>. 
 The library report citation [8] is out of date.  It should read:
 "Simon Peyton Jones and John Hughes (editors), Standard Libraries for the
@@ -243,8 +248,53 @@ and that it does not claim to be a definition of the Haskell 98 libraries."
 
 <p><li> <strong>Page 17, Section 5, first text line</strong>.  Replace "continuous" by "contiguous".
 
+<p><li> [May 2000] <strong>Page 17, Section 5, Indexing operations</strong>.  
+Add the following equation to the laws listed just before Section 5.1:
+<pre>
+  map index (range (l,u)) == [0..rangeSize (l,u)]
+</pre>
+This documents an invariant that was previously only implicit.
+
+<p><li> [May 2000] <strong>Page 17, Section 5, Indexing operations</strong>.
+This significant item (a) removes <tt>Ord</tt> from <tt>Ix</tt>'s superclasses, and
+(b) make <tt>rangeSize</tt> into a method of <tt>Ix</tt> rather than a free-standing declaration.
+Though these changes are 
+visible to the programmer, all existing Haskell 98 programs will continue to work.
+<ul>
+<li>  <strong>Page 17, Section 5, Indexing operations, boxed text</strong>. Replace the <tt>Ix</tt>
+change the class declaration, and the type signature for <tt>rangeSize</tt> with:
+<pre>
+  class Ix a where
+    range     :: (a,a) -> [a]
+    index     :: (a,a) -> a -> Int
+    inRange   :: (a,a) -> a -> Bool
+    rangeSize :: (a,a) -> Int
+</pre>
+<li> <strong>Section 5.2, pages 19, line 3</strong>. Replace the <tt>Ix</tt>
+class declaration, and the <tt>rangeSize</tt> declaration, with:
+<pre>
+  class Ix a where
+    range     :: (a,a) -> [a]
+    index     :: (a,a) -> a -> Int
+    inRange   :: (a,a) -> a -> Bool
+    rangeSize :: (a,a) -> Int
+
+    rangeSize b@(l,h) | null (range b) = 0
+	-- NB: replacing "null (range b)" by  "not (l <= h)"
+	-- fails if the bounds are tuples.  For example,
+	-- 	(1,2) <= (2,1)
+	-- but the range is nevertheless empty
+	--	range ((1,2),(2,1)) = []
+</pre>
+</ul>
+
 <p><li> <strong>Page 22, Section 6.3; and Page 23, Fig 3</strong>:
 Replace "<tt>map</tt>" by "<tt>fmap</tt>" (two occurrences in 6.3, one in Fig 3).
+
+<p><li> [May 2000] <strong>Page 23, Figure 3</strong>.
+In the definition of <tt>diag</tt>, delete the guard ``<tt>| l==l' &amp;&amp; u==u'</tt>''.
+(The original intent was presumably to check for a square array, but
+ simply makes the definition recursive and hence divergent.)
 
 <p><li> <strong>Page 29, Section 7.2</strong>.  Add a new bullet for <tt>nub</tt>.
 Add an index entry for <tt>nub</tt>.

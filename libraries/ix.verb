@@ -20,9 +20,9 @@ An implementation is entitled to assume the following laws about these
 operations:
 \bprog
 @
-        range (l,u) !! index (l,u) i == i   -- when i is in range
-
-        inRange (l,u) i == i `elem` range (l,u)
+   range (l,u) !! index (l,u) i == i   -- when i is in range
+   inRange (l,u) i		== i `elem` range (l,u)
+   map index (range (l,u))      == [0..rangeSize (l,u)]
 @
 \eprog
 

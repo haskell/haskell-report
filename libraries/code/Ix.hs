@@ -1,13 +1,13 @@
 module Ix ( Ix(range, index, inRange), rangeSize ) where
 
-class  (Ord a) => Ix a  where
-    range               :: (a,a) -> [a]
-    index               :: (a,a) -> a -> Int
-    inRange             :: (a,a) -> a -> Bool
+class  Ix a  where
+    range     :: (a,a) -> [a]
+    index     :: (a,a) -> a -> Int
+    inRange   :: (a,a) -> a -> Bool
+    rangeSize :: (a,a) -> Int
 
-rangeSize :: Ix a => (a,a) -> Int
-rangeSize b@(l,h) | null (range b) = 0
-                  | otherwise      = index b h + 1 
+    rangeSize b@(l,h) | null (range b) = 0
+                      | otherwise      = index b h + 1 
 	-- NB: replacing "null (range b)" by  "l > h" fails if
 	-- the bounds are tuples.  For example,
 	-- 	(2,1) > (1,2), 

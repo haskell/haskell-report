@@ -1,11 +1,10 @@
 module Ix ( Ix(range, index, inRange), rangeSize ) where
 
-class  (Ord a) => Ix a  where
-    range               :: (a,a) -> [a]
-    index               :: (a,a) -> a -> Int
-    inRange             :: (a,a) -> a -> Bool
-
-rangeSize               :: (Ix a) => (a,a) -> Int
+class  Ix a  where
+    range       :: (a,a) -> [a]
+    index       :: (a,a) -> a -> Int
+    inRange     :: (a,a) -> a -> Bool
+    rangeSize   :: (a,a) -> Int
 
 instance                   Ix Char      where ...
 instance                   Ix Int       where ...

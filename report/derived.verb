@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/derived.verb,v 1.1 2001/03/28 14:13:42 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/derived.verb,v 1.2 2001/05/28 14:39:47 simonpj Exp $
 %
 % The paragraph describing the formats of standard representations might
 % be deleted, since the info is already in the Prelude.  
@@ -39,7 +39,7 @@ holds for each of the constituent types "t_{ij}".
 
 \item
 If "C" is @Bounded@, the type must be either an enumeration (all
-constructors must by nullary) or have only one constructor.
+constructors must be nullary) or have only one constructor.
 
 \item
 If "C" is @Enum@, the type must be an enumeration.
