@@ -1,11 +1,12 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/syntax-lexical.verb,v 1.6 2001/11/02 16:26:48 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/syntax-lexical.verb,v 1.7 2001/12/21 16:00:25 simonpj Exp $
 % 
 
-@@@ 
+@@@
 
 program		-> \{ lexeme | whitespace \}
-lexeme          -> qvarid | qconid | qop | literal | special | reservedop | reservedid
+lexeme          -> qvarid | qconid | qvarsym | qconsym 
+                | literal | special | reservedop | reservedid
 literal		-> integer | float | char | string
 special		-> @(@ | @)@ | @,@ | @;@ | @[@ | @]@ | \bkq | @{@ | @}@
 
@@ -21,7 +22,8 @@ formfeed	-> \tr{a form feed}
 space		-> \tr{a space}
 tab		-> \tr{a horizontal tab}
 uniWhite        -> \tr{any Unicode character defined as whitespace}
-comment		-> dashes \{any\} newline
+
+comment         -> dashes [ any_{\langle symbol\rangle}  \{any\} ] newline
 dashes		-> @--@ \{@-@\}
 opencom		-> @{-@
 closecom	-> @-}@
@@ -49,7 +51,7 @@ uniDigit        -> \tr{any Unicode decimal digit}
 octit   -> @0@ | @1@ | ... | @7@
 hexit   -> digit | @A@ | ... | @F@ | @a@ | ... | @f@
 
-@@@ 
+@@@
 
 \indexsyn{program}%
 \indexsyn{lexeme}%

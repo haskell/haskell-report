@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/basic.verb,v 1.10 2001/11/02 16:26:48 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/basic.verb,v 1.11 2001/12/21 16:00:24 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Basic Types and Classes</title>
 %*section 6
@@ -274,29 +274,12 @@ are instances of these classes.
 \end{figure}
 
 Default class method declarations (Section~\ref{classes}) are provided
-for many of the methods in standard classes.  For example, the declaration
-of class @Eq@ is:
-\bprog
-@
-  class  Eq a  where
-        (==), (/=)  ::  a -> a -> Bool
-
-        x /= y  = not (x == y)
-        x == y  = not (x /= y)
-@
-\eprog
-This declaration gives default method declarations for both @/=@ and @==@,
-each being defined in terms of the other.  If an instance declaration
-for @Eq@ defines neither @==@ nor @/=@, then both will loop.
-If one is defined, the default method for the other will make use of
-the one that is defined.  If both are defined, neither default method is used.
-
-A comment with each @class@ declaration in Appendix~\ref{stdprelude} specifies
-the smallest collection of method definitions that, 
-together with the default declarations,
-provide a definition for all the class methods.
-If there is no such comment, then all class methods must
-be given to fully specify an instance.
+for many of the methods in standard classes.  A comment with each
+@class@ declaration in Appendix~\ref{stdprelude} specifies the
+smallest collection of method definitions that, together with the
+default declarations, provide a reasonable definition for all the
+class methods.  If there is no such comment, then all class methods
+must be given to fully specify an instance.
 
 \subsubsection{The Eq Class}
 \indexclass{Eq}
@@ -315,6 +298,12 @@ The @Eq@ class provides equality (@==@) and inequality (@/=@) methods.
 All basic datatypes except for functions and @IO@ are instances of this class.
 Instances of @Eq@ can be derived for any user-defined datatype whose
 constituents are also instances of @Eq@.
+
+This declaration gives default method declarations for both @/=@ and @==@,
+each being defined in terms of the other.  If an instance declaration
+for @Eq@ defines neither @==@ nor @/=@, then both will loop.
+If one is defined, the default method for the other will make use of
+the one that is defined.  If both are defined, neither default method is used.
 
 \subsubsection{The Ord Class}
 \indexclass{Ord}
@@ -360,10 +349,9 @@ The @Ordering@ datatype
 allows a single comparison to determine the precise ordering of two
 objects.
 
-%	Either all subsections should have this info, or none.
-% The defaults allow a user to create an @Ord@ instance 
-% either with a type-specific @compare@ function or with type-specific
-% @==@ and @<=@ functions.
+The default declarations allow a user to create an @Ord@ instance 
+either with a type-specific @compare@ function or with type-specific
+@==@ and @<=@ functions.
 
 \subsubsection{The Read and Show Classes}
 \indexsynonym{ReadS}
@@ -479,7 +467,7 @@ sequences (Section~\ref{arithmetic-sequences}).
 Instances of @Enum@ may be derived for any enumeration type (types
 whose constructors have no fields); see Appendix~\ref{derived-appendix}.
 
-For any type that is an instance of class @Bounded@, the following
+For any type that is an instance of class @Bounded@ as well as @Enum@, the following
 should hold:
 \begin{itemize}
 \item The calls @succ maxBound@ and @pred minBound@ should result in
@@ -496,10 +484,8 @@ an implicit bound, thus:
   enumFrom     x   = enumFromTo     x maxBound
   enumFromThen x y = enumFromThenTo x y bound
     where
-      bound = if fromEnum y >= fromEnum x then
-                 maxBound
-              else
-                 minBound
+      bound | fromEnum y >= fromEnum x = maxBound
+            | otherwise                = minBound
 @
 \eprog
 \end{itemize}
@@ -520,7 +506,7 @@ of these instances is given next.
 \end{itemize}
 For all four numeric types, @succ@ adds 1; and @pred@ subtracts 1.
 The conversions @fromEnum@ and @toEnum@ convert between the type and @Int@.
-in the case of @Float@ and @Double@, the digits after the decimal point may be lost.
+In the case of @Float@ and @Double@, the digits after the decimal point may be lost.
 It is implementation-dependent what @fromEnum@ returns when applied to 
 a value that is too large to fit in an @Int@.
 
@@ -529,7 +515,7 @@ have the following meaning:
 \begin{itemize}
 \item The sequence "@enumFrom@~e_1" is the list "@[@e_1@,@e_1+1@,@e_1+2@,@...@]@".
 
-\item The sequence "@enumFromThen@~e_1~e_2@" is the list "@[@e_1@,@e_1+i@,@e_1+2i@,@...@]@",
+\item The sequence "@enumFromThen@~e_1~e_2" is the list "@[@e_1@,@e_1+i@,@e_1+2i@,@...@]@",
 where the increment, "i", is "e_2-e_1".  The increment may be zero or negative.
 If the increment is zero, all the list elements are the same.
 
@@ -537,7 +523,7 @@ If the increment is zero, all the list elements are the same.
 the list "@[@e_1@,@e_1+1@,@e_1+2@,@...e_3@]@".
 The list is empty if "e_1 > e_3".
 
-\item The sequence "@enumFromThenTo~e_1~e_2~e_3" 
+\item The sequence "@enumFromThenTo@~e_1~e_2~e_3" 
 is the list "@[@e_1@,@e_1+i@,@e_1+2i@,@...e_3@]@",
 where the increment, "i", is "e_2-e_1".  If the increment 
 is positive or zero, the list terminates when the next element would
@@ -549,7 +535,6 @@ For @Float@ and @Double@, the semantics of the @enumFrom@ family is
 given by the rules for @Int@ above, except that the list terminates
 when the elements become greater than "e_3+i/2" for positive increment
 "i", or when they become less than "e_3+i/2" for negative "i".
-@fromEnum@ and @toEnum@ convert between the type and @Int@.
 
 For all four of these Prelude numeric types, all of the @enumFrom@ 
 family of functions are strict in all their arguments.
@@ -923,9 +908,11 @@ odd    =  not . even
 @
 \eprog\indextt{even}\indextt{odd}
 Finally, there are the greatest common divisor and least common
-multiple functions: @gcd@\indextt{gcd} "x" "y" is the greatest
-integer that divides both "x" and "y".  @lcm@\indextt{lcm} "x" "y"
-is the smallest positive integer that both "x" and "y" divide.
+multiple functions.  @gcd@\indextt{gcd} "x" "y" is the greatest
+(positive) integer that divides both "x" and "y"; for example @gcd (-3) 6@ = @3@, @gcd (-3) (-6)@ = @3@, 
+@gcd 0 4@ = @4@. @gcd 0 0@ raises a runtime error.
+
+@lcm@\indextt{lcm} "x" "y" is the smallest positive integer that both "x" and "y" divide.
 
 \subsubsection{Exponentiation and Logarithms}
 \index{exponentiation}\index{logarithm}

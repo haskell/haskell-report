@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/modules.verb,v 1.15 2001/11/01 13:43:43 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/modules.verb,v 1.16 2001/12/21 16:00:25 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Modules</title>
 %*section 5
@@ -9,9 +9,9 @@
 \index{module}
 
 A module defines a collection of values, datatypes, type synonyms,
-classes, etc.~(see Section~\ref{declarations}) in an environment created
-by a set of {\em imports}, resources brought into scope from other modules, 
-and {\em exports} some of these resources, making them available to
+classes, etc.~(see Section~\ref{declarations}), in an environment created
+by a set of {\em imports} (resources brought into scope from other modules).
+It {\em exports} some of these resources, making them available to
 other modules.  
 We use the term {\em entity}\index{entity} to refer to
 a value, type, or class defined in, imported into, or perhaps
@@ -92,8 +92,8 @@ body   -> @{@ impdecls @;@ topdecls @}@
 	| @{@ topdecls @}@
 
 modid	     -> conid
-impdecls     -> impdecl_1 @;@ ... @;@ impdecl_n 	& \qquad (n>=1)
-topdecls     -> topdecl_1 @;@ ... @;@ topdecl_n 	& \qquad (n>=1)
+impdecls     -> impdecl_1 @;@ ... @;@ impdecl_n 	& (n>=1)
+topdecls     -> topdecl_1 @;@ ... @;@ topdecl_n 	& (n>=1)
 @@@
 
 \indexsyn{module}%
@@ -123,18 +123,17 @@ for the top level of the module.
 \index{export list}
 
 @@@
-exports	 -> @(@ export_1 @,@ ... @,@ export_n [ @,@ ] @)@ & \qquad (n>=0)
+exports	 -> @(@ export_1 @,@ ... @,@ export_n [ @,@ ] @)@ & (n>=0)
 
 export   -> qvar
-	 |  qtycon [@(..)@ | @(@ qcname_1 @,@ ... @,@ qcname_n @)@] & \qquad (n>=0)
-	 |  qtycls [@(..)@ | @(@ qvar_1 @,@ ... @,@ qvar_n @)@] & \qquad (n>=0)
+	 |  qtycon [@(..)@ | @(@ cname_1 @,@ ... @,@ cname_n @)@] &  (n>=0)
+	 |  qtycls [@(..)@ | @(@ var_1 @,@ ... @,@ var_n @)@] &  (n>=0)
          |  @module@ modid
 
-qcname   -> qvar | qcon
+cname   -> var | con
 @@@
 \indexsyn{exports}%
 \indexsyn{export}%
-\indexsyn{qcname}%
 
 An {\em export list} identifies the entities to be exported by a
 module declaration.  A module implementation may only export an entity
@@ -147,7 +146,7 @@ Entities in an export list may be named as follows:
 \item
 A value, field name, or class method, whether declared in
 the module body or imported,
-may be named by giving the name of the value as a "qvarid".
+may be named by giving the name of the value as a "qvarid", which must be in scope.
 Operators should be enclosed in parentheses to turn them into
 "qvarid"'s.  
 
@@ -162,20 +161,33 @@ The form "T" names the type {\em but not the constructors or field names}.
 The ability to export a type without its constructors allows the
 construction of abstract datatypes (see Section~\ref{abstract-types}).
 \item
-The form $T@(@qcname_1@,@\ldots@,@qcname_n@)@$, where the $qcname_i$
-name only constructors and field names in $T$, 
+The form $T@(@c_1@,@\ldots@,@c_n@)@$, 
 names the type and some or all of its constructors and field names.  
-The $qcname_i$ must not contain duplications.  
+The subordinate names $c_i$ must not contain duplicates.  
 \item
 The abbreviated form "T@(..)@" names the type 
 and all its constructors and field names that are currently in scope
 (whether qualified or not).
 \end{itemize}
-Data constructors cannot be named in export lists in any other way.
+In all cases, the (possibly-qualified) type constructor "T" must be in scope. 
+The constructor and field names $c_i$ in the second form are unqualified;
+one of these subordinate names is legal if and only if (a) it names a constructor
+or field of "T", and (b) the constructor or field
+is in scope in the module body {\em regardless of whether it is in scope
+under a qualified or unqualified name}. For example, the following is 
+legal
+\bprog
+@
+  module A( Mb.Maybe( Nothing, Just ) ) where
+    import qualified Maybe as Mb
+@
+\eprog
+Data constructors cannot be named in export lists except as subordinate names, because
+they cannot otherwise be distinguished from type constructors.
 
 \item
 A type synonym "T" declared by a
-@type@ declaration may be named by the form "T".
+@type@ declaration may be named by the form "T", where "T" is in scope.
 \index{type synonym}
 
 \item
@@ -186,13 +198,17 @@ declared in a @class@ declaration may be named in one of three ways:
 \item
 The form "C" names the class {\em but not the class methods}.
 \item
-The form $C@(@f_1@,@\ldots@,@f_n@)@$, where
-the $f_i$ must be class methods of $C$, names the class and some or all
-of its methods.  The $f_i$ must not contain duplications.
+The form $C@(@f_1@,@\ldots@,@f_n@)@$, names the class and some or all
+of its methods.  The subordinate names $f_i$ must not contain duplicates.
 \item
 The abbreviated form $C@(..)@$ names the class and all its methods
 that are in scope (whether qualified or not).
 \end{itemize}
+In all cases, "C" must be in scope.  In the second form,
+one of the (unqualified) subordinate names $f_i$ is legal if and only if (a) it names a
+class method of "C", and (b) the class method 
+is in scope in the module body regardless of whether it is in scope
+under a qualified or unqualified name.
 
 \item
 The form ``@module M@'' abbreviates the set of all entities whose
@@ -260,20 +276,20 @@ even though there are no name clashes within module @A@ itself.
 @@@
 impdecl   -> @import@ [@qualified@] modid [@as@ modid] [impspec]
 	  | 	& (empty declaration)
-impspec   -> @(@ import_1 @,@ ... @,@ import_n [ @,@ ] @)@ & \qquad (n>=0)
-             |  @hiding@ @(@ import_1 @,@ ... @,@ import_n [ @,@ ] @)@ & \qquad (n>=0)
+impspec   -> @(@ import_1 @,@ ... @,@ import_n [ @,@ ] @)@ & (n>=0)
+             |  @hiding@ @(@ import_1 @,@ ... @,@ import_n [ @,@ ] @)@ & (n>=0)
 
 import    -> var
-	  |  tycon [ @(..)@ | @(@ cname_1 @,@ ... @,@ cname_n @)@] & \qquad (n>=1)
-	  |  tycls [@(..)@ | @(@ var_1 @,@ ... @,@ var_n @)@] & \qquad (n>=0)
+	  |  tycon [ @(..)@ | @(@ cname_1 @,@ ... @,@ cname_n @)@] &  (n>=1)
+	  |  tycls [@(..)@ | @(@ var_1 @,@ ... @,@ var_n @)@] & (n>=0)
 cname     -> var | con
 @@@
 %             var
 %          |  tycon
 %          |  tycon @(..)@
-%          |  tycon @(@ con_1 @,@ ... @,@ con_n@)@ & \qquad (n>=1)
+%          |  tycon @(@ con_1 @,@ ... @,@ con_n@)@ & (n>=1)
 %          |  tycls @(..)@
-%          |  tycls @(@ var_1 @,@ ... @,@ var_n@)@ & \qquad (n>=0)
+%          |  tycls @(@ var_1 @,@ ... @,@ var_n@)@ & (n>=0)
 \indexsyn{impdecl}%
 \indexsyn{impspec}%
 \indexsyn{import}%
@@ -296,7 +312,7 @@ The effect of multiple @import@ declarations is strictly
 cumulative: an entity is in scope if it is imported by any of the @import@
 declarations in a module.  The ordering of import declarations is irrelevant.
 
-Lexically speaking, the terminal symbols ``@as@'', ``@qualified@'' and
+Lexically, the terminal symbols ``@as@'', ``@qualified@'' and
 ``@hiding@'' are each a "varid" rather than a "reservedid".  They have
 special significance only in the context of an @import@ declaration;
 they may also be used as variables.
@@ -473,7 +489,6 @@ declarations can have an empty export list.  For example
 \label{qualifiers}
 
 A {\em qualified name} is written as "modid"@.@"name" (Section~\ref{ids}).
-
 A qualified name is brought into scope:
 \begin{itemize}
 \item {\em By a top level declaration.}

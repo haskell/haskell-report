@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/exps.verb,v 1.13 2001/11/02 16:26:48 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/exps.verb,v 1.14 2001/12/21 16:00:24 simonpj Exp $
 %
 %*section 3
 %**<title>The Haskell 98 Report: Expressions</title>
@@ -608,7 +608,7 @@ are class methods in the class @Enum@ as defined in the Prelude
 
 The semantics of arithmetic sequences therefore depends entirely
 on the instance declaration for the type "t".  
-Section~\ref{enum-class} for more details of which @Prelude@
+See Section~\ref{enum-class} for more details of which @Prelude@
 type are in @Enum@ and their semantics.
 
 
@@ -733,7 +733,7 @@ hold, which may be used as a translation into the kernel:
 \begin{center}
 \bt{lcl}%
 \struthack{17pt}%
-@let {@"p_1"@ = @"e_1"@; @ ... @; @"p_n"@ = @"e_n"@} in@ "e_0"
+@let {@"p_1"@=@"e_1"@; @ ... @; @"p_n"@=@"e_n"@} in@ "e_0"
       &=& @let (~@"p_1"@,@ ... @,~@"p_n"@) = (@"e_1"@,@ ... @,@"e_n"@) in@ "e_0" \\
 @let @"p"@ = @"e_1" @ in @ "e_0"
 	&=& @case @"e_1"@ of ~@"p"@ -> @"e_0"	\\
@@ -829,12 +829,17 @@ Section~\ref{case-semantics}.
 %
 @@@
 exp -> @do@ @{@ stmts @}@             & (\tr{do expression})
-stmts -> stmt_1 ... stmt_n exp [@;@]  & \qquad (n>=0)
+stmts -> stmt_1 ... stmt_n exp [@;@]  &  (n>=0)
 stmt -> exp @;@
       | pat @<-@ exp @;@
       | @let@ decls @;@
       | @;@			& (empty statement)
 @@@
+% The semicolons are done differently than for decls
+%  Reason: to do it the same way would mean:
+%	stmts -> stmt1 ; ... ; stmtn ; exp [;]
+% Now, what happens if n=0?  Is there a ';' before the exp or not?
+% Putting the ';' on the end of the stmt makes that clear.
 \indexsyn{exp}%
 \indexsyn{stmt}%
 \indexsyn{stmts}%
@@ -900,10 +905,12 @@ A field label can be used at most once in a constructor.
 Within a datatype, however, a field label can be used in more
 than one constructor provided the field has the same typing in all
 constructors. To illustrate the last point, consider:
+\bprog
 @
   data S = S1 { x :: Int } | S2 { x :: Int }   -- OK
   data T = T1 { y :: Int } | T2 { y :: Bool }  -- BAD
 @
+\eprog
 Here @S@ is legal but @T@ is not, because @y@ is given 
 inconsistent typings in the latter.
 
@@ -1099,7 +1106,7 @@ pat^i	->  pat^{i+1} [qconop^{({\rm{n}},i)} pat^{i+1}]
 lpat^i	->  (lpat^i | pat^{i+1}) qconop^{({\rm{l}},i)} pat^{i+1}
 lpat^6	->  @-@ (integer | float)		& (\tr{negative literal})
 rpat^i	->  pat^{i+1} qconop^{({\rm{r}},i)} (rpat^i | pat^{i+1})
-pat^{10}->  apat
+pat^{10} ->  apat
 	|   gcon apat_1 ... apat_k		& (\tr{arity} gcon = k, k>=1)
 
 apat	->  var [{\tt @@} apat]			& (\tr{as pattern})
@@ -1380,7 +1387,7 @@ f ~(x,y,z) [a] | (a == y) = 1
 %           where (x,y,z) = t
 % @@
 % \eprog
-both @a@ and @y@ will be evaluated by @&&@ in the guard.
+both @a@ and @y@ will be evaluated by @==@ in the guard.
 
 
 \subsubsection{Formal Semantics of Pattern Matching}

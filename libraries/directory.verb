@@ -1,4 +1,4 @@
-`%**<title>The Haskell 98 Library Report: Directory functions</title>
+%**<title>The Haskell 98 Library Report: Directory functions</title>
 %**~header
 
 %% Other useful functions from SML 96 include modification time
@@ -42,10 +42,11 @@ Computation @createDirectory@~"dir" creates a new directory "dir" which is
 initially empty, or as near to empty as the operating system allows.
 \index{making directories}
 
-{\em Error~reporting}:
-the @createDirectory@ computation may fail with:
+{\em Error~reporting}.
+The @createDirectory@ computation may fail with:
 @isPermissionError@ if the user is not permitted to create the directory;
-@isAlreadyExistsError@ if the directory already exists.
+@isAlreadyExistsError@ if the directory already exists; or @isDoesNotExistError@ if
+the new directory's parent does not exist.
 
 Computation @removeDirectory@~"dir" removes an existing directory
 "dir"\index{deleting directories}\index{removing directories}.  The
@@ -63,8 +64,8 @@ files}\index{removing files}. The implementation may specify additional
 constraints which must be satisfied before a file can be removed (for instance, the
 file may not be in use by other processes).
 
-{\em Error~reporting}:
-the @removeDirectory@ and @removeFile@ computations may fail with:
+{\em Error~reporting}.
+The @removeDirectory@ and @removeFile@ computations may fail with:
 @isPermissionError@ if the user is not permitted to remove the file/directory;
 or @isDoesNotExistError@ if the file/directory does not exist.
 
@@ -86,21 +87,22 @@ implementation need not support renaming files in all situations
 (for instance, renaming across different physical devices), but the constraints must be
 documented.
 
-{\em Error~reporting}:
-the @renameDirectory@ and @renameFile@ computations may fail with:
+{\em Error~reporting}.
+The @renameDirectory@ and @renameFile@ computations may fail with:
 @isPermissionError@ if the user is not permitted to rename the file/directory,
 or if either argument to @renameFile@ is a directory;
 or @isDoesNotExistError@ if the file/directory does not exist.
 
 Computation @getDirectoryContents@~"dir" returns a list of {\em all} entries
 in "dir"\index{reading a directory}.
+Each entry in the returned list is named relative to the directory "dir", not as an absolute path.
 
 If the operating system has a notion of current directories,
 @getCurrentDirectory@ returns an absolute path to the
 current directory of the calling process\index{current directory}.
 
-{\em Error~reporting}:
-the @getDirectoryContents@ and @getCurrentDirectory@ computations may fail with:
+{\em Error~reporting}.
+The @getDirectoryContents@ and @getCurrentDirectory@ computations may fail with:
 @isPermissionError@ if the user is not permitted to access the directory;
 or @isDoesNotExistError@ if the directory does not exist.
 
@@ -108,8 +110,8 @@ If the operating system has a notion of current directories,
 @setCurrentDirectory@~"dir" changes the current directory of the
 calling process to "dir"\index{changing the directory}\index{setting the directory}.
 
-{\em Error~reporting}:
-the @setCurrentDirectory@ computation may fail with:
+{\em Error~reporting}.
+@setCurrentDirectory@ may fail with:
 @isPermissionError@ if the user is not permitted to change directory
 to that specified;
 or @isDoesNotExistError@ if the directory does not exist.
@@ -140,11 +142,11 @@ if the argument file exists and is not a directory, and @False@ otherwise.
 The @getModificationTime@ operation returns the
 clock time at which the file/directory was last modified.
 
-{\em Error~reporting}:
-the @get(set)Permissions@,
+{\em Error~reporting}.
+@get(set)Permissions@,
 @doesFile(Directory)Exist@,
 and @getModificationTime@
-computations may fail with:
+may fail with:
 @isPermissionError@ if the user is not permitted to access
 the appropriate information;
 or @isDoesNotExistError@ if the file/directory does not exist.

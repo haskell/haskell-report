@@ -1,4 +1,4 @@
-module IO where
+module IO {- export list omitted -} where
 
 -- Just provide an implementation of the system-indendent
 -- actions that IO exports.

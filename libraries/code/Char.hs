@@ -10,9 +10,9 @@ module Char (
     Char, String
     ) where
 
-import Array  -- used for character name table.
+import Array         -- Used for character name table.
 import Numeric (readDec, readOct, lexDigits, readHex)
-import UnicodePrims  -- source of primitive Unicode functions.
+import UnicodePrims  -- Source of primitive Unicode functions.
 
 -- Character-testing operations
 isAscii, isControl, isPrint, isSpace, isUpper, isLower,

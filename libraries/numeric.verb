@@ -25,7 +25,12 @@ possibly-negative @Real@ value of type @a@ to a string.  In the call "(@showSign
 "val" is the value to show, "prec" is the precedence of the enclosing context, and "show" is
 a function that can show unsigned values.
 
-\item @showInt :: Integral a => a -> ShowS@ \\ shows {\em unsigned} @Integral@ values of type @a@.
+\item @showIntAtBase :: Integral a => a -> (Int -> Char) -> a -> ShowS@ \\
+shows a {\em non-negative} @Integral@ number using the base specified by the first argument,
+and the character representation specified by the second.
+
+\item @showInt, showOct, showHex :: Integral a => a -> ShowS@ \\ 
+show {\em non-negative} @Integral@ numbers in base 10, 8, and 16 respectively.
 
 \item 
 @showFFloat, showEFloat, showGFloat@ \\
@@ -71,6 +76,8 @@ each read an unsigned number, in decimal, octal, and hexadecimal notation respec
 In the hexadecimal case, both upper or lower case letters are allowed.
 \item @lexDigits :: ReadS String@ reads a non-empty string of decimal digits.
 \end{itemize}
+(NB: @readInt@ is the ``dual'' of @showIntAtBase@, and @readDec@ is the ``dual'' of @showInt@.
+The inconsistent naming is a historical accident.)
 
 \subsection{Miscellaneous}
 

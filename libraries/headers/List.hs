@@ -14,7 +14,7 @@ module List (
     unzip4, unzip5, unzip6, unzip7, unfoldr,
 
     -- ...and what the Prelude exports
-    []((:), []),
+    -- []((:), []),	-- This is built-in syntax
     map, (++), concat, filter,
     head, last, tail, init, null, length, (!!),
     foldl, foldl1, scanl, scanl1, foldr, foldr1, scanr, scanr1,

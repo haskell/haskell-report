@@ -96,6 +96,7 @@
 \index{(aaa)@@{\tt ()}|see{trivial type and unit expression}}%
 \index{-@@{\tt -}|hseealso{negation}}
 \index{+@@{\tt +}|hseealso{"n@+@k" pattern}}
+\index{\\@@{\tt {\char'134}}|see{lambda abstraction}}
 \index{~@@{\tt {\char'176}}|see{irrefutable pattern}}
 \index{derived instance|hseealso{instance declaration}}
 \index{if-then-else expression|see{conditional expression}}

@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/lexemes.verb,v 1.9 2001/11/01 13:43:43 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/lexemes.verb,v 1.10 2001/12/21 16:00:25 simonpj Exp $
 %
 %*section 2
 %**<title>Haskell 98 Lexical Structure</title>
@@ -113,13 +113,13 @@ two or more consecutive dashes (e.g. @--@) and extends to the following newline.
 {\em The sequence of dashes must not form part of a legal lexeme.}
 For example, ``@-->@'' or ``@|--@'' do {\em not} begin
 a comment, because both of these are legal lexemes; however ``@--foo@''
-does start a commment.
+does start a comment.
 
 A nested comment\index{comment!nested} begins with ``@{-@'' 
 and ends with ``@-}@''.  No legal lexeme starts with ``@{-@''; 
-hence, for exmaple, ``@{---@'' starts a nested comment despite the trailing dashes.
+hence, for example, ``@{---@'' starts a nested comment despite the trailing dashes.
 
-The comment itself is not lexically analysed.  Instead the first
+The comment itself is not lexically analysed.  Instead, the first
 unmatched occurrence of the string ``@-}@'' terminates the nested
 comment.  Nested comments may be nested to any depth: any occurrence
 of the string ``@{-@'' within the nested comment starts a new nested
@@ -315,6 +315,14 @@ gap     ->  @\@ whitechar \{whitechar\} @\@
 \indexsyn{ascii}%
 \indexsyn{cntrl}%
 \indexsyn{gap}%
+\index{\\a@@{\tt {\char'134}a}}%
+\index{\\b@@{\tt {\char'134}b}}%
+\index{\\f@@{\tt {\char'134}f}}%
+\index{\\n@@{\tt {\char'134}n}}%
+\index{\\r@@{\tt {\char'134}r}}%
+\index{\\t@@{\tt {\char'134}t}}%
+\index{\\v@@{\tt {\char'134}v}}%
+\index{\\\&@@{\tt {\char'134}\&}}%
 
 Character literals are written between single quotes, as in
 @'a'@, and strings between double quotes, as in @"Hello"@.

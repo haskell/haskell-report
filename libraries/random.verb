@@ -48,7 +48,7 @@ the generator.
 
 It is required that:
 \begin{itemize}
-\item If $(a,b) ~=~ @genRange@~ g$, then $a \leq b$.
+\item If $(a,b) ~=~ @genRange@~ g$, then $a < b$.
 \item $@genRange@~\bot ~\neq~ \bot$.  
 \end{itemize}
 The second condition ensures that @genRange@ cannot examine its

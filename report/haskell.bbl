@@ -21,7 +21,7 @@ L.~Damas and R.~Milner.
   Programming Languages}, pages 207--212, Albuquerque, N.M., January 1982.
 
 \bibitem{hindley69}
-JR.~Hindley.
+J.R.~Hindley.
 \newblock The principal type scheme of an object in combinatory logic.
 \newblock {\em Transactions of the American Mathematical Society}, 146:29--60,
   December 1969.
@@ -44,9 +44,9 @@ P.~Penfield, Jr.
   Francisco, September 1981.
 
 \bibitem{libraries}
-Simon Peyton Jones and John Hughes (editors).
+Simon Peyton Jones (editor).
 \newblock {S}tandard {L}ibraries for the {H}askell 98 {P}rogramming {L}anguage, 
-\newblock 1 February 1999.
+\newblock 2001.
 
 \bibitem{peyton-jones:book}
 S.L. Peyton~Jones.

@@ -59,10 +59,10 @@ These functions write to the standard output device (this is normally
 the user's terminal). 
 \bprog
 @
-putChar      :: Char -> IO ()
-putStr       :: String -> IO ()
-putStrLn     :: String -> IO ()  -- adds a newline
-print        :: Show a => a -> IO ()
+  putChar  :: Char -> IO ()
+  putStr   :: String -> IO ()
+  putStrLn :: String -> IO ()  -- adds a newline
+  print    :: Show a => a -> IO ()
 @
 \eprog
 \indextt{putChar}
@@ -89,12 +89,12 @@ These functions read input from the standard input device (normally
 the user's terminal).
 \bprog
 @
-getChar     :: IO Char
-getLine     :: IO String
-getContents :: IO String
-interact    :: (String -> String) -> IO ()
-readIO      :: Read a => String -> IO a
-readLn      :: Read a => IO a
+  getChar     :: IO Char
+  getLine     :: IO String
+  getContents :: IO String
+  interact    :: (String -> String) -> IO ()
+  readIO      :: Read a => String -> IO a
+  readLn      :: Read a => IO a
 @
 \eprog
 \indextt{interact}%
@@ -144,11 +144,11 @@ returns the contents of the file as a string.  The file is read
 lazily, on demand, as with @getContents@.
 \bprog
 @
-type FilePath =  String
-
-writeFile     ::  FilePath -> String            -> IO ()
-appendFile    ::  FilePath -> String            -> IO ()
-readFile      ::  FilePath                      -> IO String
+  type FilePath =  String
+  
+  writeFile  :: FilePath -> String -> IO ()
+  appendFile :: FilePath -> String -> IO ()
+  readFile   :: FilePath           -> IO String
 @
 \eprog
 \indextt{writeFile}%
@@ -177,8 +177,8 @@ passes the result of the first operation as an argument to the second
 operation.  
 \bprog
 @
-(>>=)         ::  IO a    -> (a -> IO b)        -> IO b 
-(>>)          ::  IO a    -> IO b               -> IO b
+  (>>=) :: IO a -> (a -> IO b) -> IO b 
+  (>>)  :: IO a -> IO b        -> IO b
 @
 \eprog
 For example,
@@ -245,8 +245,8 @@ describing the error.
 Exceptions are raised and caught using the following functions:
 \bprog
 @
-  ioError         ::  IOError -> IO a
-  catch           ::  IO a    -> (IOError -> IO a) -> IO a 
+  ioError :: IOError -> IO a
+  catch   :: IO a    -> (IOError -> IO a) -> IO a 
 @
 \eprog
 \indextt{ioError}%

@@ -1,5 +1,6 @@
 module Numeric(fromRat,
-               showSigned, showInt,
+               showSigned, showIntAtBase,
+               showInt, showOct, showHex,
                readSigned, readInt,
                readDec, readOct, readHex, 
                floatToDigits,
@@ -84,18 +85,29 @@ integerLogBase b i =
 
 -- Misc utilities to show integers and floats 
 
-showSigned    :: Real a => (a -> ShowS) -> Int -> a -> ShowS
-showSigned showPos p x | x < 0 = showParen (p > 6)
-                                           (showChar '-' . showPos (-x))
-                       | otherwise = showPos x
+showSigned :: Real a => (a -> ShowS) -> Int -> a -> ShowS
+showSigned showPos p x 
+  | x < 0     = showParen (p > 6) (showChar '-' . showPos (-x))
+  | otherwise = showPos x
 
--- showInt is used for positive numbers only
-showInt    :: Integral a => a -> ShowS
-showInt n r | n < 0 = error "Numeric.showInt: can't show negative numbers"
-            | otherwise =
-              let (n',d) = quotRem n 10
-                  r'     = toEnum (fromEnum '0' + fromIntegral d) : r
-              in  if n' == 0 then r' else showInt n' r'
+-- showInt, showOct, showHex are used for positive numbers only
+showInt, showOct, showHex :: Integral a => a -> ShowS
+showOct = showIntAtBase  8 intToDigit
+showInt = showIntAtBase 10 intToDigit
+showHex = showIntAtBase 16 intToDigit
+
+showIntAtBase :: Integral a 
+	      => a              -- base
+	      -> (Int -> Char)  -- digit to char
+	      -> a              -- number to show
+	      -> ShowS
+showIntAtBase base intToDig n rest
+  | n < 0     = error "Numeric.showIntAtBase: can't show negative numbers"
+  | n' == 0   = rest'
+  | otherwise = showIntAtBase base intToDig n' rest'
+  where
+    (n',d) = quotRem n base
+    rest'  = intToDig (fromIntegral d) : rest
 
 
 readSigned :: (Real a) => ReadS a -> ReadS a

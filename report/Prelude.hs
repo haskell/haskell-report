@@ -41,7 +41,8 @@ module Prelude (
     seq, ($!)
   ) where
 
-import PreludeBuiltin  -- Contains all `prim' values
+import PreludeBuiltin                      -- Contains all `prim' values
+import UnicodePrims( primUnicodeMaxChar )  -- Unicode primitives
 import PreludeList
 import PreludeText
 import PreludeIO
@@ -68,12 +69,12 @@ infixr 0  $, $!, `seq`
 -- Equality and Ordered classes
 
 class  Eq a  where
-    (==), (/=)       :: a -> a -> Bool
+    (==), (/=) :: a -> a -> Bool
 
         -- Minimal complete definition:
         --      (==) or (/=)
-    x /= y           =  not (x == y)
-    x == y           =  not (x /= y)
+    x /= y     =  not (x == y)
+    x == y     =  not (x /= y)
 
 class  (Eq a) => Ord a  where
     compare              :: a -> a -> Ordering
@@ -114,11 +115,15 @@ class  Enum a  where
 
         -- Minimal complete definition:
         --      toEnum, fromEnum
+	--
+	-- NOTE: these default methods only make sense for types
+	-- 	 that map injectively into Int using fromEnum
+	--	 and toEnum.
     succ             =  toEnum . (+1) . fromEnum
     pred             =  toEnum . (subtract 1) . fromEnum
     enumFrom x       =  map toEnum [fromEnum x ..]
     enumFromTo x y   =  map toEnum [fromEnum x .. fromEnum y]
-    enumFromThen x y =  map toEnum [fromEnum x, fromEnum y, ..]
+    enumFromThen x y =  map toEnum [fromEnum x, fromEnum y ..]
     enumFromThenTo x y z = 
                         map toEnum [fromEnum x, fromEnum y .. fromEnum z]
 
@@ -323,10 +328,9 @@ f =<< x          =  x >>= f
 -- Trivial type
 
 data  ()  =  ()  deriving (Eq, Ord, Enum, Bounded)
+	-- Not legal Haskell; for illustration only
 
 -- Function type
-
-data a -> b  -- No constructor for functions is exported.
 
 -- identity function
 id               :: a -> a
@@ -376,7 +380,7 @@ otherwise        =  True
 
 -- Character type
 
-data Char = ... 'a' | 'b' ... -- 2^16 unicode values
+data Char = ... 'a' | 'b' ... -- Unicode values
 
 instance  Eq Char  where
     c == c'          =  fromEnum c == fromEnum c'
@@ -390,12 +394,12 @@ instance  Enum Char  where
     enumFrom c        = map toEnum [fromEnum c .. fromEnum (maxBound::Char)]
     enumFromThen c c' = map toEnum [fromEnum c, fromEnum c' .. fromEnum lastChar]
                       where lastChar :: Char
-                               lastChar | c' < c    = minBound
-                                        | otherwise = maxBound
+                            lastChar | c' < c    = minBound
+                                     | otherwise = maxBound
 
 instance  Bounded Char  where
-    minBound            =  '\0'
-    maxBound            =  '\xffff'
+    minBound  =  '\0'
+    maxBound  =  primUnicodeMaxChar
 
 type  String = [Char]
 
@@ -428,7 +432,7 @@ either f g (Right y) =  g y
 
 -- IO type
 
-data  IO a  -- abstract
+data IO a = ... 	-- abstract
 
 instance  Functor IO where
    fmap f x           =  x >>= (return . f)
@@ -526,9 +530,8 @@ numericEnumFromThenTo n n' m = takeWhile p (numericEnumFromThen n n')
 
 -- Lists
 
--- This data declaration is not legal Haskell
--- but it indicates the idea
 data  [a]  =  [] | a : [a]  deriving (Eq, Ord)
+	-- Not legal Haskell; for illustration only
 
 instance Functor [] where
     fmap = map
@@ -542,7 +545,7 @@ instance  Monad []  where
 
 data  (a,b)   =  (a,b)    deriving (Eq, Ord, Bounded)
 data  (a,b,c) =  (a,b,c)  deriving (Eq, Ord, Bounded)
-
+	-- Not legal Haskell; for illustration only
 
 -- component projections for pairs:
 -- (NB: not provided for triples, quadruples, etc.)

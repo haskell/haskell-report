@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/syntax-iso.verb,v 1.7 2001/11/01 13:43:43 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/syntax-iso.verb,v 1.8 2001/12/21 16:00:25 simonpj Exp $
 %
 %**<title>Haskell 98 Syntax</title>
 %*section B
@@ -153,17 +153,19 @@ takes the form of a function "L" that performs the translation.
 The input to "L" is:
 \begin{itemize}
 \item 
-A stream of tokens as specified by the lexical syntax in the Haskell report,
+A stream of lexemes as specified by the lexical syntax in the Haskell report,
 with the following additional tokens: 
 \begin{itemize}
-\item If the first token after a @let@, @where@, @do@, or @of@ keyword is not @{@, 
-it is preceded by "\{n\}" where "n" is the indentation of the token. 
-\item If the first token of a module is not @{@ or @module@, 
-then it is preceded by "\{n\}" where "n" is the indentation of the token. 
-\item Where the start of a token does not follow any complete token on the
-   same line, this token is preceded by "<n>" where "n"
-   is the indentation of the token, provided that it is not,
+\item If a @let@, @where@, @do@, or @of@ keyword is not followed by the lexeme @{@, 
+the token "\{n\}" is inserted after the keyword, where "n" is the indentation of the 
+next lexeme if there is one, or "0" if the end of file has been reached.
+\item If the first lexeme of a module is not @{@ or @module@, 
+then it is preceded by "\{n\}" where "n" is the indentation of the lexeme. 
+\item Where the start of a lexeme does not follow a complete lexeme on the
+   same line, this lexeme is preceded by "<n>" where "n"
+   is the indentation of the lexeme, provided that it is not,
    as a consequence of the first two rules, preceded by "\{n\}".
+   (A string literal may span multiple lines -- Section~\ref{lexemes-char}.)
 \end{itemize}
 
 \item A stack of ``layout contexts'', in which each element is either:
@@ -192,48 +194,61 @@ are considered to be of the same, fixed, width as an ASCII character.
 
 The application
 \[
-L~tokens~[0]
+L~tokens~[]
 \]
 delivers a layout-insensitive translation of "tokens", where "tokens"
 is the result of lexically analysing a module and adding column-number
 indicators to it as described above.
 The definition of "L" is as follows, where we use ``":"'' as a stream
 construction operator, and ``"\emptystr"'' for the empty stream.
+% \begin{center}
+% \[\ba{lcll}
+%      L~ (<n>:ts)~ (m:ms)   & = & @;@ ~:~ (L~ ts~(m:ms))           &\mbox{if}~ m = n \\
+%                            & = & @}@ ~:~ (L~ (<n>:ts)~ ms)       & \mbox{if}~ n < m \\
+%                            & = & L~ ts~(m:ms)                   & \mbox{otherwise} \\
+% \\
+%      L~ (\{n\}:ts)~ (m:ms)   & = & @{@ ~:~ (L~ ts~(n:m:ms))         & \mbox{if}~n > m~   (Note~ 1)\\
+% 			     & = & @{@ ~:~ @}@ ~:~  (L~ ts~(<n>:m:ms))	& \mbox{otherwise}~   (Note~ 2)\\
+% \\
+%      L~ (t:ts)~ (m:ms)       & = & @}@ ~:~ (L~ (t:ts)~ ms)           & \mbox{if}~ m /= 0 ~\mbox{and}~ \mbox{parse-error}(t) \\
+% 			    &&& (Note~ 3) \\
+% \\
+%      L~ (@}@:ts)~ (0:ms)     & = & @}@ ~:~ (L~ ts~ms)     &                       (Note~ 4) \\
+% \\
+%      L~ (@{@:ts)~ ms         & = & @{@ ~:~ (L~ ts~(0:ms))                   &     (Note~ 5)\\
+% \\
+%      L~ (t:ts)~ ms           & = & t ~:~ (L~ ts~ms)\\
+% \\
+%      L~ \emptystr~ [0]		   & = & \emptystr\\
+%      L~ \emptystr~ (m:ms)	   & = & @}@ ~:~ L~ \emptystr~ ms	   & \mbox{if}~m \neq 0~  (Note~ 6)
+% \ea\]
+% \end{center}
 \begin{center}
 \[\ba{lcll}
-     L~ (t:ts)~ (m:ms)       & = & @}@ ~:~ (L~ (t:ts)~ ms)           & \mbox{if}~ m /= 0 ~\mbox{and}~ \mbox{parse-error}(t) \\
-			    &&& (Note~ 1) \\
-  \\
      L~ (<n>:ts)~ (m:ms)   & = & @;@ ~:~ (L~ ts~(m:ms))           &\mbox{if}~ m = n \\
                            & = & @}@ ~:~ (L~ (<n>:ts)~ ms)       & \mbox{if}~ n < m \\
-                           & = & L~ ts~(m:ms)                   & otherwise \\
-     \\
-     L~ (@}@:ts)~ (0:ms)     & = & @}@ ~:~ (L~ ts~ms)     &                       (Note~ 2) \\
-     \\
-     L~ (\{n\}:ts)~ (m:ms)   & = & @{@ ~:~ (L~ ts~(n:m:ms))         & \mbox{if}~n > m,~   (Note~ 3)\\
+     L~ (<n>:ts)~ms        & = & L~ ts~ms \\
 \\
-     L~ (@{@:ts)~ ms         & = & @{@ ~:~ (L~ ts~(0:ms))                   &     (Note~ 4)\\
-     \\
+     L~ (\{n\}:ts)~ (m:ms)   & = & @{@ ~:~ (L~ ts~(n:m:ms))      & \mbox{if}~n > m~   (Note~ 1)\\
+     L~ (\{n\}:ts)~ []       & = & @{@ ~:~ (L~ ts~[n])           & \mbox{if}~n > 0~   (Note~ 1)\\
+     L~ (\{n\}:ts)~ ms 	     & = & @{@ ~:~ @}@ ~:~  (L~ (<n>:ts)~ms) & (Note~ 2)\\
+\\
+     L~ (@}@:ts)~ (0:ms)     & = & @}@ ~:~ (L~ ts~ms)     	& (Note~ 3) \\
+     L~ (@}@:ts)~ ms         & = & \mbox{parse-error}	 	& (Note~ 3) \\
+     
+\\
+     L~ (@{@:ts)~ ms         & = & @{@ ~:~ (L~ ts~(0:ms))       &     (Note~ 4)\\
+\\
+     L~ (t:ts)~ (m:ms)       & = & @}@ ~:~ (L~ (t:ts)~ ms)      & \mbox{if}~ m /= 0 ~\mbox{and}~ \mbox{parse-error}(t) \\
+								    &&& (Note~ 5) \\
      L~ (t:ts)~ ms           & = & t ~:~ (L~ ts~ms)\\
 \\
-     L~ \emptystr~ [0]		   & = & \emptystr\\
-     L~ \emptystr~ (m:ms)	   & = & @}@ ~:~ L~ \emptystr~ ms	   & \mbox{if}~m \neq 0~  (Note~ 5)
+     L~ \emptystr~ []		   & = & \emptystr\\
+     L~ \emptystr~ (m:ms)	   & = & @}@ ~:~ L~ \emptystr~ ms	   & \mbox{if}~m \neq 0~  (Note~ 6)
 \ea\]
 \end{center}
 \begin{description}
-\item[Note 1.] The side condition "\mbox{parse-error}(t)" is to be interpreted as follows: 
-if the tokens generated so far by "L" together with the next token "t" 
-represent an invalid prefix of the Haskell grammar, and the 
-tokens generated so far by "L" followed by the token ``@}@''
-represent a valid prefix of the Haskell grammar, then "\mbox{parse-error}(t)" is true. 
-
-The test $m /= 0$ checks that an implicitly-added closing brace would match
-an implicit open brace.
-
-\item[Note 2.] By matching against 0 for the current layout context, 
-we ensure that an explicit close brace can only match an explicit open brace. 
-
-\item[Note 3.] A nested context must be further indented 
+\item[Note 1.] A nested context must be further indented 
 than the enclosing context ("n>m"). If not, "L" fails, and the compiler should indicate a
 layout error.  An example is:
 \bprog
@@ -248,12 +263,29 @@ layout error.  An example is:
 Here, the definition of @p@ is indented less than the indentation of
 the enclosing context, which is set in this case by the definition of @h@.
 
+\item[Note 2.] If the first token after a @where@ (say) is not indented more
+than the enclosing layout context, then the block must be empty, so empty
+braces are inserted.  The $\{n\}$ token is replaced by $<n>$, to mimic the
+situation if the empty braces had been explicit.
+
+\item[Note 3.] By matching against 0 for the current layout context, 
+we ensure that an explicit close brace can only match an explicit open brace. 
+A parse error results if an explicit close brace matches an implicit open brace.
+
 \item[Note 4.] This clause means that all brace pairs are treated as explicit layout 
 contexts, including labelled construction and update (Section~\ref{field-ops}). 
-This is a difference 
-between this formulation and Haskell 1.4.
+This is a difference between this formulation and Haskell 1.4.
 
-\item[Note 5.] At the end of the input, any pending close-braces are inserted. 
+\item[Note 5.] The side condition "\mbox{parse-error}(t)" is to be interpreted as follows: 
+if the tokens generated so far by "L" together with the next token "t" 
+represent an invalid prefix of the Haskell grammar, and the 
+tokens generated so far by "L" followed by the token ``@}@''
+represent a valid prefix of the Haskell grammar, then "\mbox{parse-error}(t)" is true. 
+
+The test $m /= 0$ checks that an implicitly-added closing brace would match
+an implicit open brace.
+
+\item[Note 6.] At the end of the input, any pending close-braces are inserted. 
 It is an error at this point to be within a non-layout context (i.e.~ "m = 0"). 
 \end{description}
 
@@ -288,7 +320,7 @@ body   -> @{@ impdecls @;@ topdecls @}@
 	| @{@ impdecls  @}@
 	| @{@ topdecls  @}@
 
-impdecls     -> impdecl_1 @;@ ... @;@ impdecl_n 	& \qquad (n>=1)
+impdecls     -> impdecl_1 @;@ ... @;@ impdecl_n 	&  (n>=1)
 @@@
 \indexsyn{module}%
 \indexsyn{body}%
@@ -296,28 +328,26 @@ impdecls     -> impdecl_1 @;@ ... @;@ impdecl_n 	& \qquad (n>=1)
 \indexsyn{impdecls}%
 
 @@@
-exports	 -> @(@ export_1 @,@ ... @,@ export_n [ @,@ ] @)@ & \qquad (n>=0)
+exports	 -> @(@ export_1 @,@ ... @,@ export_n [ @,@ ] @)@ & (n>=0)
 
 export   -> qvar
-	 |  qtycon [@(..)@ | @(@ qcname_1 @,@ ... @,@ qcname_n @)@] & \qquad (n>=0)
-	 |  qtycls [@(..)@ | @(@ qvar_1 @,@ ... @,@ qvar_n @)@] & \qquad (n>=0)
+	 |  qtycon [@(..)@ | @(@ cname_1 @,@ ... @,@ cname_n @)@] & (n>=0)
+	 |  qtycls [@(..)@ | @(@ qvar_1 @,@ ... @,@ qvar_n @)@] & (n>=0)
          |  @module@ modid
-qcname   -> qvar | qcon
 @@@
 \indexsyn{exports}%
 \indexsyn{export}%
-\indexsyn{qcname}%
 
 @@@
 impdecl   -> @import@ [@qualified@] modid [@as@ modid] [impspec]
 	  | 	& (\tr{empty declaration})
 
-impspec   -> @(@ import_1 @,@ ... @,@ import_n [ @,@ ] @)@ & \qquad (n>=0)
-             |  @hiding@ @(@ import_1 @,@ ... @,@ import_n [ @,@ ] @)@ & \qquad (n>=0)
+impspec   -> @(@ import_1 @,@ ... @,@ import_n [ @,@ ] @)@ & (n>=0)
+             |  @hiding@ @(@ import_1 @,@ ... @,@ import_n [ @,@ ] @)@ &  (n>=0)
 
 import    -> var
-	  |  tycon [ @(..)@ | @(@ cname_1 @,@ ... @,@ cname_n @)@] & \qquad (n>=1)
-	  |  tycls [@(..)@ | @(@ var_1 @,@ ... @,@ var_n @)@] & \qquad (n>=0)
+	  |  tycon [ @(..)@ | @(@ cname_1 @,@ ... @,@ cname_n @)@] & (n>=1)
+	  |  tycls [@(..)@ | @(@ var_1 @,@ ... @,@ var_n @)@] & (n>=0)
 cname     -> var | con
 @@@
 \indexsyn{impdecl}%
@@ -326,37 +356,37 @@ cname     -> var | con
 \indexsyn{cname}%
 
 @@@
-topdecls -> topdecl_1 @;@ ... @;@ topdecl_n 	& \qquad (n>=0)
+topdecls -> topdecl_1 @;@ ... @;@ topdecl_n 	&  (n>=0)
 topdecl	-> @type@ simpletype @=@ type
 	|  @data@ [context @=>@] simpletype @=@ constrs [deriving]
         |  @newtype@ [context @=>@] simpletype @=@ newconstr [deriving]
 	|  @class@ [scontext @=>@] tycls tyvar [@where@ cdecls]
 	|  @instance@ [scontext @=>@] qtycls inst [@where@ idecls]
-	|  @default@ @(@type_1 @,@ ... @,@ type_n@)@ & \qquad (n>=0)
+	|  @default@ @(@type_1 @,@ ... @,@ type_n@)@ & (n>=0)
 	|  decl
 @@@
 \indexsyn{topdecls}%
 \indexsyn{topdecl}%
 
 @@@
-decls	-> @{@ decl_1 @;@ ... @;@ decl_n  @}@		& \qquad (n>=0)
+decls	-> @{@ decl_1 @;@ ... @;@ decl_n  @}@		&  (n>=0)
 decl	-> gendecl
 	|  (funlhs | pat^0) rhs
 
-cdecls	-> @{@ cdecl_1 @;@ ... @;@ cdecl_n  @}@		& \qquad (n>=0)
+cdecls	-> @{@ cdecl_1 @;@ ... @;@ cdecl_n  @}@		&  (n>=0)
 cdecl	-> gendecl
 	|  (funlhs | var) rhs
 
-idecls	-> @{@ idecl_1 @;@ ... @;@ idecl_n  @}@		& \qquad (n>=0)
-idecl	-> (funlhs | qfunlhs | var | qvar) rhs
+idecls	-> @{@ idecl_1 @;@ ... @;@ idecl_n  @}@		&  (n>=0)
+idecl	-> (funlhs | var) rhs
 	|						& (\tr{empty})
 
 gendecl	-> vars @::@ [context @=>@] type	& (\tr{type signature})
 	|  fixity [integer] ops			& (\tr{fixity declaration})
 	|					& (\tr{empty declaration})
 
-ops	-> op_1 @,@ ... @,@ op_n		& \qquad (n>=1)
-vars	-> var_1 @,@ ...@,@ var_n		& \qquad (n>=1)
+ops	-> op_1 @,@ ... @,@ op_n		& (n>=1)
+vars	-> var_1 @,@ ...@,@ var_n		& (n>=1)
 fixity	-> @infixl@ | @infixr@ | @infix@
 @@@
 \indexsyn{vars}%
@@ -389,11 +419,11 @@ gtycon    -> qtycon
           |  @(,@\{@,@\}@)@                    & (\tr{tupling constructors})
 
 context -> class
-        |  @(@ class_1 @,@ ... @,@ class_n @)@		& (n>=0)
+        |  @(@ class_1 @,@ ... @,@ class_n @)@		&  (n>=0)
 class	-> qtycls tyvar			
-	|  qtycls @(@ tyvar atype_1 ...  atype_n @)@ & (n>=1)
+	|  qtycls @(@ tyvar atype_1 ...  atype_n @)@ &  (n>=1)
 scontext -> simpleclass
-        |  @(@ simpleclass_1 @,@ ... @,@ simpleclass_n @)@		& (n>=0)
+        |  @(@ simpleclass_1 @,@ ... @,@ simpleclass_n @)@		&  (n>=0)
 simpleclass -> qtycls tyvar			
 @@@
 \indexsyn{type}%
@@ -407,15 +437,15 @@ simpleclass -> qtycls tyvar
 
 
 @@@
-simpletype -> tycon tyvar_1 ... tyvar_k & (k>=0)
-constrs	   -> constr_1 @|@ ... @|@ constr_n	& (n>=1)
+simpletype -> tycon tyvar_1 ... tyvar_k &  (k>=0)
+constrs	   -> constr_1 @|@ ... @|@ constr_n	&  (n>=1)
 constr	   -> con [@!@] atype_1 ... [@!@] atype_k	& (\tr{arity} con = k, k>=0)
            |  (btype | @!@ atype) conop (btype | @!@ atype) & (\tr{infix} conop)
-           |  con @{@ fielddecl_1 @,@ ... @,@ fielddecl_n @}@ & (n>=0)
+           |  con @{@ fielddecl_1 @,@ ... @,@ fielddecl_n @}@ &  (n>=0)
 newconstr  -> con atype
 	   |  con @{@ var @::@ type @}@ 
 fielddecl  -> vars @::@ (type | @!@ atype)
-deriving   -> @deriving@ (dclass | @(@dclass_1@,@ ... @,@ dclass_n@)@)& (n>=0)
+deriving   -> @deriving@ (dclass | @(@dclass_1@,@ ... @,@ dclass_n@)@)&  (n>=0)
 dclass     -> qtycls
 @@@
 \indexsyn{simpletype}%
@@ -442,12 +472,6 @@ funlhs	->  var apat \{ apat \}
 	|   pat^{i+1} varop^{({\rm{}r},i)} rpat^i
 	|   @(@ funlhs @)@  apat \{ apat \}
 
-qfunlhs	->  qvar apat \{ apat \}
-	|   pat^{i+1} qvarop^{(a,i)} pat^{i+1}
-	|   lpat^i qvarop^{({\rm{}l},i)} pat^{i+1}
-	|   pat^{i+1} qvarop^{({\rm{}r},i)} rpat^i
-	|   @(@ qfunlhs @)@ apat \{ apat \}
-
 rhs	->  @=@ exp [@where@ decls]
 	|   gdrhs [@where@ decls]
 
@@ -456,7 +480,6 @@ gdrhs	->  gd @=@ exp [gdrhs]
 gd	->  @|@ exp^0 
 @@@
 \indexsyn{funlhs}%
-\indexsyn{qfunlhs}%
 \indexsyn{rhs}%
 \indexsyn{gdrhs}%
 \indexsyn{gd}%
@@ -505,14 +528,14 @@ qual	-> pat @<-@ exp 	& (\tr{generator})
          | @let@ decls		& (\tr{local declaration})
          | exp 			& (\tr{guard})
 
-alts	->  alt_1 @;@ ... @;@ alt_n 		& (n>=0)
+alts	->  alt_1 @;@ ... @;@ alt_n 		&  (n>=0)
 alt	->  pat @->@ exp [@where@ decls]
 	|   pat gdpat [@where@ decls]
 	|					& (empty alternative)
 
 gdpat   ->  gd @->@ exp [ gdpat ]
 
-stmts -> stmt_1 ... stmt_n exp [@;@]  & \qquad (n>=0)
+stmts -> stmt_1 ... stmt_n exp [@;@]  &  (n>=0)
 stmt -> exp @;@
       | pat @<-@ exp @;@
       | @let@ decls @;@
@@ -538,7 +561,7 @@ pat^i	->  pat^{i+1} [qconop^{({\rm{}n},i)} pat^{i+1}]
 lpat^i	->  (lpat^i | pat^{i+1}) qconop^{({\rm{}l},i)} pat^{i+1}
 lpat^6	->  @-@ (integer | float)		& (\tr{negative literal})
 rpat^i	->  pat^{i+1} qconop^{({\rm{}r},i)} (rpat^i | pat^{i+1})
-pat^{10}->  apat
+pat^{10} ->  apat
 	|   gcon apat_1 ... apat_k		& (\tr{arity} gcon = k, k>=1)
 @@@
 \indexsyn{pat}%

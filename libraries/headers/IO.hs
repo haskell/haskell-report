@@ -14,7 +14,7 @@ module IO (
     isFullError, isEOFError,
     isIllegalOperation, isPermissionError, isUserError, 
     ioeGetErrorString, ioeGetHandle, ioeGetFileName,
-    try, bracket, bracket_
+    try, bracket, bracket_,
 
     -- ...and what the Prelude exports
     IO, FilePath, IOError, ioError, userError, catch, interact,

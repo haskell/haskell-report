@@ -4,7 +4,7 @@ module Char (
     digitToInt, intToDigit,
     toUpper, toLower,
     ord, chr,
-    readLitChar, showLitChar, lexLitChar
+    readLitChar, showLitChar, lexLitChar,
 
 	-- ...and what the Prelude exports
     Char, String

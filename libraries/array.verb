@@ -160,12 +160,13 @@ subArray bnds = ixmap bnds (\i->i)
 
 -- A row of a matrix
 row :: (Ix a, Ix b) => a -> Array (a,b) c -> Array b c
-row i x = ixmap (l',u') (\j->(i,j)) x where ((l,l'),(u,u')) = bounds x
+row i x = ixmap (l',u') (\j->(i,j)) x where ((_,l'),(_,u')) = bounds x
 
--- Diagonal of a square	matrix
+-- Diagonal of a matrix (assumed to be square)
 diag :: (Ix a) => Array (a,a) b -> Array a b
 diag x = ixmap (l,u) (\i->(i,i)) x
-	 where ((l,l'),(u,u')) | l == l' && u == u'  = bounds x
+       where 
+         ((l,_),(u,_)) = bounds x
 
 -- Projection of first components of an array of pairs
 firstArray :: (Ix a) => Array a (b,c) -> Array a b

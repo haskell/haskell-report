@@ -13,18 +13,20 @@ This library defines some lesser-used operations over lists.
 
 \subsection{Indexing lists}
 
-Function @elemIndex val list@\indextt{elemIndex} returns the index of
+\begin{itemize}
+\item @elemIndex val list@\indextt{elemIndex} returns the index of
 the first occurrence, if any, of @val@  
 in @list@ as @Just index@.  @Nothing@ is returned if @not (val `elem` list)@.
 
-Function @elemIndices val list@\indextt{elemIndices} returns an
+\item @elemIndices val list@\indextt{elemIndices} returns an
 in-order list of indices, giving the occurrences of @val@ in @list@.
 
-Function @find@\indextt{find} 
+\item  @find@\indextt{find} 
 returns the first element of a list that satisfies a predicate,
 or Nothing, if there is no such element.
 @findIndex@ returns the corresponding index.
 @findIndices@ returns a list of all such indices.
+\end{itemize}
 
 \subsection{``Set'' operations}
 
@@ -109,14 +111,18 @@ predicate, respectively; i.e.,
 \eprog
 
 \item
-@sort@/@sortBy@\indextt{sort}\indextt{sortBy} 
+@sort@\indextt{sort}
 implement a stable sorting algorithm, here specified
 in terms of the @insertBy@ function, which inserts objects into a list
 according to the specified ordering relation.
 
 \item
+@insert@\indextt{insert}
+inserts a new element into an {\em ordered} list (arranged in increasing order).
+
+\item
 @group@\indextt{group} splits its list argument into a list of lists of equal, adjacent
-elements. For exmaple
+elements. For example
 \bprog
 @
   group "Mississippi" == ["M","i","ss","i","ss","i","pp","i"]
@@ -209,8 +215,21 @@ function replaces an @Ord@ context by a binary predicate, the
 predicate is assumed to define a total ordering.
 
 The ``@By@'' variants are as follows:
-@nubBy@, @deleteBy@, @unionBy@, @intersectBy@, @groupBy@,
-@sortBy@, @insertBy@, @maximumBy@, @minimumBy@.  The library does not
+@nubBy@, @deleteBy@, @deleteFirstsBy@ (the "@By@" variant of @\\@),
+@unionBy@, @intersectBy@, @groupBy@,
+@sortBy@, @insertBy@, @maximumBy@, @minimumBy@.  
+\indextt{nubBy} 
+\indextt{deleteBy} 
+\indextt{deleteFirstsBy} 
+\indextt{unionBy} 
+\indextt{intersectBy} 
+\indextt{groupBy} 
+\indextt{sortBy} 
+\indextt{insertBy} 
+\indextt{maximumBy} 
+\indextt{minimumBy} 
+
+The library does not
 provide @elemBy@, because @any (eq x)@ does the same job as @elemBy eq x@ would.
 A handful of overloaded functions (@elemIndex@, @elemIndices@, @isPrefixOf@, @isSuffixOf@)
 were not considered important enough to have ``@By@'' variants.
@@ -234,9 +253,16 @@ is a generalised verion of @length@.
 
 The ``@generic@'' operations are as follows:
 @genericLength@, @genericTake@, @genericDrop@,
-    @genericSplitAt@, @genericIndex@, @genericReplicate@.
+    @genericSplitAt@, @genericIndex@ (the generic version of @!!@), @genericReplicate@.
 
 
+\subsection{Further ``@zip@'' operations}
+
+The Prelude provides @zip@, @zip3@, @unzip@, @unzip3@, @zipWith@, and @zipWith3@.
+The List library provides these same three operations for 4, 5, 6, and 7 arguments.
+\indextt{zip4}
+\indextt{unzip4}
+\indextt{zipWith4}
 
 \clearpage
 \subsection{Library {\tt List}}

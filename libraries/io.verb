@@ -92,7 +92,6 @@ computation.  This is similar to try-catch-finally in Java.
 % Inline the code here since there's no other functions in IO that
 % are not primitive.
 
-\inputHS{code/IO}
 
 
 \subsection{Files and Handles}
@@ -181,7 +180,7 @@ or once the entire contents of the handle has been read.
 Once a semi-closed handle becomes closed, the contents of the
 associated list becomes fixed.  The contents of this final list is
 only partially specified: it will contain at least all the items of
-the stream that were evalutated prior to the handle becoming closed.
+the stream that were evaluated prior to the handle becoming closed.
 
 Any I/O errors encountered while a handle is semi-closed are simply
 discarded.
@@ -559,8 +558,8 @@ main = do
          x2 <- readNum                          
          putStr  ("Their sum is " ++ show (x1+x2) ++ "\n")
        where readNum :: IO Integer
-		-- Need a type signature for 
-		-- readLn to avoid ambiguity
+		-- Providing a type signature avoids reliance on
+		-- the defaulting rule to fix the type of x1,x2
              readNum = readLn
 @
 \eprog
@@ -575,6 +574,7 @@ Note that exactly two arguments must be supplied to the program.
 @
 import IO
 import System
+import Char( toUpper )
 
 main = do 
          [f1,f2] <- getArgs
@@ -598,6 +598,7 @@ An equivalent but much shorter version, using string I/O is:
 \bprog
 @
 import System
+import Char( toUpper )
 
 main = do
          [f1,f2] <- getArgs
@@ -616,5 +617,8 @@ main = do
 % the @~@, a class error would occur because there is no instance of
 % @IO@ for class @MonadZero@.
 
+\subsection{Library @IO@}
+
+\inputHS{code/IO}
 
 %**~footer

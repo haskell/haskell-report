@@ -1,14 +1,14 @@
 -- Standard list functions
 
 module PreludeList (
-    map, (++), filter, concat,
+    map, (++), filter, concat, concatMap, 
     head, last, tail, init, null, length, (!!), 
     foldl, foldl1, scanl, scanl1, foldr, foldr1, scanr, scanr1,
     iterate, repeat, replicate, cycle,
     take, drop, splitAt, takeWhile, dropWhile, span, break,
     lines, words, unlines, unwords, reverse, and, or,
     any, all, elem, notElem, lookup,
-    sum, product, maximum, minimum, concatMap, 
+    sum, product, maximum, minimum, 
     zip, zip3, zipWith, zipWith3, unzip, unzip3)
   where
 
@@ -28,13 +28,15 @@ map f (x:xs) = f x : map f xs
 (x:xs) ++ ys = x : (xs ++ ys)
 
 filter :: (a -> Bool) -> [a] -> [a]
-filter p [] = []
+filter p []                 = []
 filter p (x:xs) | p x       = x : filter p xs
                 | otherwise = filter p xs
 
 concat :: [[a]] -> [a]
 concat xss = foldr (++) [] xss
 
+concatMap :: (a -> [b]) -> [a] -> [b]
+concatMap f = concat . map f
 
 -- head and tail extract the first element and remaining elements,
 -- respectively, of a list, which must be non-empty.  last and init
@@ -45,14 +47,14 @@ head             :: [a] -> a
 head (x:_)       =  x
 head []          =  error "Prelude.head: empty list"
 
+tail             :: [a] -> [a]
+tail (_:xs)      =  xs
+tail []          =  error "Prelude.tail: empty list"
+
 last             :: [a] -> a
 last [x]         =  x
 last (_:xs)      =  last xs
 last []          =  error "Prelude.last: empty list"
-
-tail             :: [a] -> [a]
-tail (_:xs)      =  xs
-tail []          =  error "Prelude.tail: empty list"
 
 init             :: [a] -> [a]
 init [x]         =  []
@@ -263,9 +265,6 @@ maximum xs       =  foldl1 max xs
 
 minimum []       =  error "Prelude.minimum: empty list"
 minimum xs       =  foldl1 min xs
-
-concatMap        :: (a -> [b]) -> [a] -> [b]
-concatMap f      =  concat . map f
 
 -- zip takes two lists and returns a list of corresponding pairs.  If one
 -- input list is short, excess elements of the longer list are discarded.

@@ -14,7 +14,7 @@ module List (
     unzip4, unzip5, unzip6, unzip7, unfoldr,
 
     -- ...and what the Prelude exports
-    []((:), []),
+    -- []((:), []),	-- This is built-in syntax
     map, (++), concat, filter,
     head, last, tail, init, null, length, (!!),
     foldl, foldl1, scanl, scanl1, foldr, foldr1, scanr, scanr1,
@@ -69,7 +69,7 @@ union                   :: Eq a => [a] -> [a] -> [a]
 union                   =  unionBy (==)    
 
 unionBy                 :: (a -> a -> Bool) -> [a] -> [a] -> [a]
-unionBy eq xs ys        =  xs ++ foldl (flip (deleteBy eq)) (nubBy eq ys) xs
+unionBy eq xs ys        =  xs ++ deleteFirstsBy eq (nubBy eq ys) xs
 
 intersect               :: Eq a => [a] -> [a] -> [a]
 intersect               =  intersectBy (==)
@@ -83,15 +83,15 @@ intersperse sep [x]     =  [x]
 intersperse sep (x:xs)  =  x : sep : intersperse sep xs
 
 -- transpose is lazy in both rows and columns,
--- 	 and works for non-rectangular 'matrices'
+--       and works for non-rectangular 'matrices'
 -- For example, transpose [[1,2],[3,4,5],[]]  =  [[1,3],[2,4],[5]]
 -- Note that [h | (h:t) <- xss] is not the same as (map head xss)
---	because the former discards empty sublists inside xss
+--      because the former discards empty sublists inside xss
 transpose                :: [[a]] -> [[a]]
-transpose []		 = []
+transpose []             = []
 transpose ([]     : xss) = transpose xss
 transpose ((x:xs) : xss) = (x : [h | (h:t) <- xss]) : 
-			   transpose (xs : [t | (h:t) <- xss])
+                           transpose (xs : [t | (h:t) <- xss])
 
 partition               :: (a -> Bool) -> [a] -> ([a],[a])
 partition p xs          =  (filter p xs, filter (not . p) xs)
@@ -139,10 +139,10 @@ mapAccumR f s (x:xs)    =  (s'', y:ys)
                            where (s'',y ) = f s' x
                                  (s', ys) = mapAccumR f s xs
 
-unfoldr			:: (b -> Maybe (a,b)) -> b -> [a]
-unfoldr f b		= case f b of
-				Nothing    -> []
-				Just (a,b) -> a : unfoldr f b
+unfoldr                 :: (b -> Maybe (a,b)) -> b -> [a]
+unfoldr f b             = case f b of
+                                Nothing    -> []
+                                Just (a,b) -> a : unfoldr f b
 
 sort                    :: (Ord a) => [a] -> [a]
 sort                    =  sortBy compare
@@ -150,8 +150,8 @@ sort                    =  sortBy compare
 sortBy                  :: (a -> a -> Ordering) -> [a] -> [a]
 sortBy cmp              =  foldr (insertBy cmp) []
 
-insert			:: (Ord a) => a -> [a] -> [a]
-insert			= insertBy compare
+insert                  :: (Ord a) => a -> [a] -> [a]
+insert                  = insertBy compare
 
 insertBy                :: (a -> a -> Ordering) -> a -> [a] -> [a]
 insertBy cmp x []       =  [x]
@@ -163,18 +163,18 @@ insertBy cmp x ys@(y:ys')
 maximumBy               :: (a -> a -> Ordering) -> [a] -> a
 maximumBy cmp []        =  error "List.maximumBy: empty list"
 maximumBy cmp xs        =  foldl1 max xs
-			where
-			   max x y = case cmp x y of
-					GT -> x
-					_  -> y
+                        where
+                           max x y = case cmp x y of
+                                        GT -> x
+                                        _  -> y
 
 minimumBy               :: (a -> a -> Ordering) -> [a] -> a
 minimumBy cmp []        =  error "List.minimumBy: empty list"
 minimumBy cmp xs        =  foldl1 min xs
-			where
-			   min x y = case cmp x y of
-					GT -> y
-					_  -> x
+                        where
+                           min x y = case cmp x y of
+                                        GT -> y
+                                        _  -> x
 
 genericLength           :: (Integral a) => [b] -> a
 genericLength []        =  0

@@ -6,7 +6,7 @@ module PreludeText (
     showChar, showString, readParen, showParen ) where
 
 -- The instances of Read and Show for
---	Bool, Char, Maybe, Either, Ordering
+--      Bool, Char, Maybe, Either, Ordering
 -- are done via "deriving" clauses in Prelude.hs
 
 import Char(isSpace, isAlpha, isDigit, isAlphaNum,
@@ -22,8 +22,8 @@ class  Read a  where
     readsPrec        :: Int -> ReadS a
     readList         :: ReadS [a]
 
-	-- Minimal complete definition:
-	--	readsPrec
+        -- Minimal complete definition:
+        --      readsPrec
     readList         = readParen False (\r -> [pr | ("[",s)  <- lex r,
                                                     pr       <- readl s])
                        where readl  s = [([],t)   | ("]",t)  <- lex s] ++
@@ -36,14 +36,14 @@ class  Read a  where
 
 class  Show a  where
     showsPrec        :: Int -> a -> ShowS
-    show 	     :: a -> String 
+    show             :: a -> String 
     showList         :: [a] -> ShowS
 
-	-- Mimimal complete definition:
-	--	show or showsPrec
+        -- Mimimal complete definition:
+        --      show or showsPrec
     showsPrec _ x s   = show x ++ s
 
-    show x 	      = showsPrec 0 x ""
+    show x            = showsPrec 0 x ""
 
     showList []       = showString "[]"
     showList (x:xs)   = showChar '[' . shows x . showl xs
@@ -113,7 +113,7 @@ lex (c:s) | isSingle c = [([c],s)]
           | otherwise  = []    -- bad character
              where
               isSingle c =  c `elem` ",;()[]{}_`"
-	      isSym c    =  c `elem` "!@#$%&*+./<=>?\\^|:-~"
+              isSym c    =  c `elem` "!@#$%&*+./<=>?\\^|:-~"
               isIdChar c =  isAlphaNum c || c `elem` "_'"
 
               lexFracExp ('.':c:cs) | isDigit c
@@ -129,13 +129,13 @@ lex (c:s) | isSingle c = [([c],s)]
 
 instance  Show Int  where
     showsPrec n = showsPrec n . toInteger
-	-- Converting to Integer avoids
-	-- possible difficulty with minInt
+        -- Converting to Integer avoids
+        -- possible difficulty with minInt
 
 instance  Read Int  where
   readsPrec p r = [(fromInteger i, t) | (i,t) <- readsPrec p r]
-	-- Reading at the Integer type avoids
-	-- possible difficulty with minInt
+        -- Reading at the Integer type avoids
+        -- possible difficulty with minInt
 
 instance  Show Integer  where
     showsPrec           = showSigned showInt

@@ -66,7 +66,17 @@ range.
 
 The function @showLitChar@ converts a character to a string using
 only printable characters, using Haskell source-language escape conventions.
-The function @readLitChar@ does the reverse.
+The function @lexLitChar@ does the reverse, returning the sequence of characters 
+that encode the character.
+The function @readLitChar@ does the same, but in addition converts the 
+to the character that it encodes.  For example:
+\bprog
+@
+  showLitChar '\n' s       =  "\\n" ++ s
+  lexLitChar  "\\nHello"   =  [("\\n", "Hello")]
+  readLitChar "\\nHello"   =  [("\n", "Hello")]
+@
+\eprog
 
 Function @toUpper@ converts a letter to the corresponding
 upper-case letter, leaving any other character unchanged.  Any

@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/decls.verb,v 1.13 2001/11/01 13:43:43 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/decls.verb,v 1.14 2001/12/21 16:00:24 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Declarations</title>
 %*section 4
@@ -22,7 +22,7 @@ body   -> @{@ impdecls @;@ topdecls @}@
 	| @{@ impdecls  @}@
 	| @{@ topdecls  @}@
 
-topdecls -> topdecl_1 @;@ ... @;@ topdecl_n 	& \qquad (n>=1)
+topdecls -> topdecl_1 @;@ ... @;@ topdecl_n 	& (n>=1)
 topdecl	-> @type@ simpletype @=@ type
 	|  @data@ [context @=>@] simpletype @=@ constrs [deriving]
         |  @newtype@ [context @=>@] simpletype @=@ newconstr [deriving]
@@ -31,24 +31,24 @@ topdecl	-> @type@ simpletype @=@ type
 	|  @default@ @(@type_1 @,@ ... @,@ type_n@)@ & \qquad (n>=0)
 	|  decl
 
-decls	-> @{@ decl_1 @;@ ... @;@ decl_n @}@		& \qquad (n>=0)
+decls	-> @{@ decl_1 @;@ ... @;@ decl_n @}@		& (n>=0)
 decl	-> gendecl
 	|  (funlhs | pat^0) rhs
 
-cdecls	-> @{@ cdecl_1 @;@ ... @;@ cdecl_n @}@		& \qquad (n>=0)
+cdecls	-> @{@ cdecl_1 @;@ ... @;@ cdecl_n @}@		& (n>=0)
 cdecl	-> gendecl
 	|  (funlhs | var) rhs
 
-idecls	-> @{@ idecl_1 @;@ ... @;@ idecl_n @}@		& \qquad (n>=0)
-idecl	-> (funlhs | qfunlhs | var | qvar) rhs
+idecls	-> @{@ idecl_1 @;@ ... @;@ idecl_n @}@		& (n>=0)
+idecl	-> (funlhs | var) rhs
 	|						& (\tr{empty})
 
 gendecl	-> vars @::@ [context @=>@] type	& (\tr{type signature})
 	|  fixity [integer] ops			& (\tr{fixity declaration})
 	|					& (\tr{empty declaration})
 
-ops	-> op_1 @,@ ... @,@ op_n		& \qquad (n>=1)
-vars	-> var_1 @,@ ... @,@ var_n		& \qquad (n>=1)
+ops	-> op_1 @,@ ... @,@ op_n		& (n>=1)
+vars	-> var_1 @,@ ... @,@ var_n		& (n>=1)
 fixity	-> @infixl@ | @infixr@ | @infix@
 @@@
 \indexsyn{vars}%
@@ -576,7 +576,7 @@ useful to assign "field labels" to the components of a data object.
 This allows a specific field to be referenced independently of its
 location within the constructor.
 
-A constructor definition in a @data@ declaration using the record syntax
+A constructor definition in a @data@ declaration using the record
 syntax (@C { ... }@) assigns labels to the components of the constructor.
 Constructors using field labels may be freely mixed with constructors
 without them. 
@@ -637,8 +637,6 @@ Section~\ref{strict-eval}) if "s_i" is of the form "@!@ t_i".  Pattern
 matching on "K" is not affected by strictness flags.
 }
 
-Lexically speaking, ``@!@'' is an ordinary "varsym" not a "reservedop"; it has special significance
-only in the context of the argument types of a @data@ declaration.
 
 \subsubsection{Type Synonym Declarations}
 \index{type synonym}
@@ -799,7 +797,7 @@ topdecl	-> @class@ [scontext @=>@] simpleclass [@where@ cdecls]
 scontext -> simpleclass
         |  @(@ simpleclass_1 @,@ ... @,@ simpleclass_n @)@		& (n>=0)
 simpleclass -> qtycls tyvar			
-cdecls	-> @{@ cdecl_1 @;@ ... @;@ cdecl_n @}@		& \qquad (n>=0)
+cdecls	-> @{@ cdecl_1 @;@ ... @;@ cdecl_n @}@		& (n>=0)
 cdecl	-> gendecl
 	|  (funlhs | var) rhs
 @@@
@@ -931,15 +929,10 @@ inst	-> gtycon
 	|  @(@ gtycon tyvar_1 ... tyvar_k @)@	& (k>=0, tyvars {\rm distinct})
 	|  @(@ tyvar_1 @,@ ... @,@ tyvar_k @)@	& (k>=2, tyvars {\rm distinct})
 	|  @[@ tyvar @]@
-	|  @(@ tyvar_1 @->@ tyvar_2 @)@		& tyvar_1 {\rm and} tyvar_2 {\rm distinct}
-idecls	-> @{@ idecl_1 @;@ ... @;@ idecl_n @}@		& \qquad (n>=0)
-idecl	-> (funlhs | var | qfunlhs | qvar) rhs
-	|							& (empty)
-qfunlhs	->  qvar apat \{ apat \}
-	|   pat^{i+1} qvarop^{(a,i)} pat^{i+1}
-	|   lpat^i qvarop^{({\rm{}l},i)} pat^{i+1}
-	|   pat^{i+1} qvarop^{({\rm{}r},i)} rpat^i
-	|   @(@ qfunlhs @)@ apat \{ apat \}
+	|  @(@ tyvar_1 @->@ tyvar_2 @)@		& (tyvar_1 {\rm and} tyvar_2 {\rm distinct})
+idecls	-> @{@ idecl_1 @;@ ... @;@ idecl_n @}@		& (n>=0)
+idecl	-> (funlhs | var) rhs
+	|						& (empty)
 @@@
 \index{topdecl@@{\em topdecl} (@instance@)}
 \indexsyn{inst}%
@@ -971,27 +964,45 @@ such as:
 @
 \eprog
 The declarations "d" may contain bindings only for the class
-methods\index{class method} of "C".  The declarations may not contain any type
+methods\index{class method} of "C".  It is illegal to give a 
+binding for a class method that is not in scope, but the name under
+which it is in scope is immaterial; in particular, it may be a qualified
+name.  (This rule is identical to that used for subordinate names in
+export lists --- Section~\ref{export}.)
+For example, this is legal, even though @return@ is in scope only
+with the qualified name @Monad.return@.
+\bprog
+@
+  module A where
+    import qualified Monad
+
+    instance Monad.Monad T where
+      return = ...
+      (>>=)  = ...
+@
+\eprog
+The declarations may not contain any type
 signatures or fixity declarations,\index{type signature}\index{fixity declaration}
 since these have already been given in the @class@
 declaration.  As in the case of default class methods
 \index{default class method}%
 (Section~\ref{class-decls}), the method declarations must take the form of
 a variable or function definition.
-However, unlike other declarations, the name of the bound
-variable may be qualified.  So this is legal:
-\bprog
-@
-  module A where
-    import qualified B( Foo(op) )
-    instance B.Foo Int where
-      B.op = ...
-@
-\eprog
-Here, module @A@ imports class @Foo@ from module @B@, and then gives an 
-instance declaration for @Foo@.  Since @B@ is imported @qualified@, the name
-of the class method, @op@, is not in scope; so the definition must define @B.op@.
-Hence the need for the "qfunlhs" and "qvar" left hand sides in "idecl".
+
+% However, unlike other declarations, the name of the bound
+% variable may be qualified.  So this is legal:
+% \bprog
+% 
+%  module A where
+%    import qualified B( Foo(op) )
+%    instance B.Foo Int where
+%      B.op = ...
+%
+%\eprog
+% Here, module @A@ imports class @Foo@ from module @B@, and then gives an 
+%instance declaration for @Foo@.  Since @B@ is imported @qualified@, the name
+%of the class method, @op@, is not in scope; so the definition must define @B.op@.
+% Hence the need for the "qfunlhs" and "qvar" left hand sides in "idecl".
 
 If no binding is given for some class method then the
 corresponding default class method
@@ -1150,7 +1161,7 @@ including an empty deriving form: @deriving ()@.
 \index{overloading!defaults}
 
 @@@
-topdecl -> @default@ @(@type_1 @,@ ... @,@ type_n@)@ & \qquad (n>=0)
+topdecl -> @default@ @(@type_1 @,@ ... @,@ type_n@)@ & (n>=0)
 @@@
 \index{topdecl@@{\em topdecl} (@default@)}
 
@@ -1220,7 +1231,7 @@ default declaration}:
 "@default (@t_1 @,@ ... @,@ t_n@)@"
 \]
 where "n\geq0", and each
-"t_i" must be a monotype for which "@Num @t_i" holds.
+"t_i" must be a type for which "@Num @t_i" holds.
 In situations where an ambiguous type is discovered, an ambiguous type variable, "v", 
 is defaultable if:
 \begin{itemize}
@@ -1260,7 +1271,7 @@ including the top level of a module.
 
 @@@
 gendecl -> vars @::@ [context @=>@] type
-vars	-> var_1 @,@ ...@,@ var_n		& \qquad (n>=1)
+vars	-> var_1 @,@ ...@,@ var_n		& (n>=1)
 @@@
 \indexsyn{signdecl}%
 \indexsyn{vars}%
@@ -1370,7 +1381,7 @@ to supply the more general type signature, @T a -> a@.
 @@@
 gendecl	-> fixity [integer] ops
 fixity	-> @infixl@ | @infixr@ | @infix@
-ops	-> op_1 @,@ ... @,@ op_n		& \qquad (n>=1)
+ops	-> op_1 @,@ ... @,@ op_n		&  (n>=1)
 op	-> varop | conop 
 @@@
 \indexsyn{gendecl}%
@@ -1384,7 +1395,7 @@ must be in the range "0" to "9".
 A fixity declaration may appear anywhere that 
 a type signature appears and, like a type signature, declares a property of
 a particular operator.  Also like a type signature,
-a fixity declaration can only occur in the same declaration group as
+a fixity declaration can only occur in the same sequence of declarations as
 the declaration of the operator itself, and at most one fixity declaration
 may be given for any operator.  (Class methods are a minor exception;
 their fixity declarations can occur either in the class declaration itself
@@ -1524,7 +1535,6 @@ gdrhs	->  gd @=@ exp [gdrhs]
 gd	->  @|@ exp^0 
 @@@
 \indexsyn{decl}%
-\indexsyn{qfunlhs}%
 \indexsyn{rhs}%
 \indexsyn{gdrhs}%
 \indexsyn{gd}%

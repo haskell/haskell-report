@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/libraries/library.verb,v 1.11 2001/10/02 09:09:26 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/libraries/library.verb,v 1.12 2001/12/21 16:00:22 simonpj Exp $
 %
 % NOTE:--------------------------------------------------------------
 % The formatting of this report and the ``new font selection scheme''
@@ -380,7 +380,7 @@
 %\newcommand{\subsubsubsection}[1]{\par\noindent{\it #1}}
 \newcommand{\subsubsubsection}{\subsubsection*}
 
-%\sloppy
+\sloppy
 
 % a few hyphenation patterns, anyone?
 \hyphenation{da-ta-type da-ta-types}
@@ -412,7 +412,7 @@
 {\Large\bf for the} \\[.1in]
 {\huge\bf Haskell 98} \\[.3in]
 {\LARGE\bf Programming Language} \\[.3in]
-{\large\bf Revised: October 2001}
+{\large\bf Revised: December 2001}
 \end{center}
 
 \vspace{.15in}
@@ -456,7 +456,7 @@ Copyright (c) Simon Peyton Jones.
 
 {\em The authors intend this Report to belong to the entire Haskell
 community, and so we grant permission to copy and distribute it for
-any purpose, provided that it is reproduced in its entireity,
+any purpose, provided that it is reproduced in its entirety,
 including this Notice. Modified versions of this Report may also be
 copied and distributed for any purpose, provided that the modified
 version is clearly presented as such, and that it does not claim to be
