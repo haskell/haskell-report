@@ -1,7 +1,7 @@
 module List ( 
     elemIndex, elemIndices,
     find, findIndex, findIndices,
-    nub, nubBy, delete, deleteBy, (\\), 
+    nub, nubBy, delete, deleteBy, (\\), deleteFirstsBy,
     union, unionBy, intersect, intersectBy,
     intersperse, transpose, partition, group, groupBy,
     inits, tails, isPrefixOf, isSuffixOf,
@@ -55,14 +55,14 @@ nubBy eq (x:xs)         =  x : nubBy eq (filter (\y -> not (eq x y)) xs)
 delete                  :: Eq a => a -> [a] -> [a]
 delete                  =  deleteBy (==)
 
-deleteBy                :: (a -> a -> Bool) -> a -> [a] -> [a]
+deleteBy                :: (x -> a -> Bool) -> x -> [a] -> [a]
 deleteBy eq x []        = []
 deleteBy eq x (y:ys)    = if x `eq` y then ys else y : deleteBy eq x ys
 
 (\\)                    :: Eq a => [a] -> [a] -> [a]
 (\\)                    =  foldl (flip delete)
 
-deleteFirstsBy          :: (a -> a -> Bool) -> [a] -> [a] -> [a]
+deleteFirstsBy          :: (x -> a -> Bool) -> [a] -> [x] -> [a]
 deleteFirstsBy eq       =  foldl (flip (deleteBy eq))
 
 union                   :: Eq a => [a] -> [a] -> [a]

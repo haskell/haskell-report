@@ -153,8 +153,15 @@ is processed from right-to-left rather than left-to-right.
 
 \subsection{@unfoldr@}
 
-The @unfoldr@\indextt{unfoldr} function undoes a @foldr@ operation.  Note that,
-in general, only invertible functions can be unfolded.
+The @unfoldr@ function is a `dual' to @foldr@: while @foldr@ reduces a list
+to a summary value, @unfoldr@ builds a list from a seed value.  For 
+example:
+\bprog
+@
+  iterate f == unfoldr (\x -> Just (x, f x))
+@
+\eprog
+In some cases, @unfoldr@ can undo a @foldr@ operation:
 \bprog
 @
   unfoldr f' (foldr f z xs) == xs

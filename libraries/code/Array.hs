@@ -60,11 +60,11 @@ ixmap b f a           = array b [(i, a ! f i) | i <- range b]
 instance  (Ix a)          => Functor (Array a) where
     fmap fn (MkArray b f) =  MkArray b (fn . f) 
 
-instance  (Ix a, Eq b)  => Eq (Array a b)  where
-    a == a'             =  assocs a == assocs a'
+instance  (Ix a, Eq a, Eq b)  => Eq (Array a b)  where
+    a == a' =  assocs a == assocs a'
 
-instance  (Ix a, Ord b) => Ord (Array a b)  where
-    a <=  a'            =  assocs a <=  assocs a'
+instance  (Ix a, Ord a, Ord b) => Ord (Array a b)  where
+    a <= a' =  assocs a <= assocs a'
 
 instance  (Ix a, Show a, Show b) => Show (Array a b)  where
     showsPrec p a = showParen (p > 9) (

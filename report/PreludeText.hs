@@ -133,9 +133,7 @@ instance  Show Int  where
 	-- possible difficulty with minInt
 
 instance  Read Int  where
-  readsPrec p r = (fromInteger i, t)
-		where
-		  (i,t) = readsPrec p r
+  readsPrec p r = [(fromInteger i, t) | (i,t) <- readsPrec p r]
 	-- Reading at the Integer type avoids
 	-- possible difficulty with minInt
 

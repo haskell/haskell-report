@@ -59,6 +59,8 @@ with "<tt>Int</tt>".
 <p><li> [Apr 2001] <strong>Page 21, Section 3.11, List Comprehensions; and Page 128.</strong> 
 <ul> <li> In the production for "aexp", change the "n >= 0" to "n >= 1".
 <li> Remove the production for (empty qualifier)
+<li> In the translation box lower down the page, rewrite the translation so
+that it does not involve and empty list of qualifiers.  (Unchanged semantics.)
 </ul>
 This change ensures that there is at least one qualifier in list comprehension,
 and no qualifier is empty.  The translation lower down page 23 is then 
@@ -362,9 +364,7 @@ Replace the instances for <tt>Show Int</tt> and <tt>Read Int</tt> with
 	    -- possible difficulty with minInt
     
     instance  Read Int  where
-      readsPrec p r = (fromInteger i, t)
-		    where
-		      (i,t) = readsPrec p r
+      readsPrec p r = [(fromInteger i, t) | (i,t) <- readsPrec p r]
 	    -- Reading at the Integer type avoids
 	    -- possible difficulty with minInt
 </pre>
@@ -451,6 +451,7 @@ class declaration, and the <tt>rangeSize</tt> declaration, with:
     rangeSize :: (a,a) -> Int
 
     rangeSize b@(l,h) | null (range b) = 0
+                      | otherwise      = index b h + 1 
 	-- NB: replacing "null (range b)" by  "not (l <= h)"
 	-- fails if the bounds are tuples.  For example,
 	-- 	(1,2) <= (2,1)
@@ -459,6 +460,17 @@ class declaration, and the <tt>rangeSize</tt> declaration, with:
 </pre>
 (Note: the comment has changed too; it was misleading before.)
 </ul>
+
+<p><li> [May 2001] <strong>Page 24, Section 6.6</strong>.
+Add <tt>Eq a</tt> to the context for <tt>instance Eq (Array a b)</tt>, thus:
+<pre>
+    instance  (Ix a, Eq a, Eq b)  => Eq (Array a b)  ...
+</pre>
+Similarly, add <tt>Ord a</tt> to the context for <tt>instance Ord (Array a b)</tt>, thus:
+<pre>
+    instance  (Ix a, Ord a, Ord b) => Ord (Array a b) ...
+</pre>
+(Both consequences of removing <tt>Ord</tt> as a superclass of <tt>Ix</tt>.)
 
 <p><li> <strong>Page 22, Section 6.3; and Page 23, Fig 3</strong>:
 Replace "<tt>map</tt>" by "<tt>fmap</tt>" (two occurrences in 6.3, one in Fig 3).
@@ -473,6 +485,31 @@ Add an index entry for <tt>nub</tt>.
 
 <p><li> <strong>Page 29, Section 7.2, second bullet</strong>.  
 Introduce a new bullet just before "<tt>union</tt> is list union".
+
+<p><li> [May 2001] <strong>Page 30, Section 7.4, unfoldr</strong>.
+Replace the first line-and-a-half paragraph with:
+<p>
+"The <tt>unfoldr</tt> function is a `dual' to <tt>foldr</tt>: while <tt>foldr</tt> reduces a list
+to a summary value, <tt>unfoldr</tt> builds a list from a seed value.  For 
+example:
+<pre>
+  iterate f == unfoldr (\x -> Just (x, f x))
+</pre>
+In some cases, <tt>unfoldr</tt> can undo a <tt>foldr</tt> operation:"
+<p>
+(Followed by the existing displayed equation.)
+
+
+<p><li> [May 2001] <strong>Page 32, Section 7.8, Library List</strong>.
+<ul> <li> Add <tt>deleteFirstsBy</tt> to the export list.  (It has always
+ been in the library, but the report failed to export it!)
+<li> Generalise the type signatures of <tt>deleteBy</tt> and <tt>deleteFirstsBy</tt> to:
+<pre>
+   deleteBy                :: (x -> a -> Bool) -> x -> [a] -> [a]
+   deleteFirstsBy          :: (x -> a -> Bool) -> [a] -> [x] -> [a]
+</pre>
+The definitions have these more general types, and they are occasionally useful.
+</ul>
 
 <p><li> [Apr 2001] <strong>Page 34, Section 7.8, Library List</strong>.
 Replace the definition of <tt>partition</tt> by
