@@ -1,0 +1,41 @@
+<html>
+<head>
+</head>
+<HEAD>
+<TITLE>Haskell 98 Revised: ERRATA</title></head>
+</head>
+</head>
+</head>
+</head>
+</HEAD>
+<BODY>
+<div align=center>
+<img src="h98.gif" alt="Haskell 98">
+</div>
+
+<h1>Errata in the 
+<a href="http://haskell.cs.yale.edu/definition/">Revised Haskell 98 Language Report (2003)</a></h1>
+
+The list below gives all known errors in "Haskell 98 Language and Libraries: the Revised Report",
+published by Cambridge University Press as a book, and also in the Journal of Functional Programming
+13(1) (Jan 2003). 
+All page references are to these texts, which may differ slightly from the online versions.
+
+<ul>
+<p><li> <strong>Page 170, Chapter 15 Indexing operations.</strong>.  
+Replace the (bogus) law "<tt>map index (range (l,u)) = [0..rangeSize (l,u)]</tt>" by
+<pre>
+  map (index (l,u)) (range (l,u)) = [0 .. rangeSize (l,u) - 1]
+</pre>
+
+<p><li> <strong>Page 194, line -9, Chapter 19 Character
+utilities.</strong>.  Replace "converts the to the character it
+encodes" by "converts the string to the character it encodes".
+
+
+</ul>
+<hr>
+<address>Simon Peyton Jones, simonpj@microsoft.com</address>
+</body>
+</html>
+
