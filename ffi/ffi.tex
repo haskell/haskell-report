@@ -14,6 +14,7 @@
 % Interface. 
 
 % Changes since RC6:
+% * Clarified the lexis of C identifiers and C header file names
 % * In `ForeignPtr', added `mallocForeignPtrArray' and `mallocForeignPtrArray0'
 % * Clarified spec of allocations functions adding constraints taken from the
 %   corresponding C routines
@@ -79,8 +80,17 @@
 %   C bindings.
 
 % TODO:
-% * "Foreign Proxy" discussion not finished yet
-% * mallocForeignPtrArray and related issues
+% * "Foreign Proxy" (add it, there don't seem to be objections)
+%   - Ross points out that Eq must generally be defined on the underlying type
+%     if we want that Eq ForeignPtr compares the Ptr encapsulated in the
+%     ForeignPtr.  I don't think that's quite right, we could just have
+%       instance Eq a => Eq (ForeignObj a) where
+%         x == y = foreignObjToObj x == foreignObjToObj y
+%     This means for all ForeignObjs that if Eq is defined, it is defined by
+%     the Eq of the base type.  An alternative would be to define Eq on
+%     ForeignObjs as identity and use newtype to define ForeignPtrs with a
+%     different Eq instance.
+% * reallocForeignPtrArray and related issues (waiting for replies)
 % * Revise layout of the front page.
 % * Implement HTMLization.  (Malcolm suggests using
 %   <http://pauillac.inria.fr/~maranget/hevea/>)
@@ -115,7 +125,7 @@
     \\
     \textbf{--- DRAFT ---}\\[1ex]
     \ttfamily\scriptsize
-    $\relax$Id: ffi.tex,v 1.39 2003/01/22 05:47:14 chak Exp $\relax$%
+    $\relax$Id: ffi.tex,v 1.40 2003/01/22 08:48:26 chak Exp $\relax$%
     \ignorespaces}
   }
 \end{DRAFT}
@@ -326,10 +336,13 @@ reasonable effort.
 \newpage
 \section{Lexical Structure}
 
-The only addition to the lexical structure of Haskell 98 as defined
-in~\cite[Section~2]{haskell98} is a single new reserved identifier (namely,
-\code{foreign}) and a set of special identifiers.  The latter have a special
-meaning only within foreign declarations, but may be used as ordinary
+In the following, all formal grammatical definitions are based on the same
+notation as that defined in the Haskell 98
+Report~\cite[Section~2.1]{haskell98} and we make free use of all nonterminals
+defined in the Haskell 98 Report.  The only addition to the lexical structure
+of Haskell 98~\cite[Section~2]{haskell98} is a single new reserved identifier
+(namely, \code{foreign}) and a set of special identifiers.  The latter have a
+special meaning only within foreign declarations, but may be used as ordinary
 identifiers elsewhere.
 
 The following productions are added:
@@ -350,6 +363,25 @@ The special identifiers \code{ccall}, \code{cplusplus}, \code{dotnet},
 However, a concrete implementation of the FFI is free to support additional,
 system-specific calling conventions whose name is not explicitly listed here.
 
+To refer to objects of an external C context, we introduce the following
+phrases:
+%
+\begin{grammar}
+  \grule[C header filename]{chname}{%
+    \grepeat{\gnterm{chchar}} .\ h}
+  \grule[C identifier]{cid}{%
+    \gnterm{letter} \grepeat{\gnterm{letter} \galt\ \gnterm{ascDigit}}}
+  \grule{chchar}{%
+    \gnterm{letter} \galt\ \gnterm{ascSymbol}\gminus{\&}}
+  \grule{letter}{%
+    \gnterm{ascSmall} \galt\ \gnterm{ascLarge} \galt\ \_}
+\end{grammar}
+%
+The range of lexemes that are admissible for \gnterm{chname} is a subset of
+those permitted as arguments to the \code{\#{}include} directive in C.  In
+particular, a file name \gnterm{chname} must end in the suffix \code{.h}.  The
+lexemes produced by \gnterm{cid} coincide with those allowed as C identifiers,
+as specified in~\cite{C}.
 
 \newpage
 \section{Foreign Declarations}
@@ -669,35 +701,27 @@ under the \code{ccall} calling convention is as follows:
 %
 \begin{grammar}
   \grule[static function or address]{impent}{%
-    " \gopt{static} \gopt{\gnterm{fname}} \gopt{\&} 
+    " \gopt{static} \gopt{\gnterm{chname}} \gopt{\&} 
     \gopt{\gnterm{cid}} "}
   \gor[stub factory importing addresses]{%
     " dynamic "}
   \gor[stub factory exporting thunks]{%
     " wrapper "}
-  \grule{fname}{%
-    \gverbal{file name with suffix `\code{.h}'}}
-  \grule{cid}{%
-    \gverbal{C identifier}}
 \end{grammar}
 %
 The first alternative either imports a static function \gnterm{cid} or, if
 \gterm\& precedes the identifier, a static address.  If \gnterm{cid} is
 omitted, it defaults to the name of the imported Haskell variable.  The
-optional filename \gnterm{fname} specifies a C header file.
-The range of lexemes that are admissible for \gnterm{fname}
-and \gnterm{cid} coincides with the range of lexemes for arguments to the
-\code{\#{}include} directive and C identifiers, respectively, as defined
-in~\cite{C}.  The only exception is that the file name \gnterm{fname} must end
-in the suffix \code{.h}.  The intended meaning is that \gnterm{fname} has to
-be included to access \gnterm{cid}.  In particular, when the Haskell system
-compiles Haskell to C code, the directive
+optional filename \gnterm{chname} specifies a C header file, where the
+intended meaning is that the header file declares the C entity identified by
+\gnterm{cid}.  In particular, when the Haskell system compiles Haskell to C
+code, the directive
 %
 \begin{quote}
-  \gterm{\#include "\gnterm{fname}"}
+  \gterm{\#include "\gnterm{chname}"}
 \end{quote}
 %
-will be placed into any generated C file that refers to the foreign entity
+needs to be placed into any generated C file that refers to the foreign entity
 before the first occurrence of that entity in the generated C file.
 
 The second and third alternative, identified by the keywords \gterm{dynamic}
@@ -805,13 +829,13 @@ foreign import ccall "wrapper"
 \subsubsection{Specification of Header Files}
 
 A C header specified in an import declaration is always included by
-\gterm{\#include "\gnterm{fname}"}.  There is no explicit support for
-\gterm{\#include <\gnterm{fname}>} style inclusion.  The ISO C99~\cite{C99}
+\gterm{\#include "\gnterm{chname}"}.  There is no explicit support for
+\gterm{\#include <\gnterm{chname}>} style inclusion.  The ISO C99~\cite{C99}
 standard guarantees that any search path that would be used for a
-\gterm{\#include <\gnterm{fname}>} is also used for \gterm{\#include
-  "\gnterm{fname}"} and it is guaranteed that these paths are searched after
-all paths that are unique to \gterm{\#include "\gnterm{fname}"}.  Furthermore,
-we require that \gnterm{fname} ends on \code{.h} to make parsing of the
+\gterm{\#include <\gnterm{chname}>} is also used for \gterm{\#include
+  "\gnterm{chname}"} and it is guaranteed that these paths are searched after
+all paths that are unique to \gterm{\#include "\gnterm{chname}"}.  Furthermore,
+we require that \gnterm{chname} ends on \code{.h} to make parsing of the
 specification of external entities unambiguous.
   
 The specification of include files has been kept to a minimum on purpose.
