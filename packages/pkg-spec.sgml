@@ -103,7 +103,8 @@ handle many cases with no trouble.</para>
 
 <sect2><title>Dramatis personae</title>
 
-<para>The &hps; serves a number of different people:
+<para>The &hps; serves a number of people in different ways:
+
 <itemizedlist>
 <listitem><para>
  <emphasis>Joe User</emphasis> is simply a Haskell user.  He does not download new packages.  Nevertheless,
@@ -116,14 +117,27 @@ he needs to know about his Haskell compiler's <option>-package</option> flag (se
   and can install packages in more globally-visible places.
 	    </para>
 	  </listitem>
-<listitem><para> <emphasis>Roland RPM</emphasis>, <emphasis>Donald
- Debian</emphasis>, and <emphasis>Willie Windows</emphasis> build
- Linux RPM, Debian, and Windows installer packages respectively (this
- list is not exhaustive).  They do this as a service for Angela Author
- and the community, and may know little or nothing about the internal
- details of the Haskell packages they are wrapping up.
-	    </para>
-	  </listitem>
+
+<listitem><para><emphasis>Peter Packager</emphasis> builds operating
+system specific install files (e.g. .msi .rpm .deb) from packages
+supplied by Marcus or Angela.  We might also call him <emphasis>Roland
+RPM</emphasis>, <emphasis>Donald Debian</emphasis>, and
+<emphasis>Willie Windows</emphasis> who build Linux RPM, Debian, and
+Windows installer packages respectively (this list is not exhaustive).
+They do this as a service to their platform's community, and may know
+little or nothing about the internal details of the Haskell packages
+they are wrapping up.  </para> </listitem>
+
+<listitem><para><emphasis>Isabella Installer</emphasis> installs
+binary packages supplied by Peter or Angela, (or Rowland, Donald, and
+Willie).  Isabella requires only a Haskell compiler/interpreter.  She
+can use rpm to install packages by Rowland.  She cannot or will not
+build the packages herself, so she relies on Peter to provide them.
+She won't use the Setup script directly from Angela, but she might use
+a layered tool like <application>haskell-install</application>, which does all
+the work of downloading and installing simple
+packages.</para></listitem>
+
 <listitem><para>
  <emphasis>Angela Author</emphasis> wants to write a simple Haskell &tool;, and distribute it with 
 minimum fuss, in such a way that all the above folk can easily use it.
@@ -136,9 +150,18 @@ about his internal complexity.
 	    </para>
 	  </listitem>
 	</itemizedlist>
-We describe Angela and Marcus as <emphasis>producers</emphasis> of their packages, and all the others
-as package <emphasis>consumers</emphasis>.  
+
+We describe Angela and Marcus as <emphasis>producers</emphasis> of
+their packages, and all the others as package
+<emphasis>consumers</emphasis>.
       </para>
+
+<para>Note that though these users all have different names, it is very
+common for their roles to overlap when it comes to real people.  For
+instance, if Bob builds packages for himself, he becomes Joe once
+they're built.  These personas are <emphasis>use cases</emphasis>, and
+not meant to represent completely distinct individuals.</para>
+
     </sect2>
 
 <sect2 id="example"><title>An example</title>
@@ -381,7 +404,7 @@ test, install, register, and unregister a package.  </para>
 
 The Setup script is an <emphasis>interface</emphasis>.  It is meant to
 give a standard look-and-feel to packages for the sake of Joe User,
-Bob Builder, Sam Sysadmin, and Rowland RPM, as well as for layered
+Bob Builder, Peter Packager, Sam Sysadmin, and Rowland RPM, as well as for layered
 software tools.  This interface provides an abstraction layer on top
 of any implementation that Angela or Marcus prefers.</para>
 
@@ -915,15 +938,17 @@ in the final step, so that the package is installed where all users will see it.
 
 <sect3><title>System packagers (Debian, RPM etc)</title>
 
-<para>System packagers, such as Donald Debian, will run the configure and build steps just like Bob and Sam.
-A that point, Donald will say
-<programlisting>
-  ./Setup.lhs install --install-prefix=/tmp/donald
-</programlisting>
-to construct a ready-to-zip tree of all the installed files, plus a file <filename>installed-pkg-descr</filename>
-that describes the installed package.  He arranges to deliver both these components to the target machine,
-and then feed <filename>installed-pkg-descr</filename> to &hc-pkg; on the target machine.
-      </para>
+        <para>System packagers, such as Peter Packager or Donald
+        Debian, will run the configure and build steps just like Bob
+        and Sam.  A that point, Donald will say <programlisting>
+        ./Setup.lhs install --install-prefix=/tmp/donald
+        </programlisting> to construct a ready-to-zip tree of all the
+        installed files, plus a file
+        <filename>installed-pkg-descr</filename> that describes the
+        installed package.  He arranges to deliver both these
+        components to the target machine, and then feed
+        <filename>installed-pkg-descr</filename> to &hc-pkg; on the
+        target machine.  </para>
 
 	<para>The file <filename>installed-pkg-descr</filename> also
         contains information he needs for building his Debian
@@ -939,6 +964,12 @@ and then feed <filename>installed-pkg-descr</filename> to &hc-pkg; on the target
 	some intervention by the System Packager will be necessary;
 	for example platform-specific dependencies may need to be
 	specified.</para>
+
+
+        <para>After Peter has constructed the package, Isabella can
+        install it in a manner she is comfortable with.</para>
+
+
       </sect3>
    </sect2>
 </sect1>
@@ -1084,6 +1115,35 @@ that. </para> <para>Simon says: fine -- but we should make it easy for Marcus Ma
 
 </sect1>
 
+
+
+<!-- Appendix: Layered Tools --------------------------------- -->
+<appendix><title>Layered Tools</title>
+
+<para>One great advantage to having a standard configure/build/install
+interface for all Haskell packages is that end users don't need to
+learn a new method for each package they install.</para>
+
+<para>Likewise, with such an interface, we can build layered tools in
+a typical Unix fashion.  For instance, we might want a tool that
+downloads and installs Haskell packages.  It can be implemented as a
+simple shell script, <application>haskell-install</application> (where
+"$@" represents the command-line argument):
+
+<programlisting>#!/bin/sh
+
+echo "wget http://packages.haskell.org/$@"
+echo "tar -zxvf $@.tgz"
+echo "cd $@"
+echo "./Setup.lhs configure"
+echo "./Setup.lhs build"
+echo "./Setup.lhs install"</programlisting></para>
+
+<para>Now the end-user (Isabella) only needs to say "haskell-install
+myPackage", rather than performing all of the Setup steps by
+hand.</para>
+
+</appendix>
 
 
 <!-- Appendix: Related Systems --------------------------------- -->
