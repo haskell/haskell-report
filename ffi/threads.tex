@@ -28,8 +28,8 @@
 
 \title{A semantics for foreign threads}
 
-\author{Simon Peyton Jones \and Simon Marlow}
-
+\author{The Haskell FFI team}
+\maketitle
 
 \makeatactive
 
@@ -81,7 +81,79 @@ should never cause other threads to block.
 \end{itemize}
 
 
-\section{State}
+\section{Proposed design}
+
+The key extension is the ability to create a ``bound'' foreign export,
+that can be called from a foreign language.
+The intuitive idea is that ``@bound@'' means that the native OS thread that makes
+the call into Haskell is also guaranteed to run any @foreign@ calls that the
+Haskell thread makes.  
+
+\subsection{Extension to the FFI Syntax}
+
+A bound foreign export is declared by adding the specialid \texttt{bound}
+after the calling convention (before the exported entity string).
+
+The bound attribute can also apply to thunks created by foreign imported
+"wrapper" functions. These stub factories are the only situation where the
+\texttt{bound} attribute applies. 
+
+Example:
+\begin{quote}
+\begin{verbatim}
+foreign export ccall bound "CFoo" haskellFoo
+    :: IO ()
+foreign import ccall bound "wrapper" wrapHaskellFoo
+    :: IO () -> IO (FunPtr (IO ())) 
+\end{verbatim}
+\end{quote}
+
+The \texttt{bound} attribute should only be valid for exported entities
+that are in the IO monad.
+
+
+\subsection{Library Addition}
+
+A function named \texttt{forkBoundThread} should be added to the library
+(somewhere in \texttt{Foreign} or \texttt{Concurrent}).
+A possible implementation for POSIX systems is given below.
+
+\begin{quote}
+\begin{verbatim}
+forkBoundThread :: IO () -> IO ()
+
+-- pthread_create(thread, attr, start_routine, arg)
+foreign import ccall pthread_create
+    :: Ptr (Ptr ())
+    -> Ptr ()
+    -> FunPtr (Ptr () -> IO (Ptr ()))
+    -> Ptr ()
+    -> IO CInt
+
+foreign export ccall bound "wrapper" wrapHaskell
+    :: (Ptr () -> IO (Ptr ()))
+    -> IO (FunPtr (Ptr () -> IO (Ptr ())))
+    
+forkBoundThread action =
+    wrapHaskell (\ptr -> do
+            freeHaskellFunPtr thunk
+            action
+            return nullPtr
+        )
+    >>= \thunk -> alloca
+    >>= \thread -> pthread_create thread nullPtr thunk nullPtr
+    >> return ()
+
+\end{verbatim}
+\end{quote}
+
+\section{Operational semantics}
+
+While the intuition is clear, it is quite difficult to say \emph{precisely} what a ``@bound@'' export means.
+The purpose of this section is to give a precise description, using a simple operational semantics.
+
+
+\subsection{State}
 
 The state of the system is represented by a pair
 $$\NS ; \HS$$
@@ -156,7 +228,7 @@ or else it is a call to a foreign function $f$.
 We do not model the data passed to, or returned from, a foreign call, nor
 any details of what ``internal Haskell'' operations are.  
 
-\section{Evolution}
+\subsection{Evolution}
 
 We describe how the system evolves in a very standard way, using 
 transition rules, of form
@@ -259,63 +331,6 @@ the end of the Haskell thread.
 \item (WKR) and (EXT) allow new native threads to enter the system.
 
 \end{itemize}
-
-\section{Extension to the FFI Syntax}
-
-A bound foreign export is declared by adding the specialid \texttt{bound}
-after the calling convention (before the exported entity string).
-
-The bound attribute can also apply to thunks created by foreign imported
-"wrapper" functions. These stub factories are the only situation where the
-\texttt{bound} attribute applies. 
-
-Example:
-\begin{quote}
-\begin{verbatim}
-foreign export ccall bound "CFoo" haskellFoo
-    :: IO ()
-foreign import ccall bound "wrapper" wrapHaskellFoo
-    :: IO () -> IO (FunPtr (IO ())) 
-\end{verbatim}
-\end{quote}
-
-The \texttt{bound} attribute should only be valid for exported entities
-that are in the IO monad.
-
-\section{Library Addition}
-
-A function named \texttt{forkBoundThread} should be added to the library
-(somewhere in \texttt{Foreign} or \texttt{Concurrent}).
-A possible implementation for POSIX systems is given below.
-
-\begin{quote}
-\begin{verbatim}
-forkBoundThread :: IO () -> IO ()
-
--- pthread_create(thread, attr, start_routine, arg)
-foreign import ccall pthread_create
-    :: Ptr (Ptr ())
-    -> Ptr ()
-    -> FunPtr (Ptr () -> IO (Ptr ()))
-    -> Ptr ()
-    -> IO CInt
-
-foreign export ccall bound "wrapper" wrapHaskell
-    :: (Ptr () -> IO (Ptr ()))
-    -> IO (FunPtr (Ptr () -> IO (Ptr ())))
-    
-forkBoundThread action =
-    wrapHaskell (\ptr -> do
-            freeHaskellFunPtr thunk
-            action
-            return nullPtr
-        )
-    >>= \thunk -> alloca
-    >>= \thread -> pthread_create thread nullPtr thunk nullPtr
-    >> return ()
-
-\end{verbatim}
-\end{quote}
 
 \section{Issues}
 
