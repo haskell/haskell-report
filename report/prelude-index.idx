@@ -144,11 +144,13 @@ class                             #TShow a       #S6.3.3
 #Vexp              :: Floating a => a -> a 
 #Vexponent         :: RealFloat a => a -> Int 
 #Vfail             :: Monad m => String -> m a
+#Vfilter           :: (a -> Bool) -> [a] -> [a]
 #Vflip             :: (a -> b -> c) -> (b -> a -> c)
 #VfloatDigits      :: RealFloat a => a -> Int 
 #VfloatRadix       :: RealFloat a => a -> Integer 
 #VfloatRange       :: RealFloat a => a -> (Int, Int) 
 #Vfloor            :: (RealFrac a, Integral b) => a -> b 
+#Vfmap             :: Functor f => (a -> b) -> f a -> f b
 #Vfoldl            :: (a -> b -> a) -> a -> [b] -> a #&foldl (+) 0 [a,b,c] = ((a+b)+c)+0
 #Vfoldl1           :: (a -> a -> a) -> [a] -> a #&foldl1 (+) [a,b,c] = (a+b)+c
 #Vfoldr            :: (a -> b -> b) -> b -> [a] -> b #&foldr (+) 0 [a,b,c] = 0+(a+(b+c))
@@ -181,7 +183,7 @@ class                             #TShow a       #S6.3.3
 #Vlog              :: Floating a => a -> a 
 #VlogBase          :: Floating a => a -> a -> a 
 #Vlookup           :: Eq a => a -> [(a, b)] -> Maybe b
-#Vmap              :: Functor f => (a -> b) -> f a -> f b 
+#Vmap              :: (a -> b) -> [a] -> [b] 
 #VmapM             :: Monad m => (a -> m b) -> [a] -> m [b]
 #VmapM_            :: Monad m => (a -> m b) -> [a] -> m ()
 #Vmax              :: Ord a => a -> a -> a 
