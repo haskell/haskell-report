@@ -14,11 +14,13 @@
 % Interface. 
 
 % Changes since RC6:
+% * `mallocBytes' and `allocaBytes' must align memory sufficiently for any
+%   basic foreign type that fits into the allocated block
 % * Removed typos in the description of the module `ForeignPtr'
 % * Added Peter Gammie to the list of acknowledged people
 % * `addForeignPtrFinalizer' guarantees that finalizers for a single foreign
 %   pointer are executed in the opposite order as they were added.
-% * Added the constraint "sizeOf x `mod` alignment x = 0" to `Storable'
+% * `Storable': Require that the size is divisible by the alignment
 % * Added Ross Paterson to the list of acknowledged people
 % * Fixed typos
 % * Added hs_free_fun_ptr() and hs_free_stable_ptr()
@@ -108,7 +110,7 @@
     \\
     \textbf{--- DRAFT ---}\\[1ex]
     \ttfamily\scriptsize
-    $\relax$Id: ffi.tex,v 1.37 2003/01/13 14:17:48 chak Exp $\relax$%
+    $\relax$Id: ffi.tex,v 1.38 2003/01/14 12:21:00 chak Exp $\relax$%
     \ignorespaces}
   }
 \end{DRAFT}
@@ -1429,15 +1431,9 @@ The signatures and behaviour of the member functions of the class
   and alignment computes the alignment constraint of the argument.  An
   alignment constraint \code{x} is fulfilled by any address divisible by
   \code{x}. Both functions do not evaluate their argument, but compute the
-  result on the basis of the type of the argument alone.  We require that all
-  the elements of a contiguous array of storable values meet the alignment
-  constraint of these values; more formally, we require that
-  %
-  \begin{quote}
-\begin{verbatim}
-sizeOf v `mod` alignment v == 0
-\end{verbatim}%
-  \end{quote}
+  result on the basis of the type of the argument alone.  We require that the
+  size is divisible by the alignment.  (Thus each element of a contiguous
+  array of storable values will be properly aligned if the first one is.)
 
 \item[peekElemOff ::\ Storable a => Ptr a -> Int -> IO a] Read a value from a
   memory area regarded as an array of values of the same kind. The first
@@ -1492,7 +1488,9 @@ storage space for such an array can be allocated by the following functions:
   (Section~\ref{sec:Storable}).
 
 \item[mallocBytes ::\ Int -> IO (Ptr a)] Allocate a block of memory of the
-  given number of bytes.
+  given number of bytes.  The block of memory is sufficiently aligned for any
+  of the basic foreign types (see Section~\ref{sec:foreign-types}) that fits
+  into a memory block of the allocated size.
   
 \item[alloca ::\ Storable a => (Ptr a -> IO b) -> IO b] Allocate a block of
   memory of the same size as \code{malloc}, but the reference is passed to a
@@ -1502,7 +1500,8 @@ storage space for such an array can be allocated by the following functions:
   computation.
 
 \item[allocaBytes ::\ Int -> (Ptr a -> IO b) -> IO b] As \code{alloca}, but
-  allocate a memory area of the given size.
+  allocate a memory area of the given size.  The same alignment constraint as
+  for \code{mallocBytes} holds.
   
 \item[realloc ::\ Storable b => Ptr a -> IO (Ptr b)] Resize a memory area that
   was allocated with \code{malloc} or \code{mallocBytes} to the size needed to
