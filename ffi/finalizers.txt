@@ -287,7 +287,7 @@ Todo: flesh out.
 
 
 --
-Simon Marlow,  Alastair Reid, Simon Peyton Jones, Malcolm Wallace,
-Ross Paterson, Manuel Chakravarty, George Russell, John Meacham,
-<please insert your name here>
-
+Simon Marlow, Alastair Reid, Simon Peyton Jones, Malcolm Wallace, Ross
+Paterson, Manuel Chakravarty, George Russell, John Meacham, and others
+on the ffi@haskell.org mailing list.  (please add or remove names as
+appropriate).
