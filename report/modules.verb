@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/modules.verb,v 1.7 2001/08/23 16:19:27 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/modules.verb,v 1.8 2001/08/23 16:41:41 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Modules</title>
 %*section 5
@@ -199,7 +199,7 @@ that are in scope (whether qualified or not).
 
 \item
 The form `"@module@ M"' abbreviates the set of all entities whose
-names are brought into scope by one or more \emph{unqualified} @import@ declarations
+names are brought into scope by one or more {\em unqualified} @import@ declarations
 of the form `"@import@~M~[impspec]"' or `"@import@~A~@as@~M~[impspec]"'.  This set may be empty.
 For example:
 \bprog

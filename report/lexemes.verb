@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/lexemes.verb,v 1.4 2001/08/23 16:16:57 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/lexemes.verb,v 1.5 2001/08/23 16:41:41 simonpj Exp $
 %
 %*section 2
 %**<title>Haskell 98 Lexical Structure</title>
@@ -110,7 +110,7 @@ Comments\index{comment} are valid whitespace.
 
 An ordinary comment\index{comment!end-of-line} begins with a sequence of
 two or more consecutive dashes (e.g. @--@) and extends to the following newline.
-\emph{The sequence of dashes must not form part of a legal lexeme.}
+{\em The sequence of dashes must not form part of a legal lexeme.}
 For example, ``@-->@'' or ``@|--@'' do {\em not} begin
 a comment, because both of these are legal lexemes; however ``@--foo@''
 does start a commment.

@@ -261,7 +261,7 @@ This footnote qualifies the otherwise over-strong statement.
 Replace the first paragrah of this item with:
 <p>
 "The form "<tt>module</tt> M" abbreviates the set of all entities whose
-<em>unqualified</em> names are brought into scope by one or more <tt>import</tt> declarations
+names are brought into scope by one or more <em>unqualified</em> <tt>import</tt> declarations
 of the form "<tt>import</tt> M [impspec]" or "<tt>import</tt> A <tt>as</tt> M [impspec]".  This set may be empty.
 For example:"
 
@@ -301,7 +301,7 @@ be imported...".
 Delete the two sentences "The hiding clause only applies to unqualified
 names...  A hiding clause has no effect....".
 
-<p><li> [July 2001] <strong>Page 66, Section 5.3, Import Declarations, numbered item 2.</strong>
+<p><li> [Aug 2001] <strong>Page 66, Section 5.3, Import Declarations, numbered item 2.</strong>
 Add "It is not an error to hide an entity that is not, in fact, exported by
 the imported module, although compilers are encouraged to flag a warning in this case."
 (This is different from what I proposed by email, which made this case an error,
@@ -325,7 +325,7 @@ The last example in the section should read:
 	import Foo as A(f)
 </pre>
 
-<p><li> <strong>Page 68, Section 5.5.1, Qualified names.</strong>
+<p><li> [Aug 2001] <strong>Page 68, Section 5.5.1, Qualified names.</strong>
 Replace the second example in the first bullet by:
 <pre>
   module M where
@@ -378,7 +378,7 @@ just as <tt>A</tt> does.  Thus there is little danger of accidentally shadowing
 Prelude names."
 
 <p><li> [Aug 2001]  <strong>Page 74, Section 6.1.3, Lists.</strong>  In the last sentence,
-after "@Monad@" add ", @Functor@".  (The list type is an instance of @Functor@.)
+after "<tt>Monad</tt>" add ", <tt>Functor</tt>".  (The list type is an instance of <tt>Functor</tt>.)
 
 <p><li> [May 2001]  <strong>Page 74, Section 6.1.4, Tuples.</strong>
 Replace the first paragraph of this section with:
@@ -402,7 +402,7 @@ Delete the sentence "Functions are an instance of the <tt>Show</tt> class but no
 
 <p><li> [Aug 2001]  <strong>Page 75, Section 6.1.7, The IO and IOError Types.</strong>
 In the second sentence, replace "<tt>Show</tt>" by "<tt>Functor</tt>".  
-(@IO@ is an instance of @Functor@, but not @Show@.)
+(<tt>IO</tt> is an instance of <tt>Functor</tt>, but not <tt>Show</tt>.)
 
 <p><li>  [Apr 2001] <strong>Page 76, Section 6.3, Standard Haskell classes.</strong>
 There is a formatting error in the example.  There should be a new line
