@@ -180,7 +180,7 @@ Rationale
   ----------------------------------
 
     There are significant problems when one wants to manipulate
-    mutable Haskell state from a finalizer.  This is discussed in the
+    mutable Haskell state from a Haskell finalizer.  This is discussed in the
     section on mutable state, below.
 
   Concurrency
@@ -191,6 +191,13 @@ Rationale
     *and* mutable state, there are plenty of good reasons for wanting
     Haskell finalizers.
     
+    Dissenting note: no example of this has been presented.  (An
+    alleged example turned out to be an example of adding a Haskell
+    finalizer to a Haskell object.  The Haskell object contained a
+    buffer which was to be flushed and deallocated when the object was
+    finalized.  The buffer happened to be a C object but clearly the
+    buffer needed to be flushed no matter what.)
+
 
   Arguments against
   -----------------
@@ -220,8 +227,8 @@ Rationale
        FFI.
 
        It is apparently straightforward to simply delay execution of
-       finalizers until they reach 'safe' points in the IO monad.  As
-       discussed above, this runs the risk of starvation.
+       finalizers until they reach 'safe' points in the IO monad but, as
+       discussed below, this runs the risk of starvation.
        
     4. Writing Haskell finalizers which benefit from being written in
        Haskell instead of C (i.e., getting some advantage from the
@@ -231,6 +238,8 @@ Rationale
 
        These must be specified in the FFI spec and, of course, implemented.
 
+    5. The complexity of the solution seems to be out of line with the
+       simplicity of the task to be accomplished.
 
 
 Implementations
@@ -255,9 +264,10 @@ Implementations
     computation, and finalizers can even preempt each other.
 
     The patch does not address any of the issues described in the
-    section on mutable state, below.
+    section on mutable state, below and it is believed that deadlock
+    could result if the finalizers used MVars.
 
-    An alternative implementation would be to piggyback on Hugs's
+    An alternative implementation would be to piggyback on Hugs'
     cooperative concurrency and place finalizers into the "thread
     pool" (or whatever Hugs uses for this).  Unfortunately, this runs
     the risk of starvation since context switches only occur when
@@ -424,6 +434,10 @@ Interaction with co-operative concurrency
     not concerned that execution of a finalizer might be delayed half
     a second or 10 seconds or some other finite time; we are concerned
     that the execution of the finalizer might be delayed indefinitely.
+    [It is also open to question whether lessons learnt with imperative
+    languages like Java apply to lazy languages.  For example, only
+    lazy languages have hGetContents and similar functions built using
+    unsafeInterleaveIO.]
 
     Simon M. tends to the view that implementing Haskell finalizers
     using co-operative concurrency isn't a particularly fruitful
@@ -463,13 +477,6 @@ Proposals
 
 4. Support both Haskell and C finalizers.
 
-4. No change to the spec for the time being, while we evaluate the
-   need and cost of implementing Haskell finalizers in a range of
-   implementations.  Note that upgrading from C finalizers to
-   Haskell finalizers would only require that we say that finalizers
-   are invoked with the equivalent of a 'safe' ffi call instead of
-   an 'unsafe' ffi call and, no doubt, the addition of some
-   convenience functions.
 
 
 --
