@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/decls.verb,v 1.10 2001/09/10 11:06:23 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/decls.verb,v 1.11 2001/09/24 14:40:47 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Declarations</title>
 %*section 4
@@ -288,18 +288,25 @@ It denotes the type of lists with elements of type "t" (see
 Sections~\ref{lists} and \ref{basic-lists}).
 
 \end{enumerate}
-Although the tuple, list, and function types have special syntax, they
-are not different from user-defined types with equivalent
-functionality.
+These special syntactic forms always denote the built-in type constructors
+for functions, tuples, and lists, regardless of what is in scope.
+In a similar way, the prefix type constructors @(->)@, @[]@, @()@, @(,)@, 
+and so on, always denote the built-in type constructors; they 
+cannot be qualified, nor mentioned in import or export lists (Section~\ref{modules}).
+(Hence the special production, ``gtycon'', above.)
 
-Expressions and types have a consistent syntax.
+Although the list and tuple types have special syntax, their semantics 
+is the same as the equivalent user-defined algebraic data types.
+
+Notice that expressions and types have a consistent syntax.
 If "t_i" is the type of
 expression or pattern "e_i", then the expressions "@(\@ e_1 @->@ e_2@)@",
 "@[@e_1@]@", and "@(@e_1,e_2@)@" have the types "@(@t_1 @->@ t_2@)@",
 "@[@t_1@]@", and "@(@t_1,t_2@)@", respectively.
 
 \index{quantification}
-With one exception, the
+With one exception (that of the distinguished type variable
+in a class declaration (Section~\ref{class-decls})), the
 type variables in a \Haskell{} type expression
 are all assumed to be universally quantified; there is no explicit
 syntax for universal quantification~\cite{damas-milner82}.
@@ -311,9 +318,6 @@ when discussing the types of \Haskell{} programs.  When we write an
 explicitly quantified type, the scope of the "\forall" extends as far
 to the right as possible; for example, "\forall a.~a \rightarrow a" means
 "\forall a.~(a \rightarrow a)".
-
-The exception referred to is that of the distinguished type variable
-in a class declaration (Section~\ref{class-decls}).
 
 %Every type variable appearing in a signature
 %is universally quantified over that signature.  This last

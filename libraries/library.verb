@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/libraries/library.verb,v 1.9 2001/08/31 16:03:08 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/libraries/library.verb,v 1.10 2001/09/24 14:40:47 simonpj Exp $
 %
 % NOTE:--------------------------------------------------------------
 % The formatting of this report and the ``new font selection scheme''
@@ -412,7 +412,7 @@
 {\Large\bf for the} \\[.1in]
 {\huge\bf Haskell 98} \\[.3in]
 {\LARGE\bf Programming Language} \\[.3in]
-{\large\bf Revised: July 2001}
+{\large\bf Revised: September 2001}
 \end{center}
 
 \vspace{.15in}

@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/modules.verb,v 1.11 2001/09/13 13:29:08 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/modules.verb,v 1.12 2001/09/24 14:40:48 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Modules</title>
 %*section 5
@@ -195,37 +195,39 @@ that are in scope (whether qualified or not).
 \end{itemize}
 
 \item
-The form `"@module@ M"' abbreviates the set of all entities whose
-names are brought into scope by one or more {\em unqualified} @import@ declarations
-of the form `"@import@~M~[impspec]"' or `"@import@~A~@as@~M~[impspec]"'.  This set may be empty.
+The form ``@module M@'' abbreviates the set of all entities whose
+{\em unqualified} name, $e$, is in scope, and for which the {\em qualified} name
+$M.e$ is also in scope and refers to the same entity as $e$.  This set
+may be empty.
 For example:
 \bprog
 @
-      module Queue( module Stack, enqueue, dequeue ) where
-          import Stack
-          ...
+  module Queue( module Stack, enqueue, dequeue ) where
+      import Stack
+      ...
 @
 \eprog
 Here the module @Queue@ uses the module name @Stack@ in its export
 list to abbreviate all the entities imported from @Stack@.  
-\item
-Additionally, a module can name its own local definitions in its export
-list using its name in the `"@module@" m' syntax.  For example:
+
+A module can name its own local definitions in its export
+list using its own name in the ``@module M@'' syntax, because a local
+declaration brings into scope both a qualified and unqualified name (Section~\ref{qualifiers}). 
+For example:
 \bprog
 @
- module Mod1(module Mod1, module Mod2) where
- import Mod2
- import Mod3
+  module Mod1( module Mod1, module Mod2 ) where
+  import Mod2
+  import Mod3
 @
 \eprog
 Here module @Mod1@ exports all local definitions as well as those
-imported from @Mod2@ but not those imported from @Mod3@.  Note that
-@module M where@ is the same as using @module M(module M) where@.
-\end{enumerate}
-It is an error to use "@module@~M" in an export list unless $M$ is the
-module bearing the export list, or $M$ is imported
-by at least one @import@ declaration (qualified or unqualified).
+imported from @Mod2@ but not those imported from @Mod3@.
 
+It is an error to use @module M@ in an export list unless @M@ is 
+the module bearing the export list, or @M@ is imported by at 
+least one import declaration (qualified or unqualified).
+\end{enumerate}
 Exports lists are cumulative: the set of entities exported by an export
 list is the union of the entities exported by the individual items of the list.
 
@@ -329,8 +331,8 @@ associated type.  Thus, in
 any constructor, class, or type named @C@ is excluded.  In contrast,
 using @C@ in an import list names only a class or type.  
 
-It is not an error to hide an entity that is not, in fact, exported by
-the imported module, although compilers are encouraged to flag a warning in this case.
+It is an error to hide an entity that is not, in fact, exported by
+the imported module.
 
 \item
 Finally, if "impspec" is omitted then 

@@ -14,7 +14,7 @@ array       :: (Ix a) => (a,a) -> [(a,b)] -> Array a b
 array b ivs =
     if and [inRange b i | (i,_) <- ivs]
         then MkArray b
-                     (\j -> case [v | (i,v) <- ivs, index b i == index b j] of
+                     (\j -> case [v | (i,v) <- ivs, i == j] of
                             [v]   -> v
                             []    -> error "Array.!: \
                                            \undefined array element"
@@ -41,12 +41,11 @@ assocs                :: (Ix a) => Array a b -> [(a,b)]
 assocs a              =  [(i, a!i) | i <- indices a]
 
 (//)                  :: (Ix a) => Array a b -> [(a,b)] -> Array a b
-a // new_ivs          = array b (old_ivs ++ new_ivs)
+a // new_ivs          = array (bounds a) (old_ivs ++ new_ivs)
                       where
-	          	b       = bounds a
                   	old_ivs = [(i,a!i) | i <- indices a,
-                  			     index b i `notElem` new_is]
-                  	new_is  = [index b j | (j,_) <- new_ivs]
+                                             i `notElem` new_is]
+                  	new_is  = [i | (i,_) <- new_ivs]
 
 accum                 :: (Ix a) => (b -> c -> b) -> Array a b -> [(a,c)]
                                    -> Array a b
@@ -63,10 +62,10 @@ ixmap b f a           = array b [(i, a ! f i) | i <- range b]
 instance  (Ix a)          => Functor (Array a) where
     fmap fn (MkArray b f) =  MkArray b (fn . f) 
 
-instance  (Ix a, Eq a, Eq b)  => Eq (Array a b)  where
+instance  (Ix a, Eq b)  => Eq (Array a b)  where
     a == a' =  assocs a == assocs a'
 
-instance  (Ix a, Ord a, Ord b) => Ord (Array a b)  where
+instance  (Ix a, Ord b) => Ord (Array a b)  where
     a <= a' =  assocs a <= assocs a'
 
 instance  (Ix a, Show a, Show b) => Show (Array a b)  where

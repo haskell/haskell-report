@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/exps.verb,v 1.9 2001/09/11 13:04:27 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/exps.verb,v 1.10 2001/09/24 14:40:47 simonpj Exp $
 %
 %*section 3
 %**<title>The Haskell 98 Report: Expressions</title>
@@ -7,25 +7,17 @@
 \section{Expressions}\index{expression}
 \label{expressions}
 
-In this section, we describe the syntax and informal semantics of \Haskell{}
-{\em expressions}, including their translations into the
+In this section, we describe the syntax and informal semantics of
+\Haskell{} {\em expressions}, including their translations into the
 \Haskell{} kernel, where appropriate.  Except in the case of @let@
 expressions, these translations preserve both the static and dynamic
-semantics.
-Free variables and constructors used in these translations refer to
-entities 
-defined by the Prelude.  To avoid clutter,
-\index{Prelude}
-we use @True@ instead of
-@Prelude.True@ or @map@ instead of @Prelude.map@. (@Prelude.True@ is a
-"qualified name" as described in Section~\ref{import}.)
-
-Free variables and constructors used in these translations
-always refer to entities defined by the @Prelude@.
-For example, ``@concatMap@'' used in the translation of list comprehensions 
-(Section~\ref{list-comprehensions})
-means the @concatMap@ defined by the @Prelude@, regardless of what is in scope
-where the list comprehension is used.
+semantics.  Free variables and constructors used in these translations
+always refer to entities defined by the @Prelude@.  For example,
+``@concatMap@'' used in the translation of list comprehensions
+(Section~\ref{list-comprehensions}) means the @concatMap@ defined by
+the @Prelude@, regardless of whether or not the identifier ``@concatMap@'' is in
+scope where the list comprehension is used, and (if it is in scope)
+what it is bound to.
 
 In the syntax that follows, there are some families of nonterminals
 indexed by precedence levels (written as a superscript).  Similarly, the

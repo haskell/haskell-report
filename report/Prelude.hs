@@ -5,10 +5,15 @@ module Prelude (
     Either(Left, Right),
     Ordering(LT, EQ, GT),
     Char, String, Int, Integer, Float, Double, Rational, IO,
+
+-- 	These built-in types are defined in the Prelude, but
+--	are denoted by built-in syntax, and cannot legally
+--	appear in an export list.
 --  List type: []((:), [])
 --  Tuple types: (,), (,,), etc.
 --  Trivial type: ()
 --  Functions: (->)
+
     Eq((==), (/=)),
     Ord(compare, (<), (<=), (>=), (>), max, min),
     Enum(succ, pred, toEnum, fromEnum, enumFrom, enumFromThen,
@@ -46,7 +51,11 @@ infixr 9  .
 infixr 8  ^, ^^, **
 infixl 7  *, /, `quot`, `rem`, `div`, `mod`
 infixl 6  +, -
-infixr 5  :
+
+-- The (:) operator is built-in syntax, and cannot legally be given
+-- a fixtity declaration; but its fixity is given by:
+--   infixr 5  :
+
 infix  4  ==, /=, <, <=, >=, >
 infixr 3  &&
 infixr 2  ||

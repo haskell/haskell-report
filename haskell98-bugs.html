@@ -199,6 +199,25 @@ In clause (r) replace "e0" by "v" throughout.
 First paragraph, last sentence.  After "infix type constructors are not allowed",
 add "(other than <tt>(->)</tt>)".
 
+<p><li> [Late Sept 2001] <strong>Page 38, Section 4.1.2, Algebraic Datatype Declarations.</strong>
+Replace the sentence
+"Although the tuple, list, and function types have special syntax, they
+are not different from user-defined types with equivalent
+functionality."
+with
+<p>
+"These special syntactic forms always denote the built-in type constructors
+for functions, tuples, and lists, regardless of what is in scope.
+In a similar way, the prefix type constructors <tt>(->),</tt>, <tt>[]</tt>, <tt>()</tt>, <tt>(,)</tt>, 
+and so on, always denote the built-in type constructors; they 
+cannot be qualified, nor mentioned in import or export lists (Section 5).
+(Hence the special production, <em>gtycon</em>, above.)
+<p>
+"Although the tuple and list types have special syntax, their semantics 
+is the same as the equivalent user-defined algebraic data types."
+<p>
+(This stuff is clarification only.)
+
 <p><li> <strong>Page 40, Section 4.2.1, Algebraic Datatype Declarations.</strong>
 In the bottom paragraph on the page, before "The context in the data declaration
 has no other effect whatsoever" add the following:
@@ -337,12 +356,9 @@ be imported...".
 Delete the two sentences "The hiding clause only applies to unqualified
 names...  A hiding clause has no effect....".
 
-<p><li> [Aug 2001] <strong>Page 66, Section 5.3, Import Declarations, numbered item 2.</strong>
-Add "It is not an error to hide an entity that is not, in fact, exported by
-the imported module, although compilers are encouraged to flag a warning in this case."
-(This is different from what I proposed by email, which made this case an error,
-but it allow a bit more flexibility
-as modules change.)
+<p><li> [Late Sept 2001] <strong>Page 66, Section 5.3, Import Declarations, numbered item 2.</strong>
+Add "It is an error to hide an entity that is not, in fact, exported by
+the imported module."
 
 <p><li> [July 2001] <strong>Page 66, Section 5.3.1, Qualified Import.</strong> [This section
 becomes 5.3.2.]  Replace the first sentence with:
@@ -505,6 +521,15 @@ After the above signature for <tt>userError</tt>, add the following:
 
     fail s = ioError (userError s)
 </pre>"
+
+<p><li> [Late Sept 2001] <strong>Page 93, Appendix A, Standard Prelude.</strong>
+Replace the fixity declaration for <tt>(:)</tt> by the following comments:
+<pre>
+-- The (:) operator is built-in syntax, and cannot legally be given
+-- a fixtity declaration; but its fixity is given by:
+--   infixr 5  :
+</pre>
+
 
 <p><li><strong>Page 94, Appendix A, Standard Prelude, class <tt>Enum</tt>.</strong>
 After the default method for <tt>enumFromTo</tt> add
@@ -739,16 +764,17 @@ Add the following equation to the laws listed just before Section 5.1:
 </pre>
 This documents an invariant that was previously only implicit.
 
-<p><li> [May 2001] <strong>Page 17, Section 5, Indexing operations</strong>.
-This significant item (a) removes <tt>Ord</tt> from <tt>Ix</tt>'s superclasses, and
-(b) make <tt>rangeSize</tt> into a method of <tt>Ix</tt> rather than a free-standing declaration.
-Though these changes are 
-visible to the programmer, all existing Haskell 98 programs will continue to work.
+<p><li> [Late Sept 2001] <strong>Page 17, Section 5, Indexing operations</strong>.
+This significant item makes <tt>rangeSize</tt> into a method of
+<tt>Ix</tt> rather than a free-standing declaration.  Though this
+change is visible to the programmer, all existing Haskell 98
+programs will continue to work.
+
 <ul>
 <li>  <strong>Page 17, Section 5, Indexing operations, boxed text</strong>. Replace the <tt>Ix</tt>
 change the class declaration, and the type signature for <tt>rangeSize</tt> with:
 <pre>
-  class Ix a where
+  class Ord a => Ix a where
     range     :: (a,a) -> [a]
     index     :: (a,a) -> a -> Int
     inRange   :: (a,a) -> a -> Bool
@@ -757,7 +783,7 @@ change the class declaration, and the type signature for <tt>rangeSize</tt> with
 <li> <strong>Section 5.2, pages 19, line 3</strong>. Replace the <tt>Ix</tt>
 class declaration, and the <tt>rangeSize</tt> declaration, with:
 <pre>
-  class Ix a where
+  class Ord a => Ix a where
     range     :: (a,a) -> [a]
     index     :: (a,a) -> a -> Int
     inRange   :: (a,a) -> a -> Bool
@@ -788,32 +814,6 @@ must provide <tt>Ix</tt> instances for tuples up to at least size 15."
 <p>
 [This change just clarifies, and propagates the "instances up to size 15" change from 
 Section 6.1.6 of the Language Report.]
-
-<p><li> [Sept 2001] <strong>Page 23,24, Section 6.4</strong>.
-<ul>
-<li> In the definition of <tt>array</tt> on page 23, replace "<tt>i == j</tt>" by
-"<tt>index b i == index b j</tt>".
-
-<li> Replace the definition of <tt>(//)</tt> on page 24 with:
-<pre>
-     a // new_ivs = array b (old_ivs ++ new_ivs)
-                  where
-	            b       = bounds a
-                    old_ivs = [(i,a!i) | i <- indices a,
-                                         index b i `notElem` new_is]
-                    new_is  = [index b j | (j,_) <- new_ivs]
-</pre>
-
-<li> Add <tt>Eq a</tt> to the context for <tt>instance Eq (Array a b)</tt>, thus:
-<pre>
-    instance  (Ix a, Eq a, Eq b)  => Eq (Array a b)  ...
-</pre>
-<li> Add <tt>Ord a</tt> to the context for <tt>instance Ord (Array a b)</tt>, thus:
-<pre>
-    instance  (Ix a, Ord a, Ord b) => Ord (Array a b) ...
-</pre>
-</ul>
-(All consequences of removing <tt>Ord</tt> as a superclass of <tt>Ix</tt>.)
 
 <p><li> <strong>Page 22, Section 6.3; and Page 23, Fig 3</strong>:
 Replace "<tt>map</tt>" by "<tt>fmap</tt>" (two occurrences in 6.3, one in Fig 3).
