@@ -41,6 +41,6 @@ ioeGetErrorString     :: IOError -> String
 ioeGetHandle          :: IOError -> Maybe Handle
 ioeGetFileName        :: IOError -> Maybe FilePath
 
-try                   :: IO a -> Either IOError a
+try                   :: IO a -> IO (Either IOError a)
 bracket               :: IO a -> (a -> IO b) -> (a -> IO c) -> IO c
 bracket_              :: IO a -> (a -> IO b) -> IO c -> IO c

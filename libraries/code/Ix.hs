@@ -8,12 +8,11 @@ class  Ix a  where
 
     rangeSize b@(l,h) | null (range b) = 0
                       | otherwise      = index b h + 1 
-	-- NB: replacing "null (range b)" by  "l > h" fails if
-	-- the bounds are tuples.  For example,
-	-- 	(2,1) > (1,2), 
-	-- but 
-	--	range ((2,1),(1,2)) = []
-
+	-- NB: replacing "null (range b)" by  "not (l <= h)"
+	-- fails if the bounds are tuples.  For example,
+	-- 	(1,2) <= (2,1)
+	-- but the range is nevertheless empty
+	--	range ((1,2),(2,1)) = []
 
 instance  Ix Char  where
     range (m,n)		= [m..n]

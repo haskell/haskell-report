@@ -4,7 +4,7 @@
 ##########################################
 # What to make if you type 'make'
 
-default: haskell.ps html
+default: haskell.ps.gz html
 
 # Begin by saying
 #	touch haskell.idx
@@ -35,6 +35,8 @@ EXPAND = expand
 #########################################
 #	Files 
 #########################################
+
+RELEASE_DIR = ../haskell98-revised
 
 PARTS =		preface-13.tex iso-chars.tex \
 		intro.tex lexemes.tex  exps.tex \
@@ -151,12 +153,10 @@ haskell-librariesx.dvi : sigplan_haskell-libraries.dvi
 haskell.ps : haskell.dvi
 	dvips haskell.dvi -o haskell.ps
 
-
-
-publish: haskell.ps html
-	gzip < haskell.ps > y:Haskell/haskell98-report/haskell.ps.gz
-	cp haskell98-report-html/* y:Haskell/haskell98-report
-	tar cvf - haskell98-report-html | gzip > y:Haskell/haskell98-report/haskell98-report-html.tar.gz
+release: haskell.ps html
+	gzip < haskell.ps > $(RELEASE_DIR)/haskell.ps.gz
+	cp -r haskell98-report-html $(RELEASE_DIR)
+	tar cvf - haskell98-report-html | gzip > $(RELEASE_DIR)/haskell98-report-html.tar.gz
 
 publish-pdf: report.pdf
 	gzip < report.pdf > y:Haskell/haskell98-report/report.pdf.gz

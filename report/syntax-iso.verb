@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/syntax-iso.verb,v 1.1 2001/03/28 14:13:42 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/syntax-iso.verb,v 1.2 2001/05/29 15:40:00 simonpj Exp $
 %
 %**<title>Haskell 98 Syntax</title>
 %*section B
@@ -238,8 +238,9 @@ layout error.  An example is:
 Here, the definition of @p@ is indented less than the indentation of
 the enclosing context, which is set in this case by the definition of @h@.
 
-\item[Note 4.] This means that all brace pairs are treated as explicit layout 
-contexts, including record expressions. This is a difference 
+\item[Note 4.] This clause means that all brace pairs are treated as explicit layout 
+contexts, including labelled construction and update (Section~\ref{field-ops}). 
+This is a difference 
 between this formulation and Haskell 1.4.
 
 \item[Note 5.] At the end of the input, any pending close-braces are inserted. 
@@ -500,7 +501,7 @@ aexp 	->  qvar				& (\tr{variable})
 	|   @(@ exp_1 @,@ ... @,@ exp_k @)@	& (\tr{tuple}, k>=2)
 	|   @[@ exp_1 @,@ ... @,@ exp_k @]@	& (\tr{list}, k>=1)
 	|   @[@ exp_1 [@,@ exp_2] @..@ [exp_3] @]@ & (\tr{arithmetic sequence})
-	|   @[@ exp @|@ qual_1 @,@ ... @,@ qual_n @]@	& (\tr{list comprehension}, n>=0)
+	|   @[@ exp @|@ qual_1 @,@ ... @,@ qual_n @]@	& (\tr{list comprehension}, n>=1)
 	|   @(@ exp^{i+1} qop^{(a,i)} @)@        & (\tr{left section})
         |   @(@ qop^{(a,i)} exp^{i+1} @)@        & (\tr{right section})
         |   qcon @{@ fbind_1 @,@ ... @,@ fbind_n @}@ & (\tr{labeled construction}, n>=0)
@@ -512,7 +513,6 @@ aexp 	->  qvar				& (\tr{variable})
 qual	-> pat @<-@ exp 	& (generator)
          | @let@ decls		& (local declaration)
          | exp 			& (guard)
-	 | 			& (empty qualifier)
 
 alts	->  alt_1 @;@ ... @;@ alt_n 		& (n>=0)
 alt	->  pat @->@ exp [@where@ decls]
@@ -521,11 +521,11 @@ alt	->  pat @->@ exp [@where@ decls]
 
 gdpat   ->  gd @->@ exp [ gdpat ]
 
-stmts -> stmt_1 @;@ ... @;@ stmt_n	& \qquad (n>=0)
-stmt -> exp
-      | pat @<-@ exp
-      | @let@ decls
-      | 			& (empty statment)
+stmts -> stmt_1 ... stmt_n exp [@;@]  & \qquad (n>=0)
+stmt -> exp @;@
+      | pat @<-@ exp @;@
+      | @let@ decls @;@
+      | @;@			& (empty statment)
 
 fbind   ->  qvar @=@ exp
         

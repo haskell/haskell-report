@@ -1,5 +1,5 @@
 module Random (
-	RandomGen(next, split),
+	RandomGen(next, split, genRange),
 	StdGen, mkStdGen,
 	Random( random,   randomR, 
 		randoms,  randomRs,
@@ -10,8 +10,9 @@ module Random (
 ---------------- The RandomGen class ------------------------
 
 class RandomGen g where
-  next  :: g  -> (Int, g)
-  split :: g -> (g, g)
+  genRange :: g -> (Int, Int)
+  next     :: g -> (Int, g)
+  split    :: g -> (g, g)
 
 ---------------- A standard instance of RandomGen -----------
 data StdGen = ...	-- Abstract

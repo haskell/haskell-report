@@ -94,9 +94,7 @@ transpose ((x:xs) : xss) = (x : [h | (h:t) <- xss]) :
 			   transpose (xs : [t | (h:t) <- xss])
 
 partition               :: (a -> Bool) -> [a] -> ([a],[a])
-partition p xs          =  foldr select ([],[]) xs
-                           where select x (ts,fs) | p x       = (x:ts,fs)
-                                                  | otherwise = (ts, x:fs)
+partition p xs          =  (filter p xs, filter (not . p) xs)
 
 -- group splits its list argument into a list of lists of equal, adjacent
 -- elements.  e.g.,
@@ -162,13 +160,21 @@ insertBy cmp x ys@(y:ys')
                                 GT -> y : insertBy cmp x ys'
                                 _  -> x : ys
 
-maximumBy               :: (a -> a -> a) -> [a] -> a
-maximumBy max []        =  error "List.maximumBy: empty list"
-maximumBy max xs        =  foldl1 max xs
+maximumBy               :: (a -> a -> Ordering) -> [a] -> a
+maximumBy cmp []        =  error "List.maximumBy: empty list"
+maximumBy cmp xs        =  foldl1 max xs
+			where
+			   max x y = case cmp x y of
+					GT -> x
+					_  -> y
 
-minimumBy               :: (a -> a -> a) -> [a] -> a
-minimumBy min []        =  error "List.minimumBy: empty list"
-minimumBy min xs        =  foldl1 min xs
+minimumBy               :: (a -> a -> Ordering) -> [a] -> a
+minimumBy cmp []        =  error "List.minimumBy: empty list"
+minimumBy cmp xs        =  foldl1 min xs
+			where
+			   min x y = case cmp x y of
+					GT -> y
+					_  -> x
 
 genericLength           :: (Integral a) => [b] -> a
 genericLength []        =  0

@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/basic.verb,v 1.1 2001/03/28 14:13:42 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/basic.verb,v 1.2 2001/05/29 15:40:00 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Basic Types and Classes</title>
 %*section 6
@@ -154,8 +154,7 @@ member, the nullary constructor @()@.  See also Section~\ref{unit-expression}.
 \subsubsection{Function Types}
 \index{function}
 Functions are an abstract type: no constructors directly create
-functional values.  Functions are an instance of the @Show@ class but
-not @Read@.  The following simple functions are found in the Prelude:
+functional values.  The following simple functions are found in the Prelude:
 @id@, @const@, @(.)@, @flip@, @($)@, and @until@.
 \indextt{id}
 \indextt{const}
@@ -273,6 +272,7 @@ are instances of these classes.
 Default class method declarations (Section~\ref{classes}) are provided
 for many of the methods in standard classes.  For example, the declaration
 of class @Eq@ is:
+\bprog
 @
   class  Eq a  where
         (==), (/=)  ::  a -> a -> Bool
@@ -280,6 +280,7 @@ of class @Eq@ is:
         x /= y  = not (x == y)
 	x == y  = not (x /= y)
 @
+\eprog
 This declaration gives default method declarations for both @/=@ and @==@,
 each being defined in terms of the other.  If an instance declaration
 for @Eq@ defines neither @==@ nor @/=@, then both will loop.
@@ -392,7 +393,11 @@ class  Show a  where
 @
 \eprog
 The @Read@ and @Show@ classes are used to convert values to
-or from strings. @showsPrec@ and @showList@ return a @String@-to-@String@
+or from strings. 
+The @Int@ argument to @showsPrec@ and @readsPrec@ gives the operator
+precedence of the enclosing context (see Appendix~\ref{derived-text}).
+
+@showsPrec@ and @showList@ return a @String@-to-@String@
 function, to allow constant-time concatenation of its results using function
 composition.
 A specialised variant, @show@, is also provided, which
@@ -531,8 +536,8 @@ expression.
 In the Prelude, lists, 
 @Maybe@, and @IO@ are all instances of @Monad@.
 The @fail@ method for lists returns the empty list @[]@,
-and for @Maybe@ returns @Nothing@.  However, for @IO@, the @fail@ 
-method invokes @error@.
+for @Maybe@ returns @Nothing@, and for @IO@ raises a user
+exception in the IO monad (see Section~\ref{io-exceptions}).
 
 Instances of @Monad@ should satisfy the following laws:
 \[\ba{lcl}
@@ -746,12 +751,12 @@ class  (RealFrac a, Floating a) => RealFloat a  where
                         :: a -> Bool
     atan2		:: a -> a -> a
 
-fromIntegral		:: (Integral a, Num b) => a -> b
 gcd, lcm		:: (Integral a) => a -> a-> a
 (^)			:: (Num a, Integral b) => a -> b -> a
 (^^)			:: (Fractional a, Integral b) => a -> b -> a
 
-fromRealFrac	        :: (RealFrac a, Fractional b) => a -> b
+fromIntegral		:: (Integral a, Num b) => a -> b
+realToFrac	        :: (Real a, Fractional b) => a -> b
 @
 }
 %**<div align=center> <h4>Figure 7</h4> </div>
@@ -765,14 +770,13 @@ fromRealFrac	        :: (RealFrac a, Fractional b) => a -> b
 \indextt{decodeFloat}\indextt{encodeFloat}
 \indextt{exponent}\indextt{significand}\indextt{scaleFloat}
 \indextycon{Int}\indextycon{Integer}
-\indextt{minInt}\indextt{maxInt}                
 \indextt{fromIntegral}
 \indextt{gcd}\indextt{lcm} 
 \index{^@@{\tt  {\char'136}}} % this is ^.  Must have 2 spaces after tt!
 \index{^^@@{\tt  {\char'136}{\char'136}}} % this is ^^
 \indexclass{RealFrac}
 \indextycon{Float}\indextycon{Double}
-\indextt{fromRealFrac}
+\indextt{realToFrac}
 \indextt{atan2}
 \end{figure}
 
@@ -990,10 +994,10 @@ return false.
 Also available are the following coercion functions:
 \bprog
 @
-fromIntegral :: (Integral a, Num b) => a -> b
-fromRealFrac :: (RealFrac a, Fractional b) => a -> b
+fromIntegral :: (Integral a, Num b)    => a -> b
+realToFrac   :: (Real a, Fractional b) => a -> b
 @
-\eprogNoSkip\indextt{fromIntegral}\indextt{fromRealFrac}
+\eprogNoSkip\indextt{fromIntegral}\indextt{realToFrac}
 
 
 %**~footer

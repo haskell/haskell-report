@@ -16,7 +16,6 @@ data #T[a] = [] | a : [a]  deriving (Eq, Ord) #S6.1.3
 data #T(a,b) = (a,b) deriving (Eq, Ord, Bounded) #S6.1.4 
       Instances: #IRead#(a,b) #IShow#(a,b)
 data a->b #S6.1.6
-      Instances: #IShow#a->b
 data #TBool = False | True deriving (Eq, Ord, Enum, Read, Show, Bounded) #S6.1.1
 data #TChar #S6.1.2
        Instances: Eq Ord #IEnum#Char #IRead#Char #IShow#Char 
@@ -69,7 +68,7 @@ class                  (Num a) => #TFractional a #S6.4
 class                             #TFunctor f    #S6.3.5
 class         (Real a, Enum a) => #TIntegral a   #S6.4
 class                             #TMonad m      #S6.3.6
-class   (Eq a, Show a, Eval a) => #TNum a        #S6.4
+class           (Eq a, Show a) => #TNum a        #S6.4
 class                   (Eq a) => #TOrd a        #S6.3.2
 class                             #TRead a       #S6.3.3
 class           (Num a, Ord a) => #TReal a       #S6.4
@@ -105,7 +104,6 @@ class                             #TShow a       #S6.3.3
 #V(^)              :: (Num a, Integral b) => a -> b -> a 
 #V(^^)             :: (Fractional a, Integral b) => a -> b -> a #&negative exponent allowed
 #Vabs              :: Num a => a -> a 
-#Vsequence         :: Monad m => [m a] -> m [a] 
 #Vacos             :: Floating a => a -> a 
 #Vacosh            :: Floating a => a -> a 
 #Vall              :: (a -> Bool) -> [a] -> Bool #&all (/= 'a') "cba" = False
@@ -232,7 +230,8 @@ class                             #TShow a       #S6.3.3
 #Vscanl1           :: (a -> a -> a) -> [a] -> [a] #&scanl1 (+) [1,2,3] = [1,3,6]
 #Vscanr            :: (a -> b -> b) -> b -> [a] -> [b] #&scanr (+) 0 [1,2,3] = [6,5,3,0]
 #Vscanr1           :: (a -> a -> a) -> [a] -> [a] #&scanr1 (+) [1,2,3] = [6,5,3]
-#Vseq              :: Eval a => a -> a -> b #&#S6.2
+#Vseq              :: a -> b -> b #&#S6.2
+#Vsequence         :: Monad m => [m a] -> m [a] 
 #Vsequence_        :: Monad m => [m a] -> m () #&do operations in sequence
 #Vshow             :: Show a => a -> String #&#S6.3.3
 #VshowChar         :: Char -> ShowS

@@ -1,6 +1,5 @@
 module Directory ( 
-    Permissions,
-    readable, writable, executable, searchable, 
+    Permissions( readable, writable, executable, searchable ), 
     createDirectory, removeDirectory, removeFile, 
     renameDirectory, renameFile, getDirectoryContents,
     getCurrentDirectory, setCurrentDirectory,
@@ -10,14 +9,17 @@ module Directory (
 
 import Time ( ClockTime )
 
-data Permissions = ... 	-- Abstract
+data Permissions = Permissions {
+			readable,   writable,
+			executable, searchable :: Bool
+		   }
 
 instance Eq   Permissions where ...
 instance Ord  Permissions where ...
 instance Read Permissions where ...
 instance Show Permissions where ...
 
-readable, writable, executable, searchable :: Permissions -> Bool
+
 
 createDirectory 	:: FilePath -> IO ()
 removeDirectory 	:: FilePath -> IO ()

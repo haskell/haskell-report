@@ -18,6 +18,15 @@ which are not a recognized part of the \Haskell{} standard.
 The latest version of this report, as well many other available libraries,
 can be found on the web at @http://haskell.org@.
 
+\subsection*{The April 2001 Revision}
+
+Both Haskell 98 Reports were revised in April 2001, to incorporate
+dozens of typographical errors and presentational improvements.  A
+complete list of all changes can be found at @http:://haskell.org@.
+
+
+\subsection*{Acknowledgements}
+
 We would like to express our thanks to those who have contributed
 directly or indirectly to this report without being named as authors,
 including
@@ -32,6 +41,9 @@ Sandra Loosemore,
 Graeme Moss,
 Sven Panne,
 Keith Wansbrough.
+
+In addition, many people named in the Acknowledgements to the Haskell 98 Language
+Report also contributed to the Library Report.
 
 \clearpage
 \section{Introduction}

@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/libraries/library.verb,v 1.1 2001/03/28 14:16:23 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/libraries/library.verb,v 1.2 2001/05/29 15:39:59 simonpj Exp $
 %
 % NOTE:--------------------------------------------------------------
 % The formatting of this report and the ``new font selection scheme''
@@ -412,29 +412,22 @@
 {\Large\bf for the} \\[.1in]
 {\huge\bf Haskell 98} \\[.3in]
 {\LARGE\bf Programming Language} \\[.3in]
-{\large\bf 1 February 1999}
+{\large\bf FILL IN DATE!}
 \end{center}
 
 \vspace{.15in}
 \begin{center} \large
-Simon Peyton Jones$^8$ [editor] \\
-John Hughes$^3$ [editor] \\
-Lennart Augustsson$^3$ \\
-Dave Barton$^7$ \\
-Brian Boutel$^4$ \\
-Warren Burton$^5$ \\
-Joseph Fasel$^6$ \\
-Kevin Hammond$^2$ \\
-Ralf Hinze$^{12}$ \\
-Paul Hudak$^1$ \\
-Thomas Johnsson$^3$ \\
-Mark Jones$^9$ \\
-John Launchbury$^{14}$ \\
-Erik Meijer$^{10}$\\
-John Peterson$^1$ \\
-Alastair Reid$^1$ \\
-Colin Runciman$^{13}$ \\
-Philip Wadler$^{11}$ \\
+\begin{tabular}{l@@{\hspace{5mm}}l}
+Simon Peyton Jones$^8$ [editor] & John Hughes$^3$ [editor] \\
+Lennart Augustsson$^3$		& Dave Barton$^7$ \\
+Brian Boutel$^4$ 		& Warren Burton$^5$ \\
+Joseph Fasel$^6$ 		& Kevin Hammond$^2$ \\
+Ralf Hinze$^{12}$ 		& Paul Hudak$^1$ \\
+Thomas Johnsson$^3$ 		& Mark Jones$^9$ \\
+John Launchbury$^{14}$ 		& Erik Meijer$^{10}$ \\
+John Peterson$^1$		& Alastair Reid$^1$ \\
+Colin Runciman$^{13}$ 		& Philip Wadler$^{11}$
+\end{tabular}
 \end{center}
 \vspace{.15in}
 
@@ -456,6 +449,17 @@ Authors' affiliations:
 (14)~Oregon Graduate Institute
 \end{quotation}
 \vspace{.2in}
+\begin{center}
+Copyright (c) Simon Peyton Jones and John Hughes. 
+\end{center}
+
+{\em The authors intend this Report to belong to the entire Haskell
+community, and so we grant permission to copy and distribute it for
+any purpose, provided that it is reproduced in its entireity,
+including this Notice. Modified versions of this Report may also be
+copied and distributed for any purpose, provided that the modified
+version is clearly presented as such, and that it does not claim to be
+a definition of the language Haskell 98.}
 }
 
 \end{titlepage}

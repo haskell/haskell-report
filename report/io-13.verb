@@ -165,6 +165,7 @@ main = appendFile "squares" (show [(x,x*x) | x <- [0,0.1..2]])
 \subsection{Sequencing I/O Operations}
 \indextt{>>}
 \indextt{>>=}
+The type constructor @IO@ is an instance of the @Monad@ class.
 The two monadic binding functions, methods in the @Monad@ class, are
 used to compose a series of I/O
 operations.  The @>>@
@@ -222,21 +223,28 @@ getLine = do c <- getChar
 
 \subsection{Exception Handling in the I/O Monad}
 \index{exception handling}
+\label{io-exceptions}
+
 The I/O monad includes a simple exception handling system.  Any I/O
 operation may raise an exception instead of returning a result.
+
 Exceptions in the I/O monad are represented by values of 
 type @IOError@.  This is an abstract type: its constructors are hidden
 from the user.  The @IO@ library defines functions that construct and
 examine @IOError@ values.  The only Prelude function that creates an
-\indextt{userError}%
 @IOError@ value is @userError@.  User error values include a string
 describing the error.
-
+\bprog
+@
+  userError :: String -> IOError
+@
+\eprog
+\indextt{userError}%
 Exceptions are raised and caught using the following functions:
 \bprog
 @
-ioError         ::  IOError -> IO a
-catch           ::  IO a    -> (IOError -> IO a) -> IO a 
+  ioError         ::  IOError -> IO a
+  catch           ::  IO a    -> (IOError -> IO a) -> IO a 
 @
 \eprog
 \indextt{ioError}%
@@ -260,6 +268,17 @@ outer handler.  The @isEOFError@ function is part of @IO@ library.
 When an exception propagates outside the main program, the \Haskell{}
 system prints the associated @IOError@ value and exits the program.
 
+The @fail@ method of the @IO@ instance of the @Monad@ class (Section~\ref{monad-class}) raises a
+@userError@, thus:
+\bprog
+@
+  instance Monad IO where 
+    ...bindings for return, (>>=), (>>)
+
+    fail s = ioError (userError s)
+@
+\eprog
+\indextt{fail}%
 The exceptions raised by the I/O functions in the Prelude are defined
 in the Library Report.
 

@@ -8,7 +8,7 @@ module PreludeList (
     take, drop, splitAt, takeWhile, dropWhile, span, break,
     lines, words, unlines, unwords, reverse, and, or,
     any, all, elem, notElem, lookup,
-    Sum, product, maximum, minimum, concatMap, 
+    sum, product, maximum, minimum, concatMap, 
     zip, zip3, zipWith, zipWith3, unzip, unzip3)
   where
 
@@ -19,7 +19,7 @@ infixr 5  ++
 infix  4  `elem`, `notElem`
 
 -- Map and append
-map :: (a -> b) -> [a] -> [a]
+map :: (a -> b) -> [a] -> [b]
 map f []     = []
 map f (x:xs) = f x : map f xs
 
@@ -70,10 +70,10 @@ length (_:l)     =  1 + length l
 
 -- List index (subscript) operator, 0-origin
 (!!)                :: [a] -> Int -> a
-(x:_)  !! 0         =  x
-(_:xs) !! n | n > 0 =  xs !! (n-1)
-(_:_)  !! _         =  error "Prelude.!!: negative index"
+xs     !! n | n < 0 =  error "Prelude.!!: negative index"
 []     !! _         =  error "Prelude.!!: index too large"
+(x:_)  !! 0         =  x
+(_:xs) !! n         =  xs !! (n-1)
 
 -- foldl, applied to a binary operator, a starting value (typically the
 -- left-identity of the operator), and a list, reduces the list using
@@ -102,7 +102,7 @@ scanl f q xs     =  q : (case xs of
 
 scanl1           :: (a -> a -> a) -> [a] -> [a]
 scanl1 f (x:xs)  =  scanl f x xs
-scanl1 _ []      =  error "Prelude.scanl1: empty list"
+scanl1 _ []      =  []
 
 -- foldr, foldr1, scanr, and scanr1 are the right-to-left duals of the
 -- above functions.
@@ -121,11 +121,11 @@ scanr f q0 []     =  [q0]
 scanr f q0 (x:xs) =  f x q : qs
                      where qs@(q:_) = scanr f q0 xs 
 
-scanr1           :: (a -> a -> a) -> [a] -> [a]
-scanr1 f  [x]    =  [x]
-scanr1 f  (x:xs) =  f x q : qs
-                    where qs@(q:_) = scanr1 f xs 
-scanr1 _ []      =  error "Prelude.scanr1: empty list"
+scanr1          :: (a -> a -> a) -> [a] -> [a]
+scanr1 f []     =  []
+scanr1 f [x]    =  [x]
+scanr1 f (x:xs) =  f x q : qs
+                   where qs@(q:_) = scanr1 f xs 
 
 -- iterate f x returns an infinite list of repeated applications of f to x:
 -- iterate f x == [x, f x, f (f x), ...]
@@ -154,22 +154,17 @@ cycle xs         =  xs' where xs' = xs ++ xs'
 -- is equivalent to (take n xs, drop n xs).
 
 take                   :: Int -> [a] -> [a]
-take 0 _               =  []
+take n _      | n <= 0 =  []
 take _ []              =  []
-take n (x:xs) | n > 0  =  x : take (n-1) xs
-take _     _           =  error "Prelude.take: negative argument"
+take n (x:xs)          =  x : take (n-1) xs
 
 drop                   :: Int -> [a] -> [a]
-drop 0 xs              =  xs
+drop n xs     | n <= 0 =  xs
 drop _ []              =  []
-drop n (_:xs) | n > 0  =  drop (n-1) xs
-drop _     _           =  error "Prelude.drop: negative argument"
+drop n (_:xs)          =  drop (n-1) xs
 
 splitAt                  :: Int -> [a] -> ([a],[a])
-splitAt 0 xs             =  ([],xs)
-splitAt _ []             =  ([],[])
-splitAt n (x:xs) | n > 0 =  (x:xs',xs'') where (xs',xs'') = splitAt (n-1) xs
-splitAt _     _          =  error "Prelude.splitAt: negative argument"
+splitAt n xs             =  (take n xs, drop n xs)
 
 -- takeWhile, applied to a predicate p and a list xs, returns the longest
 -- prefix (possibly empty) of xs of elements that satisfy p.  dropWhile p xs

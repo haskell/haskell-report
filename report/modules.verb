@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/modules.verb,v 1.1 2001/03/28 14:13:42 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/modules.verb,v 1.2 2001/05/29 15:40:00 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Modules</title>
 %*section 5
@@ -104,7 +104,7 @@ parentheses) to be exported.  The header is followed by an optional
 list of @import@ declarations that specify modules to be imported,
 optionally restricting 
 the imported bindings.  This is
-followed the module
+followed by the module
 body.  The module body is simply a list of top-level declarations
 ("topdecls"), as described in Section~\ref{declarations}.  
 
@@ -296,7 +296,7 @@ constructors, methods, or field names exported from the module.
 
 The list must name only
 entities exported by the imported module.
-The list may be empty, in which case nothing except the instances are
+The list may be empty, in which case nothing except the instances is
 imported.
 
 \item
@@ -313,7 +313,9 @@ associated type.  Thus, in
 @
 \eprog
 any constructor, class, or type named @C@ is excluded.  In contrast,
-using @C@ in an import list names only a class or type.  The hiding
+using @C@ in an import list names only a class or type.  
+
+The hiding
 clause only applies to unqualified names.  In the previous example, 
 the name @M.C@ is brought into scope.  A hiding clause has no effect
 in an @import@ @qualified@ declaration.
@@ -387,7 +389,7 @@ This module is legal provided only that @Foo@ and @Baz@ do not both export @f@.
 An @as@ clause may also be used on an un-@qualified@ @import@ statement:
 \bprog
 @
-  import Foo(f) as A
+  import Foo as A(f)
 @
 \eprog
 This declaration brings into scope @f@ and @A.f@.
@@ -518,6 +520,28 @@ declared in @C@.  The ambiguity could be fixed by replacing the reference to @x@
 @y@ are exported by both @B@ and @C@.  An error is only reported if @y@ is actually mentioned.
 \end{itemize}
 
+The name occurring in a type signature or fixity declarations is
+always unqualified, and unambiguously refers to another declaration in
+the same declaration list (except that the fixity declaration for a
+class method can occur at top level --- Section~\ref{fixity}). For example,
+the following module is legal:
+\bprog
+@
+  module F where
+
+    sin :: Float -> Float
+    sin x = (x::Float)
+
+    f x = Prelude.sin (F.sin x)
+@
+\eprog
+The local declaration for @sin@ is
+legal, even though the Prelude function @sin@ is implicitly in
+scope. The references to @Prelude.sin@ and @F.sin@ must both be qualified
+to make it unambigous which @sin@ is meant. However, the unqualified
+name "@sin@" in the type signature in the first line of @F@ unambiguously
+refers to the local declaration for @sin@.
+
 \subsubsection{Closure}
 \label{closure}
 \index{closure}
@@ -638,17 +662,20 @@ every module that does so must have an @import@ declaration
 that makes this nonstandard usage explicit.  For example:
 \bprog
 @
- module A where
-   import Prelude hiding (null)
-   null x = []
+  module A( null, nonNull ) where
+    import Prelude hiding( null ) 
+    null, nonNull :: Int -> Bool
+    null    x = x == 0
+    nonNull x = not (null x)
 @
 \eprog
-Module @A@ redefines @null@, but it must indicate this by
-importing @Prelude@ without @null@.  Furthermore, @A@ exports @null@,
-but every module that imports @null@ unqualified from @A@ must also
-hide\index{hiding} 
-@null@ from @Prelude@ just as @A@ does.  Thus there is little danger
-of accidentally shadowing Prelude names.
+Module @A@ redefines @null@, and contains an unqualified reference to @null@
+on the right hand side of @nonNull@. The latter would be ambiguous
+without the @hiding(null)@ on the @import Prelude@ statement. Every
+module that imports @A@ unqualified, and then makes an unqualified
+reference to @null@ must also resolve the ambiguous use of @null@ just as
+@A@ does. Thus there is little danger of accidentally shadowing Prelude
+names.
 
 It is possible to construct and use a different module to serve in
 place of the Prelude.  Other than the fact that it is implicitly

@@ -5,7 +5,7 @@
 # Begin by saying
 #	touch library.idx
 
-default: library.ps html
+default: library.ps.gz html
 
 
 #########################################
@@ -37,6 +37,8 @@ EXPAND = expand
 
 # I've been having problems with that damn NT messing up filenames in the html
 # generator so I'm changing the .verb files to lower case  -- jcp
+
+RELEASE_DIR = ../haskell98-revised
 
 PARTS =		library.tex introduction.tex ratio.tex complex.tex ix.tex \
                 numeric.tex \
@@ -129,11 +131,10 @@ verbs:  $(CODEV) $(HEADERSV)
 library.ps : library.dvi
 	dvips library.dvi -o library.ps
 
-
-publish: library.ps html
-	gzip < library.ps > y:Haskell/haskell98-library/library.ps.gz
-	cp haskell98-library-html/* y:Haskell/haskell98-library
-	tar cvf - haskell98-library-html | gzip > y:Haskell/haskell98-library/haskell98-library-html.tar.gz
+release: library.ps html
+	gzip < library.ps > $(RELEASE_DIR)/library.ps.gz
+	cp -r haskell98-library-html $(RELEASE_DIR)
+	tar cvf - haskell98-library-html | gzip > $(RELEASE_DIR)/haskell98-library-html.tar.gz
 
 publish-pdf: library.pdf
 	gzip < library.pdf > y:Haskell/haskell98-library/library.pdf.gz
@@ -143,7 +144,7 @@ publish-pdf: library.pdf
 #	Suffix rules
 #########################################
 
-.SUFFIXES:	.hs .verb .tex .dvi
+.SUFFIXES:	.hs .verb .tex .dvi .gz .ps
 
 .verb.tex:
 	expand < $< | $(VERBATIM) >$@
@@ -156,4 +157,5 @@ publish-pdf: library.pdf
 
 .tex.dvi:
 	$(LATEX) $<
+
 

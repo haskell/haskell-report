@@ -20,7 +20,8 @@ in @list@ as @Just index@.  @Nothing@ is returned if @not (val `elem` list)@.
 Function @elemIndices val list@\indextt{elemIndices} returns an
 in-order list of indices, giving the occurrences of @val@ in @list@.
 
-Function @find@ returns the first element of a list that satisfies a predicate,
+Function @find@\indextt{find} 
+returns the first element of a list that satisfies a predicate,
 or Nothing, if there is no such element.
 @findIndex@ returns the corresponding index.
 @findIndices@ returns a list of all such indices.
@@ -34,8 +35,16 @@ lists don't contain duplicates, provided that their first argument
 contains no duplicates.
 
 \begin{itemize}
+\item 
+@nub@\indextt{nub} removes duplicate elements from a list. For example:
+\bprog
+@
+  nub [1,3,1,4,3,3] = [1,3,4]
+@
+\eprog
 \item
-@delete x@ removes the first occurrence of @x@ from its list argument,
+@delete x@\indextt{delete} 
+removes the first occurrence of @x@ from its list argument,
 e.g.,  
 \bprog
 @
@@ -44,10 +53,13 @@ e.g.,
 \eprog
 
 \item
-@(\\)@ is list difference (non-associative).  In the result of @xs \\ ys@,
+@(\\)@\indextt{(\\)} is list 
+difference (non-associative).  In the result of @xs \\ ys@,
 the first occurrence of each element of @ys@ in turn (if any)
 has been removed from @xs@.  Thus, @(xs ++ ys) \\ xs == ys@.
-@union@ is list union, e.g., 
+
+\item 
+@union@\indextt{union} is list union, e.g., 
 \bprog
 @
   "dog" `union` "cow" == "dogcw"
@@ -55,7 +67,7 @@ has been removed from @xs@.  Thus, @(xs ++ ys) \\ xs == ys@.
 \eprog
 
 \item
-@intersect@ is list intersection, e.g.,  
+@intersect@\indextt{intersect} is list intersection, e.g.,  
 \bprog
 @
   intersect [1,2,3,4] `intersect` [2,4,6,8] == [2,4]
@@ -67,7 +79,8 @@ has been removed from @xs@.  Thus, @(xs ++ ys) \\ xs == ys@.
 
 \begin{itemize}
 \item
-@intersperse sep@ inserts @sep@ between the elements of its list argument,
+@intersperse sep@\indextt{intersperse} 
+inserts @sep@ between the elements of its list argument,
 e.g.,  
 \bprog
 @
@@ -76,7 +89,7 @@ e.g.,
 \eprog
 
 \item
-@transpose@ transposes the rows and columns of its argument,
+@transpose@\indextt{transpose} transposes the rows and columns of its argument,
 e.g., 
 \bprog
 @
@@ -85,7 +98,8 @@ e.g.,
 \eprog
 
 \item
-@partition@ takes a predicate and a list and returns a pair of lists:
+@partition@\indextt{partition} 
+takes a predicate and a list and returns a pair of lists:
 those elements of the argument list that do and do not satisfy the
 predicate, respectively; i.e.,
 \bprog
@@ -95,12 +109,13 @@ predicate, respectively; i.e.,
 \eprog
 
 \item
-@sort@/@sortBy@ implement a stable sorting algorithm, here specified
+@sort@/@sortBy@\indextt{sort}\indextt{sortBy} 
+implement a stable sorting algorithm, here specified
 in terms of the @insertBy@ function, which inserts objects into a list
 according to the specified ordering relation.
 
 \item
-@group@ splits its list argument into a list of lists of equal, adjacent
+@group@\indextt{group} splits its list argument into a list of lists of equal, adjacent
 elements. For exmaple
 \bprog
 @
@@ -109,7 +124,7 @@ elements. For exmaple
 \eprog
 
 \item
-@inits@ returns the list of initial segments of its argument list, shortest first.
+@inits@\indextt{inits} returns the list of initial segments of its argument list, shortest first.
 \bprog
 @
   inits "abc" == ["","a","ab","abc"]
@@ -117,7 +132,8 @@ elements. For exmaple
 \eprog
 
 \item
-@tails@ returns the list of all final segments of its argument list, longest first.
+@tails@\indextt{tails} 
+returns the list of all final segments of its argument list, longest first.
 \bprog
 @
   tails "abc" == ["abc", "bc", "c",""]
@@ -125,17 +141,19 @@ elements. For exmaple
 
 \eprog
 \item
-@mapAccumL f s l@ applies @f@ to an accumulating ``state'' parameter @s@
+@mapAccumL f s l@\indextt{mapAccumL} 
+applies @f@ to an accumulating ``state'' parameter @s@
 and to each element of @l@ in turn.
 
 \item
-@mapAccumR@ is similar to @mapAccumL@ except that the list
+@mapAccumR@\indextt{mapAccumR}
+is similar to @mapAccumL@ except that the list
 is processed from right-to-left rather than left-to-right.
 \end{itemize}
 
 \subsection{@unfoldr@}
 
-The @unfoldr@ function undoes a @foldr@ operation.  Note that,
+The @unfoldr@\indextt{unfoldr} function undoes a @foldr@ operation.  Note that,
 in general, only invertible functions can be unfolded.
 \bprog
 @

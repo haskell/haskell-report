@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/decls.verb,v 1.1 2001/03/28 14:13:42 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/decls.verb,v 1.2 2001/05/29 15:40:00 simonpj Exp $
 %
 %**<title>The Haskell 98 Report: Declarations</title>
 %*section 4
@@ -48,7 +48,7 @@ gendecl	-> vars @::@ [context @=>@] type	& (type signature)
 	|					& (empty declaration)
 
 ops	-> op_1 @,@ ... @,@ op_n		& \qquad (n>=1)
-vars	-> var_1 @,@ ...@,@ var_n		& \qquad (n>=1)
+vars	-> var_1 @,@ ... @,@ var_n		& \qquad (n>=1)
 fixity	-> @infixl@ | @infixr@ | @infix@
 @@@
 \indexsyn{vars}%
@@ -274,7 +274,7 @@ in a more traditional style:\nopagebreak[4]
 "@(->)@ t_1 t_2".  Function arrows associate to the right.
 
 \item A {\em tuple type}\index{tuple type} has the form 
-"@(@t_1@,@...@,@ t_k@)@" where "k>=2", which is equivalent to
+"@(@t_1@,@ ... @,@ t_k@)@" where "k>=2", which is equivalent to
 the type "@(,@$\ldots$@,)@ t_1 ... t_k" where there are
 $k-1$ commas between the parenthesis.  It denotes the
 type of "k"-tuples with the first component of type "t_1", the second
@@ -535,8 +535,16 @@ introduces a type constructor @Set@ of kind $\ast\rightarrow\ast$, and construct
 \ea\]
 In the example given, the overloaded
 type for @ConsSet@ ensures that @ConsSet@ can only be applied to values whose
-type is an instance of the class @Eq@.  The context in the @data@
-declaration has no other effect whatsoever.
+type is an instance of the class @Eq@.  
+Pattern matching against @ConsSet@ also gives rise to an @Eq a@ constraint. 
+For example: 
+\bprog
+@
+  f (ConsSet a s) = a
+@
+\eprog
+the function @f@ has inferred type @Eq a => Set a -> a@.
+The context in the @data@ declaration has no other effect whatsoever.
 
 The visibility of a datatype's constructors (i.e.~the ``abstractness''
 \index{abstract datatype}
@@ -586,6 +594,9 @@ more than one type in scope.  Field names share the top level namespace
 with ordinary variables and class methods and must not conflict with
 other top level names in scope.
 
+The pattern @F {}@ matches any value built with constructor @F@, 
+{\em whether or not @F@ was declared with record syntax}. 
+
 \paragraph{Strictness Flags}
 \label{strictness-flags}
 \index{strictness flag}
@@ -601,7 +612,7 @@ A declaration of the form
 "@data@ cx @=>@ T u_1 ... u_k @=@ ... @|@ K s_{1} ... s_{n} @|@ ... "
 \]
 where each "s_i" is either of the form @!@" t_i" or "t_i", replaces
-every occurance of "K" in an expression by 
+every occurrence of "K" in an expression by 
 \[
 "@(\ @x_1 ... x_n @->@ ( ((K op_1 x_1) op_2 x_2) ... ) op_n x_n)"
 \]
@@ -1078,7 +1089,7 @@ which derived instances are allowed are
 @Bounded@\indexdi{Bounded},
 @Show@\indexdi{Show},
 and @Read@\indexdi{Read},
-all defined in Figure~\ref{standard-classes}, page~\pageref{standard-classes}.
+all mentioned in Figure~\ref{standard-classes}, page~\pageref{standard-classes}.
 The
 precise details of how the derived instances are generated for each of
 these classes are provided in Appendix~\ref{derived-appendix}, including
@@ -1190,16 +1201,19 @@ default declaration}:
 \]
 where "n\geq0", and each
 "t_i" must be a monotype for which "@Num @t_i" holds.
-In situations where an ambiguous type is discovered, an
-ambiguous type variable is defaultable if at least one
-of its classes is a numeric class (that is, @Num@ or a subclass of
-@Num@) and if all of its classes 
-are defined in the Prelude or a standard library
+In situations where an ambiguous type is discovered, an ambiguous type variable, "v", 
+is defaultable if:
+\begin{itemize}
+\item "v" appears only in constraints of the form "C v", where "C" is a class, and
+\item at least one of these classes is a numeric class,
+	(that is, @Num@ or a subclass of @Num@), and 
+\item all of these classes are defined in the Prelude or a standard library
 (Figures~\ref{basic-numeric-1}--\ref{basic-numeric-2},
 pages~\pageref{basic-numeric-1}--\pageref{basic-numeric-2}
 show the numeric classes, and
 Figure~\ref{standard-classes}, page~\pageref{standard-classes},
 shows the classes defined in the Prelude.)
+\end{itemize}
 Each defaultable variable is replaced by the first type in the
 default list that is an instance of all the ambiguous variable's classes.
 It is a static error if no such type is found.
@@ -1532,12 +1546,13 @@ linear}\index{linearity}\index{linear pattern}---no variable is
 allowed to appear more than once in the entire set.
 
 Alternative syntax is provided for binding functional values to infix
-operators.  For example, these two function
-definitions are equivalent:
+operators.  For example, these three function
+definitions are all equivalent:
 \bprog
 @
   plus x y z = x+y+z
   x @\bkqB@plus@\bkqA@ y = \ z -> x+y+z
+  (x @\bkqB@plus@\bkqA@ y) z = x+y+z
 @
 \eprogNoSkip
 
@@ -1546,11 +1561,11 @@ definitions are equivalent:
 The general binding form for functions is semantically
 equivalent to the equation (i.e.~simple pattern binding):
 \[
-x @= \@ x_1 ... x_n @-> case (@x_1@, @...@, @x_k@) of@
+"x @= \@ x_1 ... x_k @-> case (@x_1@, @...@, @x_k@) of@"
 \ba[t]{lcl}
 "@(@p_{11}, ..., p_{1k}@)@ match_1"  \\
 "..." \\
-"@(@p_{m1}, ..., p_{mk}@)@ match_m"
+"@(@p_{n1}, ..., p_{nk}@)@ match_n"
 \ea\]
 where the "x_i" are new identifiers.
 }
@@ -1603,12 +1618,15 @@ Here are four examples:
 \bprog
 @
   x + 1 = ...		-- Function binding, defines (+)
+			-- Equivalent to   (+) x 1 = ...
 
   (x + 1) = ...		-- Pattern binding, defines x
 
   (x + 1) * y = ...	-- Function binding, defines (*)
+			-- Equivalent to   (*) (x+1) y = ...
 
-  (x + 1) 2 = ...	-- Function binding, defines (+)
+  (x + 1) y = ...	-- Function binding, defines (+)
+			-- Equivalent to   (+) x 1 y = ...
 @
 \eprog
 The first two can be distinguished because a pattern binding
@@ -1753,7 +1771,7 @@ Consider:
 \bprog
 @
   f :: (Monad m, Eq (m a)) => a -> m a -> Bool
-  f x y = x == return y
+  f x y = return x == y
 @
 \eprog
 The type of @return@ is @Monad m => a -> m a@; the type of @(==)@ is
@@ -2119,7 +2137,7 @@ $\ast\rightarrow\ast$, respectively.
 Defaults are applied to each dependency group without consideration of
 the ways in which particular type constructor constants or classes are
 used in later dependency groups or elsewhere in the program.  For example,
-adding the following definition to those above do not influence the
+adding the following definition to those above does not influence the
 kind inferred for @Tree@ (by changing it to
 $(\ast\rightarrow\ast)\rightarrow\ast$, for instance), and instead
 generates a static error because the kind of @[]@, $\ast\rightarrow\ast$,

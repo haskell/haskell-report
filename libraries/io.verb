@@ -146,17 +146,29 @@ enough information to identify the handle for debugging.  A handle is
 equal according to @==@ only to itself; no attempt
 is made to compare the internal state of different handles for equality.
 
+\subsubsection{Standard Handles}
+\label{StandardHandles}
+\index{standard handles}
+
+Three handles are allocated during program initialisation.  The first
+two (@stdin@\indextt{stdin} and @stdout@\indextt{stdout}) manage input or output from the \Haskell{}
+program's standard input or output channel respectively.  The third
+(@stderr@\indextt{stderr}) manages output to the standard error channel.  These
+handles are initially open.
+
 \subsubsection{Semi-Closed Handles}
 \label{SemiClosed}
 \index{semi-closed handles}
 
-The operation @hGetContents@\indextt{hGetContents} puts a handle "hdl" into an intermediate
+The operation "@hGetContents@ hdl"\indextt{hGetContents} 
+puts a handle "hdl" into an intermediate
 state, {\em semi-closed}.  In this state, "hdl" is effectively closed,
 but items are read from "hdl" on demand and accumulated in a special
 stream returned by @hGetContents@~"hdl".
  
-Any operation except for @hClose@ that fails because a handle is
-closed, also fails if a handle is semi-closed.  A semi-closed handle
+Any operation that fails because a handle is
+closed, also fails if a handle is semi-closed. The only exception is @hClose@.
+A semi-closed handle
 becomes closed:
 \begin{itemize}
 \item
@@ -173,16 +185,28 @@ associated stream becomes fixed, and is the list of those items which
 were successfully read from that handle. Any I/O errors encountered while
 a handle is semi-closed are simply discarded.
  
+\subsubsection{File locking}
 
-\subsubsection{Standard Handles}
-\label{StandardHandles}
-\index{standard handles}
+Implementations should enforce as far as possible, locally to the
+\Haskell{} process, multiple-reader single-writer locking on files.
+That is, \emph{there may either be many handles on the same file which manage
+input, or just one handle on the file which manages output}.  If any
+open or semi-closed handle is managing a file for output, no new
+handle can be allocated for that file.  If any open or semi-closed
+handle is managing a file for input, new handles can only be allocated
+if they do not manage output.  Whether two files are the same is
+implementation-dependent, but they should normally be the same if they
+have the same absolute path name and neither has been renamed, for
+example.
 
-Three handles are allocated during program initialisation.  The first
-two (@stdin@\indextt{stdin} and @stdout@\indextt{stdout}) manage input or output from the \Haskell{}
-program's standard input or output channel respectively.  The third
-(@stderr@\indextt{stderr}) manages output to the standard error channel.  These
-handles are initially open.
+{\em Warning}: the @readFile@ operation (Section 7.1 of the Haskell Language Report)
+holds a semi-closed handle on the file until the entire contents of the file have been
+consumed.  It follows that an attempt to write to a file (using @writeFile@, for example)
+that was earlier opened by @readFile@ will usually result in 
+failure with @isAlreadyInUseError@.
+\indextt{readFile}
+\indextt{writeFile}
+
 
 \subsection{Opening and Closing Files}
 \label{OpeningClosing}
@@ -218,27 +242,15 @@ position is 0).  The initial buffer mode is implementation-dependent.
 If @openFile@ fails on a file opened for output, the file may still
 have been created if it did not already exist.
 
-Implementations should enforce as far as possible, locally to the
-\Haskell{} process, multiple-reader single-writer locking on files.
-Thus there may either be many handles on the same file which manage
-input, or just one handle on the file which manages output.  If any
-open or semi-closed handle is managing a file for output, no new
-handle can be allocated for that file.  If any open or semi-closed
-handle is managing a file for input, new handles can only be allocated
-if they do not manage output.  Whether two files are the same is
-implementation-dependent, but they should normally be the same if they
-have the same absolute path name and neither has been renamed, for
-example.
-
 {\em Error reporting}: the @openFile@ computation may fail with
 @isAlreadyInUseError@ if the file is already open and cannot be
 reopened;
 @isDoesNotExistError@ if the file does not exist; or
 @isPermissionError@ if the user does not have
 permission to open the file.
-
-%ADG: this is obvious!
-%KH:  Not really.  It's actually quite subtle!
+\indextt{isAlreadyInUseError}
+\indextt{isDoesNotExistError}
+\indextt{isPermissionError}
 
 \subsubsection{Closing Files}
 \label{Closing}
@@ -485,6 +497,7 @@ character is available.
 the @hLookahead@ computation may fail with:
 @isEOFError@ if the end of file has been reached.
 
+\subsubsection{Reading The Entire Input}
 \label{hGetContents}
 \index{get the contents of a file}
 
@@ -495,6 +508,8 @@ by "hdl", which is made semi-closed.
 {\em Error reporting}:
 the @hGetContents@ computation may fail with:
 @isEOFError@ if the end of file has been reached.
+
+\subsubsection{Text Output}
 
 Computation @hPutChar@~"hdl"~"c"\indextt{hPutChar} writes the character "c" to the file
 or channel managed by "hdl".  Characters may be buffered if buffering
@@ -539,7 +554,9 @@ main = do
          x2 <- readNum                          
          putStr  ("Their sum is " ++ show (x1+x2) ++ "\n")
        where readNum :: IO Integer
-             readNum =  do { line <- getLine; readIO line }
+		-- Need a type signature for 
+		-- readLn to avoid ambiguity
+             readNum = readLn
 @
 \eprog
 

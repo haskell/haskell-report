@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/lexemes.verb,v 1.1 2001/03/28 14:13:42 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/lexemes.verb,v 1.2 2001/05/29 15:40:00 simonpj Exp $
 %
 %*section 2
 %**<title>Haskell 98 Lexical Structure</title>
@@ -295,7 +295,7 @@ ascii   -> @^@cntrl | @NUL@ | @SOH@ | @STX@ | @ETX@ | @EOT@ | @ENQ@ | @ACK@
        | @BEL@ | @BS@ | @HT@ | @LF@ | @VT@ | @FF@ | @CR@ | @SO@ | @SI@ | @DLE@ 
        | @DC1@ | @DC2@ | @DC3@ | @DC4@ | @NAK@ | @SYN@ | @ETB@ | @CAN@ 
        | @EM@ | @SUB@ | @ESC@ | @FS@ | @GS@ | @RS@ | @US@ | @SP@ | @DEL@
-cntrl   -> ASClarge | @@ | @[@ | @\@ | @]@ | @^@ | @_@
+cntrl   -> ascLarge | @@ | @[@ | @\@ | @]@ | @^@ | @_@
 gap     ->  @\@ whitechar \{whitechar\} @\@
 @@@
 \indexsyn{char}%
@@ -381,7 +381,12 @@ For each subsequent line, if it contains only whitespace or is
 indented more, then the previous item is continued (nothing is
 inserted); if it is indented the same amount, then a new item begins
 (a semicolon is inserted); and if it is indented less, then the
-layout list ends (a close brace is inserted).  A close brace is
+layout list ends (a close brace is inserted).  If the indentation of the 
+non-brace lexeme immediately following a @where@, @let@, @do@ or @of@ is less 
+than or equal to the current indentation level, then instead of starting 
+a layout, an empty list ``@{}@'' is inserted, and layout processing 
+occurs for the current level (i.e. insert a semicolon or close brace). 
+A close brace is
 also inserted whenever the syntactic category containing the
 layout list ends; that is, if an illegal lexeme is encountered at
 a point where a close brace would be legal, a close brace is inserted.
@@ -426,7 +431,7 @@ data Stack a = Empty
 push :: a -> Stack a -> Stack a
 push x s = MkStack x s
 
-size :: Stack a -> Integer
+size :: Stack a -> Int
 size s = length (stkToLst s)  where
            stkToLst  Empty         = []
            stkToLst (MkStack x s)  = x:xs where xs = stkToLst s
@@ -451,7 +456,7 @@ module AStack( Stack, push, pop, top, size ) where
 ;push :: a -> Stack a -> Stack a
 ;push x s = MkStack x s
 
-;size :: Stack a -> Integer
+;size :: Stack a -> Int
 ;size s = length (stkToLst s)  where
            {stkToLst  Empty         = []
            ;stkToLst (MkStack x s)  = x:xs where {xs = stkToLst s

@@ -61,7 +61,7 @@ infixr 0  $, $!, `seq`
 class  Eq a  where
     (==), (/=)       :: a -> a -> Bool
 
-        -- Minimal complete defintion:
+        -- Minimal complete definition:
         --      (==) or (/=)
     x /= y           =  not (x == y)
     x == y           =  not (x /= y)
@@ -109,6 +109,7 @@ class  Enum a  where
     pred             =  toEnum . (subtract 1) . fromEnum
     enumFrom x       =  map toEnum [fromEnum x ..]
     enumFromTo x y   =  map toEnum [fromEnum x .. fromEnum y]
+    enumFromThen x y =  map toEnum [fromEnum x, fromEnum y, ..]
     enumFromThenTo x y z = 
                         map toEnum [fromEnum x, fromEnum y .. fromEnum z]
 
@@ -427,7 +428,7 @@ instance Monad IO where
    return = ...
 
    m >> k = m >>= \_ -> k
-   fail s = error s
+   fail s = ioError (userError s)
 
 -- Ordering type
 
@@ -479,7 +480,7 @@ instance  RealFloat  Double  where ...
 -- The Enum instances for Floats and Doubles are slightly unusual.
 -- The `toEnum' function truncates numbers to Int.  The definitions
 -- of enumFrom and enumFromThen allow floats to be used in arithmetic
--- series: [0,0.1 .. 1.0].  However, roundoff errors make these somewhat
+-- series: [0,0.1 .. 0.95].  However, roundoff errors make these somewhat
 -- dubious.  This example may have either 10 or 11 elements, depending on
 -- how 0.1 is represented.
 

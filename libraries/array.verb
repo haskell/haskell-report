@@ -143,11 +143,11 @@ accumArray f z b = accum f (array b [(i, z) | i <- range b])
 \subsection{Derived Arrays}
 \index{array!derived}
 
-The two functions @map@\indextt{map} and @ixmap@\indextt{ixmap}
+The two functions @fmap@\indextt{fmap} and @ixmap@\indextt{ixmap}
 derive new arrays from existing ones; they may be
 thought of as providing function composition on the left and right,
 respectively, with the mapping that the original array embodies.
-The @map@ function transforms the array values while 
+The @fmap@ function transforms the array values while 
 @ixmap@ allows for transformations on array indices.
 Figure~\ref{derived-array-examples} shows some examples.
 
@@ -169,7 +169,7 @@ diag x = ixmap (l,u) (\i->(i,i)) x
 
 -- Projection of first components of an array of pairs
 firstArray :: (Ix a) => Array a (b,c) -> Array a b
-firstArray = map (\(x,y)->x)
+firstArray = fmap (\(x,y)->x)
 @
 }
 \ecaption{Derived array examples}
