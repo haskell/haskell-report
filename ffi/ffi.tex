@@ -13,6 +13,10 @@
 % does not claim to be a definition of the Haskell 98 Foreign Function
 % Interface. 
 
+% Changes since RC15:
+% * 6.3: Footnote regarding __STDC_ISO_10646__ added to text introducing
+%        `CWString'.
+%
 % Changes since RC14:
 % * 6.2: CWChar -> CWchar
 % * 6.3: - CWChar -> CWchar
@@ -164,14 +168,14 @@
 \excludeversion{FUTURE}  % material for future extensions
 
 %\def\Version{\relax}
-\def\Version{\\(Release Candidate 15)}
+\def\Version{\\(Release Candidate 16)}
 \begin{DRAFT}%
 {
   \gdef\Version{%
     \\
     \textbf{--- DRAFT ---}\\[1ex]
     \ttfamily\scriptsize
-    $\relax$Id: ffi.tex,v 1.52 2003/11/12 04:58:11 chak Exp $\relax$%
+    $\relax$Id: ffi.tex,v 1.53 2003/11/17 09:11:37 chak Exp $\relax$%
     \ignorespaces}
   }
 \end{DRAFT}
@@ -2407,7 +2411,12 @@ care, as a loss of information can occur.
 
 To simplify bindings to C libraries that use \code{wchar\_t} for character
 sets that cannot be encoded in byte strings, the module \code{CString} also
-exports a variant of the above string marshalling routines for wide characters.
+exports a variant of the above string marshalling routines for wide
+characters---i.e., for the C \code{wchar\_t} type.\footnote{Note that if the
+  platform defines \code{\_\_STDC\_ISO\_10646\_\_} then \code{wchar\_t}
+  characters are Unicode code points, and thus, the conversion between Haskell
+  \code{Char} and \code{CWchar} is a simple cast.  On other platforms, the
+  translation is locale-dependent, just as for \code{CChar}.}
 %
 \begin{codedesc}
 \item[type CWString~~~~= Ptr CWchar]
