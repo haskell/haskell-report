@@ -1,0 +1,30 @@
+	The Haskell Language and Library Reports
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+SOURCE FILES
+
+    report/		The Language Report
+    
+    libraries/		The Libraries Report
+    
+    tools/		Tools needed to build the Reports
+		    	(cd into here and type make)
+    
+    Makefile		Build a distribution of the Reports
+
+    haskell98-bugs.html	A list of all the changes from the original
+			Haskell 98 Report to the July 2001 revision.
+			Covers both the Language and Library report.
+    
+	    
+    h98.gif		A GIF for a Haskell 98 logo
+
+
+OUTPUT FILES
+    haskell98-revised/	A directory containing the distribution
+
+
+	Notes on how to generate PDF
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[Mark pls fill in here.]
