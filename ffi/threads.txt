@@ -1,0 +1,101 @@
+Foreign Threads
+===============
+
+There are two variant attempts to address issues associated with
+thread-local state in foreign threads (i.e., those provided by the
+operating system or standard libraries as opposed to those provided by
+a Haskell runtime system).
+
+Until such time as we are able to merge the proposals, we include both
+proposals as self-contained entities.
+
+
+Proposal 1
+==========
+
+Goals
+~~~~~
+
+Since foreign libraries sometimes exploit thread local state, it is
+necessary to provide some control over which thread is used to execute
+foreign code.  In particular, it is important that it should be
+possible for Haskell code to arrange that a sequence of calls to a
+given library are performed by the same foreign (or 'native') thread
+and that if an external library calls into Haskell, then any outgoing
+calls from Haskell are performed by the same foreign thread.
+
+This specification is intended to be implementable both by
+multi-threaded Haskell implementations and by single-threaded
+implementations and so it does not comment on which particular OS
+thread is used to execute Haskell code.
+
+
+Design
+~~~~~~
+
+Haskell threads may be bound with either zero or one foreign threads.
+Binding occurs at thread creation time.  There are four ways to
+create Haskell threads so there are four cases to consider:
+
+1) forkForeignThread :: IO () -> IO ThreadId
+   The fresh Haskell thread is bound to a fresh foreign thread.
+
+2) forkIO :: IO () -> IO ThreadId
+   The fresh Haskell thread is not bound to a foreign thread.
+
+3) Calls to a bound foreign export allocate a fresh Haskell
+   thread which is then bound to the calling thread thread.
+
+   Bound foreign exports have the form
+
+     foreign export bound foo :: <type>
+
+   and otherwise behave like normal foreign exports.
+
+4) ToDo: For completeness, there ought to be a way to 'bind'
+   finalizers to foreign threads but no concrete proposal currently
+   exists.
+
+Calls to bound foreign imports by Haskell threads which are bound to a
+foreign thread are performed by that foreign thread.
+
+   Bound foreign imports have the form
+
+     foreign import bound foo :: <type>
+
+   and otherwise behave like normal foreign imports.
+
+Calls to any free (i.e., not bound) foreign imports may be made in
+the bound thread (if it exists) or by some other foreign thread at
+the implementation's discretion.
+
+
+Issues
+~~~~~~
+
+The notion of bound foreign imports could be eliminated by saying that
+all foreign calls are performed by the bound thread if one exists and
+eliminate the concept of 'bound foreign imports'.  The only reason to
+allow any flexibility is to allow for faster implementations which
+perform less context switching - this is especially important for
+'unsafe' foreign calls.
+
+
+An alternative to forkForeignThread is to allow direct control over
+thread binding:
+
+   bindThread :: ForeignThread -> IO ()
+   The current Haskell thread is bound to a fresh foreign thread.
+   (Any previous binding is forgotten.)
+
+This leads to a much simpler design since it eliminates the need for
+forkForeignThread and can be used for finalizers too.  The cost is
+that every bound foreign call requires locking and a context switch
+since multiple Haskell threads may be bound to the same foreign thread
+and could try to make a foreign call 'at the same time'.  Binding
+finalizers to foreign threads also seems to require locking and a
+context switch for the same reason.
+
+
+End of Proposal 1
+=================

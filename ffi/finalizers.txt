@@ -2,8 +2,14 @@ Haskell Finalizers
 ==================
 
   This is intended to be an up-to-date summary of the discussion
-  relating to finalizers on the FFI mailing list, up until about 15
-  Oct 2002.
+  relating to finalizers on the FFI mailing list, up until the end of
+  2002.
+
+  The final decision was that, since Haskell finalizers could only be
+  implemented in GHC, we would adopt C finalizers.  The problem is
+  described in the section titled "Accessing immutable Haskell state"
+  below but boils down to atomicity assumptions made by the abstract
+  machine.
 
   The summary is *intended* to be impartial, but since the authors
   (Simon M. and Alastair Reid) have our own differing opinions about
@@ -11,6 +17,7 @@ Haskell Finalizers
   the other, or at least the exposition of one side of the argument
   may be more accurate than the other.  Please accept our apologies and
   modify accordingly.
+
 
 The main issue
 ==============
