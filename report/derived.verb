@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/derived.verb,v 1.3 2001/05/29 15:40:00 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/derived.verb,v 1.4 2001/05/30 13:47:12 simonpj Exp $
 %
 % The paragraph describing the formats of standard representations might
 % be deleted, since the info is already in the Prelude.  
@@ -373,25 +373,25 @@ formatting of floating point numbers.
 %@@
 %readList:: ReadS [a]
 %readList r = [pr | ("[",s) <- lex r,
-%		  pr	  <- readl s	]
-%	    where readl s = [([],t) | ("]",t) <- lex s] ++
-%			   [(x:xs,v) |	(x,t) <- reads s,
-%					(",",u) <- lex t,
-%					(xs,v) <- readl u	]
+%                 pr      <- readl s    ]
+%           where readl s = [([],t) | ("]",t) <- lex s] ++
+%                          [(x:xs,v) |  (x,t) <- reads s,
+%                                       (",",u) <- lex t,
+%                                       (xs,v) <- readl u       ]
 %
 %showList:: [a] -> ShowS
 %showList xs = showChar '[' . showl xs
-%	     where
-%	     showl [] = showChar ']'
-%	     showl (x:xs) = shows x . showChar ',' . showl xs
+%            where
+%            showl [] = showChar ']'
+%            showl (x:xs) = shows x . showChar ',' . showl xs
 %@@
 %\eprog
 %\begin{figure}
 %\outline{
 %@@
 %instance (C, Text u1, ..., Text uk) => Text (T u1 ... uk) where
-%	showsPrec = ...
-%	readsPrec = ...
+%       showsPrec = ...
+%       readsPrec = ...
 %@@
 %}
 %\caption{General form of a derived instance of @Text@}
@@ -430,44 +430,44 @@ the class declaration shown in Figure~\ref{standard-classes}
 \begin{figure}[tb]
 \outlinec{
 @
-infix 4 :^:
+infix 5 :^:
 data Tree a =  Leaf a  |  Tree a :^: Tree a
 
 instance (Eq a) => Eq (Tree a) where
-	Leaf m == Leaf n  =  m==n
-	u:^:v  == x:^:y	  =  u==x && v==y
+        Leaf m == Leaf n  =  m==n
+        u:^:v  == x:^:y   =  u==x && v==y
              _ == _       =  False
 
 instance (Ord a) => Ord (Tree a) where
-	Leaf m <= Leaf n  =  m<=n
-	Leaf m <= x:^:y	  =  True
-	u:^:v  <= Leaf n  =  False
-	u:^:v  <= x:^:y	  =  u<x || u==x && v<=y
+        Leaf m <= Leaf n  =  m<=n
+        Leaf m <= x:^:y   =  True
+        u:^:v  <= Leaf n  =  False
+        u:^:v  <= x:^:y   =  u<x || u==x && v<=y
 
 instance (Show a) => Show (Tree a) where
 
         showsPrec d (Leaf m) = showParen (d >= 10) showStr
-    	  where
+          where
              showStr = showString "Leaf " . showsPrec 10 m
 
         showsPrec d (u :^: v) = showParen (d > 4) showStr
-    	  where
+          where
              showStr = showsPrec 5 u . 
                        showString " :^: " .
                        showsPrec 5 v
 
 instance (Read a) => Read (Tree a) where
 
-	readsPrec d r =  readParen (d > 4)
-			 (\r -> [(u:^:v,w) |
-				 (u,s) <- readsPrec 5 r,
-				 (":^:",t) <- lex s,
-				 (v,w) <- readsPrec 5 t]) r
+        readsPrec d r =  readParen (d > 4)
+                         (\r -> [(u:^:v,w) |
+                                 (u,s) <- readsPrec 5 r,
+                                 (":^:",t) <- lex s,
+                                 (v,w) <- readsPrec 5 t]) r
 
-		      ++ readParen (d > 9)
-			 (\r -> [(Leaf m,t) |
-				 ("Leaf",s) <- lex r,
-				 (m,t) <- readsPrec 10 s]) r
+                      ++ readParen (d > 9)
+                         (\r -> [(Leaf m,t) |
+                                 ("Leaf",s) <- lex r,
+                                 (m,t) <- readsPrec 10 s]) r
 @
 }
 %**<div align=center> <h4>Figure 8</h4> </div>

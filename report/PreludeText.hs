@@ -128,10 +128,16 @@ lex (c:s) | isSingle c = [([c],s)]
               lexExp s = [("",s)]
 
 instance  Show Int  where
-    showsPrec           = showSigned showInt
+    showsPrec           = showsPrec . toInteger
+	-- Converting to Integer avoids
+	-- possible difficulty with minInt
 
 instance  Read Int  where
-    readsPrec p         = readSigned readDec
+  readsPrec p r = (fromInteger i, t)
+		where
+		  (i,t) = readsPrec p r
+	-- Reading at the Integer type avoids
+	-- possible difficulty with minInt
 
 instance  Show Integer  where
     showsPrec           = showSigned showInt

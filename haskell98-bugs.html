@@ -215,15 +215,14 @@ Replace the first paragraph of this section with:
 "Tuples are algebraic datatypes with special syntax, as defined
 in Section 3.8.  Each tuple type has a single constructor.
 All tuples are instances of <tt>Eq</tt>, <tt>Ord</tt>, <tt>Bounded</tt>, <tt>Read</tt>,
-and <tt>Show</tt> (provided, of course, that all their component types are).
-Classes defined in the libraries may also supply
-instances for tuple types.
+<tt>Show</tt>, and <tt>Ix</tt> (provided, of course, that all their component types are).
 <p>
 There is no upper bound on the size of a tuple, but some Haskell
 implementations may restrict the size of tuples, and limit the
 instances associated with larger tuples.  However, every Haskell
 implementation must support tuples up to size 7, and their instances
-for <tt>Eq</tt>, <tt>Ord</tt>, <tt>Bounded</tt>, <tt>Read</tt>, and <tt>Show</tt>.  The Prelude and
+for <tt>Eq</tt>, <tt>Ord</tt>, <tt>Bounded</tt>, <tt>Read</tt>, 
+<tt>Show</tt>, and <tt>Ix</tt>.  The Prelude and
 libraries define tuple functions such as <tt>zip</tt> for tuples up to a size
 of 7."
 
