@@ -182,8 +182,10 @@ driven by their module name: <filename>~/coll/Data/Set.hs</filename>,
 Next, she writes
 a <emphasis>package description</emphasis>, which she puts in <filename>~/coll/</filename>&pkg-desc;:
 <programlisting>
-    name:     angela-coll
-    version:  1
+Name: angela-col
+Version: 0.1.1.1.1-foo-bar-bang
+License: LGPL
+Copyright: Copyright 2004, Angela Author
 </programlisting>
 She also creates a three-line Haskell file <filename>~/coll/Setup.lhs</filename> as follows:
 <programlisting>
@@ -711,26 +713,43 @@ specifies the syntax of the package description, and the command-line interface 
 <sect2 id=pkg-desc><title>The package description</title>
 
 <para>Here is a sample package description file:
-<programlisting>
-  name:    hunit
-  version: 4.3
-  deps:    [ foogle > 2.9, bargle = 2.5.1 ]
+<programlisting>-- Required
+Name: Cabal
+Version: 0.1.1.1.1-foo-bar-bang
+License: AllRightsReserved
+Copyright: Free Text String
+-- Optional - may be in source?
+Stability: Free Text String
+Build-Depends: haskell-src, HUnit>=1.0.0-foo
+Modules: Distribution.Package, Distribution.Version, Distribution.Simple.GHCPackageConfig
+         Distribution.Make
+Main-Modules: Distribution.Main
 </programlisting>
-The first two lines are compulsory. The dependencies are optional, assumed empty if omitted. 
-There can be more lines, all of the form <emphasis>name: stuff</emphasis>, specific to the particular
-setup script in use.  For the &hps;-provided simple build infrastructure, the package description syntax
-is given in <xref linkend="sbi-pkg-desc">.
-</para>
-<para>The exact syntax is still undecided.  Should we put everything in quotes?
-<programlisting>
-  deps:    [ "foogle > 2.9", "bargle = 2.5.1" ]
-</programlisting>
-If not, how can a program that doesn't understand a particular field safely ignore it?  Skip to end of line?
-But there may be many lines in fields like <literal>deps</literal>.
-<emphasis>ToDo: pick a syntax, provide a parser in the Distribution
-libraries somewhere.</emphasis>
-</para>
-    </sect2>
+
+The Name, Version, License, and Copyright are compulsory.</para>
+
+<para>The rest of the lines are optional.  Any fields the system
+doesn't understand will be ignored (to allow addition of fields at a
+later date, or to allow Setup script authors to provide their own
+fields). Each field must begin with "Field-Name:".</para>
+
+<para>Lines beginning with "--" will be considered comments and
+ignored.</para>
+
+<para>Each field must begin with "Field-Name:".  In order to allow for
+long fields, any line that begins with whitespace will be considered
+part of the previous field.  </para>
+
+<para>As given, there should be no reason to have completely empty
+lines (except perhaps for the last line in the file).  In the future,
+if there is need to add more records, they will be separated by at
+least one completely empty line.</para>
+
+<para>For the &hps;-provided simple build infrastructure, the package
+description fields and syntax are given in <xref
+linkend="sbi-pkg-desc">.</para>
+
+</sect2>
 
 <sect2 id=setup-spec><title>The setup script specification</title>
 
@@ -1025,9 +1044,41 @@ The full specification is in <xref linkend="sbi-setup">.
     </sect2>
 <sect2 id=sbi-pkg-desc><title>Package description in the simple build infrastructure</title>
 
-<para>When using the simple build infrastructure, the package description file &pkg-desc;
-contains not only the name of the package, its version and dependencies, but also a collection of information 
-to explain to the simple build infrastructure how to build the package.  This section gives the syntax.</para>
+<para>When using the simple build infrastructure, the package
+description file &pkg-desc; contains not only the name of the package,
+its version and dependencies, but also a collection of information to
+explain to the simple build infrastructure how to build the package.
+This section gives the specific fields, and the syntax of those
+fields.  For the general syntax of the file, please see <xref
+linkend="pkg-desc">.</para>
+
+<para>Here is a sample package description file with all the fields understood by the simple build infrastructure:
+<programlisting>-- Required
+Name: Cabal
+Version: 0.1.1.1.1-foo-bar-bang
+License: AllRightsReserved
+Copyright: Free Text String
+-- Optional - may be in source?
+Stability: Free Text String
+Build-Depends: haskell-src, HUnit>=1.0.0-foo
+Modules: Distribution.Package, Distribution.Version, Distribution.Simple.GHCPackageConfig
+Main-Modules: Distribution.Main
+C-Sources: foo/bar/bang.c, bong/boing.h
+HS-Source-Dir: src
+Exposed-Modules: Distribution.Void, Foo.Bar
+Extensions: {some known extensions}
+Extra-Libs: libfoo, bar, bang
+Include-Dirs: foo/bar, fang/fong
+Includes: /foo/bar, jedi/night
+Options: ghc: -fTH, hugs: +TH</programlisting>
+The Name, Version, License, and Copyright are compulsory.</para>
+
+<para>All other fields, such as dependency-related fields, will be
+considered empty if they are absent.  Any fields that the system does
+not understand will be ignored.</para>
+
+<para>FIX/TODO: Provide BNF-type grammar, especially for field
+contents, remove below checklist and questions.</para>
 
 <para>For now, we just have a checklist of what must be there
 <itemizedlist>
