@@ -236,7 +236,7 @@ is rather like using an explicit export list on a Haskell module.</para>
 </itemizedlist>
 The first two components can be combined to form a single text string called the <emphasis>package ID</emphasis>, 
 using a hyphen to separate the version
-from the name, and dots to separate the version components.  For example, "hunit=2.3".
+from the name, and dots to separate the version components.  For example, "hunit-2.3".
 </para>
 
 </sect2>
@@ -482,11 +482,11 @@ User packages <emphasis>shadow</emphasis> global packages, in the following sens
 An installed package can be <emphasis>exposed</emphasis> or <emphasis>hidden</emphasis>.  An exposed package
 populates the module name space, while a hidden package does not.  Hidden packages are nevertheless necessary.
 For example, the user might use
-package A=2.1 and B=1.0; 
-but B=1.0 might depend on A=1.9. So the latter must be installed (else B=1.0 could not be installed), but
-should be hidden, so that user imports see A=2.1. (However, note that the 
-whole-program invariant described in <xref linkend="packages-and-haskell"> implies that a program using B=1.0 could
-not also use A=2.1, because then both A=2.1 and A=1.9 would form part of the program, and they almost certainly 
+package A-2.1 and B-1.0; 
+but B-1.0 might depend on A-1.9. So the latter must be installed (else B-1.0 could not be installed), but
+should be hidden, so that user imports see A-2.1. (However, note that the 
+whole-program invariant described in <xref linkend="packages-and-haskell"> implies that a program using B-1.0 could
+not also use A-2.1, because then both A-2.1 and A-1.9 would form part of the program, and they almost certainly 
 use the same module names.)
 </para>
 <para>The registration program &hc-pkg; provides operations to expose or hide an 
@@ -533,8 +533,8 @@ check that no user has a user package depending on P.</para>
       same name.</para>
 
       <para>Later options override earlier ones, so that for example
-      <literal>-package hunit=1.2 -package hunit=1.3</literal> will
-      result in <literal>hunit=1.3</literal> being exposed.</para>
+      <literal>-package hunit-1.2 -package hunit-1.3</literal> will
+      result in <literal>hunit-1.3</literal> being exposed.</para>
 
       <para>Additionally, compilers should provide a
       <option>-hide-package</option> flag, which does the opposite of
@@ -609,7 +609,7 @@ allows a user to make a new package known to the compiler, and to ask what packa
 
      </tbody></tgroup>
      </table>
-     A <replaceable>pkg</replaceable> argument can be a package ID, such as "<literal>hunit=2.3</literal>", or just a package name, 
+     A <replaceable>pkg</replaceable> argument can be a package ID, such as "<literal>hunit-2.3</literal>", or just a package name, 
 such as "<literal>hunit</literal>".  To determine which package is meant, &hc-pkg; searches first the
 registered user packages and then the global packages.  If no such package exists, the command fails; that is, it does nothing, 
 returning a non-zero error code.
