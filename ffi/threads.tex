@@ -20,7 +20,7 @@
 %       HS: set of Haskell threads
 \newcommand{\hcall}{H}
 \newcommand{\fcall}[2]{F^{#1}~#2}
-\newcommand{\ret}[1]{R~#1}
+\newcommand{\ret}[1]{RET~#1}
 
 \newcommand{\bound}[1]{B(#1)}
 \newcommand{\forkio}[1]{ForkIO(#1)}
@@ -835,7 +835,7 @@ N[\hcall:S]; (\tau~@>>@~a)_{M}
 \\
 N[\hcall:S]; (\fcall{si}{f}@>>@~a)_N 
         & \Rightarrow 
-        & N[\fcall{si}{a_N}:\hcall:S];  & (FCALL) \\
+        & N[\fcall{si}{a}:\hcall:S];  & (FCALL) \\
 \\
 N[\hcall:S]; (@forkIO@~b~@>>@~a)_N 
         & \Rightarrow 
@@ -868,5 +868,180 @@ N[\hcall : S]; (\ret{})_N
 $$
 
 The pattern of these rules is exactly as for the First Proposal, but they are noticeably simpler.
+They are very much simpler than the Second Proposal.
+
+\newpage
+\part{Fourth Proposal}
+
+This proposal is a variant of the Second and Third Proposals; simpler than the Second,
+but addressing concerns about the Third.
+
+\section{Informal semantics}
+
+Here's the basic idea:
+\begin{description}
+\item[Haskell threads and OS threads.] \mbox{}\\
+\begin{itemize}
+\item Every Haskell thread is \emph{either} unbound, \emph{or} bound to a exactly one OS thread.  
+
+\item At most one Haskell thread may be bound to one OS thread.
+In particular, @forkIO@ forks a new unbound Haskell thread.
+
+\item A Haskell thread, bound to a new OS thread, can be created with @forkOS@.
+
+\end{itemize}
+
+\item[Foreign interface.] \mbox{}\\
+\begin{itemize}
+\item No @safe@ vs @threadsafe@ distinction. But we retain the @safe@/@unsafe@ distinction.
+\item A foreign call made by a Haskell thread is (guaranteed to be) made by its bound OS thread, if
+any.
+
+\item If a @safe@ foreign call blocks, then no Haskell threads block.  (Remember, every OS thread
+has at most one Haskell thread bound to it.)
+
+\item A foreign call \emph{into Haskell} (via @foreign export@ or @foreign import wrapper@) is 
+run by a Haskell thread bound to the OS thread that made the call.
+\end{itemize}
+
+
+\item[Open questions and notes.] \mbox{}\\
+\begin{itemize}
+\item Notice that, unlike the Third Proposal, there can be a 1-1 mapping between Haskell threads
+and OS threads.  Furthermore, we can run efficiently on an SMP.
+
+\item The Second Proposal allows a Haskell thread to temporarily bind itself to an OS thread, using the
+@threadBound@ primitive.  The Fourth Proposal simplifies by making that decision when the Haskell
+thread is spawned.  But it would be possible to modify the Fourth Proposal to allow an unbound Haskell
+thread to bind itself to a new OS thread, either for the remainder of its life (@bindToOS@ @::@ @IO ()@),
+or for some nested action (@bindToOS@ @::@ @IO a -> IO a@).  But it's not clear if either of these are really
+necessary.  They can always be simulated with @forkOS@.
+
+\item There is no notion of an ``associated''' OS thread, a complication of the Second Proposal that we
+do not yet fully understand.
+\end{itemize}
+\end{description}
+
+
+\section{Formal semantics}
+
+The syntax of a native thread is this:
+$$
+\begin{array}{lrcll}
+\mbox{Native thread} &  t & ::= & N[S] \\
+\\
+\mbox{Native thread stack} &  S & ::= & \epsilon & \mbox{Empty}\\
+        & & | & \hcall : S  & \mbox{Executing Haskell} \\
+        & & | & \fcall{si}{a_{bt}} : S & \mbox{Executing foreign code} \\
+        & & | & \bullet & \mbox{Unknown}\\
+\\
+\mbox{Safety indicator} &  si & ::= & u & \mbox{Unsafe} \\
+        & & | & s & \mbox{Safe}
+\end{array}
+$$
+A native thread of form $N[S]$ has thread-id $N$, while $S$ is
+an abstraction of its call stack.  If $\hcall$ is on top of the stack,
+the thread is willing to execute a Haskell thread. 
+If $\fcall{si}{h}$ is
+on top of the stack, the thread is in the process of dealing with a call
+to a foreign function, which will return its result to the Haskell thread
+$h$.  The safety-indicator $si$ is from the FFI spec.
+
+A native thread of form $N[H]$ has a stack that exists only to serve Haskell 
+threads, and so can safely block inside a foreign call without mucking anything
+else up.  We might call them ``worker threads''.
+
+The syntax of a Haskell thread is this:
+$$
+\begin{array}{lrcll}
+\mbox{Haskell thread} &  h & ::= & (a)_{bt} \\
+\\
+\mbox{Bound thread id} & bt & ::= & \epsilon & \mbox{Not bound} \\
+        & & | & N & \mbox{Bound to native thread N} \\
+\\
+\mbox{Haskell action} &  a & ::= & p ~@>>@~ a  & \mbox{Sequence} \\
+        & & | & \ret  & \mbox{Return from a call into Haskell} \\
+\\
+\mbox{Primitive action} &  p & ::= & \tau & \mbox{Internal action} \\
+        & & | & @forkIO@~a & \mbox{Fork a thread} \\
+        & & | & @forkOS@~a & \mbox{Fork a native thread} \\
+        & & | & \fcall{si}{f} & \mbox{Foreign call} 
+\end{array}
+$$
+A Haskell thread $h$ of form $(a)_{N}$ has action $a$.  The indicator
+$N$ identifies the native thread $N$ to which the Haskell thread is \emph{bound}.
+
+An action $a$ is a sequence of primitive actions, finishing with a 
+return of some kind.  A primitive action is either some internal Haskell
+thing (such as performing a bit of evaluation, or operating on an @MVar@),
+or else it is a call to a foreign function $f$.
+
+We do not model the data passed to, or returned from, a foreign call, nor
+any details of what ``internal Haskell'' operations are.  
+
+\subsection{Evolution}
+
+We describe how the system evolves in a very standard way, using 
+transition rules, of form
+$$
+\NS ; \HS ~\Rightarrow~ \NS' ; \HS'
+$$
+The structural rules are as before.
+$$
+\begin{array}{rcll}
+N[\hcall:S]; (\tau~@>>@~a)_{bt} 
+        & \Rightarrow 
+        & N[\hcall:S]; (a)_{M} & (INT) \\
+\\
+N[\hcall:S]; (@forkIO@~b~@>>@~a)_{bt} 
+        & \Rightarrow 
+        & N[\hcall:S]; (a)_{bt}, (b)_\epsilon & (FORKIO) \\
+N[\hcall:S]; (@forkOS@~b~@>>@~a)_{bt}
+        & \Rightarrow 
+        & N[\hcall:S], M[\hcall,\bullet]; (a)_{M}, (b)_{bt} & (FORKOS) \\
+\\
+N[\hcall:S]; (\fcall{si}{f}~@>>@~a)_N 
+        & \Rightarrow 
+        & N[\fcall{si}{a_N}:\hcall:S];  & (FCALL1) \\
+N[\hcall]; (\fcall{si}{f}~@>>@~a)_\epsilon 
+        & \Rightarrow 
+        & N[\fcall{si}{a_\epsilon}:\hcall:S];  & (FCALL2) \\
+g\\
+N[\fcall{si}{a_{bt}}:S];  
+        & \Rightarrow 
+        & N[S]; a_{bt} & (FRET) \\
+\\
+N[\bullet];
+        & \Rightarrow 
+        & N[\hcall:\bullet];  (f ~@>>@~ \ret{})_{N} & (HCALL1) \\
+\\
+N[\fcall{s}{a} : S]; 
+        & \Rightarrow 
+        & N[\hcall : \fcall{s}{a} : S]; ~ (f ~@>>@~ \ret{})_{N} & (HCALL2) \\
+ \\
+N[\hcall : S]; (\ret{})_N
+        & \Rightarrow 
+        & N[S]; & (HRET) \\
+\\
+(nothing)
+        & \Rightarrow 
+        & N[\hcall]; & (WKR) \\
+        & \multicolumn{2}{l}{\mbox{where $N$ is fresh}} \\
+\\
+(nothing)
+        & \Rightarrow 
+        & N[\bullet]; & (EXT) \\
+        & \multicolumn{2}{l}{\mbox{where $N$ is fresh}} \\
+\end{array}
+$$
+
+\begin{description}
+\item[FORKOS.]  Note that we spawn a new OS thread $M[H,\bullet]$.  The $\bullet$ prevents it
+participating in (FCALL2), which might block $M$ inside a foreign call; instead, $M$ must
+remain available to participate in (FCALL1), since no other OS thread can do so.
+
+\item[WKR.] This rule models the birth of new worker OS threads, in case they should
+all be blocked in a foreign call.
+\end{description}
 
 \end{document}
