@@ -2,7 +2,7 @@
 <!entity  ghc         "<application>GHC</application>">
 <!entity  nhc         "<application>Nhc98</application>">
 <!entity  hugs        "<application>Hugs</application>">
-<!entity  hps         "<application>HPS</application>">
+<!entity  hps         "<application>Cabal</application>">
 <!entity  tool        "<application>tool</application>">
 <!entity  autoconf    "<application>autoconf</application>">
 <!entity  impl        "Haskell Implementation">
@@ -33,7 +33,7 @@
 <article id="hps">
   <artHeader>
     <date>2004-04-24</date>
-    <title>The Haskell Package System</title>
+    <title>A Common Architecture for Building Applications and Tools</title>
     <author>
       <firstname>Isaac</firstname>
       <surname>Jones</surname>
@@ -50,16 +50,21 @@
       <firstname>Malcolm</firstname>
       <surname>Wallace</surname>
     </author>
+    <author>
+      <firstname>Ross</firstname>
+      <surname>Patterson</surname>
+    </author>
 
     <address><email>ijones@syntaxpolice.org</email></address>
     <abstract>
 
-      <para>The Haskell Library Infrastructure Project is an effort to provide
-      a framework for developers to more effectively contribute their
-      software to the Haskell community.  This document specifies
-      the <emphasis>Haskell Package System (&hps;)</emphasis>, which contributes 
-	to the goals of the Haskell Library Infrastructure Project.
-      </para>
+      <para>The Haskell Library and Tools Infrastructure Project is an
+      effort to provide a framework for developers to more effectively
+      contribute their software to the Haskell community.  This
+      document specifies the <emphasis>Common Architecture for
+      Building Applications and Tools(&hps;)</emphasis>, which
+      contributes to the goals of the Haskell Library and Tools
+      Infrastructure Project.  </para>
       <para>Specifically, the &hps; describes what a Haskell 
 	package is, how these packages interact with the language,
 	and what Haskell implementations must to do to support packages.
@@ -71,9 +76,11 @@
 	how authors decide where in the module name space their library should live;
 	how users can find a package they want; how orphan packages find new owners;
 	and so on.</para>
-      <para> The &hps; has been discussed by the implementors of &ghc;, &nhc;, and &hugs;,
-	all of whom are prepared to implement it.  The proposal is now open
-	for wider debate. Please contribute by emailing <email>libraries@haskell.org</email>.</para>
+      <para> The &hps; has been discussed by the implementors of
+	&ghc;, &nhc;, and &hugs;, all of whom are prepared to
+	implement it.  The proposal is now open for wider
+	debate. Please contribute by emailing
+	<email>libraries@haskell.org</email>.</para>
     </abstract>
   </artheader>
 
@@ -354,12 +361,15 @@ In summary, though, <filename>Setup.lhs</filename> allows a consumer to configur
 test, install, register, and unregister a package.  </para>
 	  </listitem>
 	</itemizedlist>
-The &hps; allows a package author to write the setup script in any way she pleases, provided
-it conforms to the specification of <xref linkend="setup">.  However, many Haskell packages consist
-of little more than a bunch of Haskell modules, and for these the &hps; provides <emphasis>the simple
-build infrastructure</emphasis>, a Haskell library that does
-all the work.  The simple build infrastructure, which was used for the example in 
-<xref linkend="example">, is described in <xref linkend="sbi">.</para>
+
+The &hps; allows a package author to write the setup script in any way
+she pleases, provided it conforms to the specification of <xref
+linkend="setup">.  However, many Haskell packages consist of little
+more than a bunch of Haskell modules, and for these the &hps; provides
+<emphasis>the simple build infrastructure</emphasis>, a Haskell
+library that does all the work.  The simple build infrastructure,
+which was used for the example in <xref linkend="example">, is
+described in <xref linkend="sbi">.</para>
 
 <!-- Why Haskell ---------------------------- -->
 
