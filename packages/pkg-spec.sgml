@@ -1,6 +1,6 @@
 <!DOCTYPE ARTICLE PUBLIC "-//OASIS//DTD DocBook V3.1//EN" [
 <!entity  ghc         "<application>GHC</application>">
-<!entity  nhc         "<application>NHC</application>">
+<!entity  nhc         "<application>Nhc98</application>">
 <!entity  hugs        "<application>Hugs</application>">
 <!entity  autoconf    "<application>autoconf</application>">
 <!entity  impl        "Haskell Implementation">
@@ -69,9 +69,9 @@
 	how authors decide where in the module name space their library should live;
 	how users can find a package they want; how orphan packages find new owners;
 	and so on.</para>
-      <para> The HPS has been discussed by the implementors of GHC, nhc, and Hugs,
+      <para> The HPS has been discussed by the implementors of &ghc;, &nhc;, and &hugs;,
 	all of whom are prepared to implement it.  The proposal is now open
-	for wider debate. Please contribute by emailing libraries@haskell.org.</para>
+	for wider debate. Please contribute by emailing <email>libraries@haskell.org</email>.</para>
     </abstract>
   </artheader>
 
@@ -90,7 +90,7 @@ regardless of the Haskell implementation or installation platform.</para>
 <para>The HPS also
 supports library authors by providing an instrastructure that automates the
 process of building and packaging simple libraries.  It is not necessary to use
-this code --- indeed complex libraries may exceed its abilities --- but it should
+this code&mdash;indeed complex libraries may exceed its abilities&mdash;but it should
 handle many cases with no trouble.</para>
 
 <sect2><title>Dramatis personae</title>
@@ -108,11 +108,12 @@ he needs to know about his Haskell compiler's <function>-package</function> flag
   and can install pacakges in more globally-visible places.
 	    </para>
 	  </listitem>
-<listitem><para>
- <emphasis>Roland RPM</emphasis>, <emphasis>Donald Debian</emphasis>, and <emphasis>Willie Windows</emphasis> 
-  build Linux RPM, Debian, and Windows installer packages respectively.  (This list is not exhaustive.)
-  They do this as a service for Angela Author and the community, and may know little or nothing about the internal details 
-  of the Haskell packages they are wrapping up.
+<listitem><para> <emphasis>Roland RPM</emphasis>, <emphasis>Donald
+ Debian</emphasis>, and <emphasis>Willie Windows</emphasis> build
+ Linux RPM, Debian, and Windows installer packages respectively (this
+ list is not exhaustive).  They do this as a service for Angela Author
+ and the community, and may know little or nothing about the internal
+ details of the Haskell packages they are wrapping up.
 	    </para>
 	  </listitem>
 <listitem><para>
@@ -168,7 +169,7 @@ from the library <literal>Distribution.Simple</literal>.  This library implement
   ./Setup.lhs build
   ./Setup.lhs src-dist
 </programlisting>
-The first line readies the system to build the library using GHC; for example, it checks that GHC exists on the system.
+The first line readies the system to build the library using &ghc;; for example, it checks that &ghc; exists on the system.
 The second line checks that
 the library does indeed build flawlessly.  (At this point she can write and execute tests, as we discuss later.)
 The third line wraps up the package as a source distribution, making the file <filename>~/coll/angela-coll-1.tar.gz</filename>.
@@ -183,7 +184,7 @@ He <command>cd</command>'s to that directory and types
 </programlisting>
 He's all done. Now in his Haskell programs, Bob can simply <literal>import</literal> the new
 modules <literal>Data.Set</literal> and <literal>Data.Bag</literal>. He does not need to give extra flags
-to GHC to tell it to look for Angela's modules; they are there automatically.
+to &ghc; to tell it to look for Angela's modules; they are there automatically.
 If Angela used the same module names as someone else, Bob may need finer control: see <xref linkend="compiler-reqts">.</para>
 <para>
 If Angela wrote her modules in Haskell 98, Bob could also have said <option>--hugs</option> or
@@ -260,8 +261,8 @@ implementations.  Hence a conservative starting point.</para>
 
 <sect2><title>Packages and compilers</title>
 
-<para>We use the term ``compiler'' to mean GHC, Hugs, nhc, hbc, etc.  (Even though
-Hugs isn't really a compiler, the term is less clumsy than ``Haskell implementation''.)</para>
+<para>We use the term ``compiler'' to mean &ghc;, &hugs;, &nhc;, hbc, etc.  (Even though
+&hugs; isn't really a compiler, the term is less clumsy than ``Haskell implementation''.)</para>
 
 <para> The
 HPS requires that a conforming Haskell compiler is somewhat package aware.
@@ -313,10 +314,10 @@ for installation.  The pre-compilation means that the distribution will be Haske
 
 <listitem><para>
 The package may be wrapped up as an <emphasis>RPM</emphasis>, <emphasis>Debian</emphasis> distribution, 
-or <emphasis>Windows installer</emphasis>.  (This list is not exhaustive.)
+or <emphasis>Windows installer</emphasis> (this list is not exhaustive).
 In that case, the way it is installed is prescribed by the respective distribution mechanism;
 the only role of the HPS is to make it easy to construct such distributions. All three are
-compiler-specific binary distributions.
+compiler-specific (indeed compiler-version-specific) binary distributions.
 	    </para>
 	  </listitem>
 	</itemizedlist></para>
@@ -332,7 +333,7 @@ root directory of the tree:
 <itemizedlist>
 <listitem><para><function>pkg.desc</function> contains a short description of the package:
 specifically, the package name, version, and dependencies.  It may also contain further information
-specific to the particular build system.  The syntax of package the package description file
+specific to the particular build system.  The syntax of the package description file
 is given in <xref linkend="pkg-desc">.
 	    </para>
 	  </listitem>
@@ -413,7 +414,7 @@ This section documents those requirements</para>
 <para>Installing a package ultimately involves these steps:
 <itemizedlist>
 <listitem> <para>
- <emphasis>Compiling the source files</emphasis>, by invoking the compiler.  Even Hugs may require 
+ <emphasis>Compiling the source files</emphasis>, by invoking the compiler.  Even &hugs; may require 
      some processing (e.g running cpp).
 </para></listitem>
 
@@ -870,7 +871,7 @@ to explain to the simple build infrastructure how to build the package.  This se
 <listitem><para><function>hidden:</function> Hidden (or internal) modules</para>
 	    </listitem>
 <listitem><para><function>ghc-flags:</function>,<function>hugs-flags:</function>,<function>nhc-flags:</function>  
-		Extra compiler flags for GHC, Hugs, nhc.</para>
+		Extra compiler flags for &ghc;, &hugs;, &nhc;.</para>
 	    </listitem>
 <listitem><para> <emphasis>What else?</emphasis></para>
 	  </listitem></itemizedlist></para>
