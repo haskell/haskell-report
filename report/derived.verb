@@ -1,5 +1,5 @@
 %
-% $Header: /home/cvs/root/haskell-report/report/derived.verb,v 1.12 2002/12/10 11:51:10 simonpj Exp $
+% $Header: /home/cvs/root/haskell-report/report/derived.verb,v 1.13 2003/04/08 08:18:19 simonpj Exp $
 %
 % The paragraph describing the formats of standard representations might
 % be deleted, since the info is already in the Prelude.  
@@ -159,7 +159,7 @@ These examples illustrate this property:
 @
 \eprog
 All derived operations of class @Eq@ and @Ord@ are strict in both arguments.
-For example, "@False < @\bot" is "\bot", even though @False@ is the first constructor
+For example, "@False <= @\bot" is "\bot", even though @False@ is the first constructor
 of the @Bool@ type.
 
 \subsection{Derived instances of @Enum@}
