@@ -1,9 +1,9 @@
 % The Haskell 98 Foreign Function Interface
 % [An Addendum to the Definition of Haskell 98]
 %
-% Editor: Manuel M. T. Chakravarty
+% Editor: Manuel M T Chakravarty
 %
-% Copyright 2001 Manuel M. T. Chakravarty
+% Copyright 2001 Manuel M T Chakravarty
 %
 % The authors intend this Report to belong to the entire Haskell community, and
 % so we grant permission to copy and distribute it for any purpose, provided
@@ -15,16 +15,16 @@
 
 % TODO:
 
-%* Rationale: Point about no lib string: remove and explain
-%  why we have the [lib] prefix now
 %* IOError:
 %  - support for raising errors other than UserError and
 %    setting the attributes like file name etc
 %  - no extension of the set of "special" IO errors
-%* Version 1.0: remove (put in \begin/end{DRAFT}) the non-C
-%  language dependent bits and explain that all non-C calling
-%  conventions are experimental and impl dependent right now
 %* Clarify under which conditions two ForeignPtr are equal!
+
+% TODO after Version 1.0:
+%
+% * Review suggestions by Antony Courtney <antony@apocalypse.org> re FFI
+%   support for Java.
 
  
 \documentclass[a4paper,twosides]{article}
@@ -41,6 +41,7 @@
 %
 \includeversion{DRAFT}
 %\excludeversion{DRAFT}
+\excludeversion{UNFINISHED}
 
 \def\Version{\relax}
 \begin{DRAFT}%
@@ -49,7 +50,7 @@
     \\
     \textbf{--- DRAFT ---}\\[1ex]
     \ttfamily\scriptsize
-    $\relax$Id: ffi.tex,v 1.15 2001/09/26 14:07:05 chak Exp $\relax$%
+    $\relax$Id: ffi.tex,v 1.16 2001/10/19 01:52:06 chak Exp $\relax$%
     \ignorespaces}
   }
 \end{DRAFT}
@@ -76,25 +77,39 @@
 \pagestyle{headings}
 
 \title{%
-  The Haskell 98 Foreign Function Interface\\
+  The Haskell 98 Foreign Function Interface 1.0\\
   An Addendum to the Haskell 98 Report%
   \Version}
 \author{
   Manuel M. T. Chakravarty [editor], University of New South Wales\\
-  Sigbjorn Finne, Galois Connections\\
+  Sigbjorn Finne, Galois Connections, Inc.\\
   Fergus Henderson, University of Melbourne\\
   Marcin Kowalczyk, Warsaw University\\
   Daan Leijen, University of Utrecht\\
-  Simon Marlow, Microsoft Research\\
-  Erik Meijer, Microsoft\\
-  Sven Panne, BetaResearch\\
-  Simon Peyton Jones, Microsoft Research\\
+  Simon Marlow, Microsoft Research, Cambridge\\
+  Erik Meijer, Microsoft Corporation\\
+  Sven Panne, BetaResearch GmbH\\
+  Simon Peyton Jones, Microsoft Research, Cambridge\\
   Alastair Reid, University of Utah\\
   Malcolm Wallace, University of York\\
   Michael Weber, University of Aachen
   }
 \date{}
 \maketitle
+\par\vfill
+\noindent
+Copyright (c) 2001 Manuel M. T. Chakravarty
+\par\noindent
+\emph{The authors intend this Report to belong to the entire Haskell
+  community, and so we grant permission to copy and distribute it for any
+  purpose, provided that it is reproduced in its entirety, including this
+  Notice.  Modified versions of this Report may also be copied and distributed
+  for any purpose, provided that the modified version is clearly presented as
+  such, and that it does not claim to be a definition of the Haskell 98
+  Foreign Function Interface.}
+\par\bigskip\noindent
+The master version of the Haskell FFI Report is at \url{haskell.org}. Any
+corrections or changes in the report are found there.
 
 
 \newpage
@@ -119,16 +134,16 @@ and other languages such that the source code is portable across different
 implementations of Haskell and non-Haskell systems as well as architecture
 and operating system independent.
 
-Central in the design of this interface, which builds on experiences with a
-couple of foreign function interfaces provided by the major Haskell
-implementations, has been the goal to be comprehensive while being simple and
-minimising the change with respect to Haskell 98; the latter includes
-pollution of the name space with new keywords.  Consequently, as much as
-possible the FFI functionality is realised in the form of libraries.
-Simplicity generally overruled maximal convience for the programmer as a
-design goal.  Thus, support for more convenient interface specifications is
-the domain of system-independent tools that generate code following the
-present specification.
+The design as presented in this report builds on experiences with a number of
+foreign function interfaces that, over time, have been supported by the major
+Haskell implementations.  Central in the final design has been the goal to be
+comprehensive while being simple and minimising changes with respect to
+Haskell 98; the latter includes avoiding pollution of the name space with new
+keywords.  Consequently, as much as possible of the FFI functionality is
+realised in the form of libraries.  Simplicity generally overruled maximum
+convience for the programmer as a design goal.  Thus, support for more
+convenient interface specifications is the domain of system-independent tools
+that generate code following the present specification.
 
 \subsection*{Acknowledgements}
 
@@ -140,16 +155,17 @@ FIXME: To be written
 \newpage
 \section{Introduction}
 
-The extension of Haskell 98 introduced in this report facilitates the use of
+The extension of Haskell 98 defined in this report facilitates the use of
 non-Haskell code from Haskell and vice versa in a portable manner.  Intrusion
 into Haskell 98 has been kept to a minimum and the defined facilities have
 been extensively tested with large libraries.
 
-The present version of the FFI report does only fully specify the interaction
-between Haskell code with code that follows the C calling convention.
-However, the design of the FFI is such that it enables the modular extension
-of the present definition to include other programming languages, such as C++
-and Java.
+The present Version 1.0 of the FFI report does only fully specify the
+interaction between Haskell code with code that follows the C calling
+convention.  However, the design of the FFI is such that it enables the
+modular extension of the present definition to include other programming
+languages, such as C++ and Java.  A precise definition of the support for
+those languages is expected to be included in later versions of this report.
 
 \subsection{Embedding Into Haskell 98}
 
@@ -634,6 +650,9 @@ FIXME: Add one example for each item in the preceding description list.
 The specification of external entities under the \code{stdcall} calling
 convention is identical to that for standard C calls.
 
+
+\begin{UNFINISHED} % ==========================================================
+
 \subsection{C{+}{+} Calls}
 
 The syntax for the specification of external entities under the
@@ -674,6 +693,8 @@ calling convention is
 \begin{verbatim}
 FIXME
 \end{verbatim}
+
+\end{UNFINISHED}% =============================================================
 
 
 \newpage
@@ -1892,22 +1913,24 @@ section numbers.
   
   We require that \gnterm{fname} ends on \code{.h} to make parsing of the
   specification of external entities unambiguous.
-
-  The specification of include files has been kept to a
-  minimum on purpose.  Libraries often require a multitude of include
-  directives, some of which may be system-dependent.  Any design that attempts
-  to cover all possible configurations would introduce significant complexity.
-  Moreover, using the simple design, a custom include file can be specified
-  that uses the standard C preprocessor features to include all relevant
-  headers.
   
-  There are no facilities to specify link information, such as, for example,
-  the name of a library archive.  Link information can be complex and is often
-  system-dependent.  Again, comprehensive support would have made the design
-  significantly more complex.  In contrast to include files, simple support that
-  offloads the complexity to standard C mechanisms seems not to be possible
-  here.  Instead, we delegate the handling of link information to the package
-  management system of the Haskell implementation.
+  The specification of include files has been kept to a minimum on purpose.
+  Libraries often require a multitude of include directives, some of which may
+  be system-dependent.  Any design that attempts to cover all possible
+  configurations would introduce significant complexity.  Moreover, using the
+  simple design, a custom include file can be specified that uses the standard
+  C preprocessor features to include all relevant headers.
+  
+  Similarly, there is only minimal support for link information (such as, for
+  example, the name of a library archive), as comprehensive support would have
+  made the design significantly more complex.  In fact, as in contrast to
+  include files, simple support that offloads the complexity to standard C
+  mechanisms seems not to be possible here, we would have delegated the
+  handling of link information to the package management system of the Haskell
+  implementation if it had not been for multi-language intermediate forms,
+  such as ILX for Microsoft's .NET, which requires simple link information.
+  The option to associate the name of a library archive with an external
+  function simplifies the generation of such intermediate code.
 \end{description}
 
 
