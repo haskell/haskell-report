@@ -13,9 +13,24 @@
 % does not claim to be a definition of the Haskell 98 Foreign Function
 % Interface. 
 
+% Changes since RC2:
+%
+% * 5.8: Clarified documentation for `MarshalAlloc.free'.
+% * 5.8: Added `MarshalAlloc.realloc'.
+% * 3.2: Clarified the description of foreign types; so far, `IO ()' was
+%   strictly speaking not included as a valid return type.  Currently,
+%   functions of type `a -> ()' are included.  Do we want this?  Their use
+%   might not be portable if they include side effects.
+% * 4.1.5: New section discussing the traps & pitfalls of type promotion with
+%   C bindings.
+
 % TODO:
-% * Do we want `isAlreadyExistsErrorType' etc functions (otherwise, an
-%   ErrorType needs to be wrapped into IOError before it can be inspected)
+% * Use `impent' and `extent' instead of just entity in Section 4; so that in
+%   Sections 4.1 and 4.2 we have too different non-terminals for the grammar.
+%   Be careful to make sure that all mention of just `entity' is replaced (eg,
+%   intro to Section 4) and include `impent -> [String]' as well as `extent ->
+%   [String]'.
+% * Add the `threadsafe' flag.
 % * Revise layout of the front page.
 % * Implement HTMLization.
 
@@ -23,7 +38,6 @@
 %
 % * Review suggestions by Antony Courtney <antony@apocalypse.org> re FFI
 %   support for Java.
-% * Modifiers for concurrency control might be needed
 
  
 \documentclass[a4paper,twoside]{article}
@@ -43,14 +57,14 @@
 \excludeversion{FUTURE}  % material for future extensions
 
 %\def\Version{\relax}
-\def\Version{\\(Release Candidate 2)}
+\def\Version{\\(Release Candidate 3)}
 \begin{DRAFT}%
 {
   \gdef\Version{%
     \\
     \textbf{--- DRAFT ---}\\[1ex]
     \ttfamily\scriptsize
-    $\relax$Id: ffi.tex,v 1.24 2002/02/04 09:37:12 chak Exp $\relax$%
+    $\relax$Id: ffi.tex,v 1.25 2002/04/09 01:52:41 chak Exp $\relax$%
     \ignorespaces}
   }
 \end{DRAFT}
@@ -161,7 +175,8 @@ that generate code following the present specification.
 We heartly thank the kind people who assisted us with their comments and
 suggestions on the \code{ffi@haskell.org} mailing list as well as all the
 users of previous versions of the FFI who helped to shape the development by
-their feedback.  We are grateful to Martin D. Kealey for errata to this report.
+their feedback.  We are grateful to Olaf Chitil, Martin D. Kealey, and George
+Russell for errata to this report.
 
 
 \clearemptydoublepage
@@ -418,19 +433,20 @@ Foreign types are produced according to the following grammar:
 %
 A foreign type is the Haskell type of an external entity.  Only a subset of
 Haskell's types are permissible as foreign types, as only a restricted set of
-types can be reliably transferred between the Haskell context and an external
-context.  A foreign type generally has the form
+types can be canonically transferred between the Haskell context and an
+external context.  A foreign type generally has the form
 \[
 \textit{at}_1\code{ -> }\cdots\code{ -> }\textit{at}_n\code{ -> }\textit{rt}
 \]
 where \(n\geq0\).  It implies that the arity of the external entity is $n$.
 
-The argument types \(\textit{at}_i\) and result type \textit{rt} produced by
-\gnterm{fatype} must be \emph{marshallable foreign types}.  A marshallable
-foreign type is either (1) a basic foreign type or (2) a type synonym or
-renamed datatype of a marshallable foreign type.  Moreover, the result type
-\textit{rt} may also be a type matching \code{Prelude.IO }$t$, where $t$ is
-a marshallable foreign type.
+The argument types \(\textit{at}_i\) produced by \gnterm{fatype} must be
+\emph{marshallable foreign types;} that is, each \(\textit{at}_i\) is either
+(1) a basic foreign type or (2) a type synonym or renamed datatype of a
+marshallable foreign type.  Moreover, the result type \textit{rt} produced by
+\gnterm{frtype} must be a \emph{marshallable foreign result type;} that is, it
+is either a marshallable foreign type, the type \code{()}, or a type matching
+\code{Prelude.IO }$t$, where $t$ is a marshallable foreign type or \code{()}.
 
 External functions are generally strict in all arguments.
 
@@ -744,6 +760,75 @@ the Haskell implementation entirely if it had not been for multi-language
 intermediate forms, such as ILX of .NET, which requires simple link
 information.  The option to associate the name of a library archive with an
 external function simplifies the generation of such intermediate code.
+
+\subsubsection{C Argument Promotion}
+
+The argument passing conventions of C are dependant on whether a function
+prototype for the called functions is in scope at a call site.  In particular,
+if no function prototype is in scope, \emph{default argument promotion} is
+applied to integral and floating types.  In general, it cannot be expected
+from a Haskell system that it is aware of whether a given C function was
+compiled with or without a function prototype being in scope.  For the sake of
+portability, we thus require that a Haskell system generally implements calls
+to C functions as well as C stubs for Haskell functions as if a function
+prototype for the called function is in scope.
+
+This convention implies that the onus for ensuring the match between C and
+Haskell code is placed on the FFI user.  In particular, when a C function that
+was compiled without a prototype is called from Haskell, the Haskell signature
+at the corresponding \code{foreign import} declaration must use the types
+\emph{after} argument promotion.  For example, consider the following C
+function definition, which lacks a prototype:
+%
+\begin{quote}
+\begin{verbatim}
+void foo (a) {
+  float a;
+  ...
+}
+\end{verbatim}
+\end{quote}
+%
+The lack of a prototype implies that a C compiler will apply default argument
+promotion to the parameter \code{a}, and thus, \code{foo} will expect to
+receive a value of type \code{double}, \emph{not} \code{float}.  Hence, the
+correct \code{foreign import} declaration is
+%
+\begin{quote}
+\begin{verbatim}
+foreign import ccall foo :: Double -> IO ()
+\end{verbatim}
+\end{quote}
+
+In contrast, a C function compiled with the prototype
+%
+\begin{quote}
+\begin{verbatim}
+void foo (float a);
+\end{verbatim}
+\end{quote}
+%
+requires
+%
+\begin{quote}
+\begin{verbatim}
+foreign import ccall foo :: Float -> IO ()
+\end{verbatim}
+\end{quote}
+
+A similar situation arises in the case of \code{foreign export} declarations
+that use types that would be altered under the C default argument promotion
+rules.  When calling such Haskell functions from C, a function prototype
+matching the signature provided in the \code{foreign export} declaration must
+be in scope; otherwise, the C compiler will erroneously apply the promotion
+rules to all function arguments.
+
+Note that for a C function defined to a accept a variable number of arguments,
+all arguments beyond the explicitly typed arguments suffer argument promotion.
+However, because C permits the calling convention to be different for such
+functions; a Haskell system will, in general, not be able to make use of
+variable argument functions.  Hence, their use is deprecated in portable code.
+
 
 \subsection{Win32 API Calls}
 
@@ -1328,11 +1413,17 @@ storage space for such an array can be allocated by the following functions:
 \item[allocaBytes ::\ Int -> (Ptr a -> IO b) -> IO b] As \code{alloca}, but
   allocate a memory area of the given size.
   
-\item[reallocBytes ::\ Ptr a -> Int -> IO (Ptr a)] Resize a memory area that
-  was allocated with \code{malloc} or \code{mallocBytes} to the given size.
-
+\item[realloc ::\ Storable b => Ptr a -> IO (Ptr b)] Resize a memory area that
+  was allocated with \code{malloc} or \code{mallocBytes} to the size needed to
+  store values of type \code{b}.
+  
+\item[reallocBytes ::\ Ptr a -> Int -> IO (Ptr a)] As \code{realloc}, but
+  allocate a memory area of the given size.
+  
 \item[free ::\ Ptr a -> IO ()] Free a block of memory that was allocated with
-  \code{malloc} or \code{mallocBytes}.
+  \code{malloc}, \code{mallocBytes}, \code{realloc}, \code{reallocBytes}, or
+  any of the allocation functions from \code{MarshalArray} (see
+  Section~\ref{sec:MarshalArray}).
 \end{codedesc}
 %
 If any of allocation functions fails, a value of \code{Ptr.nullPtr} is
@@ -1370,7 +1461,7 @@ The following functions are provided by the module:
   \code{realloc} provided by the module \code{MarshalAlloc}
   (Section~\ref{sec:MarshalAlloc}), respectively, except that they allocate a
   memory area that can hold an array of elements of the given length, instead
-  of storage for just a single element.  
+  of storage for just a single element.
 
 \item[mallocArray0~~::\ Storable a => Int -> IO (Ptr a)]
 \item[allocaArray0~~::\ Storable a => Int -> (Ptr a -> IO b) -> IO b]\combineitems
