@@ -70,7 +70,7 @@ Change the production for <em>uniDigit</em> to
 <p><li> <strong>Page 5, Section 2.2, Lexical program structure; and Appendix B.2, p120.</strong>
 Change the production for <em>symbol</em> to:
 <pre>
-   symbol -> ascSymbol | uniSymbol&lt special | _ | : | " | ' &gt
+   symbol -> ascSymbol | uniSymbol&lt; special | _ | : | " | ' &gt;
 </pre>
 
 <p><li> <strong>Page 5, Section 2.2, Lexical program structure; and Appendix B.2, p120.</strong>
@@ -634,6 +634,17 @@ The previous definitions (which are simply specifications, remember) failed on m
 <p><li> [Aug 2001]  <strong>Page 124, Appendix B.3, Layout</strong>. 
 Near the end of the sub-section, delete from "Another place where..." to the end of the 
 sub-section.  (Note 5 covers the top-level case.)
+
+<p><li> [Late Sept 2001]  <strong>Page 130, Appendix C, Literate comments</strong>. 
+In paragraph 2, replace 
+"The program text is recovered
+by taking only those lines beginning with "<tt>&gt;</tt>", 
+and deleting the first character of each of those lines"
+with
+<p>
+"The program text is recovered
+by taking only those lines beginning with "<tt>&gt;</tt>", 
+and replacing the leading "<tt>&gt;</tt>" with a space."
 
 <p><li> [May 2001]  <strong>Page 132, Appendix D, Specification of Derived Instances</strong>. 
 In numbered item 3, replace 
