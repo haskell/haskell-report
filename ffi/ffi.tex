@@ -13,6 +13,17 @@
 % does not claim to be a definition of the Haskell 98 Foreign Function
 % Interface. 
 
+% Changes since RC12:
+% * Acks : Added John Meacham
+% * 4.1.5: Bug fix courtesy of Wolfgang Thaller
+% * 5.5  : Added `FinalizerEnvPtr', `newForeignPtrEnv', and
+%          `addForeignPtrFinalizerEnv'
+% * 6.3  : Added John Meacham proposal for `wchar_t' support as well localised
+%          string marshalling; in particular, this adds `CWString' and
+%          `CWStringLen' as well as the `CWString' and the `CAString' family
+%          of marshalling routines.  In addition, `charIsRepresentable' was
+%          added. 
+%
 % Changes since RC11:
 % * 5.5: Swapped argument order of `newForeignPtr' and `addForeignPtrFinalizer'
 %
@@ -146,7 +157,7 @@
     \\
     \textbf{--- DRAFT ---}\\[1ex]
     \ttfamily\scriptsize
-    $\relax$Id: ffi.tex,v 1.46 2003/08/01 06:43:56 chak Exp $\relax$%
+    $\relax$Id: ffi.tex,v 1.47 2003/10/31 07:26:45 chak Exp $\relax$%
     \ignorespaces}
   }
 \end{DRAFT}
@@ -258,8 +269,9 @@ We heartily thank the kind people who assisted us with their comments and
 suggestions on the \code{ffi@haskell.org} and \code{haskell@haskell.org}
 mailing lists as well as all the users of previous versions of the FFI who
 helped to shape the development by their feedback.  We thank Olaf Chitil,
-Peter Gammie, Wolfram Kahl, Martin D.  Kealey, Ian Lynagh, Ross Paterson, and
-George Russell for errata to previous versions of this report.
+Peter Gammie, Wolfram Kahl, Martin D. Kealey, Ian Lynagh, John Meacham, Ross
+Paterson, George Russell, and Wolfgang Thaller for errata and additions to
+previous versions of this report.
 
 
 \clearemptydoublepage
@@ -912,8 +924,9 @@ function definition, which lacks a prototype:
 %
 \begin{quote}
 \begin{verbatim}
-void foo (a) {
-  float a;
+void foo (a)
+float a;
+{
   ...
 }
 \end{verbatim}
@@ -1296,23 +1309,34 @@ that are pointing to the \code{ForeignPtr}.  Typically, the finalizer will
 free the resources bound by the foreign object.  Finalizers are generally
 implemented in the foreign language\footnote{Finalizers in Haskell cannot be
   safely realised without requiring support for
-  concurrency~\cite{boehm:finalizers}.} and have the following Haskell type:
+  concurrency~\cite{boehm:finalizers}.} and have either of the following two
+Haskell types:
 %
 \begin{quote}
 \begin{verbatim}
-type FinalizerPtr a = FunPtr (Ptr a -> IO ())
+type FinalizerPtr        a = FunPtr (           Ptr a -> IO ())
+type FinalizerEnvPtr env a = FunPtr (Ptr env -> Ptr a -> IO ())
 \end{verbatim}
 \end{quote}
 %
 A foreign finalizer is represented as a pointer to a C function of type
-\code{Ptr a -> IO ()}.  That is, a foreign finalizer attached to a finalized
-pointer \code{ForeignPtr a} gets the finalized pointer as a raw pointer of
-type \code{Ptr a} as an argument when it is invoked.  There is no guarantee on
-how soon the finalizer is executed after the last reference to the associated
-foreign pointer was dropped; this depends on the details of the Haskell
-storage manager.  The only guarantee is that the finalizer runs before the
-program terminates.  Whether a finalizer may call back into the Haskell system
-is system dependent.  Portable code may not rely on such callbacks.
+\code{Ptr a -> IO ()} or a C function of type \code{Ptr env -> Ptr a -> IO
+  ()}, where \code{Ptr env} represents an optional environment passed to the
+finalizer on invocation.  That is, a foreign finalizer attached to a finalized
+pointer \code{ForeignPtr a} gets the finalized pointer in the form of a raw
+pointer of type \code{Ptr a} as an argument when it is invoked.  In addition,
+a foreign finalizer of type \code{FinalizerEnvPtr env a} also gets an
+environment pointer of type \code{Ptr env}.  There is no guarantee on how soon
+the finalizer is executed after the last reference to the associated foreign
+pointer was dropped; this depends on the details of the Haskell storage
+manager.  The only guarantee is that the finalizer runs before the program
+terminates.  Whether a finalizer may call back into the Haskell system is
+system dependent.  Portable code may not rely on such callbacks.
+
+Foreign finalizers that expect an environment are a means to model closures in
+languages that do not support them natively, such as C.  They recover part of
+the convenience lost by requiring finalizers to be defined in the foreign
+languages rather than in Haskell.
 
 The data type \code{ForeignPtr} and associated operations have the following
 signature and purpose:
@@ -1333,8 +1357,8 @@ signature and purpose:
   Turn a plain memory reference into a foreign pointer that may be associated
   with finalizers by using \code{addForeignPtrFinalizer}.
   
-\item[newForeignPtr ::\ FinalizerPtr a -> Ptr a -> IO (ForeignPtr a)]
-  Convenience function that turns a plain memory reference into a foreign
+\item[newForeignPtr ::\ FinalizerPtr a -> Ptr a -> IO (ForeignPtr a)] This is
+  a convenience function that turns a plain memory reference into a foreign
   pointer and immediately adds a finalizer.  It is defined as
   %
   \begin{quote}
@@ -1347,10 +1371,21 @@ newForeignPtr finalizer ptr =
 \end{verbatim}
   \end{quote}
    
+\item[newForeignPtrEnv ::\ FinalizerEnvPtr env a -> Ptr env -> Ptr a -> IO
+  (ForeignPtr a)] This variant of \code{newForeignPtr} adds a finalizer that
+  expects an environment in addition to the finalized pointer.  The
+  environment that will be passed to the finalizer is fixed by the second
+  argument to \code{newForeignPtrEnv}.
+
 \item[addForeignPtrFinalizer ::\ FinalizerPtr a -> ForeignPtr a -> IO
-  ()] Add another finalizer to the given foreign pointer.  All finalizers
+  ()] Add a finalizer to the given foreign pointer.  All finalizers
   associated with a single foreign pointer are executed in the opposite order
   of their addition---i.e., the finalizer added last will be executed first.
+  
+\item[addForeignPtrFinalizerEnv ::\ FinalizerEnvPtr env a -> Ptr env ->
+  ForeignPtr a]
+\item[~~~~~~~~~~~~~~~~~~~~~~~~~~-> IO ()]\combineitems Add a finalizer that
+  expects an environment to an existing foreign pointer.
 
 \item[mallocForeignPtr ::\ Storable a => IO (ForeignPtr a)] Allocate a block
   of memory that is sufficient to hold values of type \code{a}.  The size of
@@ -2295,7 +2330,8 @@ and vice versa.  The marshalling takes the current Unicode encoding on the
 Haskell side into account.  As a consequence, no guarantees can be made about
 the relative length of a Haskell string and its corresponding C string, and
 therefore, all routines provided by \code{CString} combine memory allocation
-and marshalling.
+and marshalling.  The default character marshalling occurs within the current
+locale.
 %
 \begin{codedesc}
 \item[type CString = Ptr CChar] A C string is a reference to an array of C
@@ -2321,12 +2357,52 @@ and marshalling.
   These two routines operate as \code{newCString} and \code{newCStringLen},
   respectively, but handle memory allocation and deallocation like
   \code{MarshalAlloc.alloca} (Section~\ref{sec:MarshalAlloc}).
+  
+\item[charIsRepresentable ::\ Char -> IO Bool] Determine whether the argument
+  can be represented in the current locale.
 
+\end{codedesc}
+
+For efficiency reasons it is occasionally desirable to ignore the Unicode
+capabilities of Haskell and treat values of type \code{Char} as single byte
+characters.  Hence, the module \code{CString} provides a variant of the above
+marshalling routines that truncates character sets correspondingly.  These
+functions should be used with care, as a loss of information can occur.
+%
+\begin{codedesc}
 \item[castCharToCChar ::\ Char -> CChar]
 \item[castCCharToChar ::\ CChar -> Char] \combineitems These two functions cast
   Haskell characters to C characters and vice versa while ignoring the Unicode
-  encoding of the Haskell character.  These functions should be used with
-  care.
+  encoding of the Haskell character.  
+
+\item[peekCAString~~~~::\ CString~~~~-> IO String]
+\item[peekCAStringLen~::\ CStringLen~-> IO String]\combineitems
+\item[newCAString~~~~~::\ String -> IO CString]\combineitems
+\item[newCAStringLen~~::\ String -> IO CStringLen] \combineitems
+\item[withCAString~~~~::\ String -> (CString~~~~-> IO a) -> IO a]\combineitems
+\item[withCAStringLen~::\ String -> (CStringLen~-> IO a) -> IO a]
+  \combineitems String marshalling that cast Haskell characters to C
+  characters ignoring the Unicode encoding of Haskell characters.
+\end{codedesc}
+
+To simplify bindings to C libraries that use \code{wchar\_t} for character
+sets that cannot be encoded in byte strings, the module \code{CString} also
+exports a variant of the above string marshalling routines for wide characters.
+%
+\begin{codedesc}
+\item[type CWString~~~~= Ptr CWChar]
+\item[type CWStringLen~= (CWString, Int)] \combineitems
+  Wide character strings in a NUL-terminated version and a variant with
+  explicit length information.
+
+\item[peekCWString~~~~::\ CWString~~~~-> IO String]
+\item[peekCWStringLen~::\ CWStringLen~-> IO String]\combineitems
+\item[newCWString~~~~~::\ String -> IO CWString]\combineitems
+\item[newCWStringLen~~::\ String -> IO CWStringLen] \combineitems
+\item[withCWString~~~~::\ String -> (CWString~~~~-> IO a) -> IO a]\combineitems
+\item[withCWStringLen~::\ String -> (CWStringLen~-> IO a) -> IO a]
+  \combineitems String marshalling for wide character strings.  The interface
+  is the same as for byte strings.
 \end{codedesc}
 
 \subsection{\code{CError}}
