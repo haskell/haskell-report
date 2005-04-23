@@ -175,7 +175,7 @@
     \\
     \textbf{--- DRAFT ---}\\[1ex]
     \ttfamily\scriptsize
-    $\relax$Id: ffi.tex,v 1.54 2003/12/01 06:40:35 chak Exp $\relax$%
+    $\relax$Id: ffi.tex,v 1.55 2005/04/23 14:27:04 chak Exp $\relax$%
     \ignorespaces}
   }
 \end{DRAFT}
@@ -1140,7 +1140,7 @@ infixl 5 .|.
   
 \item[complement ::\ Bits a => a -> a] Calculate the bitwise complement of the
   argument.
-  
+
 \item[shift, rotate ::\ Bits a => a -> Int -> a] Shift or rotate the bit
   pattern to the left for a positive second argument and to the right for a
   negative argument.  The function \code{shift} performs sign extension on
@@ -1452,7 +1452,6 @@ newForeignPtr finalizer ptr =
   \code{Storable} class.
 
 \item[unsafeForeignPtrToPtr ::\ ForeignPtr a -> Ptr a]
-  
   Extract the pointer component of a foreign pointer. This is a potentially
   dangerous operation.  If the argument to \code{unsafeForeignPtrToPtr} is the
   last usage occurrence of the given foreign pointer, then its finalizer(s)

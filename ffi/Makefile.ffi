@@ -8,3 +8,11 @@ ffi.dvi: ffi.tex grammar.sty
 
 ffi.ps: ffi.dvi
 	dvips $< -o $@
+
+# Requires TeX4ht
+ffi.html: ffi.tex ffi.cfg
+	latex $< && bibtex $(basename $<) && latex $< && xhlatex $< "ffi"
+
+.PHONY: clean
+clean:
+	-rm -f *.aux *.log *.blg *.dvi *.bbl *.toc *.ps *.html *.css *.png *.4ct *.4tc *.idv *.xref tex4ht.fls
