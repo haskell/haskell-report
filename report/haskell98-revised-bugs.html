@@ -94,14 +94,21 @@ In the definition of <tt>lex</tt> make the following changes:
 [These changes reflect the fact that an identifier can start with
 an underscore.]
 
-<p><li> [Sept 2004] <strong>Page 136, Chapter 9.5 Context-Free
+
+<p><li> [Sept 2004] <strong>Page 136, Chapter 9.5, Context-Free
 Syntax.</strong>  The third production for <em>export</em> does
 not match the production and explanation given earlier in Section 5.2.
 Replace the <em>qvar</em> in parentheses after <em>qtycls</em> with
 <em>var</em>.
 
 
-<p><li> [March 2003] <strong>Page 170, Chapter 15 Indexing
+<p><li> [Aug 2005] <strong>Page 152, Chapter 12, Rational
+Numbers.</strong>  The function <tt>approxRational</tt> actually
+returns the simplest rational number within the given <em>closed</em>
+interval, not the open interval.
+
+
+<p><li> [March 2003] <strong>Page 170, Chapter 15, Indexing
 operations.</strong>  Replace the (bogus) law
 <pre>
   map index (range (l,u)) = [0..rangeSize (l,u)]
@@ -111,7 +118,7 @@ by
   map (index (l,u)) (range (l,u)) = [0 .. rangeSize (l,u) - 1]
 </pre>
 
-<p><li> [March 2003] <strong>Page 194, line -9, Chapter 19 Character
+<p><li> [March 2003] <strong>Page 194, line -9, Chapter 19, Character
 utilities.</strong>  Replace "converts the to the character it
 encodes" by "converts the string to the character it encodes".
 
