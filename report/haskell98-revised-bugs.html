@@ -16,6 +16,16 @@ as a book, and also in the Journal of Functional Programming 13(1)
 slightly from the online versions.
 
 <ul>
+
+<li> [Dec 2005] <strong>Page 8, Section 2.2, Lexical Program Structure</strong>
+The production for end-of-line <em>comment</em> appears to permit
+the character sequence <tt>--:</tt> to introduce a comment, although
+it should properly be permissible as a <em>varsym</em>.
+The production can be fixed by changing it thus:
+<p>
+<em>comment</em>&nbsp;-&gt;&nbsp;<em>dashes</em>&nbsp;[&nbsp;<em>any</em><sub>&lt;<em>symbol</em>&nbsp;|&nbsp;:&nbsp;&gt;</sub>&nbsp;{<em>any</em>}&nbsp;]&nbsp;<em>newline</em>
+
+
 <li> [July 2004] <strong>Page 32, Section 3.17.2, Informal Semantics of
 Pattern-Matching, case #6.</strong>
 Case 6 says: "Matching against a constructor using labeled fields is
