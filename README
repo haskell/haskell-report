@@ -18,8 +18,11 @@ SOURCE FILES
     report/haskell98-bugs.html	A list of all the changes from the original
 			Haskell 98 Report to the Dec 2002 revised version.
 			Covers both the Language and Library report.
-    
-	    
+
+    report/haskell98-revised-bugs.html	A list of all the changes *since*
+			the Dec 2002 revised version, to the present day.
+
+
     report/h98.gif	A GIF for a Haskell 98 logo
 
 
