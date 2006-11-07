@@ -154,7 +154,7 @@ clean:
 .SUFFIXES:	.hi .hs .verb .tex .dvi
 
 .verb.tex:
-	$(EXPAND) < $< | $(VERBATIM) | ../tools/subsection >$@
+	$(EXPAND) < $< | $(VERBATIM) | sh ../tools/subsection >$@
 # The 'subsection' part changes section -> chapter for the book style
 
 .hs.verb:
