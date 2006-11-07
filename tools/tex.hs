@@ -78,11 +78,9 @@ commands are supported but not all.
 
 module Main where
 
-import Monad(foldM)
-import IO hiding (bracket)
-import Char(isSpace, isAlpha, isDigit)
-
-import IOExts(unsafePerformIO)  -- debugging only
+import Control.Monad(foldM)
+import System.IO
+import Data.Char(isSpace, isAlpha, isDigit)
 
 data FontStyle = RM | IT | TT | Bold | Sym | UL
     deriving (Eq,Show)
