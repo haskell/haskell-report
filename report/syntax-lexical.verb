@@ -22,7 +22,7 @@ space		-> \tr{a space}
 tab		-> \tr{a horizontal tab}
 uniWhite        -> \tr{any Unicode character defined as whitespace}
 
-comment         -> dashes [ any_{\langle{}symbol\rangle}  \{any\} ] newline
+comment         -> dashes [ any_{\langle{}symbol | @:@\rangle}  \{any\} ] newline
 dashes		-> @--@ \{@-@\}
 opencom		-> @{-@
 closecom	-> @-}@
