@@ -667,7 +667,7 @@ types are in @Enum@ and their semantics.
 \index{qualifier}
 \label{qualifiers-in-patterns}
 @@@
-qual	-> pat @<-@ exp 	& (\tr{generator}, or \r{pattern guard})
+qual	-> pat @<-@ exp 	& (\tr{generator}, or \tr{pattern guard})
          | @let@ decls		& (\tr{local declaration})
          | exp 			& (\tr{guard})
 @@@
