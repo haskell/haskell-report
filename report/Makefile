@@ -119,6 +119,7 @@ haskell.ps : haskell.dvi
 # Can't use pdflatex because of eps inclusion
 
 release: haskell.ps html
+	if ! test -d $(RELEASE_DIR); then mkdir $(RELEASE_DIR); fi
 	ps2pdf haskell.ps
 	gzip < haskell.ps > $(RELEASE_DIR)/haskell.ps.gz
 	cp haskell.pdf $(RELEASE_DIR)/haskell.pdf
