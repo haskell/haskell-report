@@ -24,3 +24,7 @@ run_tex: tex.hs
 
 run_index: index.hs
 	$(GHC) -o run_index index.hs -fglasgow-exts
+
+
+clean:
+	rm -f verbatim run_tex run_index *.o *.hi
