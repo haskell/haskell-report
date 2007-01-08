@@ -267,7 +267,7 @@ are instances of these classes.
 \begin{figure}%
 %*ignore
 % \epsfbox{class-fig.eps}
-\includegraphics{classes.eps}
+\includegraphics{classes}
 % \struthack{11pt}
 %*endignore
 %**<div align=center><img src="classes.gif" alt="Diagram of standard Haskell classes"> 
