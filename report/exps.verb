@@ -663,26 +663,19 @@ on the instance declaration for the type "t".
 See Section~\ref{enum-class} for more details of which @Prelude@
 types are in @Enum@ and their semantics.
 
-
-\subsection{List Comprehensions}
-\index{list comprehension}
-\index{let expression!in list comprehensions}
-\label{list-comprehensions}
-%
+\subsection{Qualifiers in Patterns}
+\index{qualifier}
+\label{qualifiers-in-patterns}
 @@@
-aexp	-> @[@ exp @|@ qual_1 @,@ ... @,@ qual_n @]@	& (\tr{list comprehension}, n>=1)
-qual	-> pat @<-@ exp 	& (\tr{generator})
+qual	-> pat @<-@ exp 	& (\tr{generator}, or \r{pattern guard})
          | @let@ decls		& (\tr{local declaration})
          | exp 			& (\tr{guard})
 @@@
-\indexsyn{aexp}
 \indexsyn{qual}
 
-\noindent
-A {\em list comprehension} has the form "@[@ e @|@ q_1@,@ ...@,@ q_n @]@,
-n>=1," where the "q_i" qualifiers\index{qualifier} are either
+A {\em qualifier}\index{qualifier} has one of the following forms:
 \begin{itemize}
-\item {\em generators}\index{generator} of the form "p @<-@ e", where
+\item {\em generators}\index{generator} (also known as {\em pattern guards}\index{pattern guard} of the form "p @<-@ e", where
 "p" is a 
 pattern (see Section~\ref{pattern-matching}) of type "t" and "e" is an
 expression of type "@[@t@]@"
@@ -692,12 +685,34 @@ type @Bool@
 the generated expression "e" or subsequent guards and generators.
 \end{itemize}
 
-Such a list comprehension returns the list of elements
-produced by evaluating "e" in the successive environments
-created by the nested, depth-first evaluation of the generators in the
-qualifier list.  Binding of variables occurs according to the normal
-pattern matching rules (see Section~\ref{pattern-matching}), and if a
-match fails then that element of the list is simply skipped over.  Thus:\nopagebreak[4]
+The first qualifier has the same environment as the right-hand-side of
+the case-expression alternative, function definition, or pattern
+binding to which it is attached.  A qualifier creates successive
+environments for "e" created by the nested, depth-first evaluation of
+the generators and let bindings in the qualifier list.  Binding of
+variables within generators occurs according to the normal pattern
+matching rules (see Section~\ref{pattern-matching}), and may fail.  A
+qualifier matches if all of the guards in that qualifier evaluate to
+@True@ and all of the generators match, otherwise it fails.
+
+\subsection{List Comprehensions}
+\index{list comprehension}
+\index{let expression!in list comprehensions}
+\label{list-comprehensions}
+%
+@@@
+aexp	-> @[@ exp @|@ qual_1 @,@ ... @,@ qual_n @]@	& (\tr{list comprehension}, n>=1)
+@@@
+\indexsyn{aexp}
+
+\noindent
+A {\em list comprehension} has the form "@[@ e @|@ q_1@,@ ...@,@ q_n
+@]@, n>=1," where the "q_i" are qualifiers as in
+Section~\ref{qualifiers-in-patterns}.
+
+Such a list comprehension returns the list of elements produced by
+evaluating "e" in the environments created by the qualifiers.  If a match
+fails then that element of the list is simply skipped over.  Thus:\nopagebreak[4]
 \bprog
 @
 [ x |  xs   <- [ [(1,2),(3,4)], [(5,4),(3,2)] ], 
@@ -817,8 +832,8 @@ alt	->  pat @->@ exp [@where@ decls]
 	|   pat gdpat [@where@ decls]
 	|					& (empty alternative)
 
-gdpat   ->  gd @->@ exp [ gdpat ]
-gd	->  @|@ exp^0 
+gdpat   ->  qs @->@ exp [ gdpat ]
+qs	->  @|@ qual_1, ..., qual_n
 @@@
 \indexsyn{exp}%
 \indexsyn{alts}%
@@ -832,19 +847,19 @@ A {\em case expression}\index{case expression} has the general form
 \]
 where each "match_i" is of the general form
 \[\ba{lll}
- & "@|@ g_{i1}"   & "@->@ e_{i1}" \\
+ & "@|@ q_{i1}"   & "@->@ e_{i1}" \\
  & "..." \\
- & "@|@ g_{im_i}" & "@->@ e_{im_i}" \\
+ & "@|@ q_{im_i}" & "@->@ e_{im_i}" \\
  & \multicolumn{2}{l}{"@where@ decls_i"}
 \ea\]
-(Notice that in the syntax rule for "gd", the ``@|@'' is a 
+(Notice that in the syntax rule for "qs", the ``@|@'' is a 
 terminal symbol, not the syntactic metasymbol for alternation.)
 Each alternative "p_i match_i" consists of a 
 pattern\index{pattern} "p_i" and its matches, "match_i".
 Each match in turn
-consists of a sequence of pairs of guards\index{guard}
-"g_{ij}" and bodies "e_{ij}" (expressions), followed by
-optional bindings ("decls_i") that scope over all of the guards and
+consists of a sequence of pairs of qualifiers\index{qualifier}
+"q_{ij}" and bodies "e_{ij}" (expressions), followed by
+optional bindings ("decls_i") that scope over all of the qualifiers and
 expressions of the alternative.  An alternative of the form
 \[
 "pat @->@ exp @where@ decls"
@@ -862,18 +877,23 @@ type of the whole expression is that type.
 A case expression is evaluated by pattern matching the expression "e"
 against the individual alternatives.  The alternatives are tried
 sequentially, from top to bottom.  If "e" matches the pattern in the
-alternative, the guards for that alternative are tried sequentially
-from top to bottom, in the environment of the case expression extended
-first by the bindings created during the matching of the pattern, and then 
-by the "decls_i" in the @where@ clause associated with that alternative.  
-If one of the guards
-evaluates to @True@, the corresponding right-hand side is evaluated in the
-same environment as the guard.
-If all the guards evaluate to @False@, matching continues with the
-next alternative.  If no match succeeds, the result is "\bot".
-Pattern matching is described in Section~\ref{pattern-matching}, with
-the formal semantics of case expressions in
-Section~\ref{case-semantics}.
+alternative, the qualifiers for that alternative are tried
+sequentially from top to bottom, in the environment of the case
+expression extended first by the bindings created during the matching
+of the pattern, and then by the bindings of variables within the
+qualifier list (either by using a let clause or a generator), and then
+by the "decls_i" in the @where@ clause associated with that
+alternative.
+
+If one of the qualifiers matches (see
+Section~\ref{qualifiers-in-patterns}), the corresponding right-hand
+side is evaluated in the same environment as the guard.
+
+If none of the qualifiers for a given alternative match, matching
+continues with the next alternative.  If no match succeeds, the result
+is "\bot".  Pattern matching is described in
+Section~\ref{pattern-matching}, with the formal semantics of case
+expressions in Section~\ref{case-semantics}.
 
 {\em A note about parsing.} The expression
 \bprog
@@ -1464,15 +1484,10 @@ Additional examples may be found in Section~\ref{datatype-renaming}.
 % \eprogNoSkip
 % \end{enumerate}
 
-Top level patterns in case
-expressions and the set of top level patterns in function or pattern
-bindings may have zero or more associated {\em guards}\index{guard}.
-A guard is 
-a boolean expression that is evaluated only after all of the
-arguments have been successfully matched, and it must be true for the
-overall pattern match to succeed.  The environment of the guard is the same
-as the right-hand-side of the case-expression
-alternative, function definition, or pattern binding to which it is attached.
+Top level patterns in case expressions and the set of top level
+patterns in function or pattern bindings may have zero or more
+associated {\em qualifiers}\index{qualifier}.  See
+Section~\ref{qualifiers-in-patterns}.
 
 The guard semantics have an obvious influence on the
 strictness characteristics of a function or case expression.  In
