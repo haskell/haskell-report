@@ -346,14 +346,15 @@
 \outline{
 \vspace{.3in}
 \begin{center}
-{\LARGE\bf Haskell 98 Language and Libraries} \\[.1in]
-{\LARGE\bf The Revised Report} \\[.3in]
+{\LARGE\bf Haskell Prime} \\[.1in]
+{\LARGE\bf Language Report} \\[.3in]
 \end{center}
 \vspace{.3in}
 }
 \vspace{.15in}
 \begin{center} \large
-Simon Peyton Jones (editor)
+Isaac Jones and Malcolm Wallace\\
+(editors)
 \end{center}
 \vspace{.15in}
 
@@ -391,7 +392,7 @@ that it does not claim to be a definition of the language Haskell 98.
 \startnewstuff
 \pagenumbering{arabic}
 
-\part{The Haskell 98 Language}
+\part{The Haskell Prime Language}
 
 \input{intro}\startnewsection
 \input{lexemes}\startnewsection
@@ -410,7 +411,7 @@ that it does not claim to be a definition of the language Haskell 98.
 
 % ------------------------- Part II: libraries report -----------------------------------
 
-\part{The Haskell 98 Libraries}
+\part{The Haskell Prime Libraries}
 \label{libraries}
 
 \input{ratio}\startnewsection

@@ -40,7 +40,8 @@ that a committee should be formed to design such a language, providing
 faster communication of new ideas, a stable foundation for real
 applications development, and a vehicle through which others
 would be encouraged to use functional languages.  This
-document describes the result of that committee's efforts: a purely
+document describes the result of that (and subsequent)
+committee's efforts: a purely
 functional programming language called \Haskell{},
 \index{Haskell@@\Haskell{}}
 named after the logician Haskell B.~Curry\index{Curry, Haskell B.}
@@ -62,7 +63,7 @@ satisfied these constraints:
       programming languages.
 \end{enumerate}
 
-\section*{\Haskell{} 98: language and libraries}
+\section*{\Haskell{} Prime: language and libraries}
 
 The committee intended that \Haskell{} would serve as a basis for
 future research in language design, and hoped that extensions or
@@ -70,67 +71,85 @@ variants of the language would appear, incorporating experimental
 features.
 
 \Haskell{} has indeed evolved continuously since its original publication.
-By the middle of 1997, there had been four iterations of the language design
-(the latest at that point being \Haskell{} 1.4).  At the 1997 \Haskell{} Workshop 
-in Amsterdam, it was decided that a stable variant of \Haskell{} was needed;
-this stable language is the subject of this Report, and is called ``\Haskell{} 98''.
+By the middle of 1997, there had been five versions of the language design
+(from \Haskell{} 1.0 -- 1.4).  At the 1997 \Haskell{} Workshop 
+in Amsterdam, it was decided that a stable variant of \Haskell{} was
+needed; this became ``\Haskell{} 98'' and was published in Februrary
+1999.  The fixing of minor bugs led to the \emph{Revised} \Haskell{} 98 Report
+in 2002.
 
-\Haskell{} 98 was conceived as a relatively minor tidy-up of \Haskell{} 1.4, making
-some simplifications, and removing some pitfalls for the unwary. It is intended to
-be a ``stable'' language in sense the {\em implementors are committed to supporting
-\Haskell{} 98 exactly as specified, for the foreseeable future}.
+At the 2005 \Haskell{} Workshop, the consensus was that so many extensions
+to the official language were widely used (and supported by multiple
+implementations), that it was worthwhile to define another iteration of
+the language standard, essentially to codify (and legitimise) the status
+quo.
+
+\Haskell{} Prime was thus conceived as a relatively conservative
+extension of \Haskell{} 98, taking on board new features only where
+they were well understood and widely agreed upon.
+It too is intended to be a ``stable'' language, yet reflecting the
+considerable progress in research on language design in recent years.
+
+% {\em Implementors are committed to supporting \Haskell{} Prime
+% exactly as specified, for the foreseeable future}.
+%It provides a stable point of reference, so that those who
+%wish to write text books, or use \Haskell{} for teaching, can do so in
+%the knowledge that \Haskell{} Prime will continue to exist.  
 
 The original \Haskell{} Report covered only the language, together with a
 standard library called the @Prelude@.  By the time \Haskell{} 98 was
 stabilised, it had become clear that many programs need access to a
 larger set of library functions (notably concerning input/output and
-simple interaction with the operating system).  If these program were
+simple interaction with the operating system).  If these programs were
 to be portable, a set of libraries would have to be standardised too.
 A separate effort was therefore begun by a distinct (but overlapping)
 committee to fix the \Haskell{} 98 Libraries.  
 
-The \Haskell{} 98 Language and Library Reports were published in February 1999.
+For \Haskell{} Prime, we have seen fit once again to separate the
+Libraries standardisation process from the Language.  Libraries evolve
+much more rapidly than the language, and are governed by a looser
+community-led process.
 
-\section*{Revising the \Haskell{} 98 Reports}
-
-After a year or two, many typographical errors and infelicities had been
-spotted.  I took on the role of gathering and acting on these corrections,
-with the following goals:
-\begin{itemize}
-\item Correct typographical errors.
-\item Clarify obscure passages.
-\item Resolve ambiguities.
-\item With reluctance, make small changes to make the overall language more
-consistent.
-\end{itemize}
-This task turned out to be much, much larger than I had anticipated.
-As \Haskell{} becomes more widely used, the Report has been scrutinised by more
-and more people, and I have adopted hundreds of (mostly small) changes as 
-a result of their feedback.
-The original committees ceased to exist when the original \Haskell{} 98 Reports were 
-published, so every change was instead proposed to the entire \Haskell{} mailing list.
-
-This document is the outcome of this process of refinement.
-It includes both the \Haskell{} 98 Language Report and the Libraries Report,
-and constitutes the official specification of both.
-It is {\em not} a tutorial on programming in
-\Haskell{} such as the `Gentle Introduction' \cite{tutorial}, and some
-familiarity with functional languages is assumed. 
-
-The entire text of both Reports is available online (see ``\Haskell{} resources'' below).
-
+%\section*{Revising the \Haskell{} 98 Reports}
+%
+%After a year or two, many typographical errors and infelicities had been
+%spotted.  I took on the role of gathering and acting on these corrections,
+%with the following goals:
+%\begin{itemize}
+%\item Correct typographical errors.
+%\item Clarify obscure passages.
+%\item Resolve ambiguities.
+%\item With reluctance, make small changes to make the overall language more
+%consistent.
+%\end{itemize}
+%This task turned out to be much, much larger than I had anticipated.
+%As \Haskell{} becomes more widely used, the Report has been scrutinised by more
+%and more people, and I have adopted hundreds of (mostly small) changes as 
+%a result of their feedback.
+%The original committees ceased to exist when the original \Haskell{} 98 Reports were 
+%published, so every change was instead proposed to the entire \Haskell{} mailing list.
+%
+%This document is the outcome of this process of refinement.
+%It includes both the \Haskell{} 98 Language Report and the Libraries Report,
+%and constitutes the official specification of both.
+%It is {\em not} a tutorial on programming in
+%\Haskell{} such as the `Gentle Introduction' \cite{tutorial}, and some
+%familiarity with functional languages is assumed. 
+%
+%The entire text of both Reports is available online (see ``\Haskell{} resources'' below).
+%
 
 \section*{Extensions to \Haskell{} 98}
 
-\Haskell{} continues to evolve, going well beyond \Haskell{} 98.  For example, at the
-time of writing there are \Haskell{} implementations that support:
+The major language additions in \Haskell{} Prime, over and above \Haskell{} 98
+are listed here: 
 \begin{description}
 \item[Syntactic sugar,] including:
 \begin{itemize}
 \item pattern guards; 
-\item recursive do-notation;
+%\item recursive do-notation;
 \item lexically scoped type variables;
-\item meta-programming facilities;
+%\item meta-programming facilities;
 \end{itemize}
 
 \item[Type system innovations,] including:
@@ -149,10 +168,6 @@ time of writing there are \Haskell{} implementations that support:
 \end{itemize}
 \end{description}
 
-There is more besides.  \Haskell{} 98 does not impede these developments.
-Instead, it provides a stable point of reference, so that those who
-wish to write text books, or use \Haskell{} for teaching, can do so in
-the knowledge that \Haskell{} 98 will continue to exist.  
 
 \section*{\Haskell{} Resources}
 \label{sect:resources}
@@ -165,17 +180,17 @@ The \Haskell{} web site
 \eprog
 gives access to many useful resources, including:
 \begin{itemize}
-\item Online versions of the language and library definitions, including
-a complete list of all the differences between \Haskell{} 98 as published in February 1999
-and this revised version. 
+\item Online versions of the language and library definitions.
 \item Tutorial material on \Haskell{}.
 \item Details of the \Haskell{} mailing list.
 \item Implementations of \Haskell{}.
 \item Contributed \Haskell{} tools and libraries.
 \item Applications of \Haskell{}.
+\item User-contributed wiki pages.
 \end{itemize}
-You are welcome to comment on, suggest improvements to, and criticise the language
-or its presentation in the report, via the \Haskell{} mailing list.
+You are welcome to comment on, suggest improvements to, and criticise
+the language or its presentation in the report, via the \Haskell{}
+mailing list, or the \Haskell{} wiki.
 
 \section*{Building the language}
 
