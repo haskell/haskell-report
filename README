@@ -1,5 +1,29 @@
-	The Haskell Language and Library Reports
-	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Notes on building the report
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Firstly:
+
+        $ cd tools
+        $ make
+
+should build a few tools required for building the report itself.
+Then you should be able to say
+
+        $ cd report
+        $ make
+
+to build the PS (haskell.ps) and HTML (in haskell-report-html)
+versions.  To get PDF, use ps2pdf on the PS version.
+
+There are various other Makefile rules; for example 'make release' at
+the top level is supposed to build a complete release of the "Revised
+Haskell 98 Report", although it doesn't work out of the box.  For
+Haskell', we'll want to modify these Makefiles to do what we want in
+due course.
+
+
+Roadmap
+~~~~~~~
 
 SOURCE FILES
 
@@ -27,7 +51,3 @@ OUTPUT FILES
     haskell98-revised/	A directory containing the distribution
 
 
-	Notes on how to generate PDF
-	~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-[Mark pls fill in here.]
