@@ -7,7 +7,7 @@ nl			{sp}\n{sp}
 %{
 #define PUSH		states[top++] =
 #define POP		BEGIN states[--top]
-#define yywrap() 	1
+int yywrap (void) { return 1; }
 %}
 %%
 			int states[256];
