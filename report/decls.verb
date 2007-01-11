@@ -1621,10 +1621,10 @@ The {\em general} form of a pattern binding is "p match", where a
 "match" is the same structure as for function bindings above; in other
 words, a pattern binding is:
 \[\ba{rcl}
-"p" & "@|@ g_{1}"   & "@=@ e_{1}" \\
-    & "@|@ g_{2}"   & "@=@ e_{2}" \\
+"p" & "@|@ gs_{1}"   & "@=@ e_{1}" \\
+    & "@|@ gs_{2}"   & "@=@ e_{2}" \\
     & "..." \\
-    & "@|@ g_{m}"   & "@=@ e_{m}" \\
+    & "@|@ gs_{m}"   & "@=@ e_{m}" \\
     & \multicolumn{2}{l}{"@where {@ decls @}@"}
 \ea\]
 
@@ -1638,10 +1638,12 @@ The pattern binding above is semantically equivalent to this
 simple pattern binding:
 \[\ba{lcl}
 "p" &@=@& "@let@ decls @in@" \\
-    &   & "@if @g_1@ then @e_1@ else@" \\
-    &   & "@if @g_2@ then @e_2@ else@" \\
-    &   & ...                          \\
-    &   & "@if @g_m@ then @e_m@ else error "Unmatched pattern"@"
+    &   & @case () of @ \\
+    &   & "@  () | @gs_{1}@ -> @e_{1}" \\
+    &   & "@     | @gs_{2}@ -> @e_{2}" \\
+    &   & "@       @..." \\
+    &   & "@     | @gs_{m}@ -> @e_{m}" \\
+    &   & "@  _ -> error "Unmatched pattern"@"
 \ea\]
 }
 
