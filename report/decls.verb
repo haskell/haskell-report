@@ -1532,14 +1532,15 @@ funlhs	->  var apat \{ apat \}
 rhs	->  @=@ exp [@where@ decls]
 	|   gdrhs [@where@ decls]
 
-gdrhs	->  gd @=@ exp [gdrhs]
+gdrhs	->  guards @=@ exp [gdrhs]
 
-gd	->  @|@ exp^0 
+guards	->  @|@ guard_1, ..., guard_n             & (n>=1)
+
 @@@
 \indexsyn{decl}%
 \indexsyn{rhs}%
 \indexsyn{gdrhs}%
-\indexsyn{gd}%
+\indexsyn{qs}%
 We distinguish two cases within this syntax: a {\em pattern binding}
 occurs when the left hand side is a "pat^0"; 
 otherwise, the binding is called a {\em function

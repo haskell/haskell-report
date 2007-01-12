@@ -663,38 +663,6 @@ on the instance declaration for the type "t".
 See Section~\ref{enum-class} for more details of which @Prelude@
 types are in @Enum@ and their semantics.
 
-\subsection{Qualifiers in Patterns}
-\index{qualifier}
-\label{qualifiers-in-patterns}
-@@@
-qual	-> pat @<-@ exp 	& (\tr{generator}, or \tr{pattern guard})
-         | @let@ decls		& (\tr{local declaration})
-         | exp 			& (\tr{guard})
-@@@
-\indexsyn{qual}
-
-A {\em qualifier}\index{qualifier} has one of the following forms:
-\begin{itemize}
-\item {\em generators}\index{generator} (also known as {\em pattern guards}\index{pattern guard} of the form "p @<-@ e", where
-"p" is a 
-pattern (see Section~\ref{pattern-matching}) of type "t" and "e" is an
-expression of type "@[@t@]@"
-\item {\em guards},\index{guard} which are arbitrary expressions of
-type @Bool@ 
-\item {\em local bindings} that provide new definitions for use in
-the generated expression "e" or subsequent guards and generators.
-\end{itemize}
-
-The first qualifier has the same environment as the right-hand-side of
-the case-expression alternative, function definition, or pattern
-binding to which it is attached.  A qualifier creates successive
-environments for "e" created by the nested, depth-first evaluation of
-the generators and let bindings in the qualifier list.  Binding of
-variables within generators occurs according to the normal pattern
-matching rules (see Section~\ref{pattern-matching}), and may fail.  A
-qualifier matches if all of the guards in that qualifier evaluate to
-@True@ and all of the generators match, otherwise it fails.
-
 \subsection{List Comprehensions}
 \index{list comprehension}
 \index{let expression!in list comprehensions}
@@ -702,24 +670,40 @@ qualifier matches if all of the guards in that qualifier evaluate to
 %
 @@@
 aexp	-> @[@ exp @|@ qual_1 @,@ ... @,@ qual_n @]@	& (\tr{list comprehension}, n>=1)
+qual    -> pat @<-@ exp         & (\tr{generator})
+         | @let@ decls          & (\tr{local declaration})
+         | exp                  & (\tr{boolean guard})
 @@@
 \indexsyn{aexp}
+\indexsyn{qual}
 
 \noindent
-A {\em list comprehension} has the form "@[@ e @|@ q_1@,@ ...@,@ q_n
-@]@, n>=1," where the "q_i" are qualifiers as in
-Section~\ref{qualifiers-in-patterns}.
+A {\em list comprehension} has the form "@[@ e @|@ q_1@,@ ...@,@ q_n @]@,
+n>=1," where the "q_i" qualifiers\index{qualifier} are either
+\begin{itemize}
+\item {\em generators}\index{generator} of the form "p @<-@ e", where
+"p" is a
+pattern (see Section~\ref{pattern-matching}) of type "t" and "e" is an
+expression of type "@[@t@]@"
+\item {\em boolean guards},\index{boolean guard} which are arbitrary expressions of
+type @Bool@
+\item {\em local bindings} that provide new definitions for use in
+the generated expression "e" or subsequent boolean guards and generators.
+\end{itemize}
 
-Such a list comprehension returns the list of elements produced by
-evaluating "e" in the environments created by the qualifiers.  If a match
-fails then that element of the list is simply skipped over.  Thus:\nopagebreak[4]
+Such a list comprehension returns the list of elements
+produced by evaluating "e" in the successive environments
+created by the nested, depth-first evaluation of the generators in the
+qualifier list.  Binding of variables occurs according to the normal
+pattern matching rules (see Section~\ref{pattern-matching}), and if a
+match fails then that element of the list is simply skipped over.  Thus:\nopagebreak[4]
 \bprog
 @
 [ x |  xs   <- [ [(1,2),(3,4)], [(5,4),(3,2)] ], 
       (3,x) <- xs ]
 @
 \eprog
-yields the list @[4,2]@.  If a qualifier is a guard, it must evaluate
+yields the list @[4,2]@.  If a qualifier is a boolen guard, it must evaluate
 to @True@ for the previous pattern match to succeed.  
 As usual, bindings in list comprehensions can shadow those in outer
 scopes; for example:
@@ -832,14 +816,19 @@ alt	->  pat @->@ exp [@where@ decls]
 	|   pat gdpat [@where@ decls]
 	|					& (empty alternative)
 
-gdpat   ->  qs @->@ exp [ gdpat ]
-qs	->  @|@ qual_1, ..., qual_n
+gdpat   ->  guards @->@ exp [ gdpat ]
+guards	->  @|@ guard_1, ..., guard_n             & (n>=1)
+guard	-> pat @<-@ exp^0 	& (\tr{pattern guard})
+         | @let@ decls		& (\tr{local declaration})
+         | exp^0		& (\tr{boolean guard})
 @@@
 \indexsyn{exp}%
 \indexsyn{alts}%
 \indexsyn{alt}%
 \indexsyn{gdpat}%
-\indexsyn{gd}%
+\indexsyn{guards}%
+\indexsyn{guard}%
+
 
 A {\em case expression}\index{case expression} has the general form
 \[
@@ -847,20 +836,36 @@ A {\em case expression}\index{case expression} has the general form
 \]
 where each "match_i" is of the general form
 \[\ba{lll}
- & "@|@ q_{i1}"   & "@->@ e_{i1}" \\
+ & "@|@ gs_{i1}"   & "@->@ e_{i1}" \\
  & "..." \\
- & "@|@ q_{im_i}" & "@->@ e_{im_i}" \\
+ & "@|@ gs_{im_i}" & "@->@ e_{im_i}" \\
  & \multicolumn{2}{l}{"@where@ decls_i"}
 \ea\]
-(Notice that in the syntax rule for "qs", the ``@|@'' is a 
+(Notice that in the syntax rule for "guards", the ``@|@'' is a 
 terminal symbol, not the syntactic metasymbol for alternation.)
 Each alternative "p_i match_i" consists of a 
 pattern\index{pattern} "p_i" and its matches, "match_i".
 Each match in turn
-consists of a sequence of pairs of qualifiers\index{qualifier}
-"q_{ij}" and bodies "e_{ij}" (expressions), followed by
-optional bindings ("decls_i") that scope over all of the qualifiers and
-expressions of the alternative.  An alternative of the form
+consists of a sequence of pairs of guards\index{guard}
+"gs_{ij}" and bodies "e_{ij}" (expressions), followed by
+optional bindings ("decls_i") that scope over all of the guards and
+expressions of the alternative.
+
+\index{Pattern Guards}
+\index{guards}
+A {\em guard}\index{guard} has one of the following forms:
+\begin{itemize}
+\item {\em pattern guards}\index{pattern guard} are of the form "p @<-@ e", where
+"p" is a 
+pattern (see Section~\ref{pattern-matching}) of type "t" and "e" is an
+expression type "t".  They succeed if the expression "e" matches the pattern "p", and introduce the bindings of the pattern to the environment.
+\item {\em boolean guards}\index{boolean guard} are arbitrary expressions of
+type @Bool@.  They succeed if the expression evaluates to @True@, and they do not introduce new names to the environment.  A boolean guard, "g", is semantically equivalent to the pattern guard "@True <- @g".
+\item {\em local bindings} are of the form "@let @decls".  They always succeed, and they introduce the names defined in "decls" to the environment.
+\end{itemize}
+
+
+An alternative of the form
 \[
 "pat @->@ exp @where@ decls"
 \]
@@ -876,22 +881,25 @@ type of the whole expression is that type.
 
 A case expression is evaluated by pattern matching the expression "e"
 against the individual alternatives.  The alternatives are tried
-sequentially, from top to bottom.  If "e" matches the pattern in the
-alternative, the qualifiers for that alternative are tried
-sequentially from top to bottom, in the environment of the case
+sequentially, from top to bottom.  If "e" matches the pattern of an
+alternative, then the guarded expressions for that alternative are
+tried sequentially from top to bottom in the environment of the case
 expression extended first by the bindings created during the matching
-of the pattern, and then by the bindings of variables within the
-qualifier list (either by using a let clause or a generator), and then
-by the "decls_i" in the @where@ clause associated with that
-alternative.
+of the pattern, and then by the "decls_i" in the @where@ clause
+associated with that alternative.
 
-If one of the qualifiers matches (see
-Section~\ref{qualifiers-in-patterns}), the corresponding right-hand
-side is evaluated in the same environment as the guard.
+For each guarded expression, the comma-separated guards are tried
+sequentially from left to right.  If all of them succeed, then the
+corresponding expression is evaluated in the environment extended with
+the bindings introduced by the guards.  That is, the bindings that are
+introduced by a guard (either by using a let clause or a pattern
+guard) are in scope in the following guards and the corresponding
+expression.  If any of the guards fail, then this guarded expression
+fails and the next guarded expression is tried.
 
-If none of the qualifiers for a given alternative match, matching
-continues with the next alternative.  If no match succeeds, the result
-is "\bot".  Pattern matching is described in
+If none of the guarded expressions for a given alternative succeed,
+then matching continues with the next alternative.  If no alternative
+succeeds, then the result is "\bot".  Pattern matching is described in
 Section~\ref{pattern-matching}, with the formal semantics of case
 expressions in Section~\ref{case-semantics}.
 
@@ -910,7 +918,7 @@ is tricky to parse correctly.  It has a single unambiguous parse, namely
 However, the phrase "@Bool -> a@" is syntactically valid as a type, and
 parsers with limited lookahead may incorrectly commit to this choice, and hence
 reject the program.  Programmers are advised, therefore, to avoid guards that
-end with a type signature --- indeed that is why a "gd" contains 
+end with a type signature --- indeed that is why a "guard" contains 
 an "exp^0" not an "exp".
 
 \subsection{Do Expressions}
