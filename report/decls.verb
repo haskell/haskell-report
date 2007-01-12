@@ -1563,9 +1563,9 @@ general form:
 \ea\]
 or
 \[\ba{lll}
-"@|@ g_{i1}"   & "@=@ e_{i1} " \\
+"@|@ gs_{i1}"   & "@=@ e_{i1} " \\
 "..." \\
-"@|@ g_{im_i}" & "@=@ e_{im_i}" \\
+"@|@ gs_{im_i}" & "@=@ e_{im_i}" \\
                & \multicolumn{2}{l}{"@where {@ decls_i @}@"}
 \ea\]
 and where "n>=1", "1<=i<=n", "m_i>=1".  The former is treated
