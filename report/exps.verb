@@ -1540,17 +1540,21 @@ would generate rather inefficient code.
    &@                           @$p_n\ \ match_n$\ @;@\\
    &@                           _  -> error "No match" }@$\ldots$@}@\\
    &@ @{\rm where each $match_i$ has the form:}\\
-   &@  | @$g_{i,1}$  @ -> @$e_{i,1}$@ ; @$\ldots{}$@ ; | @$g_{i,m_i}$@ -> @$e_{i,m_i}$@ where { @$decls_i$@ }@\\[4pt]
+   &@  | @$gs_{i,1}$  @ -> @$e_{i,1}$@ ; @$\ldots{}$@ ; | @$gs_{i,m_i}$@ -> @$e_{i,m_i}$@ where { @$decls_i$@ }@\\[4pt]
 %\\
-(c)&@case @$v$@ of { @$p$@ | @$g_1$@ -> @$e_1$@ ; @$\ldots{}$\\
-   &\hspace*{4pt}@             | @$g_n$@ -> @$e_n$@ where { @$decls$@ }@\\
+(c)&@case @$v$@ of { @$p$@ | @$gs_1$@ -> @$e_1$@ ; @$\ldots{}$\\
+   &\hspace*{4pt}@             | @$gs_n$@ -> @$e_n$@ where { @$decls$@ }@\\
    &\hspace*{2pt}@            _     -> @$e'$@ }@\\
-   &$=$@ case @$e'$@ of@\\
-   &   @  {@$y$@ -> @     {\rm (where "y" is a new variable)}\\
- &@   case @$v$@ of {@\\
-   &@         @$p$@ -> let { @$decls$@ } in@\\
-   &@                if @$g_1$@ then @$e_1$@ @$\ldots{}$@ else if @$g_n$@ then @$e_n$@ else @$y$ \ @;@\\
-   &@         _ -> @$y$@ }}@\\[4pt]
+   &$=$@ case @$e'$@ of { @$y$@ ->@\\
+   &@   case @$v$@ of {@\\
+   &@     @$p$@ -> let { @$decls$@ } in@\\
+   &@          case () of {@\\
+   &@            () | @$gs_1$@ -> @$e_1$@;@\\
+   &@            _ -> @$\ldots$@ case () of {@\\
+   &@                       () | @$gs_n$@ -> @$e_n$@;@\\
+   &@                       _  -> @$y$@ } @$\ldots$@ }@\\
+   &@     _ -> @$y$@ }}@\\
+   &{\rm where $y$ is a new variable}\\[4pt]
 %\\
 (d)&@case @$v$@ of { ~@$p$@ -> @$e$@; _ -> @$e'$@ }@\\
 &$=$@ (\@$x_1$ $\ldots$ $x_n$ @->@ $e$ @) (case @$v$@ of { @$p$@->@ 
@@ -1624,7 +1628,25 @@ $e'$ @ }@ \\
 
 (s)&@case @$v$@ of { @$x$@+@$k$@ -> @$e$@; _ -> @$e'$@ }@\\
 &$=$@ if @$v$@ >= @$k$@ then (\@$x$@ -> @$e$@) (@$v$@-@$k$@) else @$e'$\\
-&{\rm where $k$ is a numeric literal}\\
+&{\rm where $k$ is a numeric literal}\\[4pt]
+
+(t)&@case () of { () | @$g_1$@, @$\ldots$@, @$g_n$@ -> @$e$@; _ -> @$e'$@ }@\\
+   &$=$@ case @$e'$@ of { @$y$@ ->@\\
+   &@  case () of {@\\
+   &@    () | @$g_1$@ -> @\ldots@ case () of {@\\
+   &@                   () | @$g_n$@ -> @$e$@;@\\
+   &@                   _ -> @$y$@ } @\ldots\\
+   &@    _ -> @$y$@ }}@\\
+   &{\rm where $y$ is a new variable}\\[4pt]
+
+(u)&@case () of { () | @$e_0$@ -> @$e$@; _ -> @$e'$@ }@\\
+   &$=$@ if @$e_0$@ then @$e$@ else @$e'$\\[4pt]
+
+(v)&@case () of { () | let @$decls$@ -> @$e$@; _ -> @$e'$@ }@\\
+   &$=$@ let @$decls$@ in @$e$\\[4pt]
+
+(w)&@case () of { () | (@$p$@ <- @$e_0$@) -> @$e$@; _ -> @$e'$@ }@\\
+   &$=$@ case @$e_0$@ of { @$p$@ -> @$e$@; _ -> @$e'$@ }@\\
 \end{tabular}
 }
 %**<div align=center> <h4>Figure 4</h4> </div>
@@ -1634,7 +1656,7 @@ $e'$ @ }@ \\
 
 In Figures~\ref{simple-case-expr-1}--\ref{simple-case-expr-2}:
 "e", "e'" and "e_i" are expressions; 
-"g" and "g_i" are boolean-valued expressions; 
+"g_i" and "gs_i" are guards and sequences of guards respecively;
 "p" and "p_i" are patterns; 
 "v", "x", and "x_i" are variables; 
 "K" and "K'" are algebraic datatype (@data@) constructors (including
@@ -1654,7 +1676,7 @@ tuple constructors);  and "N" is a @newtype@ constructor\index{newtype declarati
 %\index{simple case expression}
 Rule~(b) matches a general source-language
 @case@ expression, regardless of whether it actually includes
-guards---if no guards are written, then @True@ is substituted for the guards "g_{i,j}"
+guards---if no guards are written, then @True@ is substituted for the guards "gs_{i,j}"
 in the "match_i" forms.
 Subsequent identities manipulate the resulting @case@ expression into simpler
 and simpler forms.
