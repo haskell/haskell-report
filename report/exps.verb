@@ -1524,7 +1524,7 @@ The semantics of all pattern matching constructs other than @case@
 expressions are defined by giving identities that relate those
 constructs to @case@ expressions.  The semantics of
 @case@ expressions themselves are in turn given as a series of
-identities, in Figures~\ref{simple-case-expr-1}--\ref{simple-case-expr-2}. 
+identities, in Figures~\ref{simple-case-expr-1}--\ref{simple-case-expr-3}. 
 Any implementation should behave so that these identities hold; it is 
 not expected that it will use them directly, since that 
 would generate rather inefficient code.
@@ -1567,7 +1567,7 @@ $x_1$@ })@ $\ldots$ @(case @$v$@ of { @$p$@ -> @$x_n$@})@\\
 (f)&@case @$v$@ of { _ -> @$e$@; _ -> @$e'$@ } @$=$@ @$e$\\[4pt]
 \end{tabular}
 }
-%**<div align=center> <h4>Figure 3</h4> </div>
+%**<div align=center> <h4>Figure 3.1</h4> </div>
 \ecaption{Semantics of Case Expressions, Part 1}
 \label{simple-case-expr-1}
 \end{figure}
@@ -1629,8 +1629,17 @@ $e'$ @ }@ \\
 
 (s)&@case @$v$@ of { @$x$@+@$k$@ -> @$e$@; _ -> @$e'$@ }@\\
 &$=$@ if @$v$@ >= @$k$@ then (\@$x$@ -> @$e$@) (@$v$@-@$k$@) else @$e'$\\
-&{\rm where $k$ is a numeric literal}\\[4pt]
+&{\rm where $k$ is a numeric literal}
+\end{tabular}
+}
+%**<div align=center> <h4>Figure 3.2</h4> </div>
+\ecaption{Semantics of Case Expressions, Part 2}
+\label{simple-case-expr-2}
+\end{figure}
 
+\begin{figure}[tb]
+\outlinec{\small
+\begin{tabular}{@@{}cl}
 (t)&@case () of { () | @$g_1$@, @$\ldots$@, @$g_n$@ -> @$e$@; _ -> @$e'$@ }@\\
    &$=$@ case @$e'$@ of { @$y$@ ->@\\
    &@  case () of {@\\
@@ -1650,12 +1659,15 @@ $e'$ @ }@ \\
    &$=$@ case @$e_0$@ of { @$p$@ -> @$e$@; _ -> @$e'$@ }@\\
 \end{tabular}
 }
-%**<div align=center> <h4>Figure 4</h4> </div>
-\ecaption{Semantics of Case Expressions, Part 2}
-\label{simple-case-expr-2}
+%**<div align=center> <h4>Figure 3.3</h4> </div>
+\ecaption{Semantics of Case Expressions, Part 3}
+\label{simple-case-expr-3}
 \end{figure}
 
-In Figures~\ref{simple-case-expr-1}--\ref{simple-case-expr-2}:
+
+
+
+In Figures~\ref{simple-case-expr-1}--\ref{simple-case-expr-3}:
 "e", "e'" and "e_i" are expressions; 
 "g_i" and "gs_i" are guards and sequences of guards respecively;
 "p" and "p_i" are patterns; 
