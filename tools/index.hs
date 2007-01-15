@@ -19,7 +19,7 @@ doFile r f = catch
                (do putStr ("Reading " ++ f ++ ".idx\n")
                    ls <-readFile (f ++ ".idx")
                    let output = expandAllRefs r (lines ls)
-                   writeFile ("haskell98-report-html/" ++ f ++ ".html") (unlines output))
+                   writeFile ("haskell-report-html/" ++ f ++ ".html") (unlines output))
                (\err -> putStr ("Error: " ++ show err ++ "\n"))
 
 -- This sets up the parts of the state that need to be reset at the start of

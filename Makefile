@@ -1,12 +1,17 @@
-RELEASE_DIR = haskell98-revised
+RELEASE_DIR = haskell-prime-draft
 JFP_DIR = jfp-release
 
+default:
+	(cd tools; make)
+	(cd report; make)
+
 release:
+	(cd tools; make)
 	(cd report; make release)
 	(cd libraries; make release)
 	(cd jfp-release; make)
-	cp h98-revised.html $(RELEASE_DIR)/index.html
-	cp haskell98-bugs.html h98.gif $(RELEASE_DIR)
+	cp report/haskell-prime-draft.html $(RELEASE_DIR)/index.html
+	cp hprime.png $(RELEASE_DIR)
 	gzip < jfp-release/h98-book.ps > $(RELEASE_DIR)/h98-book.ps.gz
 	gzip < jfp-release/h98-book.pdf > $(RELEASE_DIR)/h98-book.pdf.gz
 

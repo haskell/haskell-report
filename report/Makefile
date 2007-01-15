@@ -40,7 +40,7 @@ EXPAND = expand
 #	Files 
 #########################################
 
-RELEASE_DIR = ../haskell98-revised
+RELEASE_DIR = ../haskell-prime-draft
 JFP_DIR = ../jfp-release
 
 PARTS =		preface-jfp.tex $(PARTS_NO_PREFACE)
@@ -100,11 +100,11 @@ haskell.dvi:  haskell.tex ${PARTS} $(SYNTAX) ${PRELUDE}
 
 # I have no idea why run_tex is run twice.  SLPJ
 html: index.html ${PARTS} ${SYNTAX} ${PRELUDE}
-	-mkdir haskell98-report-html
+	-mkdir haskell-report-html
 	$(RUN_TEX)
 	$(RUN_TEX)
 	$(RUN_INDEX)
-	cp index.html *.gif haskell98-report-html
+	cp index.html *.png *.gif haskell-report-html
 
 haskell.dvi: haskell.tex haskell.ind ${PARTS} $(SYNTAX) ${PRELUDE}  ${CODE} ${HEADERS}
 
@@ -123,14 +123,15 @@ release: haskell.ps html
 	ps2pdf haskell.ps
 	gzip < haskell.ps > $(RELEASE_DIR)/haskell.ps.gz
 	cp haskell.pdf $(RELEASE_DIR)/haskell.pdf
-	cp -r haskell98-report-html $(RELEASE_DIR)
-	tar cvf - haskell98-report-html | gzip > $(RELEASE_DIR)/haskell98-report-html.tar.gz
-	cp h98-revised.html $(RELEASE_DIR)/index.html
-	cp haskell98-bugs.html h98.gif $(RELEASE_DIR)
-	cp haskell98-revised-bugs.html h98.gif $(RELEASE_DIR)
+	cp -r haskell-report-html $(RELEASE_DIR)
+	tar cvf - haskell-report-html | gzip > $(RELEASE_DIR)/haskell-report-html.tar.gz
+	cp *.png *.gif $(RELEASE_DIR)
+	#cp h98-revised.html $(RELEASE_DIR)/index.html
+	#cp haskell98-bugs.html h98.gif $(RELEASE_DIR)
+	#cp haskell98-revised-bugs.html h98.gif $(RELEASE_DIR)
 
 publish-pdf: report.pdf
-	gzip < report.pdf > y:Haskell/haskell98-report/report.pdf.gz
+	gzip < report.pdf > y:Haskell/haskell-report/report.pdf.gz
 
 
 #########################################
@@ -142,7 +143,7 @@ veryclean: clean
 
 clean:
 	$(RM) *.dvi *.log *.aux *.ilg *.blg *.toc ${PARTS} $(SYNTAX) \
-		haskell.tex haskell.ps haskell.pdf *.o lex.yy.c haskell98-report-html/*
+		haskell.tex haskell.ps haskell.pdf *.o lex.yy.c haskell-report-html/*
 	cp haskell.ind haskell.ind.two-sided
 	echo "Don't delete the Prelude*.tex files"
 	echo "Not everyone has \"perl\" to re-make them"

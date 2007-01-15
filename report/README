@@ -1,5 +1,5 @@
 
-This is the Haskell 1.4 report, source distribution.  
+This is the Haskell Prime report, source distribution.  
 
 This has all files needed to generate either the postscript or the
 html version of the Haskell report.  Some of these files are generated
@@ -12,7 +12,7 @@ makeindex, and dvips.
 To generate the html report you need Hugs 1.4 (probably any Haskell
 1.4 compiler will do).
 
-To chage the date on the report, you must change:
+To change the date on the report, you must change:
 	* haskell.verb (line 429-ish)
 	* index.html (line 8-ish)
 	* html.config (~foot item)
