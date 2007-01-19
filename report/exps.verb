@@ -858,7 +858,9 @@ A {\em guard}\index{guard} has one of the following forms:
 \item {\em pattern guards}\index{pattern guard} are of the form "p @<-@ e", where
 "p" is a 
 pattern (see Section~\ref{pattern-matching}) of type "t" and "e" is an
-expression type "t".  They succeed if the expression "e" matches the pattern "p", and introduce the bindings of the pattern to the environment.
+expression type "t"\footnote{Note that the syntax of a pattern guard is the same as that of a generator in a list comprehension. 
+The minor contextual difference is that, in a list comprehension, a pattern of type "t" goes with an expression of type "@[@t@]@".}.
+They succeed if the expression "e" matches the pattern "p", and introduce the bindings of the pattern to the environment.
 \item {\em boolean guards}\index{boolean guard} are arbitrary expressions of
 type @Bool@.  They succeed if the expression evaluates to @True@, and they do not introduce new names to the environment.  A boolean guard, "g", is semantically equivalent to the pattern guard "@True <- @g".
 \item {\em local bindings} are of the form "@let @decls".  They always succeed, and they introduce the names defined in "decls" to the environment.
