@@ -43,7 +43,7 @@ lexp^6	->  @-@ exp^7
 rexp^i	->  exp^{i+1} qop^{({\rm{r}},i)} (rexp^i | exp^{i+1})
 exp^{10} ->  @\@ apat_1 ... apat_n @->@ exp	& (\tr{lambda abstraction}, n>=1)
 	|   @let@ decls @in@ exp	        & ({\tr{let expression}})
-	|   @if@ exp @then@ exp @else@ exp	& (\tr{conditional})
+	|   @if@ exp [@;@] @then@ exp [@;@] @else@ exp	& (\tr{conditional})
 	|   @case@ exp @of@ @{@ alts  @}@	& (\tr{case expression})
 	|   @do@ @{@ stmts @}@        	        & (\tr{do expression})
 	|   fexp
