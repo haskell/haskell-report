@@ -497,7 +497,7 @@ that does not occur free in "e".
 \label{conditionals}\index{conditional expression}
 %
 @@@
-exp	->  @if@ exp_1 @then@ exp_2 @else@ exp_3
+exp ->  @if@ exp [@;@] @then@ exp [@;@] @else@ exp
 @@@
 \indexsyn{exp}%
 
