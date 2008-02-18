@@ -61,7 +61,7 @@ right-associative.  Also, in the HTML version (but not the printed
 versions), Table 4.1 is numbered in its caption as Table 2, although
 it continues to be referred to as Table 4.1 in the text.
 
-<p><li> [May 2003] <strong>Page 89, Section 6.3.4, The Enum Class.</strong>
+<p><li> [May 2003] <strong>Page 86, Section 6.3.4, The Enum Class.</strong>
 Section 6.3.4 states: "For all four of these Prelude numeric types,
 all of the <tt>enumFrom</tt> family of functions are strict in all
 their arguments".
@@ -76,7 +76,7 @@ They both deliver an infinite list even if their argument is undefined.
 The fix is presumably to add a <tt>seq</tt> to the instances for
 <tt>Float</tt> and <tt>Double</tt>.
 
-<p><li> [June 2003] <strong>Page 95, Section 6.4.6, Coercions
+<p><li> [June 2003] <strong>Page 93, Section 6.4.6, Coercions
 and Component Extraction.</strong> The specification for
 <tt>properFraction</tt> does not deal properly with the case where
 <em>x</em> is zero.  Here is a suggested rewording:
@@ -89,6 +89,12 @@ same type as <em>x</em> and with absolute value less than 1; either
 <em>n</em> is zero or <em>n</em> has the same sign as <em>x</em>;
 and either <em>f</em> is zero or <em>f</em> has the same sign as
 <em>x</em>."
+
+<p><li> [Feb 2008] <strong>Page 98, Chapter 7.2, Sequencing I/O
+Operations.</strong>  The example using explicit <em>do</em> notation
+gives unexpected interactive behaviour, due to buffering issues.  Either
+replace uses of <tt>putStr</tt> with <tt>putStrLn</tt>, or insert a
+first line <tt>IO.hSetBuffering IO.stdout IO.NoBuffering</tt>.
 
 <p><li> [Feb 2003] <strong>Page 123, Section 8.2, PreludeText.</strong>
 In the definition of <tt>lex</tt> make the following changes:
