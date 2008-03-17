@@ -54,6 +54,13 @@ matching a pattern against a value, not a value against a pattern.
 <p>The proposed fix is to change the start of the sentence to read:
 "Matching a constructor pattern using labeled fields is ..."
 
+<p><li> [Mar 2008] <strong>Page 32, Section 3.17.2, Informal Semantics of
+Pattern-Matching, case #8.</strong>
+Case 8 says: "Matching ... against a value <em>v</em> succeeds if
+<em>x &gt;= k</em>,
+resulting in the binding of <em>n</em> to <em>x - k</em>, and fails otherwise."
+The variable <em>x</em> should of course be <em>v</em>.
+
 <p><li> [July 2004] <strong>Page 55, Section 4.4.2, Fixity
 Declarations.</strong> The operator <tt>=&lt;&lt;</tt> defined
 in the Prelude is missing from Table 4.1 - it has precedence 1,
