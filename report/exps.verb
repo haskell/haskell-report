@@ -1328,8 +1328,8 @@ to convert it to the appropriate type.
 \item Matching an "n@+@k" pattern (where "n" is a variable and "k" is a 
 positive integer literal) against a value "v" 
 \index{n+k pattern@@"n@+@k" pattern}
-succeeds if "x ~@>=@ ~k", resulting in the binding 
-of "n" to "x~@-@~k",
+succeeds if "v ~@>=@ ~k", resulting in the binding 
+of "n" to "v~@-@~k",
 and fails otherwise.  Again, the functions @>=@ and @-@ are 
 overloaded, depending on the type of the pattern.
 The match diverges if the comparison diverges.
