@@ -654,10 +654,10 @@ functions, called the ``Standard Prelude.''  In
 \Haskell{}, the Prelude is contained in the
 module @Prelude@.\indexmodule{Prelude} There are also
 many predefined library modules, which provide less frequently used
-functions and types.  For example, complex numberss, arrays, 
+functions and types.  For example, complex numbers, arrays, 
 and most of the input/output are all part of the standard
 libraries.    These are 
-defined in Part~\ref{libraries}
+defined in Part~\ref{libraries}.
 Separating
 libraries from the Prelude has the advantage of reducing the size and
 complexity of the Prelude, allowing it to be more easily assimilated,
