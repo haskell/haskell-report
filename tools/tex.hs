@@ -1400,10 +1400,16 @@ ht1 h s cf nf@(Font style sz color) nl =
      emitl (h:hs) s cf nf nl = let (s1,cf1,nf1,nl1) = ht1 h sn cf nf nl
                                    (sn,cfn,nfn,nln) = emitl hs s cf1 nf1 nl1 in
                                 (s1,cfn,nfn,nln)
-     hemitTT str forceNL = (changeFont cf ttFont ++ 
+     hemitTT str forceNL = let nf' = nf `withStyle` TT in
+                           (changeFont cf nf' ++ 
                             (if forceNL && (not nl) then "<br>\n" else "") ++
                             htmlEncodeVerb str s,
-                            ttFont, nf, forceNL)
+                            nf', nf, forceNL)
+             -- Verb is supposed to behave a little like HProtect it seems,
+             -- in that the font is temporarily changed to <tt>, then restored.
+             -- (this is weird, why not use HProtect??)
+             -- Anyway, we must be careful not to throw away any size or colour
+             -- settings when we change the font.  --SDM 3/2008
      newFont f = (s,cf,f,nl)
      doTableRow align widths rows = "<tr>" ++
                              tr1 align ws rows ++
@@ -1482,6 +1488,9 @@ enterFont (Font s sz color) = "<font " ++ fs sz ++ fc color ++ ">"
      fc "" = ""
      fc c = "color=" ++ c
 
+changeFontStyle (Font s1 _ _) s2 = 
+   if s1 /= s2 then exitFontStyle s1  ++ enterFontStyle s2 else ""
+
 enterFontStyle RM = ""
 enterFontStyle IT = "<I>"
 enterFontStyle Bold = "<B>"
@@ -1497,6 +1506,8 @@ exitFontStyle Bold = "</B>"
 exitFontStyle TT = "</tt>"
 exitFontStyle Sym = "</font>"
 exitFontStyle UL = "</u>"
+
+withStyle (Font _ sz cl) sty = Font sty sz cl
 
 emitRM h f = let (s,cf,nf,nl) = ht1 h (exitFont cf) romanFont f True in s
                  
