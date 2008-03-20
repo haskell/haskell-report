@@ -4,6 +4,7 @@
 \usepackage{times}
 \usepackage{makeidx}
 \usepackage{graphicx}
+\usepackage[dvipsnames,usenames]{color}
 
 \evensidemargin=0in
 \oddsidemargin=.5in
@@ -314,6 +315,11 @@
 
 \newcommand{\subsubsubsection}{\subsubsection*}
 \newcommand{\subsubsubsubsection}{\subsubsubsection*}
+
+% Haskell-prime
+\definecolor{prime}{named}{DarkOrchid}
+\newcommand{\hprime}[1]{\color{prime}#1\normalcolor}
+\newenvironment{haskellprime}{\color{prime}}{\normalcolor}
 
 %\sloppy
 

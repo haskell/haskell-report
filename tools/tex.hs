@@ -1025,9 +1025,11 @@ texCommands = [("\\",doEol),
                ("geq2",emit (HProtect [symFont [HSpecial 179],HString "2"])
                      .|. use ">=2"),
                ("geq0",emit (HProtect [symFont [HSpecial 179],HString "0"])
-                     .|. use ">=0")
+                     .|. use ">=0"),
+               ("hprime", embed $ \h -> HProtect [prime_font, h])
   ]
 
+prime_font = HColor "#6600CC"
 
 use :: String -> PCFun
 use str = emit (HString str)
@@ -1134,6 +1136,7 @@ doBlock a d hs =
                                [HFont Bold, HString "Axiom", HLineBreak],
                             h,
                             HPara]
+    "haskellprime" -> HProtect [prime_font, h]
     _ -> HString ("Unknown begin: \\begin{" ++ a ++ "}\n")
  where (opts,d') = case (break (== ';') d) of
 			(str,"") -> ("", str)
