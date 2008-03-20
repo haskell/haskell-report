@@ -43,7 +43,7 @@ lexp^6	->  @-@ exp^7
 rexp^i	->  exp^{i+1} qop^{({\rm{r}},i)} (rexp^i | exp^{i+1})
 exp^{10} ->  @\@ apat_1 ... apat_n @->@ exp	& (\tr{lambda abstraction}, n>=1)
 	|   @let@ decls @in@ exp	        & ({\tr{let expression}})
-	|   @if@ exp [@;@] @then@ exp [@;@] @else@ exp	& (\tr{conditional})
+	|   @if@ exp \hprime{[@;@]} @then@ exp hprime{[@;@]} @else@ exp	& (\tr{conditional})
 	|   @case@ exp @of@ @{@ alts  @}@	& (\tr{case expression})
 	|   @do@ @{@ stmts @}@        	        & (\tr{do expression})
 	|   fexp
@@ -497,7 +497,7 @@ that does not occur free in "e".
 \label{conditionals}\index{conditional expression}
 %
 @@@
-exp ->  @if@ exp [@;@] @then@ exp [@;@] @else@ exp
+exp ->  @if@ exp \hprime{[@;@]} @then@ exp \hprime{[@;@]} @else@ exp
 @@@
 \indexsyn{exp}%
 
@@ -816,10 +816,10 @@ alt	->  pat @->@ exp [@where@ decls]
 	|   pat gdpat [@where@ decls]
 	|					& (empty alternative)
 
-gdpat   ->  guards @->@ exp [ gdpat ]
-guards	->  @|@ guard_1, ..., guard_n             & (n>=1)
-guard	-> pat @<-@ exp^0 	& (\tr{pattern guard})
-         | @let@ decls		& (\tr{local declaration})
+gdpat   ->  \hprime{guards} @->@ exp [ gdpat ]
+\hprime{guards}	->  \hprime{@|@ guard_1, ..., guard_n}             & \hprime{(n>=1)}
+\hprime{guard}	-> \hprime{pat @<-@ exp^0} 	& (\hprime{\tr{pattern guard}})
+         | \hprime{@let@ decls}		& (\hprime{\tr{local declaration}})
          | exp^0		& (\tr{boolean guard})
 @@@
 \indexsyn{exp}%
@@ -836,9 +836,9 @@ A {\em case expression}\index{case expression} has the general form
 \]
 where each "match_i" is of the general form
 \[\ba{lll}
- & "@|@ gs_{i1}"   & "@->@ e_{i1}" \\
+ & "@|@ \hprime{gs_{i1}}"   & "@->@ e_{i1}" \\
  & "..." \\
- & "@|@ gs_{im_i}" & "@->@ e_{im_i}" \\
+ & "@|@ \hprime{gs_{im_i}}" & "@->@ e_{im_i}" \\
  & \multicolumn{2}{l}{"@where@ decls_i"}
 \ea\]
 (Notice that in the syntax rule for "guards", the ``@|@'' is a 
@@ -851,6 +851,7 @@ consists of a sequence of pairs of guards\index{guard}
 optional bindings ("decls_i") that scope over all of the guards and
 expressions of the alternative.
 
+\begin{haskellprime}
 \index{Pattern Guards}
 \index{guards}
 A {\em guard}\index{guard} has one of the following forms:
@@ -865,6 +866,7 @@ They succeed if the expression "e" matches the pattern "p", and introduce the bi
 type @Bool@.  They succeed if the expression evaluates to @True@, and they do not introduce new names to the environment.  A boolean guard, "g", is semantically equivalent to the pattern guard "@True <- @g".
 \item {\em local bindings} are of the form "@let @decls".  They always succeed, and they introduce the names defined in "decls" to the environment.
 \end{itemize}
+\end{haskellprime}
 
 
 An alternative of the form
@@ -890,6 +892,7 @@ expression extended first by the bindings created during the matching
 of the pattern, and then by the "decls_i" in the @where@ clause
 associated with that alternative.
 
+\begin{haskellprime}
 For each guarded expression, the comma-separated guards are tried
 sequentially from left to right.  If all of them succeed, then the
 corresponding expression is evaluated in the environment extended with
@@ -898,6 +901,7 @@ introduced by a guard (either by using a let clause or a pattern
 guard) are in scope in the following guards and the corresponding
 expression.  If any of the guards fail, then this guarded expression
 fails and the next guarded expression is tried.
+\end{haskellprime}
 
 If none of the guarded expressions for a given alternative succeed,
 then matching continues with the next alternative.  If no alternative
@@ -1550,11 +1554,11 @@ would generate rather inefficient code.
    &$=$@ case @$e'$@ of { @$y$@ ->@\\
    &@   case @$v$@ of {@\\
    &@     @$p$@ -> let { @$decls$@ } in@\\
-   &@          case () of {@\\
-   &@            () | @$gs_1$@ -> @$e_1$@;@\\
-   &@            _ -> @$\ldots$@ case () of {@\\
-   &@                       () | @$gs_n$@ -> @$e_n$@;@\\
-   &@                       _  -> @$y$@ } @$\ldots$@ }@\\
+   &\hprime{@          case () of {@}\\
+   &\hprime{@            () | @$gs_1$@ -> @$e_1$@;@}\\
+   &\hprime{@            _ -> @$\ldots$@ case () of {@}\\
+   &\hprime{@                       () | @$gs_n$@ -> @$e_n$@;@}\\
+   &\hprime{@                       _  -> @$y$@ } @$\ldots$@ }@}\\
    &@     _ -> @$y$@ }}@\\
    &{\rm where $y$ is a new variable}\\[4pt]
 %\\
@@ -1578,12 +1582,12 @@ $x_1$@ })@ $\ldots$ @(case @$v$@ of { @$p$@ -> @$x_n$@})@\\
 \outlinec{\small
 \begin{tabular}{@@{}cl}
 (g)&@case @$v$@ of { @$K\ p_1 \ldots p_n$@ -> @$e$@; _ -> @$e'$@ }@\\
-&$=$@ case @$e'$@ of { @$y$@ ->@\\
+&$=$\hprime{@ case @$e'$@ of { @$y$@ ->@}\\
 &@ case @$v$@ of {@\\
 &@     @$K\ x_1 \ldots x_n$@ -> case @$x_1$@ of {@\\
 &@                    @$p_1$@ -> @$\ldots$@ case @$x_n$@ of { @$p_n$@ -> @$e$@ ; _ -> @$y$@ } @$\ldots$\\
-&@                    _  -> @$y$@ }@\\
-&@     _ -> @$y$@ }}@\\[2pt]
+&\hprime{@                    _  -> @$y$@ }@}\\
+&\hprime{@     _ -> @$y$@ }}@}\\[2pt]
 &{\rm at least one of $p_1, \ldots, p_n$ is not a variable; $x_1, \ldots, x_n$ are new variables}\\[4pt]
 %\\
 (h)&@case @$v$@ of { @$k$@ -> @$e$@; _ -> @$e'$@ } @$=$@ if (@$v$@==@$k$@) then @$e$@ else @$e'$ \\
@@ -1641,6 +1645,7 @@ $e'$ @ }@ \\
 
 \begin{figure}[tb]
 \outlinec{\small
+\begin{haskellprime}
 \begin{tabular}{@@{}cl}
 (t)&@case () of { () | @$g_1$@, @$\ldots$@, @$g_n$@ -> @$e$@; _ -> @$e'$@ }@\\
    &$=$@ case @$e'$@ of { @$y$@ ->@\\
@@ -1660,9 +1665,10 @@ $e'$ @ }@ \\
 (w)&@case () of { () | (@$p$@ <- @$e_0$@) -> @$e$@; _ -> @$e'$@ }@\\
    &$=$@ case @$e_0$@ of { @$p$@ -> @$e$@; _ -> @$e'$@ }@\\
 \end{tabular}
+\end{haskellprime}
 }
 %**<div align=center> <h4>Figure 3.3</h4> </div>
-\ecaption{Semantics of Case Expressions, Part 3}
+\ecaption{\hprime{Semantics of Case Expressions, Part 3}}
 \label{simple-case-expr-3}
 \end{figure}
 
