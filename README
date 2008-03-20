@@ -1,6 +1,13 @@
 Notes on building the report
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Tools needed: 
+      
+      * flex
+      * GHC
+      * TeX (install "tetex" on a Linux distribution to get everything
+        you need).
+
 Firstly:
 
         $ cd tools
