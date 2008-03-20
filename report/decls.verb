@@ -1532,9 +1532,9 @@ funlhs	->  var apat \{ apat \}
 rhs	->  @=@ exp [@where@ decls]
 	|   gdrhs [@where@ decls]
 
-gdrhs	->  guards @=@ exp [gdrhs]
+gdrhs	->  \hprime{guards @=@ exp [gdrhs]}
 
-guards	->  @|@ guard_1, ..., guard_n             & (n>=1)
+\hprime{guards}	->  \hprime{@|@ guard_1, ..., guard_n}             & \hprime{(n>=1)}
 
 @@@
 \indexsyn{decl}%
@@ -1563,9 +1563,10 @@ general form:
 \ea\]
 or
 \[\ba{lll}
-"@|@ gs_{i1}"   & "@=@ e_{i1} " \\
+
+"@|@ \hprime{gs_{i1}}"   & "@=@ e_{i1} " \\
 "..." \\
-"@|@ gs_{im_i}" & "@=@ e_{im_i}" \\
+"@|@ \hprime{gs_{im_i}}" & "@=@ e_{im_i}" \\
                & \multicolumn{2}{l}{"@where {@ decls_i @}@"}
 \ea\]
 and where "n>=1", "1<=i<=n", "m_i>=1".  The former is treated
@@ -1622,10 +1623,10 @@ The {\em general} form of a pattern binding is "p match", where a
 "match" is the same structure as for function bindings above; in other
 words, a pattern binding is:
 \[\ba{rcl}
-"p" & "@|@ gs_{1}"   & "@=@ e_{1}" \\
-    & "@|@ gs_{2}"   & "@=@ e_{2}" \\
+"p" & "@|@ \hprime{gs_{1}}"   & "@=@ e_{1}" \\
+    & "@|@ \hprime{gs_{2}}"   & "@=@ e_{2}" \\
     & "..." \\
-    & "@|@ gs_{m}"   & "@=@ e_{m}" \\
+    & "@|@ \hprime{gs_{m}}"   & "@=@ e_{m}" \\
     & \multicolumn{2}{l}{"@where {@ decls @}@"}
 \ea\]
 
@@ -1639,12 +1640,12 @@ The pattern binding above is semantically equivalent to this
 simple pattern binding:
 \[\ba{lcl}
 "p" &@=@& "@let@ decls @in@" \\
-    &   & @case () of @ \\
-    &   & "@  () | @gs_{1}@ -> @e_{1}" \\
-    &   & "@     | @gs_{2}@ -> @e_{2}" \\
-    &   & "@       @..." \\
-    &   & "@     | @gs_{m}@ -> @e_{m}" \\
-    &   & "@  _ -> error "Unmatched pattern"@"
+    &   & \hprime{@case () of @} \\
+    &   & \hprime{"@  () | @gs_{1}@ -> @e_{1}"} \\
+    &   & \hprime{"@     | @gs_{2}@ -> @e_{2}"} \\
+    &   & \hprime{"@       @..."} \\
+    &   & \hprime{"@     | @gs_{m}@ -> @e_{m}"} \\
+    &   & \hprime{"@  _ -> error "Unmatched pattern"@"}
 \ea\]
 }
 
