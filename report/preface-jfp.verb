@@ -78,6 +78,7 @@ needed; this became ``\Haskell{} 98'' and was published in Februrary
 1999.  The fixing of minor bugs led to the \emph{Revised} \Haskell{} 98 Report
 in 2002.
 
+\begin{haskellprime}
 At the 2005 \Haskell{} Workshop, the consensus was that so many extensions
 to the official language were widely used (and supported by multiple
 implementations), that it was worthwhile to define another iteration of
@@ -89,6 +90,7 @@ extension of \Haskell{} 98, taking on board new features only where
 they were well understood and widely agreed upon.
 It too is intended to be a ``stable'' language, yet reflecting the
 considerable progress in research on language design in recent years.
+\end{haskellprime}
 
 % {\em Implementors are committed to supporting \Haskell{} Prime
 % exactly as specified, for the foreseeable future}.
@@ -105,10 +107,12 @@ to be portable, a set of libraries would have to be standardised too.
 A separate effort was therefore begun by a distinct (but overlapping)
 committee to fix the \Haskell{} 98 Libraries.  
 
+\begin{haskellprime}
 For \Haskell{} Prime, we have seen fit once again to separate the
 Libraries standardisation process from the Language.  Libraries evolve
 much more rapidly than the language, and are governed by a looser
 community-led process.
+\end{haskellprime}
 
 %\section*{Revising the \Haskell{} 98 Reports}
 %
@@ -141,6 +145,7 @@ community-led process.
 
 \section*{Extensions to \Haskell{} 98}
 
+\begin{haskellprime}
 The major language additions in \Haskell{} Prime, over and above \Haskell{} 98
 are listed here: 
 \begin{description}
@@ -167,6 +172,7 @@ are listed here:
 \item concurrency;
 \end{itemize}
 \end{description}
+\end{haskellprime}
 
 
 \section*{\Haskell{} Resources}
