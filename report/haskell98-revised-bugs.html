@@ -141,6 +141,31 @@ by
   map (index (l,u)) (range (l,u)) = [0 .. rangeSize (l,u) - 1]
 </pre>
 
+
+<p><li> [September 2008] <strong>Page 187-188, Chapter 17, List
+utilities.</strong> The "<code>generic</code>" functions should behave
+the same way as the <tt>Prelude</tt> functions for negative
+arguments. The ones listed in the report call <tt>error</tt>,
+while the <tt>Prelude</tt> versions simply treat negative numbers
+as 0. The implementations are replaced by:
+<pre>
+genericTake             :: (Integral a) => a -> [b] -> [b]
+genericTake n _ | n <= 0 = []
+genericTake _ []        =  []
+genericTake n (x:xs)    =  x : genericTake (n-1) xs
+
+genericDrop             :: (Integral a) => a -> [b] -> [b]
+genericDrop n xs | n <= 0 = xs
+genericDrop _ []        =  []
+genericDrop n (_:xs)    =  genericDrop (n-1) xs
+
+genericSplitAt          :: (Integral a) => a -> [b] -> ([b],[b])
+genericSplitAt n xs | n <= 0 =  ([],xs)
+genericSplitAt _ []     =  ([],[])
+genericSplitAt n (x:xs) =  (x:xs',xs'') where
+    (xs',xs'') = genericSplitAt (n-1) xs
+</pre>
+
 <p><li> [March 2003] <strong>Page 194, line -9, Chapter 19, Character
 utilities.</strong>  Replace "converts the to the character it
 encodes" by "converts the string to the character it encodes".

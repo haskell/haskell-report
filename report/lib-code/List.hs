@@ -181,26 +181,20 @@ genericLength []        =  0
 genericLength (x:xs)    =  1 + genericLength xs
 
 genericTake             :: (Integral a) => a -> [b] -> [b]
+genericTake n _ | n <= 0 = []
 genericTake _ []        =  []
-genericTake 0 _         =  []
-genericTake n (x:xs) 
-   | n > 0              =  x : genericTake (n-1) xs
-   | otherwise          =  error "List.genericTake: negative argument"
+genericTake n (x:xs)    =  x : genericTake (n-1) xs
 
 genericDrop             :: (Integral a) => a -> [b] -> [b]
-genericDrop 0 xs        =  xs
+genericDrop n xs | n <= 0 = xs
 genericDrop _ []        =  []
-genericDrop n (_:xs) 
-   | n > 0              =  genericDrop (n-1) xs
-   | otherwise          =  error "List.genericDrop: negative argument"
+genericDrop n (_:xs)    =  genericDrop (n-1) xs
 
 genericSplitAt          :: (Integral a) => a -> [b] -> ([b],[b])
-genericSplitAt 0 xs     =  ([],xs)
+genericSplitAt n xs | n <= 0 =  ([],xs)
 genericSplitAt _ []     =  ([],[])
-genericSplitAt n (x:xs) 
-   | n > 0              =  (x:xs',xs'')
-   | otherwise          =  error "List.genericSplitAt: negative argument"
-       where (xs',xs'') =  genericSplitAt (n-1) xs
+genericSplitAt n (x:xs) =  (x:xs',xs'') where
+    (xs',xs'') = genericSplitAt (n-1) xs
 
 genericIndex            :: (Integral a) => [b] -> a -> b
 genericIndex (x:_)  0   =  x
