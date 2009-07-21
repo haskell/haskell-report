@@ -142,10 +142,8 @@ veryclean: clean
 	$(RM) *~ 
 
 clean:
-	$(RM) *.dvi *.log *.aux *.ilg *.blg *.toc ${PARTS} $(SYNTAX) \
+	$(RM) *.dvi *.log *.aux *.ilg *.blg *.toc ${PARTS} $(SYNTAX) $(PRELUDE) \
 		haskell.tex haskell.ps haskell.pdf *.o lex.yy.c haskell-report-html/*
-	echo "Don't delete the Prelude*.tex files"
-	echo "Not everyone has \"perl\" to re-make them"
 
 
 #########################################
