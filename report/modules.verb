@@ -482,9 +482,9 @@ declarations can have an empty export list.  For example
 @
   module MyInstances() where
     instance Show (a -> b) where
-	show fn = "<<function>>"
+      show fn = "<<function>>"
     instance Show (IO a) where
-	show io = "<<IO action>>"
+      show io = "<<IO action>>"
 @
 \eprog
 
