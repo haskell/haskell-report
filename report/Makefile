@@ -148,22 +148,20 @@ clean:
 #	Suffix rules
 #########################################
 
-.SUFFIXES:	.hi .hs .verb .tex .dvi
-
-.verb.tex:
+%.tex: %.verb
 	$(EXPAND) < $< | $(VERBATIM) | sh ../tools/subsection >$@
 # The 'subsection' part changes section -> chapter for the book style
 
-.hs.verb:
+%.verb: %.hs
 	$(EXPAND) < $< | $(SPLITPGM) >$@
 
-%.tex: %.hs
+%.hs: %.tex
 	$(EXPAND) < $< | $(SPLITPGM) | $(VERBATIM) >$@
 
-.hi.tex:
+%.tex: %.hi
 	$(EXPAND) < $< | $(SPLITPGM) | $(VERBATIM) >$@
 
-.tex.dvi:
+%.dvi: %.tex
 	$(LATEX) $<
 
 
