@@ -161,7 +161,7 @@ clean:
 %.tex: %.hi
 	$(EXPAND) < $< | $(SPLITPGM) | $(VERBATIM) >$@
 
-%.dvi: %.tex
+%.dvi %.idx: %.tex
 	$(LATEX) $<
 
 
