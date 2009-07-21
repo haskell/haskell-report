@@ -144,7 +144,6 @@ veryclean: clean
 clean:
 	$(RM) *.dvi *.log *.aux *.ilg *.blg *.toc ${PARTS} $(SYNTAX) \
 		haskell.tex haskell.ps haskell.pdf *.o lex.yy.c haskell-report-html/*
-	cp haskell.ind haskell.ind.two-sided
 	echo "Don't delete the Prelude*.tex files"
 	echo "Not everyone has \"perl\" to re-make them"
 
