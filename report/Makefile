@@ -96,8 +96,6 @@ haskell.verb: plain_haskell.verb
 haskell.tex: haskell.verb
 	$(EXPAND) < $< | $(VERBATIM) >$@
 
-haskell.dvi:  haskell.tex ${PARTS} $(SYNTAX) ${PRELUDE}
-
 # I have no idea why run_tex is run twice.  SLPJ
 html: index.html ${PARTS} ${SYNTAX} ${PRELUDE}
 	-mkdir haskell-report-html
