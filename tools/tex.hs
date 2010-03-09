@@ -82,7 +82,7 @@ import Monad(foldM)
 import IO hiding (bracket)
 import Char(isSpace, isAlpha, isDigit)
 
-import IOExts(unsafePerformIO)  -- debugging only
+-- import IOExts(unsafePerformIO)  -- debugging only
 
 data FontStyle = RM | IT | TT | Bold | Sym | UL
     deriving (Eq,Show)

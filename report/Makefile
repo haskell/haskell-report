@@ -40,7 +40,11 @@ EXPAND = expand
 #	Files 
 #########################################
 
-RELEASE_DIR = ../haskell98-revised
+PREFIX = ../haskell98-revised
+RELEASE_DIR = $(PREFIX)
+PS_DIR = $(RELEASE_DIR)
+PDF_DIR = $(RELEASE_DIR)
+HTML_DIR = $(RELEASE_DIR)/html
 JFP_DIR = ../jfp-release
 
 PARTS =		preface-jfp.tex $(PARTS_NO_PREFACE)
@@ -99,7 +103,7 @@ haskell.tex: haskell.verb
 haskell.dvi:  haskell.tex ${PARTS} $(SYNTAX) ${PRELUDE}
 
 # I have no idea why run_tex is run twice.  SLPJ
-html: index.html ${PARTS} ${SYNTAX} ${PRELUDE}
+html: index.html haskell.dvi ${PARTS} ${SYNTAX} ${PRELUDE}
 	-mkdir haskell98-report-html
 	$(RUN_TEX)
 	$(RUN_TEX)
@@ -117,8 +121,20 @@ haskell.ps : haskell.dvi
 	dvips haskell.dvi -o haskell.ps
 
 # Can't use pdflatex because of eps inclusion
+haskell.pdf : haskell.ps
+	ps2pdf haskell.ps haskell.pdf
 
-release: haskell.ps html
+install: haskell.ps haskell.pdf html
+	mkdir -p $(PS_DIR) $(PDF_DIR) $(HTML_DIR)
+	cp haskell.ps $(PS_DIR)/haskell98-report.ps
+	cp haskell.pdf $(PDF_DIR)/haskell98-report.pdf
+	cp -r haskell98-report-html $(HTML_DIR)
+	cp h98-revised.html $(HTML_DIR)/index.html
+	cp haskell98-bugs.html h98.gif $(HTML_DIR)
+	cp haskell98-revised-bugs.html $(HTML_DIR)
+
+
+release: haskell.ps html $(RELEASE_DIR)
 	ps2pdf haskell.ps
 	gzip < haskell.ps > $(RELEASE_DIR)/haskell.ps.gz
 	cp haskell.pdf $(RELEASE_DIR)/haskell.pdf
@@ -127,6 +143,9 @@ release: haskell.ps html
 	cp h98-revised.html $(RELEASE_DIR)/index.html
 	cp haskell98-bugs.html h98.gif $(RELEASE_DIR)
 	cp haskell98-revised-bugs.html h98.gif $(RELEASE_DIR)
+
+$(RELEASE_DIR):
+	mkdir $@
 
 publish-pdf: report.pdf
 	gzip < report.pdf > y:Haskell/haskell98-report/report.pdf.gz
@@ -140,11 +159,11 @@ veryclean: clean
 	$(RM) *~ 
 
 clean:
+	$(RM) $(PRELUDE) reportrefs
 	$(RM) *.dvi *.log *.aux *.ilg *.blg *.toc ${PARTS} $(SYNTAX) \
-		haskell.tex haskell.ps haskell.pdf *.o lex.yy.c haskell98-report-html/*
-	cp haskell.ind haskell.ind.two-sided
-	echo "Don't delete the Prelude*.tex files"
-	echo "Not everyone has \"perl\" to re-make them"
+		haskell.tex haskell.ps haskell.pdf *.o lex.yy.c haskell.ind
+	$(RM) -r haskell98-report-html/
+	$(RM) lib-code/*.tex lib-hdrs/*.tex
 
 
 #########################################
@@ -167,6 +186,8 @@ clean:
 	$(EXPAND) < $< | $(SPLITPGM) | $(VERBATIM) >$@
 
 .tex.dvi:
+	$(LATEX) $<
+	$(LATEX) $<
 	$(LATEX) $<
 
 

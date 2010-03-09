@@ -7,5 +7,6 @@ hier.ps: hier.tex
 hier.pdf: hier.tex
 	TEXINPUTS=../styles: pdflatex $<
 
-clean :
-	rm hier.ps hier.pdf
+.PHONY: clean
+clean:
+	-rm -f *.aux *.log *.blg *.dvi *.bbl *.toc *.ps *.css *.png *.4ct *.4tc *.idv *.xref tex4ht.fls *.pdf

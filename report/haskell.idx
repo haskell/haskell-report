@@ -1388,7 +1388,7 @@
 \indexentry{Show@{\tt  Show} (class)!instance for {\tt Array}}{178}
 \indexentry{Read@{\tt  Read} (class)!instance for {\tt Array}}{178}
 \indexentry{List@{\tt  List} (module)}{180}
-\indexentry{\\@{\tt  {\char'134}{\char'134}}}{180}
+\indexentry{\\\\@{\tt  {\char'134}{\char'134}}}{180}
 \indexentry{elemIndex@{\tt  elemIndex}}{180}
 \indexentry{elemIndices@{\tt  elemIndices}}{180}
 \indexentry{find@{\tt  find}}{180}
@@ -1398,7 +1398,7 @@
 \indexentry{nubBy@{\tt  nubBy}}{180}
 \indexentry{delete@{\tt  delete}}{180}
 \indexentry{deleteBy@{\tt  deleteBy}}{180}
-\indexentry{\\@{\tt  {\char'134}{\char'134}}}{180}
+\indexentry{\\\\@{\tt  {\char'134}{\char'134}}}{180}
 \indexentry{deleteFirstsBy@{\tt  deleteFirstsBy}}{180}
 \indexentry{union@{\tt  union}}{180}
 \indexentry{unionBy@{\tt  unionBy}}{180}
@@ -1473,7 +1473,7 @@
 \indexentry{zipWith4@{\tt  zipWith4}}{185}
 \indexentry{List@{\tt  List} (module)}{186}
 \indexentry{Maybe@{\tt  Maybe} (module)}{186}
-\indexentry{\\@{\tt  {\char'134}{\char'134}}}{186}
+\indexentry{\\\\@{\tt  {\char'134}{\char'134}}}{186}
 \indexentry{elemIndex@{\tt  elemIndex}}{186}
 \indexentry{elemIndices@{\tt  elemIndices}}{186}
 \indexentry{find@{\tt  find}}{186}
@@ -1483,7 +1483,7 @@
 \indexentry{nubBy@{\tt  nubBy}}{187}
 \indexentry{delete@{\tt  delete}}{187}
 \indexentry{deleteBy@{\tt  deleteBy}}{187}
-\indexentry{\\@{\tt  {\char'134}{\char'134}}}{187}
+\indexentry{\\\\@{\tt  {\char'134}{\char'134}}}{187}
 \indexentry{deleteFirstsBy@{\tt  deleteFirstsBy}}{187}
 \indexentry{union@{\tt  union}}{187}
 \indexentry{unionBy@{\tt  unionBy}}{187}

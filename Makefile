@@ -1,14 +1,21 @@
-RELEASE_DIR = haskell98-revised
+PREFIX = haskell98-revised
+RELEASE_DIR = $(PREFIX)
 JFP_DIR = jfp-release
 
+install:
+	$(MAKE) -C tools
+	$(MAKE) -C report install
+
+clean:
+	$(MAKE) -C tools clean
+	$(MAKE) -C report clean
+
 release:
+	(cd tools; make)
 	(cd report; make release)
+	touch libraries/library.idx
 	(cd libraries; make release)
-	(cd jfp-release; make)
-	cp h98-revised.html $(RELEASE_DIR)/index.html
-	cp haskell98-bugs.html h98.gif $(RELEASE_DIR)
-	gzip < jfp-release/h98-book.ps > $(RELEASE_DIR)/h98-book.ps.gz
-	gzip < jfp-release/h98-book.pdf > $(RELEASE_DIR)/h98-book.pdf.gz
+	cp report/h98-revised.html $(RELEASE_DIR)/index.html
 
 jfp:
 	-mkdir $(JFP_DIR)

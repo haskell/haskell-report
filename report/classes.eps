@@ -826,7 +826,8 @@ LH
 %%Trailer
 %%DocumentNeededResources: 
 %%+ font Courier-Bold
-%%+ font TimesNewRomanPSMT
+% Don't include TrueType fonts, this make dvips(from texlive) happy
+%%%+ font TimesNewRomanPSMT
 %%DocumentSuppliedResources: 
 %%+ procset Pscript_WinNT_ErrorHandler 5.0 0
 %%+ procset Pscript_FatalError 5.0 0

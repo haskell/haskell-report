@@ -1,8 +1,17 @@
+
+all: ffi.ps ffi.pdf
+
 threads.ps: threads.tex
 	TEXINPUTS=../styles: latex threads.tex
 	dvips -f < threads.dvi > threads.ps
 
+ffi.pdf: ffi.ps
+	ps2pdf ffi.ps ffi.pdf
+
 ffi.ps: ffi.tex
+	TEXINPUTS=../styles: latex ffi.tex
+	bibtex ffi
+	TEXINPUTS=../styles: latex ffi.tex
 	TEXINPUTS=../styles: latex ffi.tex
 	dvips -f < ffi.dvi > ffi.ps
 
@@ -39,4 +48,4 @@ ffi.html.tar.gz:
 
 .PHONY: clean
 clean:
-	-rm -f *.aux *.log *.blg *.dvi *.bbl *.toc *.ps *.html *.css *.png *.4ct *.4tc *.idv *.xref tex4ht.fls
+	-rm -f *.aux *.log *.blg *.dvi *.bbl *.toc *.ps *.html *.css *.png *.4ct *.4tc *.idv *.xref tex4ht.fls *.pdf
