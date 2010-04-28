@@ -552,9 +552,12 @@ funlhs	->  var apat \{ apat \}
 rhs	->  @=@ exp [@where@ decls]
 	|   gdrhs [@where@ decls]
 
-gdrhs	->  gd @=@ exp [gdrhs]
+gdrhs	->  guards @=@ exp [gdrhs]
 
-gd	->  @|@ exp^0 
+\hprime{guards}	->  \hprime{@|@ guard_1, ..., guard_n}             & \hprime{(n>=1)}
+\hprime{guard}	-> \hprime{pat @<-@ infixexp} 	& (\hprime{\tr{pattern guard}})
+         | \hprime{@let@ decls}		& (\hprime{\tr{local declaration}})
+         | infixexp		& (\tr{boolean guard})
 @@@
 \indexsyn{funlhs}%
 \indexsyn{pat}%
@@ -610,7 +613,7 @@ alt	->  pat @->@ exp [@where@ decls]
 	|   pat gdpat [@where@ decls]
 	|					& (empty alternative)
 
-gdpat   ->  gd @->@ exp [ gdpat ]
+gdpat   ->  \hprime{guards} @->@ exp [ gdpat ]
 
 stmts -> stmt_1 ... stmt_n exp [@;@]  &  (n>=0)
 stmt -> exp @;@
