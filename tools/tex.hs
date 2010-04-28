@@ -601,7 +601,7 @@ parseCL1 s = ([],s)
 -- This handles lines of syntax definition
 
 syntaxCols :: [Int]
-syntaxCols = [100,20,250]
+syntaxCols = [100,20,350]
 
 doSyntaxLines :: State -> [String] -> PC
 doSyntaxLines s ls = do (hs, gs', ls') <- doSyntaxLine (initLS (gs s)) ls
