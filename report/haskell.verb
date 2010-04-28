@@ -411,6 +411,7 @@ that it does not claim to be a definition of the language Haskell 98.
 % \appendix
 \input{standard-prelude}\startnewsection
 \input{syntax-iso}\startnewsection
+\input{fixity}\startnewsection
 \input{derived}\startnewsection
 \input{pragmas}
 %%

@@ -26,19 +26,6 @@ BNF-like syntax is used throughout, with productions having the form:
 nonterm		-> alt_1 | alt_2 | ... | alt_n
 @@@
 
-There are some families of nonterminals indexed by
-precedence levels (written as a superscript).  Similarly, the
-nonterminals "op", "varop", and "conop" may have a double index:
-a letter "l", "r", or "n" for left-, right- or nonassociativity and
-a precedence level.  A precedence-level variable "i" ranges from 0 to 9;
-an associativity variable "a" varies over "\{l, r, n\}".
-Thus, for example
-@@@
-aexp	->  @(@ exp^{i+1} qop^{(a,i)} @)@
-@@@
-actually stands for 30 productions, with 10 substitutions for "i"
-and 3 for "a".
-
 In both the lexical and the context-free syntax, there are some
 ambiguities that are to be resolved by making grammatical phrases as
 long as possible, proceeding from left to right (in shift-reduce
@@ -318,23 +305,6 @@ is valid, because it translates to
 @
 \eprog
 The close brace is inserted due to the parse error rule above.
-The parse-error rule is hard to implement in its full generality, because 
-doing so involves fixities.  For example, the expression
-\bprog
-@
-  do a == b == c
-@
-\eprog
-has a single unambiguous (albeit probably type-incorrect) parse, namely
-\bprog
-@
-  (do { a == b }) == c
-@
-\eprog
-because @(==)@ is non-associative.   Programmers are therefore advised to avoid
-writing code that requires the parser to insert a closing brace in such
-situations.
-
 
 \startnewsection
 \subsection{Literate comments}
@@ -480,7 +450,7 @@ topdecl	-> @type@ simpletype @=@ type
 @@@
 decls	-> @{@ decl_1 @;@ ... @;@ decl_n  @}@		&  (n>=0)
 decl	-> gendecl
-	|  (funlhs | pat^0) rhs
+	|  (funlhs | \hprime{pat}) rhs
 
 cdecls	-> @{@ cdecl_1 @;@ ... @;@ cdecl_n  @}@		&  (n>=0)
 cdecl	-> gendecl
@@ -576,9 +546,7 @@ inst	-> gtycon
 
 @@@
 funlhs	->  var apat \{ apat \}
-	|   pat^{i+1} varop^{(a,i)} pat^{i+1}
-	|   lpat^i varop^{({\rm{}l},i)} pat^{i+1}
-	|   pat^{i+1} varop^{({\rm{}r},i)} rpat^i
+        |   \hprime{pat varop pat}
 	|   @(@ funlhs @)@  apat \{ apat \}
 
 rhs	->  @=@ exp [@where@ decls]
@@ -589,20 +557,20 @@ gdrhs	->  gd @=@ exp [gdrhs]
 gd	->  @|@ exp^0 
 @@@
 \indexsyn{funlhs}%
+\indexsyn{pat}%
 \indexsyn{rhs}%
 \indexsyn{gdrhs}%
 \indexsyn{gd}%
 
 @@@
-exp	->  exp^0 @::@ [context @=>@] type	& (\tr{expression type signature})
-        |   exp^0
-exp^i	->  exp^{i+1} [qop^{({\rm{}n},i)} exp^{i+1}]
-	|   lexp^i
-	|   rexp^i
-lexp^i	->  (lexp^i | exp^{i+1}) qop^{({\rm{}l},i)} exp^{i+1}
-lexp^6	->  @-@ exp^7
-rexp^i	->  exp^{i+1} qop^{({\rm{}r},i)} (rexp^i | exp^{i+1})
-exp^{10} ->  @\@ apat_1 ... apat_n @->@ exp	& (\tr{lambda abstraction}, n>=1)
+exp     ->  \hprime{infixexp @::@ [context @=>@] type}   & (\tr{expression type signature})
+        |   \hprime{infixexp}
+
+\hprime{infixexp} -> \hprime{lexp qop infixexp} & (\tr{infix operator application})
+            | \hprime{@-@ infixexp}             & (\tr{prefix negation})
+            | \hprime{lexp}
+
+\hprime{lexp}    ->  @\@ apat_1 ... apat_n @->@ exp	& (\tr{lambda abstraction}, n>=1)
 	|   @let@ decls @in@ exp	        & ({\tr{let expression}})
 	|   @if@ exp \hprime{[@;@]} @then@ exp \hprime{[@;@]} @else@ exp	& (\tr{conditional})
 	|   @case@ exp @of@ @{@ alts @}@	& (\tr{case expression})
@@ -611,9 +579,9 @@ exp^{10} ->  @\@ apat_1 ... apat_n @->@ exp	& (\tr{lambda abstraction}, n>=1)
 fexp	->  [fexp] aexp				& (\tr{function application})
 @@@
 \indexsyn{exp}%
-\index{exp@@"exp^i"}%
-\index{lexp@@"lexp^i"}%
-\index{rexp@@"rexp^i"}%
+\indexsyn{infixexp}%
+\indexsyn{lexp}%
+\indexsyn{aexp}%
 \indexsyn{fexp}%
 
 @@@
@@ -625,10 +593,8 @@ aexp 	->  qvar				& (\tr{variable})
 	|   @[@ exp_1 @,@ ... @,@ exp_k @]@	& (\tr{list}, k>=1)
 	|   @[@ exp_1 [@,@ exp_2] @..@ [exp_3] @]@ & (\tr{arithmetic sequence})
 	|   @[@ exp @|@ qual_1 @,@ ... @,@ qual_n @]@	& (\tr{list comprehension}, n>=1)
-	|   @(@ exp^{i+1} qop^{(a,i)} @)@        & (\tr{left section})
-	|   @(@ lexp^{i} qop^{(l,i)} @)@        & (\tr{left section})
-        |   @(@ qop^{(a,i)}_{\langle@-@\rangle}  exp^{i+1} @)@        & (\tr{right section})
-        |   @(@ qop^{(r,i)}_{\langle@-@\rangle}  rexp^{i} @)@        & (\tr{right section})
+	|   @(@ \hprime{infixexp qop} @)@        & (\tr{left section})
+        |   @(@ \hprime{qop_{\langle@-@\rangle} infixexp} @)@        & (\tr{right section})
         |   qcon @{@ fbind_1 @,@ ... @,@ fbind_n @}@ & (\tr{labeled construction}, n>=0)
         |   aexp_{\langle{}qcon\rangle{}} @{@ fbind_1 @,@ ... @,@ fbind_n @}@ & (\tr{labeled update}, n >= 1)
 @@@
@@ -664,23 +630,19 @@ fbind   ->  qvar @=@ exp
 \indexsyn{fbind}%
 
 @@@
-pat     ->  var @+@ integer & (\tr{successor pattern})
-	|  pat^0
-pat^i	->  pat^{i+1} [qconop^{({\rm{}n},i)} pat^{i+1}]
-	|   lpat^i
-	|   rpat^i
-lpat^i	->  (lpat^i | pat^{i+1}) qconop^{({\rm{}l},i)} pat^{i+1}
-lpat^6	->  @-@ (integer | float)		& (\tr{negative literal})
-rpat^i	->  pat^{i+1} qconop^{({\rm{}r},i)} (rpat^i | pat^{i+1})
-pat^{10} ->  apat
+pat     -> \hprime{lpat qconop pat} & (\tr{infix constructor})
+        | \hprime{@-@ (integer | float)} & (\tr{negative literal})
+        | \hprime{lpat}
+
+\hprime{lpat} ->  apat
+        | \hprime{@-@ (integer | float)} & (\tr{negative literal})
 	|   gcon apat_1 ... apat_k		& (\tr{arity} gcon = k, k>=1)
 @@@
 \indexsyn{pat}%
-\index{pat@@"pat^i"}%
-\index{lpat@@"lpat^i"}%
-\index{rpat@@"rpat^i"}%
-\indexsyn{fpat}%
+\indexsyn{lpat}%
+\indexsyn{apat}%
 \indexsyn{fpats}%
+\indexsyn{fpat}%
 
 @@@
 apat	->  var [{\tt @@} apat]			& (\tr{as pattern})

@@ -33,7 +33,7 @@ topdecl	-> @type@ simpletype @=@ type
 
 decls	-> @{@ decl_1 @;@ ... @;@ decl_n @}@		& (n>=0)
 decl	-> gendecl
-	|  (funlhs | pat^0) rhs
+	|  (funlhs | \hprime{pat}) rhs
 
 cdecls	-> @{@ cdecl_1 @;@ ... @;@ cdecl_n @}@		& (n>=0)
 cdecl	-> gendecl
@@ -1521,12 +1521,10 @@ fixity declaration.)
 \index{function binding}\index{pattern binding}
 
 @@@
-decl	->  (funlhs | pat^0) rhs
+decl	->  (funlhs | \hprime{pat}) rhs
 
 funlhs	->  var apat \{ apat \}
-	|   pat^{i+1} varop^{(a,i)} pat^{i+1}
-	|   lpat^i varop^{({\rm{}l},i)} pat^{i+1}
-	|   pat^{i+1} varop^{({\rm{}r},i)} rpat^i
+        |   \hprime{pat varop pat}
 	|   @(@ funlhs @)@  apat \{ apat \}
 
 rhs	->  @=@ exp [@where@ decls]
@@ -1538,11 +1536,12 @@ gdrhs	->  \hprime{guards @=@ exp [gdrhs]}
 
 @@@
 \indexsyn{decl}%
+\indexsyn{pat}%
 \indexsyn{rhs}%
 \indexsyn{gdrhs}%
 \indexsyn{qs}%
 We distinguish two cases within this syntax: a {\em pattern binding}
-occurs when the left hand side is a "pat^0"; 
+occurs when the left hand side is a \hprime{"pat"}; 
 otherwise, the binding is called a {\em function
 binding}.  Either binding may appear at the top-level of a module or
 within a @where@ or @let@ construct.  
@@ -1591,6 +1590,26 @@ definitions are all equivalent:
   (x @\bkqB@plus@\bkqA@ y) z = x+y+z
 @
 \eprogNoSkip
+
+\begin{haskellprime}
+
+Note that fixity resolution applies to the infix variants of the
+function binding in the same way as for expressions
+(Section~\ref{fixity-resolution}).  Applying fixity resolution to the
+left side of the equals in a function binding must leave the "varop"
+being defined at the top level.  For example, if we are defining a new
+operator @##@ with precedence 6, then this definition would be
+illegal:
+\bprog
+@
+  a ## b : xs = exp
+@
+\eprogNoSkip
+because @:@ has precedence 5, so the left hand side resolves to
+@(a ## x) : xs@, and this cannot be a pattern binding because @(a ## x)@
+is not a valid pattern.
+
+\end{haskellprime}
 
 \outline{
 \paragraph*{Translation:}
@@ -1648,29 +1667,6 @@ simple pattern binding:
     &   & \hprime{"@  _ -> error "Unmatched pattern"@"}
 \ea\]
 }
-
-\paragraph*{A note about syntax.}  It is usually straightforward
-to tell whether a binding is a pattern binding or a function binding,
-but the existence of @n+k@ patterns\index{n+k pattern@@"n@+@k" pattern}
-sometimes confuses the issue.
-Here are four examples:
-\bprog
-@
-  x + 1 = ...		-- Function binding, defines (+)
-			-- Equivalent to   (+) x 1 = ...
-
-  (x + 1) = ...		-- Pattern binding, defines x
-
-  (x + 1) * y = ...	-- Function binding, defines (*)
-			-- Equivalent to   (*) (x+1) y = ...
-
-  (x + 1) y = ...	-- Function binding, defines (+)
-			-- Equivalent to   (+) x 1 y = ...
-@
-\eprog
-The first two can be distinguished because a pattern binding
-has a "pat^0" on the left hand side, not a "pat"  --- the former cannot
-be an unparenthesised @n+k@ pattern.
 
 \subsection{Static Semantics of Function and Pattern Bindings}
 \label{dependencyanalysis}

@@ -19,29 +19,15 @@ the @Prelude@, regardless of whether or not the identifier ``@concatMap@'' is in
 scope where the list comprehension is used, and (if it is in scope)
 what it is bound to.
 
-In the syntax that follows, there are some families of nonterminals
-indexed by precedence levels (written as a superscript).  Similarly, the
-nonterminals "op", "varop", and "conop" may have a double index:
-a letter "l", "r", or "n" for left-, right- or non-associativity and
-a precedence level.  A precedence-level variable "i" ranges from 0 to 9;
-an associativity variable "a" varies over "\{l, r, n\}".
-For example
 @@@
-aexp	->  @(@ exp^{i+1} qop^{(a,i)} @)@
-@@@
-actually stands for 30 productions, with 10 substitutions for "i"
-and 3 for "a".
+exp     ->  \hprime{infixexp @::@ [context @=>@] type}   & (\tr{expression type signature})
+        |   \hprime{infixexp}
 
-@@@
-exp	->  exp^0 @::@ [context @=>@] type	& (\tr{expression type signature})
-        |   exp^0
-exp^i	->  exp^{i+1} [qop^{({\rm{n}},i)} exp^{i+1}]
-	|   lexp^i
-	|   rexp^i
-lexp^i	->  (lexp^i | exp^{i+1}) qop^{({\rm{l}},i)} exp^{i+1}
-lexp^6	->  @-@ exp^7
-rexp^i	->  exp^{i+1} qop^{({\rm{r}},i)} (rexp^i | exp^{i+1})
-exp^{10} ->  @\@ apat_1 ... apat_n @->@ exp	& (\tr{lambda abstraction}, n>=1)
+\hprime{infixexp} -> \hprime{lexp qop infixexp} & (\tr{infix operator application})
+            | \hprime{@-@ infixexp}             & (\tr{prefix negation})
+            | \hprime{lexp}
+
+\hprime{lexp}    ->  @\@ apat_1 ... apat_n @->@ exp	& (\tr{lambda abstraction}, n>=1)
 	|   @let@ decls @in@ exp	        & ({\tr{let expression}})
 	|   @if@ exp \hprime{[@;@]} @then@ exp \hprime{[@;@]} @else@ exp & (\tr{conditional})
 	|   @case@ exp @of@ @{@ alts  @}@	& (\tr{case expression})
@@ -57,18 +43,15 @@ aexp 	->  qvar				& (\tr{variable})
 	|   @[@ exp_1 @,@ ... @,@ exp_k @]@	& (\tr{list}, k>=1)
 	|   @[@ exp_1 [@,@ exp_2] @..@ [exp_3] @]@ & (\tr{arithmetic sequence})
 	|   @[@ exp @|@ qual_1 @,@ ... @,@ qual_n @]@	& (\tr{list comprehension}, n>=1)
-	|   @(@ exp^{i+1} qop^{(a,i)} @)@        & (\tr{left section})
-	|   @(@ lexp^{i} qop^{(l,i)} @)@        & (\tr{left section})
-        |   @(@ qop^{(a,i)}_{\langle@-@\rangle}  exp^{i+1} @)@        & (\tr{right section})
-        |   @(@ qop^{(r,i)}_{\langle@-@\rangle}  rexp^{i} @)@        & (\tr{right section})
+	|   @(@ \hprime{infixexp qop} @)@        & (\tr{left section})
+        |   @(@ \hprime{qop_{\langle@-@\rangle} infixexp} @)@        & (\tr{right section})
         |   qcon @{@ fbind_1 @,@ ... @,@ fbind_n @}@ & (\tr{labeled construction}, n>=0)
         |   aexp_{\langle{}qcon\rangle{}} @{@ fbind_1 @,@ ... @,@ fbind_n @}@ & (\tr{labeled update}, n >= 1)
 
 @@@
 \indexsyn{exp}%
-\index{exp@@"exp^i"}%
-\index{lexp@@"lexp^i"}%
-\index{rexp@@"rexp^i"}%
+\indexsyn{infixexp}%
+\indexsyn{lexp}%
 \indexsyn{aexp}%
 \indexsyn{fexp}%
 
@@ -120,9 +103,14 @@ Expressions involving infix operators are disambiguated by the
 operator's fixity (see Section~\ref{fixity}).  Consecutive
 unparenthesized operators with the same precedence must both be either
 left or right associative to avoid a syntax error.
-Given an unparenthesized expression ``"x qop^{(a,i)} y qop^{(b,j)} z"'', parentheses
-must be added around either ``"x qop^{(a,i)} y"'' or ``"y qop^{(b,j)}
-z"'' when "i=j" unless "a=b={\rm l}" or "a=b={\rm r}".
+Given an unparenthesized expression ``"x qop^{(a,i)} y qop^{(b,j)} z"'' 
+\hprime{(where "qop^{(a,i)}" means an operator with associativity "a" and
+precedence "i")}, parentheses must be added around either ``"x
+qop^{(a,i)} y"'' or ``"y qop^{(b,j)} z"'' when "i=j" unless "a=b={\rm
+  l}" or "a=b={\rm r}".
+
+An example algorithm for resolving expressions involving infix
+operators is given in Section~\ref{fixity-resolution}.
 
 Negation\index{negation} is the only prefix operator in
 \Haskell{}; it has the same precedence as the infix @-@ operator
@@ -153,33 +141,9 @@ This                           	    & Parses as                             \\
 @\ x -> a+b :: Int@                 & @\ x -> ((a+b) :: Int@)               \\
 \hline\et\]
 
-{\em A note about parsing.}  Expressions that involve the interaction 
-of fixities with the let/lambda meta-rule
-may be hard to parse.  For example, the expression
-\bprog
-@
-  let x = True in x == x == True
-@
-\eprog
-cannot possibly mean
-\bprog
-@
-  let x = True in (x == x == True)
-@
-\eprog
-because @(==)@ is a non-associative operator; so the expression must parse thus:
-\bprog
-@
-  (let x = True in (x == x)) == True
-@
-\eprog
-However, implementations may well use a post-parsing pass to deal with fixities,
-so they may well incorrectly deliver the former parse.  Programmers are advised
-to avoid constructs whose parsing involves an interaction of (lack of) associativity
-with the let/lambda meta-rule.
-
-For the sake of clarity, the rest of this section shows the syntax of
-expressions without their precedences.
+For the sake of clarity, the rest of this section will assume that
+expressions involving infix operators have been resolved according to
+the fixities of the operators.
 
 \subsection{Errors}
 \label{basic-errors}\index{error}
@@ -418,12 +382,11 @@ The following identities hold:
 \label{sections}
 %
 @@@
-aexp	->  @(@ exp^{i+1} qop^{(a,i)} @)@        & (\tr{left section})
-	|   @(@ lexp^{i} qop^{(l,i)} @)@        & (\tr{left section})
-        |   @(@ qop^{(a,i)}_{\langle@-@\rangle}  exp^{i+1} @)@        & (\tr{right section})
-        |   @(@ qop^{(r,i)}_{\langle@-@\rangle}  rexp^{i} @)@        & (\tr{right section})
+	|   @(@ \hprime{infixexp qop} @)@        & (\tr{left section})
+        |   @(@ \hprime{qop_{\langle@-@\rangle} infixexp} @)@        & (\tr{right section})
 @@@
-\indexsyn{aexp}%
+\indexsyn{infixexp}%
+\indexsyn{qop}%
 
 \noindent
 {\em Sections} are written as "@(@ op e @)@" or "@(@ e op @)@", where
@@ -1207,15 +1170,12 @@ defining the semantics of pattern matching for case expressions is sufficient.
 
 Patterns\index{pattern} have this syntax:
 @@@
-pat     ->  var @+@ integer            & (\tr{successor pattern})
-	|   pat^0
-pat^i	->  pat^{i+1} [qconop^{({\rm{n}},i)} pat^{i+1}]
-	|   lpat^i
-	|   rpat^i
-lpat^i	->  (lpat^i | pat^{i+1}) qconop^{({\rm{l}},i)} pat^{i+1}
-lpat^6	->  @-@ (integer | float)		& (\tr{negative literal})
-rpat^i	->  pat^{i+1} qconop^{({\rm{r}},i)} (rpat^i | pat^{i+1})
-pat^{10} ->  apat
+pat     -> \hprime{lpat qconop pat} & (\tr{infix constructor})
+        | \hprime{@-@ (integer | float)} & (\tr{negative literal})
+        | \hprime{lpat}
+
+\hprime{lpat} ->  apat
+        | \hprime{@-@ (integer | float)} & (\tr{negative literal})
 	|   gcon apat_1 ... apat_k		& (\tr{arity} gcon = k, k>=1)
 
 apat	->  var [{\tt @@} apat]			& (\tr{as pattern})
@@ -1231,9 +1191,7 @@ apat	->  var [{\tt @@} apat]			& (\tr{as pattern})
 fpat    ->  qvar @=@ pat
 @@@
 \indexsyn{pat}%
-\index{pat@@"pat^i"}%
-\index{lpat@@"lpat^i"}%
-\index{rpat@@"rpat^i"}%
+\indexsyn{lpat}%
 \indexsyn{apat}%
 \indexsyn{fpats}%
 \indexsyn{fpat}%
