@@ -316,7 +316,7 @@
 \newcommand{\subsubsubsection}{\subsubsection*}
 \newcommand{\subsubsubsubsection}{\subsubsubsection*}
 
-% Haskell-prime
+% Haskell-prime markup: this annotates the new/changed parts of the report.
 \definecolor{prime}{named}{DarkOrchid}
 \newcommand{\hprime}[1]{\color{prime}#1\normalcolor}
 \newenvironment{haskellprime}{\color{prime}}{\normalcolor}
@@ -352,15 +352,15 @@
 \outline{
 \vspace{.3in}
 \begin{center}
-{\LARGE\bf Haskell Prime} \\[.1in]
+{\LARGE\bf Haskell 2010} \\[.1in]
 {\LARGE\bf Language Report} \\[.3in]
 \end{center}
 \vspace{.3in}
 }
 \vspace{.15in}
 \begin{center} \large
-Isaac Jones and Malcolm Wallace\\
-(editors)
+Simon Marlow\\
+(editor)
 \end{center}
 \vspace{.15in}
 
@@ -398,7 +398,7 @@ that it does not claim to be a definition of the language Haskell 98.
 \startnewstuff
 \pagenumbering{arabic}
 
-\part{The Haskell Prime Language}
+\part{The Haskell 2010 Language}
 
 \input{intro}\startnewsection
 \input{lexemes}\startnewsection
@@ -417,7 +417,7 @@ that it does not claim to be a definition of the language Haskell 98.
 
 % ------------------------- Part II: libraries report -----------------------------------
 
-\part{The Haskell Prime Libraries}
+\part{The Haskell 2010 Libraries}
 \label{libraries}
 
 \input{ratio}\startnewsection
