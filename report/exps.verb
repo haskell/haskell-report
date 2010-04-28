@@ -1591,14 +1591,14 @@ $e'$ @ }@ \\
    &@    _ -> @$y$@ }}@\\
    &{\rm where $y$ is a new variable}\\[4pt]
 
-(t)&@case () of { () | @$e_0$@ -> @$e$@; _ -> @$e'$@ }@\\
-   &$=$@ if @$e_0$@ then @$e$@ else @$e'$\\[4pt]
+(t)&@case () of { () | @$p$@ <- @$e_0$@ -> @$e$@; _ -> @$e'$@ }@\\
+   &$=$@ case @$e_0$@ of { @$p$@ -> @$e$@; _ -> @$e'$@ }@\\
 
 (u)&@case () of { () | let @$decls$@ -> @$e$@; _ -> @$e'$@ }@\\
    &$=$@ let @$decls$@ in @$e$\\[4pt]
 
-(v)&@case () of { () | (@$p$@ <- @$e_0$@) -> @$e$@; _ -> @$e'$@ }@\\
-   &$=$@ case @$e_0$@ of { @$p$@ -> @$e$@; _ -> @$e'$@ }@\\
+(v)&@case () of { () | @$e_0$@ -> @$e$@; _ -> @$e'$@ }@\\
+   &$=$@ if @$e_0$@ then @$e$@ else @$e'$\\[4pt]
 \end{tabular}
 \end{haskellprime}
 }
