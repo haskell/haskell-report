@@ -157,13 +157,13 @@ clean:
 %.verb: %.hs
 	$(EXPAND) < $< | $(SPLITPGM) >$@
 
-%.hs: %.tex
+%.tex: %.hs
 	$(EXPAND) < $< | $(SPLITPGM) | $(VERBATIM) >$@
 
 %.tex: %.hi
 	$(EXPAND) < $< | $(SPLITPGM) | $(VERBATIM) >$@
 
-%.dvi %.idx: %.tex
+%.dvi: %.tex
 	$(LATEX) $<
 
 %.pdf: %.tex
