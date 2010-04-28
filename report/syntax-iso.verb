@@ -52,8 +52,8 @@ reservedid -> @case@ | @class@ | @data@ | @default@ | @deriving@ | @do@ | @else@
 	| @if@ | @import@ | @in@ | @infix@ | @infixl@ | @infixr@ | @instance@
 	| @let@ | @module@ | @newtype@ | @of@ | @then@ | @type@ | @where@ | @_@
 
-varsym		-> ( symbol \{symbol | @:@\} )_{\langle{}reservedop | dashes\rangle{}}
-consym		-> (@:@ \{symbol | @:@\})_{\langle{}reservedop\rangle{}}
+varsym		-> ( \hprime{symbol_{\langle{}@:@\rangle} \{symbol\}} )_{\langle{}reservedop | dashes\rangle{}}
+consym		-> ( \hprime{@:@ \{symbol\}})_{\langle{}reservedop\rangle{}}
 reservedop	-> @..@ | @:@ | @::@ | @=@ | @\@ | @|@ | @<-@ | @->@ | {\tt @@} | @~@ | @=>@
 
 varid			&& (\tr{variables})

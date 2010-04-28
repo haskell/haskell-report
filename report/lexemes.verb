@@ -171,8 +171,8 @@ identifiers beginning with underscore.  This allows programmers to use
 ``@_foo@'' for a parameter that they expect to be unused.
 
 @@@
-varsym		-> ( symbol \{symbol | @:@\} )_{\langle{}reservedop | dashes\rangle{}}
-consym		-> (@:@ \{symbol | @:@\})_{\langle{}reservedop\rangle{}}
+varsym		-> ( \hprime{symbol_{\langle{}@:@\rangle} \{symbol\}} )_{\langle{}reservedop | dashes\rangle{}}
+consym		-> ( \hprime{@:@ \{symbol\}})_{\langle{}reservedop\rangle{}}
 reservedop	-> @..@ | @:@ | @::@ | @=@ | @\@ | @|@ | @<-@ | @->@ | \verb+@@+ | @~@ | @=>@
 @@@
 \indexsyn{varsym}%
