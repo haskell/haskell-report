@@ -7,7 +7,7 @@
 ##########################################
 # What to make if you type 'make'
 
-default: haskell.ps html
+default: haskell.pdf html
 
 # Begin by saying
 #	touch haskell.idx
@@ -27,6 +27,7 @@ SPLITPGM = perl ../tools/splitAndIndexPgm
 
 RM    = rm -f
 LATEX = latex
+PDFLATEX = pdflatex
 MAKEINDEX = makeindex
 
 # 'expand' expands tabs to spaces
@@ -105,6 +106,7 @@ html: index.html ${PARTS} ${SYNTAX} ${PRELUDE}
 	cp index.html *.png *.gif haskell-report-html
 
 haskell.dvi: haskell.tex haskell.ind ${PARTS} $(SYNTAX) ${PRELUDE}  ${CODE} ${HEADERS}
+haskell.pdf: haskell.tex haskell.ind ${PARTS} $(SYNTAX) ${PRELUDE}  ${CODE} ${HEADERS}
 
 
 # remove this rule if you don't have "makeindex"
@@ -164,6 +166,8 @@ clean:
 %.dvi %.idx: %.tex
 	$(LATEX) $<
 
+%.pdf: %.tex
+	$(PDFLATEX) $<
 
 # -----------------------------------------------------------
 #			Out of date stuff
