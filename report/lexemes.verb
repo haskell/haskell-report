@@ -207,7 +207,7 @@ conid		       && (\tr{constructors})
 tyvar	->  varid	& (\tr{type variables})
 tycon	->  conid 	& (\tr{type constructors})
 tycls	->  conid 	& (\tr{type classes})
-modid   ->  conid	& (\tr{modules})
+modid   ->  \hprime{\{conid @.@\}} conid & (\tr{modules})
 @@@
 \indexsyn{varid}%
 \indexsyn{conid}%
@@ -217,10 +217,10 @@ modid   ->  conid	& (\tr{modules})
 \indexsyn{modid}%
 
 Variables and type variables are represented by identifiers beginning
-with small letters, and the other four by identifiers beginning with
+with small letters, and the others by identifiers beginning with
 capitals; also, variables and constructors have infix forms, the other
-four do not.  Namespaces are also discussed in
-Section~\ref{namespaces}.
+four do not.  \hprime{Module names are a dot-separated sequence of "conid"s}.
+ Namespaces are also discussed in Section~\ref{namespaces}.
 
 \index{qualified name}
 A name may optionally be {\em qualified} in certain

@@ -69,9 +69,25 @@ Because they are allowed to be mutually recursive,
 modules allow a program to be partitioned freely without regard to
 dependencies.
 
-The name-space for modules themselves is flat, with each module being associated
-with a unique module name (which are \Haskell{} identifiers
-beginning with a capital letter; i.e.~"modid").  
+\begin{haskellprime}
+A module name (lexeme "modid") is a sequence of one or more
+identifiers beginning with capital letters, separated by dots, with no
+intervening spaces.  For example, @Data.Bool@, @Main@ and
+@Foreign.Marshal.Alloc@ are all valid module names.
+
+@@@
+modid   ->  \hprime{\{conid @.@\}} conid	& (\tr{modules})
+@@@
+\indexsyn{modid}%
+
+Module names can be thought of as being arranged in a hierarchy in
+which appending a new component creates a child of the original module
+name.  For example, the module @Control.Monad.ST@ is a child of the
+@Control.Monad@ sub-hierarchy.  This is purely a convention, however,
+and not part of the language definition; in this report a "modid" is
+treated as a single identifier occupying a flat namespace.
+\end{haskellprime}
+
 There is one distinguished module, @Prelude@, which is imported into
 all modules by default (see Section~\ref{standard-prelude}), plus a
 set of standard library modules that may be imported as required
@@ -91,14 +107,12 @@ body   -> @{@ impdecls @;@ topdecls @}@
 	| @{@ impdecls  @}@
 	| @{@ topdecls @}@
 
-modid	     -> conid
 impdecls     -> impdecl_1 @;@ ... @;@ impdecl_n 	& (n>=1)
 topdecls     -> topdecl_1 @;@ ... @;@ topdecl_n 	& (n>=1)
 @@@
 
 \indexsyn{module}%
 \indexsyn{body}%
-\indexsyn{modid}%
 \indexsyn{impdecls}%
 \indexsyn{topdecls}%
 

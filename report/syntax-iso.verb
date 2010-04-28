@@ -74,7 +74,7 @@ conid			&& (\tr{constructors})
 tyvar	->  varid	& (\tr{type variables})
 tycon	->  conid 	& (\tr{type constructors})
 tycls	->  conid 	& (\tr{type classes})
-modid   ->  conid	& (\tr{modules})
+modid   ->  \hprime{\{conid @.@\}} conid	& (\tr{modules})
 
 qvarid   -> [ modid @.@ ] varid
 qconid   -> [ modid @.@ ] conid
