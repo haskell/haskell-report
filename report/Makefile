@@ -43,7 +43,7 @@ EXPAND = expand
 RELEASE_DIR = ../haskell-prime-draft
 JFP_DIR = ../jfp-release
 
-PARTS =		preface-jfp.tex $(PARTS_NO_PREFACE)
+PARTS =		preface.tex $(PARTS_NO_PREFACE)
 PARTS_NO_PREFACE = iso-chars.tex \
 		intro.tex lexemes.tex  exps.tex \
 		decls.tex  modules.tex  basic.tex  io-13.tex \

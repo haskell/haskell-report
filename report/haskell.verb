@@ -390,7 +390,7 @@ that it does not claim to be a definition of the language Haskell 98.
 \parskip=10pt plus2pt minus2pt
 \setlength{\parindent}{0cm}
 
-\input{preface-jfp}
+\input{preface}
 
 % ------------------------- Part I: language report -----------------------------------
 
