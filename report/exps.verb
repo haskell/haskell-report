@@ -1359,18 +1359,6 @@ that is, the overloaded function @fromInteger@ or @fromRational@ is
 applied to an @Integer@ or @Rational@ literal (resp)
 to convert it to the appropriate type.
 
-\item Matching an "n@+@k" pattern (where "n" is a variable and "k" is a 
-positive integer literal) against a value "v" 
-\index{n+k pattern@@"n@+@k" pattern}
-succeeds if "v ~@>=@ ~k", resulting in the binding 
-of "n" to "v~@-@~k",
-and fails otherwise.  Again, the functions @>=@ and @-@ are 
-overloaded, depending on the type of the pattern.
-The match diverges if the comparison diverges.
-
-The interpretation of the literal "k" is the same as in numeric literal
-patterns, except that only integer literals are allowed.
-
 \item
 Matching an as-pattern "var"{\tt @@}"apat" against a value "v" is
 \index{as-pattern ({\tt {\char'100}})}
@@ -1392,14 +1380,7 @@ can only be matched against a value in the class
 \index{floating literal pattern}
 can only be matched against a value
 in the class @Fractional@.
-\item An "n@+@k" pattern
-\index{n+k pattern@@"n@+@k" pattern}
-can only be matched
-against a value in the class @Integral@.
 \end{itemize}
-
-Many people feel that "n@+@k" patterns should not be used.  These
-patterns may be removed or changed in future versions of \Haskell{}. 
 
 It is sometimes helpful to distinguish two kinds of
 patterns.  Matching an {\em irrefutable pattern}
@@ -1632,10 +1613,6 @@ $e'$ @ }@ \\
 
 (r)&@case@~$\bot$~@of { @$K$@ @$x_1$@ @$\ldots$@ @$x_n$@ -> @$e$@; _ -> @$e'$@ }@ ~$=$~ $\bot$ \\
 &{\rm where $K$ is a @data@ constructor of arity $n$}\\[4pt]
-
-(s)&@case @$v$@ of { @$x$@+@$k$@ -> @$e$@; _ -> @$e'$@ }@\\
-&$=$@ if @$v$@ >= @$k$@ then (\@$x$@ -> @$e$@) (@$v$@-@$k$@) else @$e'$\\
-&{\rm where $k$ is a numeric literal}
 \end{tabular}
 }
 %**<div align=center> <h4>Figure 3.2</h4> </div>
@@ -1647,7 +1624,7 @@ $e'$ @ }@ \\
 \outlinec{\small
 \begin{haskellprime}
 \begin{tabular}{@@{}cl}
-(t)&@case () of { () | @$g_1$@, @$\ldots$@, @$g_n$@ -> @$e$@; _ -> @$e'$@ }@\\
+(s)&@case () of { () | @$g_1$@, @$\ldots$@, @$g_n$@ -> @$e$@; _ -> @$e'$@ }@\\
    &$=$@ case @$e'$@ of { @$y$@ ->@\\
    &@  case () of {@\\
    &@    () | @$g_1$@ -> @\ldots@ case () of {@\\
@@ -1656,13 +1633,13 @@ $e'$ @ }@ \\
    &@    _ -> @$y$@ }}@\\
    &{\rm where $y$ is a new variable}\\[4pt]
 
-(u)&@case () of { () | @$e_0$@ -> @$e$@; _ -> @$e'$@ }@\\
+(t)&@case () of { () | @$e_0$@ -> @$e$@; _ -> @$e'$@ }@\\
    &$=$@ if @$e_0$@ then @$e$@ else @$e'$\\[4pt]
 
-(v)&@case () of { () | let @$decls$@ -> @$e$@; _ -> @$e'$@ }@\\
+(u)&@case () of { () | let @$decls$@ -> @$e$@; _ -> @$e'$@ }@\\
    &$=$@ let @$decls$@ in @$e$\\[4pt]
 
-(w)&@case () of { () | (@$p$@ <- @$e_0$@) -> @$e$@; _ -> @$e'$@ }@\\
+(v)&@case () of { () | (@$p$@ <- @$e_0$@) -> @$e$@; _ -> @$e'$@ }@\\
    &$=$@ case @$e_0$@ of { @$p$@ -> @$e$@; _ -> @$e'$@ }@\\
 \end{tabular}
 \end{haskellprime}
@@ -1715,7 +1692,7 @@ meaning of pattern matching against overloaded constants.
 %% expressions, but doing so 
 %% would clutter the identities, which are intended only to convey the semantics.
 
-These identities all preserve the static semantics.  Rules~(d),~(e), (j), (q), and~(s)
+These identities all preserve the static semantics.  Rules~(d), (e), (j), and~(q)
 use a lambda rather than a @let@; this indicates that variables bound
 by @case@ are monomorphically typed (Section~\ref{type-semantics}).
 \index{monomorphic type variable}
