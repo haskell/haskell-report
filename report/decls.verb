@@ -1681,47 +1681,63 @@ are discussed in this section.
 \subsubsection{Dependency Analysis}
 \label{depend-anal}
 
-In general the static semantics are given by the
-normal Hindley-Milner\index{Hindley-Milner type system} inference rules.
-A {\em dependency
-analysis\index{dependency analysis} transformation} is first performed
-to increase polymorphism.
-Two variables bound by value declarations are in the
-same {\em declaration group} if either
-\index{declaration group}
+In general the static semantics are given by \hprime{applying} the
+normal Hindley-Milner\index{Hindley-Milner type system} inference
+rules.  \hprime{In order to increase polymorphism, these rules are applied to
+groups of bindings identified by a \emph{dependency analysis}.}
+
+\begin{haskellprime}
+
+A binding "b1" \emph{depends} on a binding "b2" in the same list of
+declarations if either
+
 \begin{enumerate}
-\item
-they are bound by the same pattern binding, or
-\item
-their bindings are mutually recursive (perhaps via some
-other declarations that are also part of the group).
+\item "b1" contains a free identifier that has no type signature and
+is bound by "b2", or
+\item "b1" depends on a binding that depends on "b2".
 \end{enumerate}
-Application of the following 
-rules causes each @let@ or @where@ construct (including the @where@
-defining the top level bindings in a module) to bind only the
-variables of a single declaration group, thus capturing the required
-dependency analysis:\footnote{%
-A similar transformation is described in 
-Peyton Jones' book \cite{peyton-jones:book}.}
-\begin{enumerate}
-\item The order of declarations in @where@/@let@ constructs is irrelevant.
-\item @let {@"d_1"@; @"d_2"@} in @"e" = @let {@"d_1"@} in (let {@"d_2"@} in @"e"@)@ \\
-\ \ \ \ (when no identifier bound in "d_2" appears free in "d_1")
-\end{enumerate}
+
+A \emph{declaration group} is a minimal set of mutually dependent
+bindings. Hindley-Milner type inference is applied to each declaration
+group in dependency order. The order of declarations in @where@/@let@
+constructs is irrelevant.
+
+\end{haskellprime}
+
+% Notes: from http://hackage.haskell.org/trac/haskell-prime/wiki/RelaxedDependencyAnalysis
+% 
+%     * also tightens up the original wording, which didn't mention that the declarations had to be in the same list and also defined declaration group but not dependency.
+%     * defining dependencies between bindings is a little simpler than dependencies between variables.
+%     * the dependency analysis transformation formerly listed in this
+%     * section is no longer always possible. 
 
 %----------------
 
 \subsubsection{Generalization}
 \label{generalization}
 
-The Hindley-Milner type system assigns types to a @let@-expression
-in two stages.
-First, the right-hand side of the declaration is typed, giving a type with
-no universal quantification.  Second, all type variables that occur in this
-type are universally quantified unless they are associated with
-bound variables in the type environment;
-this is called {\em generalization}.\index{generalization}
-Finally, the body of the @let@-expression is typed.
+\begin{haskellprime}
+
+The Hindley-Milner type system assigns types to a let-expression in two stages:
+
+\begin{enumerate}
+\item The declaration groups are considered in dependency order. For
+each group, a type with no universal quantification is inferred for
+each variable bound in the group. Then, all type variables that occur
+in these types are universally quantified unless they are associated
+with bound variables in the type environment; this is called
+generalization.
+
+\item Finally, the body of the let-expression is typed.
+\end{enumerate}
+
+\end{haskellprime}
+
+% Notes: from http://hackage.haskell.org/trac/haskell-prime/wiki/RelaxedDependencyAnalysis
+% 
+%     * The original deals with let's consisting of a single binding, instead of declaration groups. Note that we can no longer assume that a let has a single declaration group.
+%     * The original does not deal with functions, non-trivial patterns
+%     * or recursion. 
 
 For example, consider the declaration
 \bprog
