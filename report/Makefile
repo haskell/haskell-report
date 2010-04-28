@@ -49,7 +49,7 @@ PARTS_NO_PREFACE = iso-chars.tex \
 		intro.tex lexemes.tex  exps.tex \
 		decls.tex  modules.tex  basic.tex  io-13.tex \
 		derived.tex \
-		index-extra.tex index-intro.tex layout.tex \
+		index-extra.tex index-intro.tex layout.tex fixity.tex \
 		literate.tex pragmas.tex standard-prelude.tex \
 		ratio.tex complex.tex ix.tex \
                 numeric.tex \
@@ -91,8 +91,8 @@ LIBS =		LibMonadicIO.tex LibStdIO.tex LibIOError.tex LibReadTextIO.tex LibWriteT
 #########################################
 
 # The normally formatted report -- 2 sided, one-up
-haskell.verb: plain_haskell.verb
-	-cp plain_haskell.verb haskell.verb
+# haskell.verb: plain_haskell.verb
+# 	-cp plain_haskell.verb haskell.verb
 
 haskell.tex: haskell.verb
 	$(EXPAND) < $< | $(VERBATIM) >$@
