@@ -49,6 +49,10 @@ If "C" is @Enum@, the type must be an enumeration.
 There must be no explicit instance declaration elsewhere in the program that
 makes "T u_1 ... u_k" an instance of "C".
 % or of any of "C"'s superclasses.
+
+\item
+\hprime{If the data declaration has no constructors (i.e. when "n=0"),
+then no classes are derivable (i.e. "m=0")}
 \end{enumerate}
 For the purposes of derived instances, a @newtype@ declaration is
 treated as a @data@ declaration with a single constructor.

@@ -467,7 +467,7 @@ cname     -> var | con
 @@@
 topdecls -> topdecl_1 @;@ ... @;@ topdecl_n 	&  (n>=0)
 topdecl	-> @type@ simpletype @=@ type
-	|  @data@ [context @=>@] simpletype @=@ constrs [deriving]
+	|  @data@ [context @=>@] simpletype \hprime{[}@=@ constrs\hprime{]} [deriving]
         |  @newtype@ [context @=>@] simpletype @=@ newconstr [deriving]
 	|  @class@ [scontext @=>@] tycls tyvar [@where@ cdecls]
 	|  @instance@ [scontext @=>@] qtycls inst [@where@ idecls]

@@ -24,7 +24,7 @@ body   -> @{@ impdecls @;@ topdecls @}@
 
 topdecls -> topdecl_1 @;@ ... @;@ topdecl_n 	& (n>=1)
 topdecl	-> @type@ simpletype @=@ type
-	|  @data@ [context @=>@] simpletype @=@ constrs [deriving]
+	|  @data@ [context @=>@] simpletype \hprime{[}@=@ constrs\hprime{]} [deriving]
         |  @newtype@ [context @=>@] simpletype @=@ newconstr [deriving]
 	|  @class@ [scontext @=>@] tycls tyvar [@where@ cdecls]
 	|  @instance@ [scontext @=>@] qtycls inst [@where@ idecls]
@@ -478,7 +478,7 @@ the top level of a module.
 \label{datatype-decls}
 
 @@@
-topdecl	   -> @data@ [context @=>@] simpletype @=@ constrs [deriving]
+topdecl	   -> @data@ [context @=>@] simpletype \hprime{[}@=@ constrs\hprime{]} [deriving]
 
 simpletype -> tycon tyvar_1 ... tyvar_k	 & (k>=0) 
 
@@ -512,7 +512,7 @@ An algebraic datatype declaration has the form:
 where "cx" is a context.
 %\index{context!in data declaration@@in {\tt data} declaration}
 This declaration
-introduces a new {\em type constructor} "T" with one or more constituent {\em data
+introduces a new {\em type constructor} "T" with \hprime{zero} or more constituent {\em data
 constructors} "K_1, ..., K_n".
 \index{data constructor}\index{type constructor}
 In this Report, the unqualified term ``constructor'' always means ``data constructor''.
