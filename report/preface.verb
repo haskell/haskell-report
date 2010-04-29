@@ -1,11 +1,6 @@
 
-%**<title>Preface</title>
-%*section
-%**~sheader
 \markboth{PREFACE}{PREFACE}
-\begin{center}
-{\Large \bf Preface}
-\end{center}
+\chapter*{Preface}
 
 \vspace{.2in}
 
@@ -166,13 +161,7 @@ Removed language features:
 \section*{\Haskell{} Resources}
 \label{sect:resources}
 
-The \Haskell{} web site
-\bprog
-@
-	http://haskell.org
-@
-\eprog
-gives access to many useful resources, including:
+The \Haskell{} web site \url{http://haskell.org} gives access to many useful resources, including:
 \begin{itemize}
 \item Online versions of the language and library definitions.
 \item Tutorial material on \Haskell{}.

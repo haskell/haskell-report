@@ -68,7 +68,7 @@ Figure~\ref{prelude-index}.
 \end{itemize}
 
 \begin{figure}[tb]
-\outline{\small
+\begin{outlineenv}\small
 @
 instance  (Ix a, Ix b)  => Ix (a,b) where
         range ((l,l'),(u,u'))
@@ -97,7 +97,7 @@ instance  (Ix a, Ix b)  => Ix (a,b) where
 --          inRange (l1,u1) i1 && inRange (l2,u2) i2 &&
 --              ... && inRange (lk,uk) ik
 @
-}
+\end{outlineenv}
 \ecaption{Derivation of Ix instances}
 \label{prelude-index}
 \indexclass{Ix}                                                

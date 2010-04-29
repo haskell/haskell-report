@@ -21,11 +21,14 @@ default: haskell.pdf html
 RUN_TEX   = ../tools/run_tex
 RUN_INDEX = ../tools/run_index
 VERBATIM  = ../tools/verbatim
+VERB_TEX4HT  = ../tools/verb-tex4ht
 
 # splitAndIndexPgm won't work unless you have "perl"
 SPLITPGM = perl ../tools/splitAndIndexPgm
 
 RM    = rm -f
+CP    = cp
+LN    = ln -sf
 LATEX = latex
 PDFLATEX = pdflatex
 MAKEINDEX = makeindex
@@ -44,7 +47,7 @@ EXPAND = expand
 RELEASE_DIR = ../haskell-prime-draft
 JFP_DIR = ../jfp-release
 
-PARTS =		preface.tex $(PARTS_NO_PREFACE)
+PARTS =		haskell.tex preface.tex $(PARTS_NO_PREFACE)
 PARTS_NO_PREFACE = iso-chars.tex \
 		intro.tex lexemes.tex  exps.tex \
 		decls.tex  modules.tex  basic.tex  io-13.tex \
@@ -56,9 +59,8 @@ PARTS_NO_PREFACE = iso-chars.tex \
                 array.tex io.tex char.tex monad.tex list.tex \
                 system.tex directory.tex \
                 maybe.tex time.tex cputime.tex random.tex \
-		locale.tex 
-
-SYNTAX =	syntax-lexical.tex syntax-iso.tex
+		locale.tex syntax-lexical.tex syntax-iso.tex \
+		Prelude.tex PreludeList.tex PreludeText.tex PreludeIO.tex
 
 CODE =		lib-code/Ratio.tex lib-code/Complex.tex lib-code/Ix.tex \
                 lib-code/Numeric.tex \
@@ -75,16 +77,7 @@ HEADERS =	lib-hdrs/Ratio.tex lib-hdrs/Complex.tex lib-hdrs/Ix.tex \
 		lib-hdrs/Time.tex lib-hdrs/Time1.tex lib-hdrs/CPUTime.tex \
 		lib-hdrs/Locale.tex 
 
-PRELUDE =	Prelude.tex PreludeList.tex PreludeText.tex PreludeIO.tex
-
-LIBPARTS =	lib-array.tex lib-intro.tex lib-io.tex lib-num.tex lib-os.tex lib-text.tex \
-		lib-index-intro.tex lib-posix.tex
-
-LIBS =		LibMonadicIO.tex LibStdIO.tex LibIOError.tex LibReadTextIO.tex LibWriteTextIO.tex \
-		LibSystem.tex LibDirectory.tex LibCPUTime.tex LibTime.tex LibUserInterrupt.tex \
-		LibRatio.tex LibArray.tex LibComplex.tex LibText.tex \
-		LibIO.tex LibIx.tex LibPosix.tex
-
+HT_TEXS = $(patsubst %, ht/%, $(PARTS))
 
 #########################################
 #	Main targets
@@ -98,15 +91,15 @@ haskell.tex: haskell.verb
 	$(EXPAND) < $< | $(VERBATIM) >$@
 
 # I have no idea why run_tex is run twice.  SLPJ
-html: index.html ${PARTS} ${SYNTAX} ${PRELUDE}
-	-mkdir haskell-report-html
-	$(RUN_TEX)
-	$(RUN_TEX)
-	$(RUN_INDEX)
-	cp index.html *.png *.gif haskell-report-html
+# html: index.html ${PARTS}
+# 	-mkdir haskell-report-html
+# 	$(RUN_TEX)
+# 	$(RUN_TEX)
+# 	$(RUN_INDEX)
+# 	cp index.html *.png *.gif haskell-report-html
 
-haskell.dvi: haskell.tex haskell.ind ${PARTS} $(SYNTAX) ${PRELUDE}  ${CODE} ${HEADERS}
-haskell.pdf: haskell.tex haskell.ind ${PARTS} $(SYNTAX) ${PRELUDE}  ${CODE} ${HEADERS}
+haskell.dvi: haskell.tex haskell.ind ${PARTS} ${CODE} ${HEADERS}
+haskell.pdf: haskell.tex haskell.ind ${PARTS} ${CODE} ${HEADERS}
 
 
 # remove this rule if you don't have "makeindex"
@@ -133,6 +126,23 @@ release: haskell.ps html
 publish-pdf: report.pdf
 	gzip < report.pdf > y:Haskell/haskell-report/report.pdf.gz
 
+#########################################
+#	HTML
+#########################################
+
+ht/classes.eps : classes.eps
+	$(CP) $< $@
+
+ht/lib-hdrs :
+	$(RM) $@
+	$(LN) ../lib-hdrs ht/lib-hdrs
+
+ht/lib-code :
+	$(RM) $@
+	$(LN) ../lib-code ht/lib-code
+
+html: $(HT_TEXS) ht/classes.eps ht/lib-hdrs ht/lib-code
+	cd ht && htlatex haskell.tex "haskell,2"
 
 #########################################
 #	Generic stuff
@@ -142,7 +152,8 @@ veryclean: clean
 	$(RM) *~ 
 
 clean:
-	$(RM) *.dvi *.log *.aux *.ilg *.blg *.toc ${PARTS} $(SYNTAX) $(PRELUDE) \
+	$(RM) ht/*.tex ht/*.html
+	$(RM) *.dvi *.log *.aux *.ilg *.blg *.toc ${PARTS} \
 		haskell.tex haskell.ps haskell.pdf *.o lex.yy.c haskell-report-html/*
 
 
@@ -169,31 +180,13 @@ clean:
 %.pdf: %.tex
 	$(PDFLATEX) $<
 
-# -----------------------------------------------------------
-#			Out of date stuff
-# -----------------------------------------------------------
+ht/%.tex: %.verb
+	$(EXPAND) < $< | $(VERB_TEX4HT) | sh ../tools/subsection >$@
 
-# Report as formatted for SIGPLAN -- 2 sided, 2-up, odd pages on left.
-# This is a bit horrible.  But almost nobody should need to do this. KH
-sigplan_haskell.dvi: sigplan_haskell.verb sigplan_article.sty \
-	             haskell.tex haskell.ind \
-		     ${PARTS} $(SYNTAX) ${PRELUDE}
-	cp sigplan_article.sty article.sty
-	cp sigplan_haskell.verb haskell.verb
-	-make haskell.dvi
-	cp plain_haskell.verb haskell.verb
-
-
-sigplan_haskell-libraries.dvi:  sigplan_haskell-libraries.tex haskell-libraries.ind ${LIBPARTS} ${LIBS}
-
-haskell-libraries.dvi:  haskell-libraries.tex haskell-libraries.ind ${LIBPARTS} ${LIBS}
-
-# ----------------------- END OF OLD SIGPLAN STUFF -----------------------------------
-
-jfp: h98-book.tex preface-jfp.tex ${PARTS_NO_PREFACE} $(SYNTAX) ${PRELUDE}
+jfp: h98-book.tex preface-jfp.tex ${PARTS_NO_PREFACE}
 	-mkdir $(JFP_DIR)
 	for n in h98-book.tex preface-jfp.tex \
-		${PARTS_NO_PREFACE} $(SYNTAX) ${PRELUDE} ; do  \
+		${PARTS_NO_PREFACE}; do  \
 		../tools/subsection < $$n >  $(JFP_DIR)/$$n ; done 
 	cp classes.eps $(JFP_DIR)
 	cp  haskell.bbl $(JFP_DIR)/h98-book.bbl

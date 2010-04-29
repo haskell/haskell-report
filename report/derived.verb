@@ -475,11 +475,11 @@ Note the implicit use of default class method
 definitions---for
 example, only @<=@ is defined for @Ord@, with the other
 class methods (@<@, @>@, @>=@, @max@, and @min@) being defined by the defaults given in
-the class declaration shown in Figure~\ref{standard-classes}
-(page~\pageref{standard-classes}).
+the class declaration shown in Figure~\ref{standard-classes}.
 
 \begin{figure}[tb]
-\outlinec{\small
+\begin{outlineenv}
+\small
 @
 infixr 5 :^:
 data Tree a =  Leaf a  |  Tree a :^: Tree a
@@ -525,7 +525,7 @@ up_prec  = 5    -- Precedence of :^:
 app_prec = 10   -- Application has precedence one more than
 		-- the most tightly-binding operator
 @
-}
+\end{outlineenv}
 %**<div align=center> <h4>Figure 8</h4> </div>
 \ecaption{Example of Derived Instances}
 \label{tree-inst}

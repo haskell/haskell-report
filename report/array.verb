@@ -53,7 +53,7 @@ Figure~\ref{array-examples} shows some examples that use the
 @array@ constructor.
 
 \begin{figure}[tb]
-\outline{\small
+\begin{outlineenv}\small
 @
 -- Scaling an array of numbers by a given number:
 scale :: (Num a, Ix b) => a -> Array b a -> Array b a
@@ -72,7 +72,7 @@ inner v w = if b == bounds w
 		else error "inconformable arrays for inner product"
 	    where b = bounds v
 @
-}
+\end{outlineenv}
 \ecaption{Array examples}
 \label{array-examples}
 \end{figure}
@@ -152,7 +152,7 @@ The @fmap@ function transforms the array values while
 Figure~\ref{derived-array-examples} shows some examples.
 
 \begin{figure}[tb]
-\outline{\small
+\begin{outlineenv}\small
 @
 -- A rectangular subarray
 subArray :: (Ix a) => (a,a) -> Array a b -> Array a b
@@ -172,7 +172,7 @@ diag x = ixmap (l,u) (\i->(i,i)) x
 firstArray :: (Ix a) => Array a (b,c) -> Array a b
 firstArray = fmap (\(x,y)->x)
 @
-}
+\end{outlineenv}
 \ecaption{Derived array examples}
 \label{derived-array-examples}
 \end{figure}

@@ -1,6 +1,6 @@
-%START  NORM  VERB  INVERB MATH  SYNTAX
+%START  NORM  VERB  INVERB  MATH  SYNTAX
 sp			[ \t]*
-verb			^{sp}@{sp}\n
+verb			\n{sp}@{sp}\n
 math			\n{sp}\"{sp}\n
 synt			\n{sp}@@@{sp}\n
 nl			{sp}\n{sp}
@@ -50,18 +50,20 @@ int yywrap (void) { return 1; }
 <MATH>@			{ printf ("\\makebox{\\tt ");
 			  PUSH MATH;  BEGIN INVERB; }
 <NORM>{synt}{sp}	{ printf ("\n\\begin{flushleft}");
-			  printf ("\\it\\begin{tabbing}\n");
-			  printf ("\\hspace{0.6in}\\=");
-			  printf ("\\hspace{3.1in}\\=\\kill\n$\\it "); 
+			  printf ("\\it\\begin{tabular}{lcl@{~~~~}l}\n$\\it ");
 			  BEGIN SYNTAX; }
-<SYNTAX>{sp}{synt}	{ printf ("$\n\\end{tabbing}\\end{flushleft}\n"); 
+<SYNTAX>{sp}{synt}	{ printf ("$\n\\end{tabular}\\end{flushleft}\n"); 
 			  BEGIN NORM; }
 <SYNTAX>{nl}		{ printf ("$\\\\ \n$\\it "); }
-<SYNTAX>{sp}"->"{sp}	{ printf ("$\\>\\makebox[3.5em]{$\\rightarrow$}");
+<SYNTAX>{sp}"->"{sp}	{ printf ("$ & \\makebox[3.5em]{$\\rightarrow$} &");
 			  printf ("$\\it "); }
 <SYNTAX>{nl}"|"{sp}	{ printf ("$\\\\ \n$\\it "); 
-			  printf ("$\\>\\makebox[3.5em]{$|$}$\\it "); }
-<SYNTAX>{sp}&{sp}	{ printf ("$\\>\\makebox[3em]{}$\\it "); }
+			  printf ("$ & \\makebox[3.5em]{$|$} & $\\it "); }
+<SYNTAX>{sp}&{sp}	{ printf ("$ & \\makebox[3em]{}$\\it "); }
+<SYNTAX>{nl}$     	{ 
+   /* this is for the HTML output: to get a blank row in a table, it
+      needs to contain something, so we add a non-breaking space */
+                          printf ("$\\\\ \n~\\\\\n$\\it "); }
 <SYNTAX>\\{nl}		{ }
 <SYNTAX>{sp}		{ printf ("\\ "); }
 <SYNTAX>"..."		{ printf ("\\ldots "); }
@@ -72,7 +74,6 @@ int yywrap (void) { return 1; }
 <SYNTAX>@@		{ printf ("@"); }
 <SYNTAX>@		{ printf ("\\makebox{\\tt ");
 			  PUSH SYNTAX;  BEGIN INVERB; }
-
 %%
 int
 main()

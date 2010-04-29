@@ -393,129 +393,85 @@ these two styles in the same file.
 \subsection{Context-Free Syntax}
 \label{bnf}
 @@@
-module -> @module@ modid [exports] @where@ body 
-       |  body
-body   -> @{@ impdecls @;@ topdecls @}@
+module -> @module@ modid [exports] @where@ body \indexsyn{module}
+       |  body\indexsyn{modid}
+body   -> @{@ impdecls @;@ topdecls @}@\indexsyn{body}
 	| @{@ impdecls  @}@
 	| @{@ topdecls  @}@
 
-impdecls     -> impdecl_1 @;@ ... @;@ impdecl_n 	&  (n>=1)
-@@@
-\indexsyn{module}%
-\indexsyn{body}%
-\indexsyn{modid}%
-\indexsyn{impdecls}%
+impdecls     -> impdecl_1 @;@ ... @;@ impdecl_n 	&  (n>=1)\indexsyn{impdecls}
 
-@@@
-exports	 -> @(@ export_1 @,@ ... @,@ export_n [ @,@ ] @)@ & (n>=0)
+\indexsyn{exports}exports	 -> @(@ export_1 @,@ ... @,@ export_n [ @,@ ] @)@ & (n>=0)
 
-export   -> qvar
+\indexsyn{export}export   -> qvar
 	 |  qtycon [@(..)@ | @(@ cname_1 @,@ ... @,@ cname_n @)@] & (n>=0)
 	 |  qtycls [@(..)@ | @(@ qvar_1 @,@ ... @,@ qvar_n @)@] & (n>=0)
          |  @module@ modid
-@@@
-\indexsyn{exports}%
-\indexsyn{export}%
 
-@@@
-impdecl   -> @import@ [@qualified@] modid [@as@ modid] [impspec]
+\indexsyn{impdecl}impdecl   -> @import@ [@qualified@] modid [@as@ modid] [impspec]
 	  | 	& (\tr{empty declaration})
 
-impspec   -> @(@ import_1 @,@ ... @,@ import_n [ @,@ ] @)@ & (n>=0)
+\indexsyn{impspec}impspec   -> @(@ import_1 @,@ ... @,@ import_n [ @,@ ] @)@ & (n>=0)
              |  @hiding@ @(@ import_1 @,@ ... @,@ import_n [ @,@ ] @)@ &  (n>=0)
 
-import    -> var
+\indexsyn{import}import    -> var
 	  |  tycon [ @(..)@ | @(@ cname_1 @,@ ... @,@ cname_n @)@] & (n>=0)
 	  |  tycls [@(..)@ | @(@ var_1 @,@ ... @,@ var_n @)@] & (n>=0)
-cname     -> var | con
-@@@
-\indexsyn{impdecl}%
-\indexsyn{impspec}%
-\indexsyn{import}%
-\indexsyn{cname}%
+\indexsyn{cname}cname     -> var | con
 
-@@@
-topdecls -> topdecl_1 @;@ ... @;@ topdecl_n 	&  (n>=0)
-topdecl	-> @type@ simpletype @=@ type
+\indexsyn{topdecls}topdecls -> topdecl_1 @;@ ... @;@ topdecl_n 	&  (n>=0)
+\indexsyn{topdecl}topdecl	-> @type@ simpletype @=@ type
 	|  @data@ [context @=>@] simpletype \hprime{[}@=@ constrs\hprime{]} [deriving]
         |  @newtype@ [context @=>@] simpletype @=@ newconstr [deriving]
 	|  @class@ [scontext @=>@] tycls tyvar [@where@ cdecls]
 	|  @instance@ [scontext @=>@] qtycls inst [@where@ idecls]
 	|  @default@ @(@type_1 @,@ ... @,@ type_n@)@ & (n>=0)
 	|  decl
-@@@
-\indexsyn{topdecls}%
-\indexsyn{topdecl}%
 
-@@@
-decls	-> @{@ decl_1 @;@ ... @;@ decl_n  @}@		&  (n>=0)
-decl	-> gendecl
+\indexsyn{decls}decls	-> @{@ decl_1 @;@ ... @;@ decl_n  @}@		&  (n>=0)
+\indexsyn{decl}decl	-> gendecl
 	|  (funlhs | \hprime{pat}) rhs
 
-cdecls	-> @{@ cdecl_1 @;@ ... @;@ cdecl_n  @}@		&  (n>=0)
-cdecl	-> gendecl
+\indexsyn{cdecls}cdecls	-> @{@ cdecl_1 @;@ ... @;@ cdecl_n  @}@		&  (n>=0)
+\indexsyn{cdecl}cdecl	-> gendecl
 	|  (funlhs | var) rhs
 
-idecls	-> @{@ idecl_1 @;@ ... @;@ idecl_n  @}@		&  (n>=0)
-idecl	-> (funlhs | var) rhs
+\indexsyn{idecls}idecls	-> @{@ idecl_1 @;@ ... @;@ idecl_n  @}@		&  (n>=0)
+\indexsyn{idecl}idecl	-> (funlhs | var) rhs
 	|						& (\tr{empty})
 
-gendecl	-> vars @::@ [context @=>@] type	& (\tr{type signature})
+\indexsyn{gendecl}gendecl	-> vars @::@ [context @=>@] type	& (\tr{type signature})
 	|  fixity [integer] ops			& (\tr{fixity declaration})
 	|					& (\tr{empty declaration})
 
-ops	-> op_1 @,@ ... @,@ op_n		& (n>=1)
-vars	-> var_1 @,@ ...@,@ var_n		& (n>=1)
-fixity	-> @infixl@ | @infixr@ | @infix@
-@@@
-\indexsyn{vars}%
-\indexsyn{fixity}%
-\indexsyn{ops}%
-\indexsyn{gendecl}%
-\indexsyn{decls}%
-\indexsyn{decl}%
-\indexsyn{cdecls}%
-\indexsyn{cdecl}%
-\indexsyn{idecls}%
-\indexsyn{idecl}%
+\indexsyn{ops}ops	-> op_1 @,@ ... @,@ op_n		& (n>=1)
+\indexsyn{vars}vars	-> var_1 @,@ ...@,@ var_n		& (n>=1)
+\indexsyn{fixity}fixity	-> @infixl@ | @infixr@ | @infix@
 
+\indexsyn{type}type      -> btype [@->@ type]                    & (\tr{function type})
 
-@@@
-type      -> btype [@->@ type]                    & (\tr{function type})
+\indexsyn{btype}btype    ->  [btype] atype                        & (\tr{type application})
 
-btype    ->  [btype] atype                        & (\tr{type application})
-
-atype    ->  gtycon
+\indexsyn{atype}atype    ->  gtycon
           |  tyvar
           |  @(@ type_1 @,@ ... @,@ type_k @)@ & (\tr{tuple type}, k>=2)
           |  @[@ type @]@                      & (\tr{list type})
           |  @(@ type @)@                      & (\tr{parenthesized constructor})
 
-gtycon    -> qtycon
+\indexsyn{gtycon}gtycon    -> qtycon
           |  @()@                              & (\tr{unit type})
           |  @[]@                              & (\tr{list constructor})
           |  @(->)@                            & (\tr{function constructor})
           |  @(,@\{@,@\}@)@                    & (\tr{tupling constructors})
 
-context -> class
+\indexsyn{context}context -> class
         |  @(@ class_1 @,@ ... @,@ class_n @)@		&  (n>=0)
-class	-> qtycls tyvar			
+\indexsyn{class}class	-> qtycls tyvar			
 	|  qtycls @(@ tyvar atype_1 ...  atype_n @)@ &  (n>=1)
-scontext -> simpleclass
+\indexsyn{scontext}scontext -> simpleclass
         |  @(@ simpleclass_1 @,@ ... @,@ simpleclass_n @)@		&  (n>=0)
-simpleclass -> qtycls tyvar			
-@@@
-\indexsyn{type}%
-\indexsyn{btype}%
-\indexsyn{atype}%
-\indexsyn{gtycon}%
-\indexsyn{context}%
-\indexsyn{class}%
-\indexsyn{simpleclass}%
-\indexsyn{scontext}%
+\indexsyn{simpleclass}simpleclass -> qtycls tyvar			
 
-
-@@@
 simpletype -> tycon tyvar_1 ... tyvar_k &  (k>=0)
 constrs	   -> constr_1 @|@ ... @|@ constr_n	&  (n>=1)
 constr	   -> con [@!@] atype_1 ... [@!@] atype_k	& (\tr{arity} con = k, k>=0)
@@ -526,16 +482,14 @@ newconstr  -> con atype
 fielddecl  -> vars @::@ (type | @!@ atype)
 deriving   -> @deriving@ (dclass | @(@dclass_1@,@ ... @,@ dclass_n@)@)&  (n>=0)
 dclass     -> qtycls
-@@@
-\indexsyn{simpletype}%
-\indexsyn{constrs}%
-\indexsyn{constr}%
-\indexsyn{fielddecl}%
-\indexsyn{deriving}%
-\indexsyn{dclass}%
-\indexsyn{newconstr}%
+\indexsyn{simpletype}
+\indexsyn{constrs}
+\indexsyn{constr}
+\indexsyn{fielddecl}
+\indexsyn{deriving}
+\indexsyn{dclass}
+\indexsyn{newconstr}
 
-@@@
 inst	-> gtycon
 	|  @(@ gtycon tyvar_1 ... tyvar_k @)@	& (k>=0, tyvars \tr{distinct})
 	|  @(@ tyvar_1 @,@ ... @,@ tyvar_k @)@	& (k>=2, tyvars \tr{distinct})

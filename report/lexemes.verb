@@ -446,7 +446,7 @@ tuple was detected, and (c)~the close brace at the very end, inserted
 because of the column 0 indentation of the end-of-file token.
 
 \begin{figure}
-\outlinec{\small
+\begin{outlineenv}\small
 @
 module AStack( Stack, push, pop, top, size ) where
 data Stack a = Empty 
@@ -467,11 +467,11 @@ pop (MkStack x s)
 top :: Stack a -> a
 top (MkStack x s) = x                     -- (top Empty) is an error
 @
-}
+\end{outlineenv}
 %**<div align=center> <h4>Figure 1</h4> </div>
 \ecaption{A sample program}
 \label{layout-before}
-\outlinec{\small
+\begin{outlineenv}\small
 @
 module AStack( Stack, push, pop, top, size ) where
 {data Stack a = Empty 
@@ -493,7 +493,7 @@ module AStack( Stack, push, pop, top, size ) where
 ;top (MkStack x s) = x                        -- (top Empty) is an error
 }
 @
-}
+\end{outlineenv}
 %**<div align=center> <h4>Figure 2</h4> </div>
 \ecaption{Sample program with layout expanded}
 \label{layout-after}

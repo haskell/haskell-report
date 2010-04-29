@@ -354,11 +354,7 @@ the local meaning of the @-@ operator and unary negation.
 
 Prefix negation has the same precedence as the infix operator @-@
 defined in the Prelude (see
-Table~\ref{prelude-fixities}%
-%*ignore
-, page~\pageref{prelude-fixities}%
-%*endignore
-).  Because @e1-e2@ parses as an
+Table~\ref{prelude-fixities}).  Because @e1-e2@ parses as an
 infix application of the binary operator @-@, one must write @e1(-e2)@ for
 the alternative parsing.  Similarly, @(-)@ is syntax for 
 @(\ x y -> x-y)@, as with any infix operator, and does not denote 
@@ -614,11 +610,7 @@ Arithmetic sequences satisfy these identities:
 \end{center}
 where @enumFrom@, @enumFromThen@, @enumFromTo@, and @enumFromThenTo@
 are class methods in the class @Enum@ as defined in the Prelude
-(see Figure~\ref{standard-classes}%
-%*ignore
-, page~\pageref{standard-classes}%
-%*endignore
-).
+(see Figure~\ref{standard-classes}).
 }
 
 The semantics of arithmetic sequences therefore depends entirely
@@ -1203,10 +1195,11 @@ partially-applied constructor.
 All patterns must be {\em linear}\index{linearity}
 \index{linear pattern}---no variable may appear more than once.  For
 example, this definition is illegal:
+\bprog
 @
-  f (x,x) = x	-- ILLEGAL; x used twice in pattern
+f (x,x) = x	-- ILLEGAL; x used twice in pattern
 @
-
+\eprog
 Patterns of the form "var"{\tt @@}"pat" are called {\em as-patterns},
 \index{as-pattern ({\tt {\char'100}})}
 and allow one to use "var"

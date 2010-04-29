@@ -1122,7 +1122,7 @@ which derived instances are allowed are
 @Bounded@\indexdi{Bounded},
 @Show@\indexdi{Show},
 and @Read@\indexdi{Read},
-all mentioned in Figure~\ref{standard-classes}, page~\pageref{standard-classes}.
+all mentioned in Figure~\ref{standard-classes}.
 The
 precise details of how the derived instances are generated for each of
 these classes are provided in Chapter~\ref{derived-appendix}, including
@@ -1241,10 +1241,9 @@ is defaultable if:
 \item at least one of these classes is a numeric class,
 	(that is, @Num@ or a subclass of @Num@), and 
 \item all of these classes are defined in the Prelude or a standard library
-(Figures~\ref{basic-numeric-1}--\ref{basic-numeric-2},
-pages~\pageref{basic-numeric-1}--\pageref{basic-numeric-2}
+(Figures~\ref{basic-numeric-1}--\ref{basic-numeric-2}
 show the numeric classes, and
-Figure~\ref{standard-classes}, page~\pageref{standard-classes},
+Figure~\ref{standard-classes}
 shows the classes defined in the Prelude.)
 \end{itemize}
 Each defaultable variable is replaced by the first type in the
@@ -1589,7 +1588,7 @@ definitions are all equivalent:
   x @\bkqB@plus@\bkqA@ y = \ z -> x+y+z
   (x @\bkqB@plus@\bkqA@ y) z = x+y+z
 @
-\eprogNoSkip
+\eprog
 
 \begin{haskellprime}
 
@@ -1604,7 +1603,7 @@ illegal:
 @
   a ## b : xs = exp
 @
-\eprogNoSkip
+\eprog
 because @:@ has precedence 5, so the left hand side resolves to
 @(a ## x) : xs@, and this cannot be a pattern binding because @(a ## x)@
 is not a valid pattern.

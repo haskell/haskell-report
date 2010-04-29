@@ -4,6 +4,7 @@
 \usepackage{times}
 \usepackage{makeidx}
 \usepackage{graphicx}
+\usepackage{url}
 \usepackage[dvipsnames,usenames]{color}
 
 \evensidemargin=0in
@@ -104,31 +105,63 @@
 
 % outlined figures
 \newcommand{\ecaption}[1]{\vspace{-1 ex}\caption{#1}\vspace{1 ex}}
+\newsavebox{\fmbox}
+
+\newenvironment{outlineenv}
+  {\begin{lrbox}{\fmbox}%
+   \begin{minipage}{415pt}%
+   \vspace{1 ex}}
+  {\end{minipage}%
+   \vspace{1 ex}%
+    \end{lrbox}%
+    \begin{center}%
+    \fbox{\usebox{\fmbox}}%
+     \end{center}}
+
 \newcommand{\outline}[1]{%
-\begin{center}
-\fbox{ \begin{minipage}{415pt}
+\begin{lrbox}{\fmbox}%
+\begin{minipage}{415pt}%
 \vspace{1 ex}
-#1
-\end{minipage} }
-\vspace{1 ex}
+#1  
+\end{minipage}%
+\vspace{1 ex}%
+\end{lrbox}%
+\begin{center}%
+\fbox{\usebox{\fmbox}}%
 \end{center}
 }
 
-\newcommand{\outlinec}{\outline}  % Centered outlines in html
+\newcommand{\outlinec}{\outline}
 
-\newcommand{\bprog}{%
-\par\noindent\begin{tabular}{@@{\hspace*{17pt}}l@@{}}}
-\newcommand{\eprog}{%
-\end{tabular}\\[\parskip]}
-\newcommand{\eprogNoSkip}{%
-\end{tabular}}
-
+% This magic adds some indentation to the left of code blocks in the
+% printed output.  It also causes a million overfull \hbox warnings,
+% which I don't know how to get rid of.  The p{\textwidth} field in
+% the tabular is required instead of just "l" because we want to use
+% the verbatim environment in there.
 %
-% variants for stdprelude; don't indent, and skip a little more
+% when generating HTML, we don't want the extra indentation, because
+% it also adds some vertical space which seems hard to get rid of.
+%
+% --SDM 29/04/2010
+%
+\ifx \HCode\Undef
+% not tex4ht...
+\newcommand{\bprog}{
+\par\vspace{-3ex}\noindent\begin{tabular}{@@{\hspace*{17pt}}p{\textwidth}@@{}}}
+\newcommand{\eprog}{%
+\end{tabular}\par\vspace{-2ex}}
 \newcommand{\bprogB}{%
-\begin{tabular}{@@{}l@@{}}}
-\newcommand{\eprogB}{%
-\end{tabular}\\[0.6\baselineskip]}
+\begin{tabular}{@@{}p{\textwidth}@@{}}}
+\newcommand{\eprogB}{\eprog}
+\newcommand{\eprogNoSkip}{\eprog}
+\else
+% tex4ht mode...
+\newcommand{\bprog}{}
+\newcommand{\eprog}{}
+\newcommand{\bprogB}{}
+\newcommand{\eprogB}{}
+\newcommand{\eprogNoSkip}{}
+\fi
 
 %special characters
 \newcommand{\bkq}{\mbox{\tt \char'022}} % (syntax) backquote char

@@ -666,11 +666,7 @@ types and the operations upon them have been heavily influenced by
 Common Lisp and Scheme.
 Numeric function names and operators are usually overloaded, using
 several type classes with an inclusion relation shown in
-Figure~\ref{standard-classes}%
-%*ignore
-, page~\pageref{standard-classes}%
-%*endignore
-.
+Figure~\ref{standard-classes}.
 The class @Num@\indexclass{Num} of numeric
 types is a subclass of @Eq@\indexclass{Eq}, since all numbers may be
 compared for equality; its subclass @Real@\indexclass{Real} is also a
@@ -744,7 +740,7 @@ Figure~\ref{standard-classes} shows the class dependencies and
 built-in types that are instances of the numeric classes.
 
 \begin{figure}[tb]
-\outlinec{
+\begin{outlineenv}
 @
 class  (Eq a, Show a) => Num a  where
     (+), (-), (*)  :: a -> a -> a
@@ -774,7 +770,7 @@ class  (Fractional a) => Floating a  where
     sinh, cosh, tanh    :: a -> a
     asinh, acosh, atanh :: a -> a
 @
-}
+\end{outlineenv}
 %**<div align=center> <h4>Figure 6</h4> </div>
 \ecaption{Standard Numeric Classes and Related Operations, Part 1}
 \label{basic-numeric-1}
@@ -802,7 +798,7 @@ class  (Fractional a) => Floating a  where
 \end{figure}
 
 \begin{figure}[tb]
-\outlinec{
+\begin{outlineenv}
 @
 class  (Real a, Fractional a) => RealFrac a  where
     properFraction   :: (Integral b) => a -> (b,a)
@@ -829,7 +825,7 @@ gcd, lcm :: (Integral a) => a -> a-> a
 fromIntegral :: (Integral a, Num b) => a -> b
 realToFrac   :: (Real a, Fractional b) => a -> b
 @
-}
+\end{outlineenv}
 %**<div align=center> <h4>Figure 7</h4> </div>
 \ecaption{Standard Numeric Classes and Related Operations, Part 2}
 \label{basic-numeric-2}
