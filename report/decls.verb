@@ -1587,8 +1587,8 @@ definitions are all equivalent:
 \bprog
 @
   plus x y z = x+y+z
-  x @\bkqB@plus@\bkqA@ y = \ z -> x+y+z
-  (x @\bkqB@plus@\bkqA@ y) z = x+y+z
+  x `plus` y = \ z -> x+y+z
+  (x `plus` y) z = x+y+z
 @
 \eprog
 
