@@ -641,10 +641,10 @@ n>=1," where the "q_i" qualifiers\index{qualifier} are either
 "p" is a
 pattern (see Section~\ref{pattern-matching}) of type "t" and "e" is an
 expression of type "@[@t@]@"
-\item {\em boolean guards},\index{boolean guard} which are arbitrary expressions of
-type @Bool@
 \item {\em local bindings} that provide new definitions for use in
-the generated expression "e" or subsequent boolean guards and generators.
+the generated expression "e" or subsequent boolean guards and generators
+\item {\em boolean guards},\index{boolean guard} which are arbitrary expressions of
+type @Bool@.
 \end{itemize}
 
 Such a list comprehension returns the list of elements
