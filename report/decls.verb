@@ -1535,12 +1535,17 @@ gdrhs	->  \hprime{guards @=@ exp [gdrhs]}
 
 \hprime{guards}	->  \hprime{@|@ guard_1, ..., guard_n}             & \hprime{(n>=1)}
 
+\indexsyn{guard}\hprime{guard}	-> \hprime{pat @<-@ infixexp} 	& (\hprime{\tr{pattern guard}})
+         | \hprime{@let@ decls}		& (\hprime{\tr{local declaration}})
+         | infixexp		& (\tr{boolean guard})
 @@@
 \indexsyn{decl}%
 \indexsyn{pat}%
 \indexsyn{rhs}%
 \indexsyn{gdrhs}%
-\indexsyn{qs}%
+\indexsyn{guards}%
+\indexsyn{guard}%
+
 We distinguish two cases within this syntax: a {\em pattern binding}
 occurs when the left hand side is a \hprime{"pat"}; 
 otherwise, the binding is called a {\em function
