@@ -29,8 +29,8 @@ int yywrap (void) { return 1; }
 <INVERB>\\		{ printf ("{\\char'134}"); }
 <INVERB>\{		{ printf ("{\\char'173}"); }
 <INVERB>\}		{ printf ("{\\char'175}"); }
-<NORM>{verb}		{ printf ("\\begin{verbatim}\n"); PUSH NORM;  BEGIN VERB; }
-<VERB>{verb}		{ printf ("\\end{verbatim}\n"); POP; }
+<NORM>{verb}		{ printf ("{\\small\\begin{verbatim}\n"); PUSH NORM;  BEGIN VERB; }
+<VERB>{verb}		{ printf ("\\end{verbatim}}\n"); POP; }
 <NORM>\"\"		{ printf ("\""); }
 <NORM>\"{sp}		{ printf ("\\mbox{$\\it ");
 			  PUSH NORM;  BEGIN MATH; }
