@@ -41,7 +41,7 @@ while (<>) {
     	print "\@\n";
     	&printIndexEntries();	# for previous block
 	$SaveForIndexing .= $_;
-	print "\\eprogB\\noindent\\bprogB\n\@\n$_";
+	print "\\eprogB\\vspace{-2ex}\\noindent\\bprogB\n\@\n$_";
 	$lineCnt = 0;
     	$savedBlanks = 0;
 
