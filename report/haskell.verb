@@ -1,5 +1,5 @@
 % Formatting for double-sided
-\documentclass[twoside,11pt]{book}
+\documentclass[twoside,10pt]{book}
 
 \usepackage{times}
 \usepackage{makeidx}
