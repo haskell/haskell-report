@@ -426,6 +426,7 @@ impdecls     -> impdecl_1 @;@ ... @;@ impdecl_n 	&  (n>=1)\indexsyn{impdecls}
 	|  @class@ [scontext @=>@] tycls tyvar [@where@ cdecls]
 	|  @instance@ [scontext @=>@] qtycls inst [@where@ idecls]
 	|  @default@ @(@type_1 @,@ ... @,@ type_n@)@ & (n>=0)
+        |  @foreign@ fdecl
 	|  decl
 
 \indexsyn{decls}decls	-> @{@ decl_1 @;@ ... @;@ decl_n  @}@		&  (n>=0)
@@ -490,59 +491,57 @@ dclass     -> qtycls
 \indexsyn{dclass}
 \indexsyn{newconstr}
 
-inst	-> gtycon
+\indexsyn{inst}inst	-> gtycon
 	|  @(@ gtycon tyvar_1 ... tyvar_k @)@	& (k>=0, tyvars \tr{distinct})
 	|  @(@ tyvar_1 @,@ ... @,@ tyvar_k @)@	& (k>=2, tyvars \tr{distinct})
 	|  @[@ tyvar @]@
 	|  @(@ tyvar_1 @->@ tyvar_2 @)@		& tyvar_1 \tr{and} tyvar_2 \tr{distinct}
-@@@
-\indexsyn{inst}%
 
-@@@
-funlhs	->  var apat \{ apat \}
+\indexsyn{fdecl}fdecl    -> @import@ callconv [safety] impent var @::@ ftype & (\tr{define varibale})
+         |  @export@ callconv expent var @::@ ftype & (\tr{expose variable})
+callconv -> @ccall@ | @stdcall@ | @cplusplus@  & (\tr{calling convention})
+         | @jvm@ | @dotnet@
+         |  \mbox{\bf system-specific calling conventions}
+\indexsyn{impent}impent   -> [string] & (\tr{see Section~\ref{sec:ccall}})
+\indexsyn{expent}expent   -> [string] & (\tr{see Section~\ref{sec:ccall}})
+\indexsyn{safety}safety   -> @unsafe@ | @safe@
+
+\indexsyn{ftype}ftype -> frtype
+      |  fatype \rightarrow ftype
+\indexsyn{frtype}frtype -> fatype
+       | @()@
+\indexsyn{fatype}fatype -> qtycon atype_1 \ldots atype_k & (k \geq 0)
+
+\indexsyn{funlhs}funlhs	->  var apat \{ apat \}
         |   \hprime{pat varop pat}
 	|   @(@ funlhs @)@  apat \{ apat \}
 
-rhs	->  @=@ exp [@where@ decls]
+\indexsyn{rhs}rhs	->  @=@ exp [@where@ decls]
 	|   gdrhs [@where@ decls]
 
-gdrhs	->  guards @=@ exp [gdrhs]
+\indexsyn{gdrhs}gdrhs	->  guards @=@ exp [gdrhs]
 
-\hprime{guards}	->  \hprime{@|@ guard_1, ..., guard_n}             & \hprime{(n>=1)}
+\indexsyn{guards}\hprime{guards}	->  \hprime{@|@ guard_1, ..., guard_n}             & \hprime{(n>=1)}
 \hprime{guard}	-> \hprime{pat @<-@ infixexp} 	& (\hprime{\tr{pattern guard}})
          | \hprime{@let@ decls}		& (\hprime{\tr{local declaration}})
          | infixexp		& (\tr{boolean guard})
-@@@
-\indexsyn{funlhs}%
-\indexsyn{pat}%
-\indexsyn{rhs}%
-\indexsyn{gdrhs}%
-\indexsyn{gd}%
 
-@@@
-exp     ->  \hprime{infixexp @::@ [context @=>@] type}   & (\tr{expression type signature})
+\indexsyn{exp}exp     ->  \hprime{infixexp @::@ [context @=>@] type}   & (\tr{expression type signature})
         |   \hprime{infixexp}
 
-\hprime{infixexp} -> \hprime{lexp qop infixexp} & (\tr{infix operator application})
+\indexsyn{infixexp}\hprime{infixexp} -> \hprime{lexp qop infixexp} & (\tr{infix operator application})
             | \hprime{@-@ infixexp}             & (\tr{prefix negation})
             | \hprime{lexp}
 
-\hprime{lexp}    ->  @\@ apat_1 ... apat_n @->@ exp	& (\tr{lambda abstraction}, n>=1)
+\indexsyn{lexp}\hprime{lexp}    ->  @\@ apat_1 ... apat_n @->@ exp	& (\tr{lambda abstraction}, n>=1)
 	|   @let@ decls @in@ exp	        & ({\tr{let expression}})
 	|   @if@ exp \hprime{[@;@]} @then@ exp \hprime{[@;@]} @else@ exp	& (\tr{conditional})
 	|   @case@ exp @of@ @{@ alts @}@	& (\tr{case expression})
         |   @do@ @{@ stmts  @}@            & (\tr{do expression})
 	|   fexp
-fexp	->  [fexp] aexp				& (\tr{function application})
-@@@
-\indexsyn{exp}%
-\indexsyn{infixexp}%
-\indexsyn{lexp}%
-\indexsyn{aexp}%
-\indexsyn{fexp}%
+\indexsyn{fexp}fexp	->  [fexp] aexp				& (\tr{function application})
 
-@@@
-aexp 	->  qvar				& (\tr{variable})
+\indexsyn{aexp}aexp 	->  qvar				& (\tr{variable})
 	|   gcon				& (\tr{general constructor})
 	|   literal				
 	|   @(@ exp @)@			      & (\tr{parenthesized expression})
@@ -554,55 +553,35 @@ aexp 	->  qvar				& (\tr{variable})
         |   @(@ \hprime{qop_{\langle@-@\rangle} infixexp} @)@        & (\tr{right section})
         |   qcon @{@ fbind_1 @,@ ... @,@ fbind_n @}@ & (\tr{labeled construction}, n>=0)
         |   aexp_{\langle{}qcon\rangle{}} @{@ fbind_1 @,@ ... @,@ fbind_n @}@ & (\tr{labeled update}, n >= 1)
-@@@
-\indexsyn{aexp}%
 
-@@@
-qual	-> pat @<-@ exp 	& (\tr{generator})
+\indexsyn{qual}qual	-> pat @<-@ exp 	& (\tr{generator})
          | @let@ decls		& (\tr{local declaration})
          | exp 			& (\tr{guard})
 
-alts	->  alt_1 @;@ ... @;@ alt_n 		&  (n>=1)
-alt	->  pat @->@ exp [@where@ decls]
+\indexsyn{alts}alts	->  alt_1 @;@ ... @;@ alt_n 		&  (n>=1)
+\indexsyn{alt}alt	->  pat @->@ exp [@where@ decls]
 	|   pat gdpat [@where@ decls]
 	|					& (empty alternative)
 
-gdpat   ->  \hprime{guards} @->@ exp [ gdpat ]
+\indexsyn{gdpat}gdpat   ->  \hprime{guards} @->@ exp [ gdpat ]
 
-stmts -> stmt_1 ... stmt_n exp [@;@]  &  (n>=0)
-stmt -> exp @;@
+\indexsyn{stmts}stmts -> stmt_1 ... stmt_n exp [@;@]  &  (n>=0)
+\indexsyn{stmt}stmt -> exp @;@
       | pat @<-@ exp @;@
       | @let@ decls @;@
       | @;@			& (empty statement)
 
-fbind   ->  qvar @=@ exp
+\indexsyn{fbind}fbind   ->  qvar @=@ exp
         
-@@@
-\indexsyn{qual}%
-\indexsyn{alts}%
-\indexsyn{alt}%
-\indexsyn{gdpat}%
-\indexsyn{stmt}%
-\indexsyn{stmts}%
-\indexsyn{fbind}%
-
-@@@
-pat     -> \hprime{lpat qconop pat} & (\tr{infix constructor})
+\indexsyn{pat}pat     -> \hprime{lpat qconop pat} & (\tr{infix constructor})
         | \hprime{@-@ (integer | float)} & (\tr{negative literal})
         | \hprime{lpat}
 
-\hprime{lpat} ->  apat
+\indexsyn{lpat}\hprime{lpat} ->  apat
         | \hprime{@-@ (integer | float)} & (\tr{negative literal})
 	|   gcon apat_1 ... apat_k		& (\tr{arity} gcon = k, k>=1)
-@@@
-\indexsyn{pat}%
-\indexsyn{lpat}%
-\indexsyn{apat}%
-\indexsyn{fpats}%
-\indexsyn{fpat}%
 
-@@@
-apat	->  var [{\tt @@} apat]			& (\tr{as pattern})
+\indexsyn{apat}apat	->  var [{\tt @@} apat]			& (\tr{as pattern})
 	|   gcon				& (\tr{arity} gcon = 0) 
         |   qcon @{@ fpat_1 @,@ ... @,@ fpat_k @}@ & (\tr{labeled pattern}, k>=0)
 	|   literal
@@ -612,38 +591,25 @@ apat	->  var [{\tt @@} apat]			& (\tr{as pattern})
 	|   @[@ pat_1 @,@ ... @,@ pat_k @]@	& (\tr{list pattern}, k>=1) 
 	|   @~@ apat				& (\tr{irrefutable pattern})
 
-fpat    ->  qvar @=@ pat
-@@@
-\indexsyn{apat}%
-@@@
-gcon    ->  @()@
+\indexsyn{fpat}fpat    ->  qvar @=@ pat
+
+\indexsyn{gcon}gcon    ->  @()@
         |   @[]@
         |   @(,@\{@,@\}@)@
         |   qcon
 
-var	->  varid | @(@ varsym @)@		& (\tr{variable})
-qvar	->  qvarid | @(@ qvarsym @)@		& (\tr{qualified variable})
-con	->  conid | @(@ consym @)@		& (\tr{constructor})
-qcon	->  qconid | @(@ gconsym @)@		& (\tr{qualified constructor})
-varop	->  varsym | \bkqB varid \bkqA		& (\tr{variable operator})
-qvarop	->  qvarsym | \bkqB qvarid \bkqA	& (\tr{qualified variable operator})
-conop	->  consym | \bkqB conid \bkqA		& (\tr{constructor operator})
-qconop	->  gconsym | \bkqB qconid \bkqA	& (\tr{qualified constructor operator})
-op	->  varop | conop 			& (\tr{operator})
-qop     ->  qvarop | qconop			& (\tr{qualified operator})
-gconsym ->  @:@ | qconsym
+\indexsyn{var}var	->  varid | @(@ varsym @)@		& (\tr{variable})
+\indexsyn{qvar}qvar	->  qvarid | @(@ qvarsym @)@		& (\tr{qualified variable})
+\indexsyn{con}con	->  conid | @(@ consym @)@		& (\tr{constructor})
+\indexsyn{qcon}qcon	->  qconid | @(@ gconsym @)@		& (\tr{qualified constructor})
+\indexsyn{varop}varop	->  varsym | \bkqB varid \bkqA		& (\tr{variable operator})
+\indexsyn{qvarop}qvarop	->  qvarsym | \bkqB qvarid \bkqA	& (\tr{qualified variable operator})
+\indexsyn{conop}conop	->  consym | \bkqB conid \bkqA		& (\tr{constructor operator})
+\indexsyn{qconop}qconop	->  gconsym | \bkqB qconid \bkqA	& (\tr{qualified constructor operator})
+\indexsyn{op}op	->  varop | conop 			& (\tr{operator})
+\indexsyn{qop}qop     ->  qvarop | qconop			& (\tr{qualified operator})
+\indexsyn{gconsym}gconsym ->  @:@ | qconsym
 @@@
-\indexsyn{gcon}%
-\indexsyn{var}%
-\indexsyn{qvar}%
-\indexsyn{con}%
-\indexsyn{qcon}%
-\indexsyn{varop}%
-\indexsyn{qvarop}%
-\indexsyn{conop}%
-\indexsyn{qconop}%
-\indexsyn{op}%
-\indexsyn{qop}%
 
 %*anchor off
 % Local Variables: 

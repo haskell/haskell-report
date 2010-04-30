@@ -29,6 +29,7 @@ topdecl	-> @type@ simpletype @=@ type
 	|  @class@ [scontext @=>@] tycls tyvar [@where@ cdecls]
 	|  @instance@ [scontext @=>@] qtycls inst [@where@ idecls]
 	|  @default@ @(@type_1 @,@ ... @,@ type_n@)@ & \qquad (n>=0)
+        |  @foreign@ fdecl
 	|  decl
 
 decls	-> @{@ decl_1 @;@ ... @;@ decl_n @}@		& (n>=0)
@@ -63,6 +64,7 @@ fixity	-> @infixl@ | @infixr@ | @infix@
 \indexsyn{cdecl}%
 \indexsyn{idecls}%
 \indexsyn{idecl}%
+\indexsyn{fdecl}%
 
 The declarations in the syntactic category "topdecls" are only allowed
 at the top level of a \Haskell{} module (see
