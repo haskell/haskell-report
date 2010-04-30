@@ -31,6 +31,7 @@ CP    = cp
 LN    = ln -sf
 LATEX = latex
 PDFLATEX = pdflatex
+BIBTEX = bibtex
 MAKEINDEX = makeindex
 
 # 'expand' expands tabs to spaces
@@ -184,6 +185,9 @@ clean:
 	$(LATEX) $<
 
 %.pdf: %.tex
+	$(PDFLATEX) $<
+	$(BIBTEX) $*
+	$(PDFLATEX) $<
 	$(PDFLATEX) $<
 
 ht/%.tex: %.verb
