@@ -1429,10 +1429,10 @@ Additional examples may be found in Section~\ref{datatype-renaming}.
 
 Top level patterns in case expressions and the set of top level
 patterns in function or pattern bindings may have zero or more
-associated {\em qualifiers}\index{qualifier}.  See
-Section~\ref{qualifiers-in-patterns}.
+associated {\em guards}\index{guards}.  See
+Section~\ref{case} for the syntax and semantics of guards.
 
-The guard semantics have an obvious influence on the
+The guard semantics have an influence on the
 strictness characteristics of a function or case expression.  In
 particular, an otherwise irrefutable pattern
 \index{irrefutable pattern}
