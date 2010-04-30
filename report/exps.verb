@@ -1358,30 +1358,26 @@ if @['a','b']@ is matched against "@[@\bot@,'x']@", then attempting to match
 
 \item These examples demonstrate refutable vs.~irrefutable
 matching:
-\bprog
-@
-(\ ~(x,y) -> 0) @"\bot"@    @"\Rightarrow"@    0
-(\  (x,y) -> 0) @"\bot"@    @"\Rightarrow"@    @"\bot"@
-@
-\eprog
-\bprog
-@
-(\ ~[x] -> 0) []    @"\Rightarrow"@    0
-(\ ~[x] -> x) []    @"\Rightarrow"@    @"\bot"@
-@
-\eprog
-\bprog
-@
-(\ ~[x,~(a,b)] -> x) [(0,1),@"\bot"@]    @"\Rightarrow"@    (0,1)
-(\ ~[x, (a,b)] -> x) [(0,1),@"\bot"@]    @"\Rightarrow"@    @"\bot"@
-@
-\eprog
-\bprog
-@
-(\  (x:xs) -> x:x:xs) @"\bot"@   @"\Rightarrow"@   @"\bot"@
-(\ ~(x:xs) -> x:x:xs) @"\bot"@   @"\Rightarrow"@   @"\bot"@:@"\bot"@:@"\bot"@
-@
-\eprogNoSkip
+
+\begin{tabular}{l}
+@(\ ~(x,y) -> 0) @$\bot$@    @$\Rightarrow$@    0@\\
+@(\  (x,y) -> 0) @$\bot$@    @$\Rightarrow$@    @$\bot$
+\end{tabular}
+
+\begin{tabular}{l}
+@(\ ~[x] -> 0) []    @$\Rightarrow$@    0@\\
+@(\ ~[x] -> x) []    @$\Rightarrow$@    @$\bot$
+\end{tabular}
+
+\begin{tabular}{l}
+@(\ ~[x,~(a,b)] -> x) [(0,1),@$\bot$@]    @$\Rightarrow$@    (0,1)@\\
+@(\ ~[x, (a,b)] -> x) [(0,1),@$\bot$@]    @$\Rightarrow$@    @$\bot$
+\end{tabular}
+
+\begin{tabular}{l}
+@(\  (x:xs) -> x:x:xs) @$\bot$@   @$\Rightarrow$@   @$\bot$\\
+@(\ ~(x:xs) -> x:x:xs) @$\bot$@   @$\Rightarrow$@   @$\bot$@:@$\bot$@:@$\bot$
+\end{tabular}
 
 \item 
 Consider the following declarations:
@@ -1393,13 +1389,13 @@ Consider the following declarations:
 \eprog
 These examples illustrate the difference in pattern matching
 between types defined by @data@ and @newtype@:
-\bprog
-@
-(\  (N True) -> True) @"\bot"@     @"\Rightarrow"@    @"\bot"@
-(\  (D True) -> True) @"\bot"@     @"\Rightarrow"@    @"\bot"@
-(\ ~(D True) -> True) @"\bot"@     @"\Rightarrow"@    True
-@
-\eprog
+
+\begin{tabular}{l}
+@(\  (N True) -> True) @"\bot"@     @"\Rightarrow"@    @"\bot"\\
+@(\  (D True) -> True) @"\bot"@     @"\Rightarrow"@    @"\bot"\\
+@(\ ~(D True) -> True) @"\bot"@     @"\Rightarrow"@    True@
+\end{tabular}
+
 Additional examples may be found in Section~\ref{datatype-renaming}.
 
 \end{enumerate}
