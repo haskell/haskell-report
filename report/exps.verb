@@ -286,7 +286,7 @@ The integers "n" and "d" are chosen so that "n/d = f".
 %
 @@@
 fexp	->  [fexp] aexp				& (\tr{function application})
-exp	->  @\@ apat_1 ... apat_n @->@ exp	& (\tr{lambda abstraction}, n>=1)
+lexp	->  @\@ apat_1 ... apat_n @->@ exp	& (\tr{lambda abstraction}, n>=1)
 @@@
 \indexsyn{exp}%
 \indexsyn{fexp}%
@@ -331,8 +331,9 @@ pattern fails to match, then the result is "\bot".
 \label{operators}
 %
 @@@
-exp	->  exp_1 qop exp_2
-	|   @-@ exp				& (\tr{prefix negation})
+\hprime{infixexp} ->  \hprime{lexp qop infixexp}
+	|   @-@ \hprime{infixexp}		& (\tr{prefix negation})
+        |   \hprime{lexp}
 qop     ->  qvarop | qconop			& (\tr{qualified operator})
 @@@
 \indexsyn{exp}%
@@ -378,7 +379,7 @@ The following identities hold:
 \label{sections}
 %
 @@@
-	|   @(@ \hprime{infixexp qop} @)@        & (\tr{left section})
+aexp 	->   @(@ \hprime{infixexp qop} @)@        & (\tr{left section})
         |   @(@ \hprime{qop_{\langle@-@\rangle} infixexp} @)@        & (\tr{right section})
 @@@
 \indexsyn{infixexp}%
@@ -456,7 +457,7 @@ that does not occur free in "e".
 \label{conditionals}\index{conditional expression}
 %
 @@@
-exp ->  @if@ exp \hprime{[@;@]} @then@ exp \hprime{[@;@]} @else@ exp
+lexp ->  @if@ exp \hprime{[@;@]} @then@ exp \hprime{[@;@]} @else@ exp
 @@@
 \indexsyn{exp}%
 
@@ -487,7 +488,7 @@ entire conditional expression.
 \label{lists}
 %
 @@@
-exp     ->  exp_1 qop exp_2
+infixexp ->  exp_1 qop exp_2
 aexp	->  @[@ exp_1 @,@ ... @,@ exp_k @]@	& (k>=1)
 	|   gcon
 gcon	-> @[]@
@@ -703,7 +704,7 @@ bound by @let@ have fully polymorphic types while those defined by
 % Including this syntax blurb does REALLY bad things to page breaking
 % in the 1.[12] report (sigh); ToDo: hope it goes away.
 @@@
-exp	->  @let@ decls @in@ exp
+lexp	->  @let@ decls @in@ exp
 @@@
 \indexsyn{exp}
 \index{declaration!within a {\tt let} expression}
@@ -765,7 +766,7 @@ Section~\ref{pattern-bindings}.
 \label{case}
 %
 @@@
-exp	->  @case@ exp @of@ @{@ alts @}@
+lexp	->  @case@ exp @of@ @{@ alts @}@
 alts	->  alt_1 @;@ ... @;@ alt_n 		& (n>=1)
 alt	->  pat @->@ exp [@where@ decls]
 	|   pat gdpat [@where@ decls]
@@ -889,7 +890,7 @@ an "infixexp" not an "exp".
 \index{monad}
 %
 @@@
-exp -> @do@ @{@ stmts @}@             & (\tr{do expression})
+lexp -> @do@ @{@ stmts @}@             & (\tr{do expression})
 stmts -> stmt_1 ... stmt_n exp [@;@]  &  (n>=0)
 stmt -> exp @;@
       | pat @<-@ exp @;@
