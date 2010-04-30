@@ -108,11 +108,6 @@ haskell.tex: haskell.verb
 haskell.dvi: haskell.tex haskell.ind ${PARTS} ${CODE} ${HEADERS}
 haskell.pdf: haskell.tex haskell.ind ${PARTS} ${CODE} ${HEADERS}
 
-
-# remove this rule if you don't have "makeindex"
-haskell.ind: haskell.idx
-	$(MAKEINDEX) -i -t haskell.ilg < haskell.idx > haskell.ind
-
 haskell.ps : haskell.dvi
 	dvips haskell.dvi -o haskell.ps
 
@@ -187,6 +182,7 @@ clean:
 %.pdf: %.tex
 	$(PDFLATEX) $<
 	$(BIBTEX) $*
+	$(MAKEINDEX) -i -t haskell.ilg < haskell.idx > haskell.ind
 	$(PDFLATEX) $<
 	$(PDFLATEX) $<
 
