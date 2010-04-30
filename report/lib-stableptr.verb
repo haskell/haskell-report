@@ -1,0 +1,59 @@
+\section{@Foreign.StablePtr@}
+\label{sec:StablePtr}
+
+A \emph{stable pointer} is a reference to a Haskell expression that is
+guaranteed not to be affected by garbage collection, i.e., it will neither be
+deallocated nor will the value of the stable pointer itself change during
+garbage collection (ordinary references may be relocated during garbage
+collection).  Consequently, stable pointers can be passed to foreign code,
+which can treat it as an opaque reference to a Haskell value.
+
+The data type and associated operations have the following signature and
+purpose:
+%
+\begin{codedesc}
+\item[data StablePtr a] Values of this type represent a stable reference to a
+  Haskell value of type @a@.
+  
+\item[newStablePtr ::\ a -> IO (StablePtr a)] Create a stable pointer
+  referring to the given Haskell value.
+  
+\item[deRefStablePtr ::\ StablePtr a -> IO a] Obtain the Haskell value
+  referenced by a stable pointer, i.e., the same value that was passed to the
+  corresponding call to @makeStablePtr@.  If the argument to
+  @deRefStablePtr@ has already been freed using @freeStablePtr@, the
+  behaviour of @deRefStablePtr@ is undefined.
+  
+\item[freeStablePtr ::\ StablePtr a -> IO ()] Dissolve the association between
+  the stable pointer and the Haskell value. Afterwards, if the stable pointer
+  is passed to @deRefStablePtr@ or @freeStablePtr@, the behaviour is
+  undefined.  However, the stable pointer may still be passed to
+  @castStablePtrToPtr@, but the @Ptr ()@ value returned by
+  @castStablePtrToPtr@, in this case, is undefined (in particular, it may
+  be @Ptr.nullPtr@).  Nevertheless, the call to @castStablePtrToPtr@
+  is guaranteed not to diverge.
+  
+\item[castStablePtrToPtr ::\ StablePtr a -> Ptr ()] Coerce a stable pointer to
+  an address. No guarantees are made about the resulting value, except that
+  the original stable pointer can be recovered by @castPtrToStablePtr@.
+  In particular, the address may not refer to an accessible memory location and
+  any attempt to pass it to the member functions of the class @Storable@
+  (Section~\ref{sec:Storable}) leads to undefined behaviour.
+  
+\item[castPtrToStablePtr ::\ Ptr () -> StablePtr a] The inverse of
+  @castStablePtrToPtr@, i.e., we have the identity
+  %
+  \begin{quote}
+\begin{verbatim}
+sp == castPtrToStablePtr (castStablePtrToPtr sp)
+\end{verbatim}
+  \end{quote}
+  %
+  for any stable pointer @sp@ on which @freeStablePtr@ has not been
+  executed yet.  Moreover, @castPtrToStablePtr@ may only be applied to
+  pointers that have been produced by @castStablePtrToPtr@.
+\end{codedesc}
+
+It is important to free stable pointers that are no longer required by using
+@freeStablePtr@.  Otherwise, the object referenced by the stable pointer
+will be retained in the heap.

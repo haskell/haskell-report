@@ -2,6 +2,7 @@
 %**~header
 
 \section{System Functions}
+\label{System}
 
 \outline{
 \inputHS{lib-hdrs/System}

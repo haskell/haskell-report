@@ -1,0 +1,64 @@
+\section{@Foreign.Marshal.Alloc@}
+\label{sec:MarshalAlloc}
+
+The module @Foreign.Marshal.Alloc@ provides operations to allocate and deallocate
+blocks of raw memory (i.e., unstructured chunks of memory outside of the area
+maintained by the Haskell storage manager).  These memory blocks are commonly
+used to pass compound data structures to foreign functions or to provide space
+in which compound result values are obtained from foreign functions.  For
+example, Haskell lists are typically passed as C arrays to C functions; the
+storage space for such an array can be allocated by the following functions:
+%
+\begin{codedesc}
+\item[malloc ::\ Storable a => IO (Ptr a)] Allocate a block of memory that is
+  sufficient to hold values of type @a@.  The size of the memory area is
+  determined by the function @Storable.sizeOf@
+  (Section~\ref{sec:Storable}).
+
+\item[mallocBytes ::\ Int -> IO (Ptr a)] Allocate a block of memory of the
+  given number of bytes.  The block of memory is sufficiently aligned for any
+  of the basic foreign types (see Section~\ref{sec:foreign-types}) that fits
+  into a memory block of the allocated size.
+  
+\item[alloca ::\ Storable a => (Ptr a -> IO b) -> IO b] Allocate a block of
+  memory of the same size as @malloc@, but the reference is passed to a
+  computation instead of being returned.  When the computation terminates,
+  free the memory area again.  The operation is exception-safe; i.e.,
+  allocated memory is freed if an exception is thrown in the marshalling
+  computation.
+
+\item[allocaBytes ::\ Int -> (Ptr a -> IO b) -> IO b] As @alloca@, but
+  allocate a memory area of the given size.  The same alignment constraint as
+  for @mallocBytes@ holds.
+  
+\item[realloc ::\ Storable b => Ptr a -> IO (Ptr b)] Resize a memory area that
+  was allocated with @malloc@ or @mallocBytes@ to the size needed to
+  store values of type @b@.  The returned pointer may refer to an
+  entirely different memory area, but will be suitably aligned to hold values
+  of type @b@.  The contents of the referenced memory area will be the
+  same as of the original pointer up to the minimum of the size of values of
+  type @a@ and @b@.  If the argument to @realloc@ is
+  @Ptr.nullPtr@, @realloc@ behaves like @malloc@.
+  
+\item[reallocBytes ::\ Ptr a -> Int -> IO (Ptr a)] As @realloc@, but
+  allocate a memory area of the given size.  In addition, if the requested size
+  is 0, @reallocBytes@ behaves like @free@.
+  
+\item[free ::\ Ptr a -> IO ()] Free a block of memory that was allocated with
+  @malloc@, @mallocBytes@, @realloc@, @reallocBytes@, or
+  any of the allocation functions from @Foreign.Marshal.Array@ (see
+  Section~\ref{sec:MarshalArray}).
+
+\item[finalizerFree ::\ FinalizerPtr a] Foreign finalizer that performs the
+  same operation as @free@.
+\end{codedesc}
+%
+If any of the allocation functions fails, a value of @Ptr.nullPtr@ is
+produced.  If @free@ or @reallocBytes@ is applied to a memory area
+that has been allocated with @alloca@ or @allocaBytes@, the
+behaviour is undefined.  Any further access to memory areas allocated with
+@alloca@ or @allocaBytes@, after the computation that was passed to
+the allocation function has terminated, leads to undefined behaviour.  Any
+further access to the memory area referenced by a pointer passed to
+@realloc@, @reallocBytes@, or @free@ entails undefined
+behaviour.

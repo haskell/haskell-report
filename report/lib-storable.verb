@@ -1,0 +1,77 @@
+\section{@Foreign.Storable@}
+\label{sec:Storable}
+
+To code marshalling in Haskell, Haskell data structures need to be translated
+into the binary representation of a corresponding data structure of the
+foreign language and vice versa.  To this end, the module @Foreign.Storable@
+provides routines that manipulate primitive data types stored in unstructured
+memory blocks.  The class @Storable@ is instantiated for all primitive
+types that can be stored in raw memory.  Reading and writing these types to
+arbitrary memory locations is implemented by the member functions of the
+class.  The member functions, furthermore, encompass support for computing the
+storage requirements and alignment restrictions of storable types.
+
+Memory addresses are represented as values of type @Ptr a@
+(Section~\ref{sec:Ptr}), where @a@ is a storable type.  The type argument
+to @Ptr@ provides some type safety in marshalling code, as pointers to
+different types cannot be mixed without an explicit cast.  Moreover, it
+assists in resolving overloading.
+
+The class @Storable@ is instantiated for all standard basic types of
+Haskell, the fixed size integral types of the modules @Int@ and
+@Word@ (Section~\ref{sec:Int-Word}), data and function pointers
+(Section~\ref{sec:Ptr}), and stable pointers (Section~\ref{sec:StablePtr}).
+There is no instance of @Storable@ for foreign pointers.  The intention
+is to ensure that storing a foreign pointer requires an explicit cast to a
+plain @Ptr@, which makes it obvious that the finalizers of the foreign
+pointer may be invoked at this point if no other reference to the pointer
+exists anymore.
+
+The signatures and behaviour of the member functions of the class
+@Storable@ are as follows:
+%
+\begin{codedesc}
+\item[sizeOf~~~~::\ Storable a => a -> Int]
+\item[alignment~::\ Storable a => a -> Int]\combineitems The function
+  @sizeOf@ computes the storage requirements (in bytes) of the argument,
+  and alignment computes the alignment constraint of the argument.  An
+  alignment constraint @x@ is fulfilled by any address divisible by
+  @x@. Both functions do not evaluate their argument, but compute the
+  result on the basis of the type of the argument alone.  We require that the
+  size is divisible by the alignment.  (Thus each element of a contiguous
+  array of storable values will be properly aligned if the first one is.)
+
+\item[peekElemOff ::\ Storable a => Ptr a -> Int -> IO a] Read a value from a
+  memory area regarded as an array of values of the same kind. The first
+  argument specifies the start address of the array and the second the index
+  into the array (the first element of the array has index 0).
+  
+\item[pokeElemOff ::\ Storable a => Ptr a -> Int -> a -> IO ()] Write a value
+  to a memory area regarded as an array of values of the same kind.  The first
+  and second argument are as for @peekElemOff@.
+  
+\item[peekByteOff ::\ Storable a => Ptr b -> Int -> IO a] Read a value from a
+  memory location given by a base address and byte offset from that base
+  address.
+  
+\item[pokeByteOff ::\ Storable a => Ptr b -> Int -> a -> IO ()] Write a value
+  to a memory location given by a base address and offset from that base
+  address.
+  
+\item[peek ::\ Storable a => Ptr a -> IO a] Read a value from the given memory
+  location.
+  
+\item[poke ::\ Storable a => Ptr a -> a -> IO ()] Write the given value to the
+  given memory location.
+\end{codedesc}
+%
+On some architectures, the @peek@ and @poke@ functions might require
+properly aligned addresses to function correctly.  Thus, portable code should
+ensure that when peeking or poking values of some type @a@, the alignment
+constraint for @a@, as given by the function @alignment@ is
+fulfilled.
+
+A minimal complete definition of @Storable@ needs to define
+@sizeOf@, @alignment@, one of @peek@, @peekElemOff@, or
+@peekByteOff@, and one of @poke@, @pokeElemOff@, and
+@pokeByteOff@.

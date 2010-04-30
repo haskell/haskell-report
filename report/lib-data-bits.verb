@@ -1,0 +1,78 @@
+\section{@Data.Bits@}
+
+This module provides functions implementing typical bit operations overloaded
+for the standard integral types @Int@ and @Integer@ as well as the
+types provided by the modules @Int@ and @Word@ in
+Section~\ref{sec:Int-Word}.  The overloading is implemented via a new type
+class @Bits@, which is a subclass of @Num@ and has the following
+member functions:
+%
+\begin{codedesc}
+\item[(.\&.), (.|.), xor ::\ Bits a => a -> a -> a]  Implement bitwise
+  conjunction, disjunction, and exclusive or.  The infix operators have the
+  following precedences:
+  %
+  \begin{quote}
+\begin{verbatim}
+infixl 7 .&.
+infixl 6 `xor`
+infixl 5 .|.
+\end{verbatim}
+  \end{quote}
+  
+\item[complement ::\ Bits a => a -> a] Calculate the bitwise complement of the
+  argument.
+
+\item[shift, rotate ::\ Bits a => a -> Int -> a] Shift or rotate the bit
+  pattern to the left for a positive second argument and to the right for a
+  negative argument.  The function @shift@ performs sign extension on
+  signed number types; i.e., right shifts fill the top bits with 1 if the
+  number is negative and with 0 otherwise.  These operators have the following
+  precedences as infix operators:
+  %
+  \begin{quote}
+\begin{verbatim}
+infixl 8 `shift`, `rotate`
+\end{verbatim}
+  \end{quote}
+  %
+  For unbounded types (e.g., @Integer@), @rotate@ is equivalent to
+  @shift@.  An instance can define either this unified @rotate@ or
+  @rotateL@ and @rotateR@, depending on which is more convenient for
+  the type in question.
+
+\item[bit ::\ Bits a => Int -> a] Obtain a value where only the $n$th bit
+  is set.
+  
+\item[setBit, clearBit, complementBit ::\ a -> Int -> a] Set, clear, or
+  complement the bit at the given position.
+  
+\item[testBit ::\ Bits a => a -> Int -> Bool] Check whether the $n$th bit of
+  the first argument is set.
+
+\item[bitSize~~::\ Bits a => a -> Int]
+\item[isSigned~::\ Bits a => a -> Bool]\combineitems Respectively, query the
+  number of bits of values of type @a@ and whether these values are
+  signed.  These functions never evaluate their argument.  The function
+  @bitSize@ is undefined for unbounded types (e.g., @Integer@).
+
+\item[shiftL,~~shiftR~~::\ Bits a => a -> Int -> a]
+\item[rotateL,~rotateR~::\ Bits a => a -> Int -> a]\combineitems The functions
+  @shiftR@ and @rotateR@ are synonyms for @shift@ and
+  @rotate@; @shiftL@ and @rotateL@ negate the second argument.
+  These operators have the following precedences as infix operators:
+  %
+  \begin{quote}
+\begin{verbatim}
+infixl 8 `shiftL`, `shiftR`, `rotateL`, `rotateR`
+\end{verbatim}
+  \end{quote}
+
+\end{codedesc}
+%
+Bits are numbered from 0 with bit 0 being the least significant bit.  A
+minimal complete definition of the type class @Bits@ must include
+definitions for the following functions: @(.&.)@, @(.|.)@,
+@xor@, @complement@, @shift@, @rotate@, @bitSize@,
+and @isSigned@. 
+

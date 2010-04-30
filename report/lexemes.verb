@@ -148,8 +148,9 @@ comment in that code will interfere with the nested comments.
 varid	-> (small \{small | large | digit | @'@ \})_{\langle{}reservedid\rangle{}}
 conid		-> large \{small | large | digit | @'@ \} 
 reservedid -> @case@ | @class@ | @data@ | @default@ | @deriving@ | @do@ | @else@
-	| @if@ | @import@ | @in@ | @infix@ | @infixl@ | @infixr@ | @instance@
-	| @let@ | @module@ | @newtype@ | @of@ | @then@ | @type@ | @where@ | @_@
+	| \hprime{@foreign@} | @if@ | @import@ | @in@ | @infix@ | @infixl@
+        | @infixr@ | @instance@ | @let@ | @module@ | @newtype@ | @of@
+        | @then@ | @type@ | @where@ | @_@
 @@@
 \indexsyn{varid}%
 \indexsyn{conid}%

@@ -1,0 +1,87 @@
+\section{@Foreign.Marshal.Error@}
+\label{sec:MarshalError}
+
+The module @Foreign.Marshal.Error@ provides language independent routines for
+converting error conditions of external functions into Haskell @IO@ monad
+exceptions.  It consists out of two parts.  The first part extends the I/O
+error facilities of the @IO@ module (Section~\ref{IO}) with
+functionality to construct I/O errors.  The second part provides a set of
+functions that ease turning exceptional result values into I/O errors.
+
+\paragraph{I/O Errors}
+%
+The following functions can be used to construct values of type
+@IOError@.
+%
+\begin{codedesc}
+\item[data IOErrorType] This is an abstract type that contains a value for
+  each variant of @IOError@.
+
+\item[mkIOError ::\ IOErrorType -> String -> Maybe Handle -> Maybe FilePath
+  -> IOError] Construct an @IOError@ of the given type where the second
+  argument describes the error location and the third and fourth argument
+  contain the file handle and file path of the file involved in the error if
+  applicable. 
+  
+\item[alreadyExistsErrorType ::\ IOErrorType] I/O error where the operation
+  failed because one of its arguments already exists.
+  
+\item[doesNotExistErrorType ::\ IOErrorType] I/O error where the operation
+  failed because one of its arguments does not exist.
+  
+\item[alreadyInUseErrorType ::\ IOErrorType] I/O error where the operation
+  failed because one of its arguments is a single-use resource, which is
+  already being used.
+  
+\item[fullErrorType ::\ IOErrorType] I/O error where the operation failed
+  because the device is full.
+  
+\item[eofErrorType ::\ IOErrorType] I/O error where the operation failed
+  because the end of file has been reached.
+  
+\item[illegalOperationType ::\ IOErrorType] I/O error where the operation is
+  not possible.
+  
+\item[permissionErrorType ::\ IOErrorType] I/O error where the operation failed
+  because the user does not have sufficient operating system privilege to
+  perform that operation.
+
+\item[userErrorType ::\ IOErrorType] I/O error that is programmer-defined.
+
+\item[annotateIOError ::\ IOError -> String -> Maybe Handle -> Maybe
+  FilePath -> IOError] Adds a location description and maybe a file path and
+  file handle to an I/O error.  If any of the file handle or file path is not
+  given the corresponding value in the I/O error remains unaltered.
+\end{codedesc}
+
+\paragraph{Result Value Checks}
+
+The following routines are useful for testing return values and raising an I/O
+exception in case of values indicating an error state.
+%
+\begin{codedesc}
+\item[throwIf ::\ (a -> Bool) -> (a -> String) -> IO a -> IO a] Execute the
+  computation determined by the third argument.  If the predicate provided in
+  the first argument yields @True@ when applied to the result of that
+  computation, raise an @IO@ exception that includes an error message
+  obtained by applying the second argument to the result of the computation.
+  If no exception is raised, the result of the computation is the result of
+  the whole operation.
+
+\item[throwIf\_ ::\ (a -> Bool) -> (a -> String) -> IO a -> IO ()]
+  Operate as @throwIf@ does, but discard the result of the computation
+  in any case.
+
+\item[throwIfNeg~~::\ (Ord a, Num a) => (a -> String) -> IO a -> IO a]
+\item[throwIfNeg\_~::\ (Ord a, Num a) => (a -> String) -> IO a -> IO ()]\combineitems
+  These two functions are instances of @throwIf@ and @throwIf_@,
+  respectively, where the predicate is @(< 0)@.
+  
+\item[throwIfNull ::\ String -> IO (Ptr a) -> IO (Ptr a)] This is an instance
+  of @throwIf@, where the predicate is @(== Ptr.nullPtr)@ and the
+  error message is constant.
+
+\item[void ::\ IO a -> IO ()]
+  Discard the result of a computation.
+\end{codedesc}
+

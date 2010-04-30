@@ -1,0 +1,25 @@
+\subsubsection{@Int@ and @Word@}
+\label{sec:Int-Word}
+
+The two modules @Int@ and @Word@ provide the following signed and
+unsigned integral types of fixed size:
+%
+\begin{quote}
+  \begin{tabular}{|l|l|l|}
+    \hline
+    Size in bits & Signed       & Unsigned\\\hline\hline
+    8            & @Int8@  & @Word8@\\
+    16           & @Int16@ & @Word16@\\
+    32           & @Int32@ & @Word32@\\
+    64           & @Int64@ & @Word64@\\
+    \hline
+  \end{tabular}
+\end{quote}
+%
+For these integral types, the modules @Int@ and @Word@ export class
+instances for the class @Bits@ and all type classes for which @Int@
+has an instance in the @Prelude@ and standard libraries.  The
+constraints on the implementation of these instances are also the same as
+those for @Int@ (Section~\ref{standard-numeric-types}).  There is, however, the
+additional constraint that all arithmetic on the fixed-sized types is
+performed modulo \(2^n\).

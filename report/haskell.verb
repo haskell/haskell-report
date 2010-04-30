@@ -133,35 +133,37 @@
 
 \newcommand{\outlinec}{\outline}
 
-% This magic adds some indentation to the left of code blocks in the
-% printed output.  It also causes a million overfull \hbox warnings,
-% which I don't know how to get rid of.  The p{\textwidth} field in
-% the tabular is required instead of just "l" because we want to use
-% the verbatim environment in there.
-%
-% when generating HTML, we don't want the extra indentation, because
-% it also adds some vertical space which seems hard to get rid of.
-%
-% --SDM 29/04/2010
-%
-\ifx \HCode\Undef
-% not tex4ht...
-\newcommand{\bprog}{
-\par\vspace{-3ex}\noindent\begin{tabular}{@@{\hspace*{17pt}}p{\textwidth}@@{}}}
-\newcommand{\eprog}{%
-\end{tabular}\par\vspace{-2ex}}
-\newcommand{\bprogB}{%
-\begin{tabular}{@@{}p{\textwidth}@@{}}}
-\newcommand{\eprogB}{\eprog}
-\newcommand{\eprogNoSkip}{\eprog}
-\else
-% tex4ht mode...
-\newcommand{\bprog}{}
-\newcommand{\eprog}{}
+% we used to have a complicated arrangement with a tabular environment
+% to indent the code blocks a little, but it ran into difficulties
+% when I started using the verbatim environment for code, also it
+% looked bad in the HTML output.  The simple way works best: just use
+% the quote environment. --SDM 4/2010
+\newcommand{\bprog}{\vspace{-1ex}\begin{quote}}
+\newcommand{\eprog}{\end{quote}\vspace{-1ex}}
 \newcommand{\bprogB}{}
 \newcommand{\eprogB}{}
-\newcommand{\eprogNoSkip}{}
-\fi
+\newcommand{\eprogNoSkip}{\eprog}
+
+% setting of code from ffi.tex
+%
+\makeatletter
+\newenvironment{codedesc}{%             % description of code pieces
+  \list{}{\labelwidth\z@@
+    \let\makelabel\codedesclabel}
+  }{%
+  \endlist
+  }
+\newcommand*{\codedesclabel}[1]{%
+  \hspace{-\leftmargin}
+  \parbox[b]{\labelwidth}{\makebox[0pt][l]{\texttt{#1}}\\}\hfil\relax
+  }
+\makeatother
+\newcommand{\combineitems}{\vspace*{-\itemsep}\vspace*{-\parsep}\vspace*{-1em}}
+
+% general from ffi.tex
+%
+\newcommand{\clearemptydoublepage}{%
+  \newpage{\pagestyle{empty}\cleardoublepage}}
 
 %special characters
 \newcommand{\bkq}{\mbox{\tt \char'022}} % (syntax) backquote char
@@ -440,6 +442,7 @@ that it does not claim to be a definition of the language Haskell 98.
 \input{modules}\startnewsection
 \input{basic}\startnewsection
 \input{io-13}\startnewsection
+\input{ffi}\startnewsection
 
 % \appendix
 \input{standard-prelude}\startnewsection
@@ -471,6 +474,23 @@ that it does not claim to be a definition of the language Haskell 98.
 \input{cputime}\startnewsection
 \input{random}\startnewsection
 
+\input{lib-data-intword}
+\input{lib-data-bits}
+
+\input{lib-foreign}
+\input{lib-ptr}
+\input{lib-foreignptr}
+\input{lib-storable}
+\input{lib-stableptr}
+\input{lib-marshal}
+\input{lib-marshalerror}
+\input{lib-marshalutils}
+\input{lib-marshalalloc}
+\input{lib-marshalarray}
+\input{lib-cforeign}
+\input{lib-ctypes}
+\input{lib-cstring}
+\input{lib-cerror}
 
 
 % ------------------------- Index and references -----------------------------------

@@ -49,8 +49,9 @@ lambda abstractions extend to the right as far as possible.
 varid	-> (small \{small | large | digit | @'@ \})_{\langle{}reservedid\rangle{}}
 conid		-> large \{small | large | digit | @'@ \} 
 reservedid -> @case@ | @class@ | @data@ | @default@ | @deriving@ | @do@ | @else@
-	| @if@ | @import@ | @in@ | @infix@ | @infixl@ | @infixr@ | @instance@
-	| @let@ | @module@ | @newtype@ | @of@ | @then@ | @type@ | @where@ | @_@
+	| \hprime{@foreign@} | @if@ | @import@ | @in@ | @infix@ | @infixl@
+        | @infixr@ | @instance@ | @let@ | @module@ | @newtype@ | @of@
+        | @then@ | @type@ | @where@ | @_@
 
 varsym		-> ( \hprime{symbol_{\langle{}@:@\rangle} \{symbol\}} )_{\langle{}reservedop | dashes\rangle{}}
 consym		-> ( \hprime{@:@ \{symbol\}})_{\langle{}reservedop\rangle{}}

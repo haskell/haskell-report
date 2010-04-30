@@ -59,8 +59,14 @@ PARTS_NO_PREFACE = iso-chars.tex \
                 array.tex io.tex char.tex monad.tex list.tex \
                 system.tex directory.tex \
                 maybe.tex time.tex cputime.tex random.tex \
-		locale.tex syntax-lexical.tex syntax-iso.tex \
-		Prelude.tex PreludeList.tex PreludeText.tex PreludeIO.tex
+		locale.tex syntax-lexical.tex syntax-iso.tex ffi.tex \
+		Prelude.tex PreludeList.tex PreludeText.tex PreludeIO.tex \
+		lib-marshal.tex \
+		lib-cerror.tex     lib-data-intword.tex  lib-marshalerror.tex \
+		lib-cforeign.tex   lib-foreignptr.tex    lib-marshalutils.tex \
+		lib-cstring.tex    lib-foreign.tex       lib-ptr.tex \
+		lib-ctypes.tex     lib-marshalalloc.tex  lib-stableptr.tex \
+		lib-data-bits.tex  lib-marshalarray.tex  lib-storable.tex
 
 CODE =		lib-code/Ratio.tex lib-code/Complex.tex lib-code/Ix.tex \
                 lib-code/Numeric.tex \
