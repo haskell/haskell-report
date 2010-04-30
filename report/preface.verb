@@ -80,63 +80,20 @@ implementations), that it was worthwhile to define another iteration of
 the language standard, essentially to codify (and legitimise) the status
 quo.
 
-\Haskell{} 2010 was thus conceived as a relatively conservative
-extension of \Haskell{} 98, taking on board new features only where
-they were well understood and widely agreed upon.
-It too is intended to be a ``stable'' language, yet reflecting the
+The \Haskell{} Prime effort was thus conceived as a relatively
+conservative extension of \Haskell{} 98, taking on board new features
+only where they were well understood and widely agreed upon.  It too
+is intended to be a ``stable'' language, yet reflecting the
 considerable progress in research on language design in recent years.
+
+After several years exploring the design space, it was decided that a
+single monolithic revision of the language was too large a task, and
+the best way to make progress was to evolve the language in small
+incremental steps, each revision integrating only a small number of
+well-understood extensions and changes.  \Haskell{} 2010 is the first
+revision to be created in this way, and new revisions are expected
+once per year.
 \end{haskellprime}
-
-% {\em Implementors are committed to supporting \Haskell{} 2010
-% exactly as specified, for the foreseeable future}.
-%It provides a stable point of reference, so that those who
-%wish to write text books, or use \Haskell{} for teaching, can do so in
-%the knowledge that \Haskell{} 2010 will continue to exist.  
-
-The original \Haskell{} Report covered only the language, together with a
-standard library called the @Prelude@.  By the time \Haskell{} 98 was
-stabilised, it had become clear that many programs need access to a
-larger set of library functions (notably concerning input/output and
-simple interaction with the operating system).  If these programs were
-to be portable, a set of libraries would have to be standardised too.
-A separate effort was therefore begun by a distinct (but overlapping)
-committee to fix the \Haskell{} 98 Libraries.  
-
-\begin{haskellprime}
-For \Haskell{} 2010, we have seen fit once again to separate the
-Libraries standardisation process from the Language.  Libraries evolve
-much more rapidly than the language, and are governed by a looser
-community-led process.
-\end{haskellprime}
-
-%\section*{Revising the \Haskell{} 98 Reports}
-%
-%After a year or two, many typographical errors and infelicities had been
-%spotted.  I took on the role of gathering and acting on these corrections,
-%with the following goals:
-%\begin{itemize}
-%\item Correct typographical errors.
-%\item Clarify obscure passages.
-%\item Resolve ambiguities.
-%\item With reluctance, make small changes to make the overall language more
-%consistent.
-%\end{itemize}
-%This task turned out to be much, much larger than I had anticipated.
-%As \Haskell{} becomes more widely used, the Report has been scrutinised by more
-%and more people, and I have adopted hundreds of (mostly small) changes as 
-%a result of their feedback.
-%The original committees ceased to exist when the original \Haskell{} 98 Reports were 
-%published, so every change was instead proposed to the entire \Haskell{} mailing list.
-%
-%This document is the outcome of this process of refinement.
-%It includes both the \Haskell{} 98 Language Report and the Libraries Report,
-%and constitutes the official specification of both.
-%It is {\em not} a tutorial on programming in
-%\Haskell{} such as the `Gentle Introduction' \cite{tutorial}, and some
-%familiarity with functional languages is assumed. 
-%
-%The entire text of both Reports is available online (see ``\Haskell{} resources'' below).
-%
 
 \section*{Extensions to \Haskell{} 98}
 
@@ -146,7 +103,7 @@ The most significant language changes in \Haskell{} 2010 relative to
 
 New language features:
 \begin{itemize}
-\item A foreign function interface (FFI)
+\item A Foreign Function Interface (FFI)
 \item Hierarchical module names, e.g. @Data.Bool@
 \item Pattern guards
 \end{itemize}
@@ -170,6 +127,7 @@ The \Haskell{} web site \url{http://haskell.org} gives access to many useful res
 \item Contributed \Haskell{} tools and libraries.
 \item Applications of \Haskell{}.
 \item User-contributed wiki pages.
+\item News and events in the \Haskell{} community.
 \end{itemize}
 You are welcome to comment on, suggest improvements to, and criticise
 the language or its presentation in the report, via the \Haskell{}
@@ -177,40 +135,60 @@ mailing list, or the \Haskell{} wiki.
 
 \section*{Building the language}
 
-\Haskell{} was created, and continues to be sustained, by an active community of 
-researchers and application programmers.  Those who served on the Language and
-Library committees, in particular, devoted a huge amount of time and energy to the
-language.  Here they are, with their affiliation(s) for the relevant period:
+\Haskell{} was created, and continues to be sustained, by an active
+community of researchers and application programmers.  Those who
+served on the Language and Library committees, in particular, devoted
+a huge amount of time and energy to the language.  Here they are, with
+their affiliation(s) for the relevant period:
 
 \begin{center}
 Arvind (MIT) \\
+Audrey Tang \\
 Lennart Augustsson (Chalmers University) \\
 Dave Barton (Mitre Corp) \\
 Brian Boutel (Victoria University of Wellington) \\
 Warren Burton (Simon Fraser University) \\
+Manuel M T Chakravarty (University of New South Wales) \\
+Duncan Coutts (Well-Typed LLP) \\
 Jon Fairbairn (University of Cambridge) \\
 Joseph Fasel (Los Alamos National Laboratory) \\
+John Goerzen
 Andy Gordon (University of Cambridge) \\
 Maria Guzman (Yale University) \\
 Kevin Hammond [editor] (University of Glasgow) \\
+Bastiaan Heeren (Utrecht University) \\
 Ralf Hinze (University of Bonn) \\
 Paul Hudak [editor] (Yale University) \\
 John Hughes [editor] (University of Glasgow; Chalmers University) \\
 Thomas Johnsson (Chalmers University) \\
+Isaac Jones (Galois, inc.)
 Mark Jones (Yale University, University of Nottingham, Oregon Graduate Institute) \\
 Dick Kieburtz (Oregon Graduate Institute) \\
-John Launchbury (University of Glasgow; Oregon Graduate Institute) \\
+John Launchbury (University of Glasgow; Oregon Graduate Institute; Galois, inc.) \\
+Andres Löh (Utrecht University) \\
+Ian Lynagh (Well-Typed LLP) \\
 Erik Meijer (Utrecht University) \\
 Rishiyur Nikhil (MIT) \\
+Simon Marlow [editor] (Microsoft Research) \\
+John Meacham \\
+Ravi Nanavati (Bluespec, inc.) \\
+Henrik Nilsson (University of Nottingham) \\
+Ross Paterson (City University, London) \\
 John Peterson [editor] (Yale University) \\
 Simon Peyton Jones [editor] (University of Glasgow; Microsoft Research Ltd) \\
 Mike Reeve (Imperial College) \\
 Alastair Reid (University of Glasgow) \\
 Colin Runciman (University of York) \\
+Don Stewart (Galois, inc.) \\
+Martin Sulzmann (Informatik Consulting Systems AG) \\
+Simon Thompson (University of Kent) \\
 Philip Wadler [editor] (University of Glasgow) \\
+Malcolm Wallace (York University) \\
+Stephanie Weirich (University of Pennsylvania) \\
 David Wise (Indiana University) \\
 Jonathan Young (Yale University)
 \end{center}
+
 Those marked [editor] served as the co-ordinating editor for one or more
 revisions of the language.
 
@@ -226,7 +204,6 @@ Duke Briscoe,
 Paul Callaghan,
 Magnus Carlsson,
 Mark Carroll,
-Manuel Chakravarty,
 Franklin Chen,
 Olaf Chitil,
 Chris Clack,
@@ -280,10 +257,8 @@ Bjorn Lisper,
 Sandra Loosemore,
 Pablo Lopez,
 Olaf Lubeck, 
-Ian Lynagh,
 Christian Maeder,
 Ketil Malde,
-Simon Marlow,
 Michael Marte,
 Jim Mattson,
 John Meacham,
@@ -293,7 +268,6 @@ Randy Michelsen,
 Rick Mohr,
 Andy Moran,
 Graeme Moss,
-Henrik Nilsson,
 Arthur Norman,
 Nick North,
 Chris Okasaki,
@@ -301,7 +275,6 @@ Bjarte M. {\O}stvold,
 Paul Otto, 
 Sven Panne,
 Dave Parrott,
-Ross Paterson,
 Larne Pekowsky,
 Rinus Plasmeijer,
 Ian Poole,
@@ -330,7 +303,6 @@ Mike Thyer,
 Mark Tullsen,
 David Tweed,
 Pradeep Varma,
-Malcolm Wallace,
 Keith Wansbrough,
 Tony Warnock,
 Michael Webber,
@@ -353,6 +325,6 @@ been possible.
 
 \vspace{1in}
 
-Simon Peyton Jones \\
-Cambridge, September 2002
+Simon Marlow \\
+Cambridge, April 2010
 %**~sfooter
