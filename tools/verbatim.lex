@@ -17,6 +17,7 @@ int yywrap (void) { return 1; }
 <NORM>@@		{ printf ("@"); }
 <NORM>@			{ printf ("\\mbox{\\tt ");
 			  PUSH NORM;  BEGIN INVERB; }
+<INVERB>" "             { printf ("\\ "); }
 <INVERB>@		{ printf ("}");  POP; }
 <INVERB>\#		{ printf ("{\\char'43}"); }
 <INVERB>\$		{ printf ("{\\char'44}"); }
