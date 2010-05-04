@@ -11,9 +11,9 @@ Haskell expressions.  Fixity resolution also applies to Haskell
 patterns, but patterns are a subset of expressions so in what follows
 we consider only expressions for simplicity.
 
-The function @resolve@ takes a list consisting of alternating
-expressions and operators; i.e. an instance of the "infixexp"
-non-terminal in the context-free grammar, and returns either @Just e@
+The function @resolve@ takes a list in which the elements are
+expressions or operators, i.e. an instance of the "infixexp"
+non-terminal in the context-free grammar.  It returns either @Just e@
 where @e@ is the resolved expression, or @Nothing@ if the input does
 not represent a valid expression.  In a compiler, of course, it would
 be better to return more information about the operators involved for
@@ -22,13 +22,22 @@ will suffice to illustrate the algorithm here.
 
 \bprog
 @
+import Control.Monad
+
 type Prec   = Int
 type Var    = String
 
-data Op     = Op String Prec Fixity                 deriving Eq
-data Fixity = Leftfix | Rightfix | Nonfix           deriving Eq
-data Exp    = Var Var | OpApp Exp Op Exp | Neg Exp  deriving Eq
-data Tok    = TExp Exp | TOp Op | TNeg              deriving Eq
+data Op = Op String Prec Fixity
+  deriving (Eq,Show)
+
+data Fixity = Leftfix | Rightfix | Nonfix
+  deriving (Eq,Show)
+
+data Exp = Var Var | OpApp Exp Op Exp | Neg Exp 
+  deriving (Eq,Show)
+
+data Tok = TExp Exp | TOp Op | TNeg
+  deriving (Eq,Show)
    
 resolve :: [Tok] -> Maybe Exp
 resolve tokens = fmap fst $ parseNeg (Op "" (-1) Nonfix) tokens
@@ -121,7 +130,7 @@ illegal.
 The function @parseNeg@ handles prefix negation.  If we encounter a
 negation operator, and it is legal in this position (the operator to
 the left has precedence lower than 6), then we proceed in a similar
-way to case (3) above: compute the argument to '-' by recursively
+way to case (3) above: compute the argument to @-@ by recursively
 calling @parseNeg@, and then continue by calling @parse@.
 
 Note that this algorithm is insensitive to the range and resolution of
