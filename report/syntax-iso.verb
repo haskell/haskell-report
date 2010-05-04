@@ -520,7 +520,7 @@ callconv -> @ccall@ | @stdcall@ | @cplusplus@  & (\tr{calling convention})
 \indexsyn{rhs}rhs	->  @=@ exp [@where@ decls]
 	|   gdrhs [@where@ decls]
 
-\indexsyn{gdrhs}gdrhs	->  guards @=@ exp [gdrhs]
+\indexsyn{gdrhs}gdrhs	->  \hprime{guards @=@ exp [gdrhs]}
 
 \indexsyn{guards}\hprime{guards}	->  \hprime{@|@ guard_1, ..., guard_n}             & \hprime{(n>=1)}
 \hprime{guard}	-> \hprime{pat @<-@ infixexp} 	& (\hprime{\tr{pattern guard}})
