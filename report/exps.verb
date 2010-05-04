@@ -1510,16 +1510,15 @@ $x_1$@ })@ $\ldots$ @(case @$v$@ of { @$p$@ -> @$x_n$@})@\\
 \outlinec{\small
 \begin{tabular}{@@{}cl}
 (g)&@case @$v$@ of { @$K\ p_1 \ldots p_n$@ -> @$e$@; _ -> @$e'$@ }@\\
-&$=$\hprime{@ case @$e'$@ of { @$y$@ ->@}\\
-&@ case @$v$@ of {@\\
+&$=$@ case @$v$@ of {@\\
 &@     @$K\ x_1 \ldots x_n$@ -> case @$x_1$@ of {@\\
-&@                    @$p_1$@ -> @$\ldots$@ case @$x_n$@ of { @$p_n$@ -> @$e$@ ; _ -> @$y$@ } @$\ldots$\\
-&\hprime{@                    _  -> @$y$@ }@}\\
-&\hprime{@     _ -> @$y$@ }}@}\\[2pt]
+&@                    @$p_1$@ -> @$\ldots$@ case @$x_n$@ of { @$p_n$@ -> @$e$@ ; _ -> @$e'$@ } @$\ldots$\\
+&@                    _  -> @$e'$@ }@\\
+&@     _ -> @$e'$@ }@\\[2pt]
 &{\rm at least one of $p_1, \ldots, p_n$ is not a variable; $x_1, \ldots, x_n$ are new variables}\\[4pt]
 %\\
 (h)&@case @$v$@ of { @$k$@ -> @$e$@; _ -> @$e'$@ } @$=$@ if (@$v$@==@$k$@) then @$e$@ else @$e'$ \\
-&{\rm where $k$ is a numeric, character, or string literal.} \\[4pt]
+&{\rm where $k$ is a numeric, character, or string literal} \\[4pt]
 %\\
 (i)&@case @$v$@ of { @$x$@ -> @$e$@; _ -> @$e'$@ } @$=$@ case @$v$@ of { @$x$@ -> @$e$@ }@\\[4pt]
 %\\
@@ -1572,12 +1571,11 @@ $e'$ @ }@ \\
 \begin{haskellprime}
 \begin{tabular}{@@{}cl}
 (s)&@case () of { () | @$g_1$@, @$\ldots$@, @$g_n$@ -> @$e$@; _ -> @$e'$@ }@\\
-   &$=$@ case @$e'$@ of { @$y$@ ->@\\
-   &@  case () of {@\\
+   &$=$@ case () of {@\\
    &@    () | @$g_1$@ -> @\ldots@ case () of {@\\
    &@                   () | @$g_n$@ -> @$e$@;@\\
-   &@                   _ -> @$y$@ } @\ldots\\
-   &@    _ -> @$y$@ }}@\\
+   &@                   _ -> @$e'$@ } @\ldots\\
+   &@    _ -> @$e'$@ }@\\
    &{\rm where $y$ is a new variable}\\[4pt]
 
 (t)&@case () of { () | @$p$@ <- @$e_0$@ -> @$e$@; _ -> @$e'$@ }@\\
