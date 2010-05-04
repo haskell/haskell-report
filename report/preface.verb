@@ -69,7 +69,7 @@ features.
 By the middle of 1997, there had been five versions of the language design
 (from \Haskell{} 1.0 -- 1.4).  At the 1997 \Haskell{} Workshop 
 in Amsterdam, it was decided that a stable variant of \Haskell{} was
-needed; this became ``\Haskell{} 98'' and was published in Februrary
+needed; this became ``\Haskell{} 98'' and was published in February
 1999.  The fixing of minor bugs led to the \emph{Revised} \Haskell{} 98 Report
 in 2002.
 
@@ -103,14 +103,14 @@ The most significant language changes in \Haskell{} 2010 relative to
 
 New language features:
 \begin{itemize}
-\item A Foreign Function Interface (FFI)
-\item Hierarchical module names, e.g. @Data.Bool@
-\item Pattern guards
+\item A Foreign Function Interface (FFI).
+\item Hierarchical module names, e.g. @Data.Bool@.
+\item Pattern guards.
 \end{itemize}
 
 Removed language features:
 \begin{itemize}
-\item The $(n+k)$ pattern syntax
+\item The $(n+k)$ pattern syntax.
 \end{itemize}
 
 \end{haskellprime}
@@ -143,7 +143,6 @@ their affiliation(s) for the relevant period:
 
 \begin{center}
 Arvind (MIT) \\
-Audrey Tang \\
 Lennart Augustsson (Chalmers University) \\
 Dave Barton (Mitre Corp) \\
 Brian Boutel (Victoria University of Wellington) \\
@@ -181,6 +180,7 @@ Alastair Reid (University of Glasgow) \\
 Colin Runciman (University of York) \\
 Don Stewart (Galois, inc.) \\
 Martin Sulzmann (Informatik Consulting Systems AG) \\
+Audrey Tang \\
 Simon Thompson (University of Kent) \\
 Philip Wadler [editor] (University of Glasgow) \\
 Malcolm Wallace (University of York) \\
@@ -194,12 +194,12 @@ revisions of the language.
 
 In addition, dozens of other people made helpful contributions, some small but
 many substantial.  They are as follows:
-Kris Aerts,
 Hans Aberg,
+Kris Aerts,
 Sten Anderson,
 Richard Bird,
-Stephen Blott,
 Tom Blenko,
+Stephen Blott,
 Duke Briscoe,
 Paul Callaghan,
 Magnus Carlsson,
@@ -226,7 +226,6 @@ Matt Harden,
 Klemens Hemm,
 Fergus Henderson,
 Dean Herington,
-Ralf Hinze,
 Bob Hiromoto,
 Nic Holt,
 Ian Holyer, 
@@ -242,7 +241,6 @@ Wolfram Kahl,
 Stefan Kahrs,
 Antti-Juhani Kaijanaho,
 Jerzy Karczmarczuk,
-Wolfram Kahl,
 Kent Karlsson,
 Martin D. Kealey,
 Richard Kelsey,
@@ -299,7 +297,6 @@ Josef Svenningsson,
 Ken Takusagawa,
 Wolfgang Thaller,
 Satish Thatte,
-Simon Thompson,
 Tom Thomson,
 Tommy Thorn,
 Dylan Thurston,
