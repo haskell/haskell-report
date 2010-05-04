@@ -474,23 +474,16 @@ impdecls     -> impdecl_1 @;@ ... @;@ impdecl_n 	&  (n>=1)\indexsyn{impdecls}
         |  @(@ simpleclass_1 @,@ ... @,@ simpleclass_n @)@		&  (n>=0)
 \indexsyn{simpleclass}simpleclass -> qtycls tyvar			
 
-simpletype -> tycon tyvar_1 ... tyvar_k &  (k>=0)
-constrs	   -> constr_1 @|@ ... @|@ constr_n	&  (n>=1)
-constr	   -> con [@!@] atype_1 ... [@!@] atype_k	& (\tr{arity} con = k, k>=0)
+\indexsyn{simpletype}simpletype -> tycon tyvar_1 ... tyvar_k &  (k>=0)
+\indexsyn{constrs}constrs	   -> constr_1 @|@ ... @|@ constr_n	&  (n>=1)
+\indexsyn{constr}constr	   -> con [@!@] atype_1 ... [@!@] atype_k	& (\tr{arity} con = k, k>=0)
            |  (btype | @!@ atype) conop (btype | @!@ atype) & (\tr{infix} conop)
            |  con @{@ fielddecl_1 @,@ ... @,@ fielddecl_n @}@ &  (n>=0)
-newconstr  -> con atype
+\indexsyn{newconstr}newconstr  -> con atype
 	   |  con @{@ var @::@ type @}@ 
-fielddecl  -> vars @::@ (type | @!@ atype)
-deriving   -> @deriving@ (dclass | @(@dclass_1@,@ ... @,@ dclass_n@)@)&  (n>=0)
-dclass     -> qtycls
-\indexsyn{simpletype}
-\indexsyn{constrs}
-\indexsyn{constr}
-\indexsyn{fielddecl}
-\indexsyn{deriving}
-\indexsyn{dclass}
-\indexsyn{newconstr}
+\indexsyn{fielddecl}fielddecl  -> vars @::@ (type | @!@ atype)
+\indexsyn{deriving}deriving   -> @deriving@ (dclass | @(@dclass_1@,@ ... @,@ dclass_n@)@)&  (n>=0)
+\indexsyn{dclass}dclass     -> qtycls
 
 \indexsyn{inst}inst	-> gtycon
 	|  @(@ gtycon tyvar_1 ... tyvar_k @)@	& (k>=0, tyvars \tr{distinct})
@@ -523,7 +516,7 @@ callconv -> @ccall@ | @stdcall@ | @cplusplus@  & (\tr{calling convention})
 \indexsyn{gdrhs}gdrhs	->  \hprime{guards @=@ exp [gdrhs]}
 
 \indexsyn{guards}\hprime{guards}	->  \hprime{@|@ guard_1, ..., guard_n}             & \hprime{(n>=1)}
-\hprime{guard}	-> \hprime{pat @<-@ infixexp} 	& (\hprime{\tr{pattern guard}})
+\indexsyn{guard}\hprime{guard}	-> \hprime{pat @<-@ infixexp} 	& (\hprime{\tr{pattern guard}})
          | \hprime{@let@ decls}		& (\hprime{\tr{local declaration}})
          | infixexp		& (\tr{boolean guard})
 
