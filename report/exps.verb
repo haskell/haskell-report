@@ -1164,7 +1164,6 @@ defining the semantics of pattern matching for case expressions is sufficient.
 Patterns\index{pattern} have this syntax:
 @@@
 pat     -> \hprime{lpat qconop pat} & (\tr{infix constructor})
-        | \hprime{@-@ (integer | float)} & (\tr{negative literal})
         | \hprime{lpat}
 
 \hprime{lpat} ->  apat

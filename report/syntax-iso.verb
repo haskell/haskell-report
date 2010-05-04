@@ -575,7 +575,6 @@ callconv -> @ccall@ | @stdcall@ | @cplusplus@  & (\tr{calling convention})
 \indexsyn{fbind}fbind   ->  qvar @=@ exp
         
 \indexsyn{pat}pat     -> \hprime{lpat qconop pat} & (\tr{infix constructor})
-        | \hprime{@-@ (integer | float)} & (\tr{negative literal})
         | \hprime{lpat}
 
 \indexsyn{lpat}\hprime{lpat} ->  apat
