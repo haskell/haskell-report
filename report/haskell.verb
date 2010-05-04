@@ -6,6 +6,7 @@
 \usepackage{graphicx}
 \usepackage{url}
 \usepackage[dvipsnames,usenames]{color}
+\usepackage[pdftex,bookmarks=true]{hyperref}
 
 \evensidemargin=0in
 \oddsidemargin=.5in
