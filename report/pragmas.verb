@@ -95,11 +95,9 @@ support the @LANGUAGE@ pragma are required to support
 @
 \eprog
 Those implementations are also encouraged to support the following
-named language extensions: @DoAndIfThenElse@, @HierarchicalModules@,
-@FixityResolution@, @PatternGuards@, @NoNPlusKPatterns@,
-@RelaxedDependencyAnalysis@, @LineCommentSyntax@, @EmptyDataDeclarations@,
-@LanguagePragma@ and @ForeignFunctionInterface@. These are the named
-language extensions, supported by some pre-Haskell 2010
+named language extensions: @PatternGuards@, @NoNPlusKPatterns@,
+@RelaxedPolyRec@, @EmptyDataDecls@, @ForeignFunctionInterface@. These
+are the named language extensions, supported by some pre-Haskell 2010
 implementations, that have been integrated into this report.
 
 \end{haskellprime}
