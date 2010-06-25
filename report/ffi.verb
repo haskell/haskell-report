@@ -892,3 +892,281 @@ size of the various integral types is not fixed.  Thus, to represent C
 interfaces faithfully in Haskell, for each integral type in C, we need to have
 an integral type in Haskell that is guaranteed to have the same size as the
 corresponding C type.
+
+\subsection{The External C Interface}
+
+\begin{table}
+  \begin{center}
+    \begin{tabular}{|l|l|l|}
+      \hline
+      C symbol          & Haskell symbol & Constraint on concrete C type\\
+      \hline\hline
+      @HsChar@     & @Char@    
+      & integral type\\
+      \hline
+      @HsInt@      & @Int@
+      & signed integral type, $\geq30$ bit\\
+      \hline
+      @HsInt8@     & @Int8@
+      & signed integral type, 8 bit; @int8_t@ if available\\
+      \hline
+      @HsInt16@    & @Int16@
+      & signed integral type, 16 bit; @int16_t@ if available\\
+      \hline
+      @HsInt32@    & @Int32@
+      & signed integral type, 32 bit; @int32_t@ if available\\
+      \hline
+      @HsInt64@    & @Int64@
+      & signed integral type, 64 bit; @int64_t@ if available\\ 
+      \hline
+      @HsWord8@    & @Word8@
+      & unsigned integral type, 8 bit; @uint8_t@ if available\\
+      \hline
+      @HsWord16@   & @Word16@
+      & unsigned integral type, 16 bit; @uint16_t@ if available\\
+      \hline
+      @HsWord32@   & @Word32@
+      & unsigned integral type, 32 bit; @uint32_t@ if available\\
+      \hline
+      @HsWord64@   & @Word64@
+      & unsigned integral type, 64 bit; @uint64_t@ if available\\
+      \hline
+      @HsFloat@    & @Float@
+      & floating point type\\
+     \hline
+      @HsDouble@   & @Double@
+      & floating point type\\
+     \hline
+      @HsBool@     & @Bool@
+      & @int@\\
+     \hline
+      @HsPtr@      & @Ptr a@
+      & @(void *)@\\
+     \hline
+      @HsFunPtr@   & @FunPtr a@
+      & @(void (*)(void))@\\
+     \hline
+      @HsStablePtr@& @StablePtr a@
+      & @(void *)@\\
+     \hline
+    \end{tabular}
+    \caption{C Interface to Basic Haskell Types}
+    \label{tab:c-haskell-types}
+  \end{center}
+\end{table}
+%
+\begin{table}
+  \begin{center}
+%    \begin{tabular}{|l|l|l|}
+    \begin{tabular}{|l|l|p{30ex}|}
+      \hline
+      CPP symbol           & Haskell value & Description\\
+      \hline\hline
+      @HS_CHAR_MIN@ & @minBound :: Char@
+      & \\
+      \hline
+      @HS_CHAR_MAX@ & @maxBound :: Char@
+      & \\
+      \hline
+      @HS_INT_MIN@ & @minBound :: Int@
+      & \\
+      \hline
+      @HS_INT_MAX@ & @maxBound :: Int@
+      & \\
+      \hline
+      @HS_INT8_MIN@ & @minBound :: Int8@
+      & \\
+      \hline
+      @HS_INT8_MAX@ & @maxBound :: Int8@
+      & \\
+      \hline
+      @HS_INT16_MIN@ & @minBound :: Int16@
+      & \\
+      \hline
+      @HS_INT16_MAX@ & @maxBound :: Int16@
+      & \\
+      \hline
+      @HS_INT32_MIN@ & @minBound :: Int32@
+      & \\
+      \hline
+      @HS_INT32_MAX@ & @maxBound :: Int32@
+      & \\
+      \hline
+      @HS_INT64_MIN@ & @minBound :: Int64@
+      & \\
+      \hline
+      @HS_INT64_MAX@ & @maxBound :: Int64@
+      & \\
+      \hline
+      @HS_WORD8_MAX@ & @maxBound :: Word8@
+      & \\
+      \hline
+      @HS_WORD16_MAX@ & @maxBound :: Word16@
+      & \\
+      \hline
+      @HS_WORD32_MAX@ & @maxBound :: Word32@
+      & \\
+      \hline
+      @HS_WORD64_MAX@ & @maxBound :: Word64@
+      & \\
+      \hline
+      @HS_FLOAT_RADIX@ & @floatRadix :: Float@
+      & \\
+      \hline
+      @HS_FLOAT_ROUND@ & n/a
+      & rounding style as per~\cite{C99}\\
+      \hline
+      @HS_FLOAT_EPSILON@ & n/a
+      & difference between 1 and the least value greater
+      than 1 as per~\cite{C99}\\
+      \hline
+      @HS_DOUBLE_EPSILON@ & n/a
+      & (as above)\\
+      \hline
+      @HS_FLOAT_DIG@ & n/a
+      & number of decimal digits as per~\cite{C99}\\
+      \hline
+      @HS_DOUBLE_DIG@ & n/a
+      & (as above)\\
+      \hline
+      @HS_FLOAT_MANT_DIG@ & @floatDigits :: Float@
+      & \\
+      \hline
+      @HS_DOUBLE_MANT_DIG@ & @floatDigits :: Double@
+      & \\
+      \hline
+      @HS_FLOAT_MIN@ & n/a
+      & minimum floating point number as per~\cite{C99}\\
+      \hline
+      @HS_DOUBLE_MIN@ & n/a
+      & (as above)\\
+      \hline
+      @HS_FLOAT_MIN_EXP@ & @fst . floatRange :: Float@
+      & \\
+      \hline
+      @HS_DOUBLE_MIN_EXP@ & @fst . floatRange :: Double@
+      & \\
+      \hline
+      @HS_FLOAT_MIN_10_EXP@ & n/a
+      & minimum decimal exponent as per~\cite{C99}\\
+      \hline
+      @HS_DOUBLE_MIN_10_EXP@ & n/a
+      & (as above)\\
+      \hline
+      @HS_FLOAT_MAX@ & n/a
+      & maximum floating point number as per~\cite{C99}\\
+      \hline
+      @HS_DOUBLE_MAX@ & n/a
+      & (as above)\\
+      \hline
+      @HS_FLOAT_MAX_EXP@ & @snd . floatRange :: Float@
+      & \\
+      \hline
+      @HS_DOUBLE_MAX_EXP@ & @snd . floatRange :: Double@
+      & \\
+      \hline
+      @HS_FLOAT_MAX_10_EXP@ & n/a
+      & maximum decimal exponent as per~\cite{C99}\\
+      \hline
+      @HS_DOUBLE_MAX_10_EXP@ & n/a
+      & (as above)\\
+      \hline
+      @HS_BOOL_FALSE@ & False
+      & \\
+      \hline
+      @HS_BOOL_TRUE@ & True
+      & \\
+      \hline
+    \end{tabular}
+    \caption{C Interface to Range and Precision of Basic Types}
+    \label{tab:c-haskell-values}
+  \end{center}
+\end{table}
+%
+Every Haskell system that implements the FFI needs to provide a C header file
+named @HsFFI.h@ that defines the C symbols listed in
+Tables~\ref{tab:c-haskell-types} and~\ref{tab:c-haskell-values}.
+Table~\ref{tab:c-haskell-types} table lists symbols that represent types
+together with the Haskell type that they represent and any constraints that
+are placed on the concrete C types that implement these symbols.  When a C
+type @HsT@ represents a Haskell type @T@, the occurrence of @T@
+in a foreign function declaration should be matched by @HsT@ in the
+corresponding C function prototype.  Indeed, where the Haskell system
+translates Haskell to C code that invokes @foreign@ @import@ed C
+routines, such prototypes need to be provided and included via the header that
+can be specified in external entity strings for foreign C functions (cf.\ 
+Section~\ref{sec:ccall}); otherwise, the system behaviour is undefined.  It is
+guaranteed that the Haskell value @nullPtr@ is mapped to @(HsPtr) NULL@ in C and @nullFunPtr@ is mapped to @(HsFunPtr) NULL@ and
+vice versa.
+
+Table~\ref{tab:c-haskell-values} contains symbols characterising the range and
+precision of the types from Table~\ref{tab:c-haskell-types}.  Where available,
+the table states the corresponding Haskell values.  All C symbols, with the
+exception of @HS_FLOAT_ROUND@ are constants that are suitable for use in
+@#if@ preprocessing directives.  Note that there is only one rounding
+style (@HS_FLOAT_ROUND@) and one radix (@HS_FLOAT_RADIX@), as
+this is all that is supported by ISO C~\cite{C99}.
+
+Moreover, an implementation that does not support 64 bit integral types on the
+C side should implement @HsInt64@ and @HsWord64@ as a structure.  In
+this case, the bounds @HS_INT64_MIN@, @HS_INT64_MAX@, and
+@HS_WORD64_MAX@ are undefined.
+
+In addition, to the symbols from Table~\ref{tab:c-haskell-types}
+and~\ref{tab:c-haskell-values}, the header @HsFFI.h@ must also contain
+the following prototypes:
+%
+\begin{quote}
+\begin{verbatim}
+void hs_init     (int *argc, char **argv[]);
+void hs_exit     (void);
+void hs_set_argv (int argc, char *argv[]);
+
+void hs_perform_gc (void);
+
+void hs_free_stable_ptr (HsStablePtr sp);
+void hs_free_fun_ptr    (HsFunPtr fp);
+\end{verbatim}
+\end{quote}
+%
+These routines are useful for mixed language programs, where the main
+application is implemented in a foreign language that accesses routines
+implemented in Haskell.  The function @hs_init()@ initialises the
+Haskell system and provides it with the available command line arguments.
+Upon return, the arguments solely intended for the Haskell runtime system are
+removed (i.e., the values that @argc@ and @argv@ point to may have
+changed).  This function must be called during program startup before any
+Haskell function is invoked; otherwise, the system behaviour is undefined.
+Conversely, the Haskell system is deinitialised by a call to
+@hs_exit()@.  Multiple invocations of @hs_init()@ are permitted,
+provided that they are followed by an equal number of calls to
+@hs_exit()@ and that the first call to @hs_exit()@ is after the
+last call to @hs_init()@.  In addition to nested calls to
+@hs_init()@, the Haskell system may be de-initialised with
+@hs_exit()@ and be re-initialised with @hs_init()@ at a later
+point in time.  This ensures that repeated initialisation due to multiple
+libraries being implemented in Haskell is covered.
+
+The Haskell system will ignore the command line arguments passed to the second
+and any following calls to @hs_init()@.  Moreover, @hs_init()@ may
+be called with @NULL@ for both @argc@ and @argv@, signalling
+the absence of command line arguments.
+
+The function @hs_set_argv()@ sets the values returned by the functions
+@getProgName@ and @getArgs@ of the module @System@ (Section~\ref{System}).  This function may only be invoked after
+@hs_init()@.  Moreover, if @hs_set_argv()@ is called at all, this
+call must precede the first invocation of @getProgName@ and
+@getArgs@.  Note that the separation of @hs_init()@ and
+@hs_set_argv()@ is essential in cases where in addition to the Haskell
+system other libraries that process command line arguments during
+initialisation are used.
+
+The function @hs_perform_gc()@ advises the Haskell storage manager to
+perform a garbage collection, where the storage manager makes an effort to
+releases all unreachable objects.  This function must not be invoked from C
+functions that are imported @unsafe@ into Haskell code nor may it be used
+from a finalizer.
+
+Finally, @hs_free_stable_ptr()@ and @hs_free_fun_ptr()@ are
+the C counterparts of the Haskell functions @freeStablePtr@ and
+@freeHaskellFunPtr@.
