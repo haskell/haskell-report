@@ -162,9 +162,13 @@ veryclean: clean
 	$(RM) *~ 
 
 clean:
-	$(RM) ht/*.tex ht/*.html
-	$(RM) *.dvi *.log *.aux *.ilg *.blg *.toc ${PARTS} \
-		haskell.tex haskell.ps haskell.pdf *.o lex.yy.c haskell-report-html/*
+	$(RM) ${HT_TEXS} ht/*.html ht/html/* ht/*.htm ht/hask*.png ht/*.log ht/*.tmp \
+	 	ht/*.xref ht/classes.eps ht/*.css ht/*.idx ht/*.aux ht/*.dvi \
+		ht/*.4ct ht/*.4tc
+	$(RM) *.dvi *.log *.aux *.ilg *.blg *.toc *.bbl *.idx *.tmp *.out \
+		${PARTS} \
+		haskell.tex haskell.ps haskell.pdf *.o lex.yy.c haskell-report-html/* \
+		haddock-style.tex
 
 
 #########################################
