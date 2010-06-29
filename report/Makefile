@@ -7,11 +7,13 @@
 ##########################################
 # What to make if you type 'make'
 
-default: haskell.pdf html
+default: pdf html
+
+.PHONY: pdf
+pdf : haskell.pdf
 
 # Begin by saying
 #	touch haskell.idx
-
 
 #########################################
 #	Tools you need
@@ -55,36 +57,48 @@ PARTS_NO_PREFACE = iso-chars.tex \
 		derived.tex \
 		index-extra.tex index-intro.tex layout.tex fixity.tex \
 		literate.tex pragmas.tex standard-prelude.tex \
-		ratio.tex complex.tex ix.tex \
-                numeric.tex \
-                array.tex io.tex char.tex monad.tex list.tex \
-                system.tex directory.tex \
-                maybe.tex time.tex cputime.tex random.tex \
-		locale.tex syntax-lexical.tex syntax-iso.tex ffi.tex \
+		syntax-lexical.tex syntax-iso.tex ffi.tex \
 		Prelude.tex PreludeList.tex PreludeText.tex PreludeIO.tex \
-		lib-marshal.tex \
-		lib-cerror.tex     lib-data-intword.tex  lib-marshalerror.tex \
-		lib-cforeign.tex   lib-foreignptr.tex    lib-marshalutils.tex \
-		lib-cstring.tex    lib-foreign.tex       lib-ptr.tex \
-		lib-ctypes.tex     lib-marshalalloc.tex  lib-stableptr.tex \
-		lib-data-bits.tex  lib-marshalarray.tex  lib-storable.tex
+		$(LIB_TEX)
 
-CODE =		lib-code/Ratio.tex lib-code/Complex.tex lib-code/Ix.tex \
-                lib-code/Numeric.tex \
-                lib-code/Array.tex lib-code/Char.tex lib-code/List.tex \
-                lib-code/Monad.tex lib-code/Maybe.tex lib-code/IO.tex \
-		lib-code/Time.tex lib-code/Locale.tex
+LIB_MODULES = Data.Array \
+	Data.Char \
+	Data.Complex \
+	System.IO \
+	System.IO.Error \
+	Data.Ix \
+	Data.List \
+	Data.Maybe \
+	Control.Monad \
+	Data.Ratio \
+	System.Environment \
+	System.Exit \
+	Data.Int \
+	Data.Word \
+	Data.Bits \
+	Foreign \
+	Foreign.Ptr \
+	Foreign.ForeignPtr \
+	Foreign.StablePtr \
+	Foreign.Storable \
+	Foreign.C \
+	Foreign.C.Error \
+	Foreign.C.String \
+	Foreign.C.Types \
+	Foreign.Marshal \
+	Foreign.Marshal.Alloc \
+	Foreign.Marshal.Array \
+	Foreign.Marshal.Error \
+	Foreign.Marshal.Utils
 
-HEADERS =	lib-hdrs/Ratio.tex lib-hdrs/Complex.tex lib-hdrs/Ix.tex \
-                lib-hdrs/Numeric.tex \
-                lib-hdrs/Array.tex lib-hdrs/IO.tex lib-hdrs/Char.tex \
-		lib-hdrs/List.tex lib-hdrs/List1.tex \
-                lib-hdrs/Monad.tex lib-hdrs/System.tex lib-hdrs/Directory.tex \
-                lib-hdrs/Maybe.tex lib-hdrs/IO1.tex lib-hdrs/Random.tex \
-		lib-hdrs/Time.tex lib-hdrs/Time1.tex lib-hdrs/CPUTime.tex \
-		lib-hdrs/Locale.tex 
+HADDOCK_ODIR = libs
+
+LIB_TEX = $(patsubst %, $(HADDOCK_ODIR)/%, $(addsuffix .tex, $(subst .,-,$(LIB_MODULES))))
 
 HT_TEXS = $(patsubst %, ht/%, $(PARTS))
+
+show:
+	@echo '$(VALUE)="$($(VALUE))"'
 
 #########################################
 #	Main targets
@@ -105,8 +119,8 @@ haskell.tex: haskell.verb
 # 	$(RUN_INDEX)
 # 	cp index.html *.png *.gif haskell-report-html
 
-haskell.dvi: haskell.tex haskell.ind ${PARTS} ${CODE} ${HEADERS}
-haskell.pdf: haskell.tex haskell.ind ${PARTS} ${CODE} ${HEADERS}
+haskell.dvi: haskell.tex haskell.ind ${PARTS}
+haskell.pdf: haskell.tex haskell.ind haddock-style.tex ${PARTS}
 
 haskell.ps : haskell.dvi
 	dvips haskell.dvi -o haskell.ps
@@ -135,21 +149,15 @@ publish-pdf: report.pdf
 ht/classes.eps : classes.eps
 	$(CP) $< $@
 
-ht/lib-hdrs :
-	$(RM) $@
-	$(LN) ../lib-hdrs ht/lib-hdrs
-
-ht/lib-code :
-	$(RM) $@
-	$(LN) ../lib-code ht/lib-code
-
-html: $(HT_TEXS) ht/classes.eps ht/lib-hdrs ht/lib-code
+.PHONY: html
+html: $(HT_TEXS) ht/classes.eps ht/haddock-style.tex
 	cd ht && htlatex haskell.tex "haskell,2"
 
 #########################################
 #	Generic stuff
 #########################################
 
+.PHONY: clean veryclean
 veryclean: clean
 	$(RM) *~ 
 
@@ -188,6 +196,9 @@ clean:
 
 ht/%.tex: %.verb
 	$(EXPAND) < $< | $(VERB_TEX4HT) | sh ../tools/subsection >$@
+
+ht/libs/%.tex: libs/%.tex
+	$(CP) $< $@
 
 jfp: h98-book.tex preface-jfp.tex ${PARTS_NO_PREFACE}
 	-mkdir $(JFP_DIR)
@@ -242,3 +253,16 @@ haskell-libraries-2up.dvi : haskell-librariesx.dvi
 haskell-librariesx.dvi : sigplan_haskell-libraries.dvi
 	dviselect =4: sigplan_haskell-libraries.dvi haskell-librariesx.dvi
 
+
+# -----------------------------------------------------------------------------
+# Haddock-generated library docs
+
+HADDOCK = /64playpen/simonmar/testing/inplace/bin/haddock
+
+GHC_BUILD = /home/simonmar/builds/testing
+LIB_PKG_DIR = $(GHC_BUILD)/libraries/haskell2010
+
+HADDOCK_GHC_OPTS = --optghc=-package-name --optghc=haskell2010-1.0.0.0 --optghc=-hide-all-packages --optghc=-i --optghc=-i$(GHC_BUILD)/libraries/haskell2010/. --optghc=-i$(GHC_BUILD)/libraries/haskell2010/dist-install/build --optghc=-i$(GHC_BUILD)/libraries/haskell2010/dist-install/build/autogen --optghc=-i$(GHC_BUILD)/Libraries/haskell2010/dist-install/build --optghc=-i$(GHC_BUILD)/Libraries/haskell2010/dist-install/build/autogen --optghc=-i$(GHC_BUILD)/Libraries/haskell2010/. --optghc=-optP-include --optghc=-optP$(GHC_BUILD)/libraries/haskell2010/dist-install/build/autogen/cabal_macros.h --optghc=-package --optghc=array-0.3.0.0 --optghc=-package --optghc=base-4.3.0.0 --optghc=-package-name --optghc=haskell2010 --optghc=-XPackageImports --optghc=-XCPP --optghc=-no-user-package-conf --optghc=-rtsopts --optghc=-O --optghc=-fasm --optghc=-dcore-lint --optghc=-fno-warn-deprecated-flags --optghc=-odir --optghc=libraries/haskell2010/dist-install/build --optghc=-hidir --optghc=$(GHC_BUILD)/libraries/haskell2010/dist-install/build --optghc=-stubdir --optghc=$(GHC_BUILD)/libraries/haskell2010/dist-install/build --optghc=-hisuf --optghc=hi --optghc=-osuf --optghc=o --optghc=-hcsuf --optghc=hc 
+
+haddock :
+	$(HADDOCK) --odir=$(HADDOCK_ODIR) --no-tmp-comp-dir --latex --title="haskell2010-1.0.0.0: Compatibility with Haskell 2010" --read-interface=../ghc-prim,$(GHC_BUILD)/libraries/ghc-prim/dist-install/doc/html/ghc-prim/ghc-prim.haddock --read-interface=../array-0.3.0.0,$(GHC_BUILD)/libraries/array/dist-install/doc/html/array/array.haddock --read-interface=../base-4.3.0.0,$(GHC_BUILD)/libraries/base/dist-install/doc/html/base/base.haddock $(HADDOCK_GHC_OPTS) $(patsubst %, $(LIB_PKG_DIR)/%, $(addsuffix .hs, $(subst .,/,$(LIB_MODULES))))

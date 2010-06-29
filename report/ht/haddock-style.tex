@@ -1,0 +1,39 @@
+% Haddock style sheet
+
+\newcommand{\haddockbeginheader}{\begin{quote}}
+\newcommand{\haddockendheader}{\end{quote}}
+
+% a little gap before the ``Methods'' header
+\newcommand{\haddockpremethods}{\vspace{2ex}}
+
+% inserted before \\begin{verbatim}
+\newcommand{\haddockverb}{}
+
+% an identifier: we add an index entry
+\newcommand{\haddockid}[1]{\haddocktt{#1}\indextt{#1}}
+
+% \newcommand{\haddockbeginconstrs}{\vspace{-2ex}\begin{tabular}{llp{4in}}}
+\newcommand{\haddockbeginconstrs}{\begin{tabular}{@{}llp{4in}}}
+\newcommand{\haddockendconstrs}{\end{tabular}}
+
+\newcommand{\haddockbeginargs}{\begin{tabular}{@{}llp{4in}}}
+\newcommand{\haddockendargs}{\end{tabular}}
+
+\newcommand{\haddocktt}[1]{{\texttt{#1}}}
+\newcommand{\haddockdecltt}[1]{{\bfseries \texttt{#1}}}
+
+\makeatletter
+\newenvironment{haddockdesc}
+               {\list{}{\labelwidth\z@ \itemindent-\leftmargin
+                        \let\makelabel\haddocklabel}}
+               {\endlist}
+\newcommand*\haddocklabel[1]{\hspace\labelsep\haddockdecltt{#1}}
+\makeatother
+
+% after a declaration, start a new line for the documentation.
+% Otherwise, the documentation starts right after the declaration,
+% because we're using the list environment and the declaration is the
+% ``label''.  I tried making this newline part of the label, but
+% couldn't get that to work reliably (the space seemed to stretch
+% sometimes).
+\newcommand{\haddockbegindoc}{}

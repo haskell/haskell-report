@@ -145,22 +145,6 @@
 \newcommand{\eprogB}{}
 \newcommand{\eprogNoSkip}{\eprog}
 
-% setting of code from ffi.tex
-%
-\makeatletter
-\newenvironment{codedesc}{%             % description of code pieces
-  \list{}{\labelwidth\z@@
-    \let\makelabel\codedesclabel}
-  }{%
-  \endlist
-  }
-\newcommand*{\codedesclabel}[1]{%
-  \hspace{-\leftmargin}
-  \parbox[b]{\labelwidth}{\makebox[0pt][l]{\texttt{#1}}\\}\hfil\relax
-  }
-\makeatother
-\newcommand{\combineitems}{\vspace*{-\itemsep}\vspace*{-\parsep}\vspace*{-1em}}
-
 % general from ffi.tex
 %
 \newcommand{\clearemptydoublepage}{%
@@ -363,6 +347,8 @@
 \hyphenation{da-ta-type da-ta-types}
 \hyphenation{Has-kell}
 
+% Macros for Haddock output
+\input{haddock-style}
 
 \begin{document}
 
@@ -458,41 +444,35 @@ that it does not claim to be a definition of the language Haskell 2010.
 \part{The Haskell 2010 Libraries}
 \label{libraries}
 
-\input{ratio}\startnewsection
-\input{complex}\startnewsection
-\input{numeric}\startnewsection
-\input{ix}\startnewsection
-\input{array}\startnewsection
-\input{list}\startnewsection
-\input{maybe}\startnewsection
-\input{char}\startnewsection
-\input{monad}\startnewsection
-\input{io}\startnewsection
-\input{directory}\startnewsection
-\input{system}\startnewsection
-\input{time}\startnewsection
-\input{locale}\startnewsection
-\input{cputime}\startnewsection
-\input{random}\startnewsection
-
-\input{lib-data-intword}
-\input{lib-data-bits}
-
-\input{lib-foreign}
-\input{lib-ptr}
-\input{lib-foreignptr}
-\input{lib-storable}
-\input{lib-stableptr}
-\input{lib-marshal}
-\input{lib-marshalerror}
-\input{lib-marshalutils}
-\input{lib-marshalalloc}
-\input{lib-marshalarray}
-\input{lib-cforeign}
-\input{lib-ctypes}
-\input{lib-cstring}
-\input{lib-cerror}
-
+\input{libs/Control-Monad}
+\input{libs/Data-Array}
+\input{libs/Data-Bits}
+\input{libs/Data-Char}
+\input{libs/Data-Complex}
+\input{libs/Data-Int}
+\input{libs/Data-Ix}
+\input{libs/Data-List}
+\input{libs/Data-Maybe}
+\input{libs/Data-Ratio}
+\input{libs/Data-Word}
+\input{libs/System-Environment}
+\input{libs/System-Exit}
+\input{libs/Foreign}
+\input{libs/Foreign-C}
+\input{libs/Foreign-C-Error}
+\input{libs/Foreign-C-String}
+\input{libs/Foreign-C-Types}
+\input{libs/Foreign-ForeignPtr}
+\input{libs/Foreign-Marshal}
+\input{libs/Foreign-Marshal-Alloc}
+\input{libs/Foreign-Marshal-Array}
+\input{libs/Foreign-Marshal-Error} 
+\input{libs/Foreign-Marshal-Utils}
+\input{libs/Foreign-Ptr}
+\input{libs/Foreign-StablePtr}
+\input{libs/Foreign-Storable}
+\input{libs/System-IO}
+\input{libs/System-IO-Error}
 
 % ------------------------- Index and references -----------------------------------
 
