@@ -390,7 +390,7 @@ The following types constitute the set of \emph{basic foreign types}:
 \item @Int8@, @Int16@, @Int32@, @Int64@, @Word8@,
   @Word16@, @Word32@, @Word64@, @Ptr a@, @FunPtr a@,
   and @StablePtr a@, for any type @a@, as exported by @Foreign@
-  (Section~\ref{sec:Foreign}).
+  (Section~\ref{module:Foreign}).
 \end{itemize}
 %
 A Haskell system that implements the FFI needs to be able to pass these types
@@ -478,7 +478,7 @@ into the Haskell system.  If it does, the system behaviour is undefined.  The
 default for an invocation is to be @safe@.  Note that a callback into
 the Haskell system implies that a garbage collection might be triggered after
 an external entity was called, but before this call returns.  Consequently,
-objects other than stable pointers (cf.\ Section~\ref{sec:StablePtr}) may be
+objects other than stable pointers (cf.\ Section~\ref{module:Foreign.StablePtr}) may be
 moved or garbage collected by the storage manager.
 
 \subsubsection{Export Declarations}
@@ -620,7 +620,7 @@ foreign import ccall "&" bar :: Ptr CInt
 \eprog
 must be used to obtain a pointer referring to the variable.  The variable can
 be read and updated using the routines provided by the module @Foreign.Storable@
-(cf.\ Section~\ref{sec:Storable}).
+(cf.\ Section~\ref{module:Foreign.Storable}).
 
 \paragraph{Export Declarations}
 
@@ -879,9 +879,9 @@ good reasons for doing the marshalling in Haskell:
 Consequently, the Haskell FFI emphasises Haskell-side marshalling.
 
 The interface to the marshalling libraries is provided by the module
-@Foreign@ (Chapter~\ref{sec:Foreign}) plus a language-dependent module per supported language.  In
+@Foreign@ (Chapter~\ref{module:Foreign}) plus a language-dependent module per supported language.  In
 particular, the standard requires the availability of the module
-@Foreign.C@ (Chapter~\ref{sec:CForeign}), which simplifies portable interfacing with external C code.
+@Foreign.C@ (Chapter~\ref{module:Foreign.C}), which simplifies portable interfacing with external C code.
 Language-dependent modules, such as @Foreign.C@, generally provide Haskell
 types representing the basic types of the foreign language using a
 representation that is compatible with the foreign types as implemented by the
@@ -1153,7 +1153,7 @@ be called with @NULL@ for both @argc@ and @argv@, signalling
 the absence of command line arguments.
 
 The function @hs_set_argv()@ sets the values returned by the functions
-@getProgName@ and @getArgs@ of the module @System@ (Section~\ref{System}).  This function may only be invoked after
+@getProgName@ and @getArgs@ of the module @System.Environment@ (Section~\ref{module:System.Environment}).  This function may only be invoked after
 @hs_init()@.  Moreover, if @hs_set_argv()@ is called at all, this
 call must precede the first invocation of @getProgName@ and
 @getArgs@.  Note that the separation of @hs_init()@ and
