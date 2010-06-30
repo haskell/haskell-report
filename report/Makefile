@@ -50,16 +50,17 @@ EXPAND = expand
 RELEASE_DIR = ../haskell-prime-draft
 JFP_DIR = ../jfp-release
 
-PARTS =		haskell.tex preface.tex $(PARTS_NO_PREFACE)
+PARTS =		haskell.tex preface.tex $(PARTS_NO_PREFACE) $(LIB_TEX)
+
 PARTS_NO_PREFACE = iso-chars.tex \
 		intro.tex lexemes.tex  exps.tex \
 		decls.tex  modules.tex  basic.tex  io-13.tex \
 		derived.tex \
-		index-extra.tex index-intro.tex layout.tex fixity.tex \
-		literate.tex pragmas.tex standard-prelude.tex \
+		index-extra.tex index-intro.tex fixity.tex \
+		pragmas.tex standard-prelude.tex \
 		syntax-lexical.tex syntax-iso.tex ffi.tex \
-		Prelude.tex PreludeList.tex PreludeText.tex PreludeIO.tex \
-		$(LIB_TEX)
+		Prelude.tex PreludeList.tex PreludeText.tex PreludeIO.tex
+
 
 LIB_MODULES = Data.Array \
 	Data.Char \
@@ -159,15 +160,16 @@ html: $(HT_TEXS) ht/classes.eps ht/haddock.sty
 
 .PHONY: clean veryclean
 veryclean: clean
-	$(RM) *~ 
+	$(RM) *~ $(LIB_TEX)
 
 clean:
 	$(RM) ${HT_TEXS} ht/*.html ht/html/* ht/*.htm ht/hask*.png ht/*.log ht/*.tmp \
 	 	ht/*.xref ht/classes.eps ht/*.css ht/*.idx ht/*.aux ht/*.dvi \
 		ht/*.4ct ht/*.4tc
 	$(RM) *.dvi *.log *.aux *.ilg *.blg *.toc *.bbl *.idx *.tmp *.out \
-		${PARTS} \
+		haskell.tex preface.tex $(PARTS_NO_PREFACE) \
 		haskell.tex haskell.ps haskell.pdf *.o lex.yy.c haskell-report-html/*
+# NB. don't clean $(LIB_TEX) here
 
 
 #########################################
