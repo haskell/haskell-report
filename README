@@ -1,12 +1,43 @@
-Notes on building the report
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Haskell Report README
+~~~~~~~~~~~~~~~~~~~~~
 
-Tools needed: 
-      
-      * flex
-      * GHC
-      * TeX (install "tetex" on a Linux distribution to get everything
-        you need).
+These are the sources to the Haskell report, including all the source
+files you will need to generate either the PDF or the HTML version of
+the report.
+
+
+Tools you will need
+~~~~~~~~~~~~~~~~~~~
+
+PDF version: a decent LaTeX installation with pdflatex.  We use the
+following additional packages:
+
+  - times
+  - makeidx
+  - graphicx
+  - url
+  - color
+  - hyperref
+
+Also you need the following tools
+
+  - makeindex
+
+all of which are usually available with a good TeX distribution
+(e.g. TeX Live).
+
+The following are also required for building the tools:
+
+  - flex
+  - GHC
+
+The HTML version additionall requires
+
+  - tex4ht (e.g. install 'tex4ht' on a Debian or Ubuntu system, or 
+            'tetex-tex4ht' on a Fedora system)
+
+Building the report
+~~~~~~~~~~~~~~~~~~~
 
 Firstly:
 
@@ -19,23 +50,12 @@ Then you should be able to say
         $ cd report
         $ make
 
-to build the PS (haskell.ps) and HTML (in haskell-report-html)
-versions.  To get PDF, use ps2pdf on the PS version.
+This will create:
 
-When you check in a patch to the darcs repo, darcs will automatically
-try to re-build the tools and report.  If it fails for any reason, then
-your patch will be rejected.  (This is controlled by the top-level
-Makefile target 'default', and the darcs preferences.)  If you think
-your patch is fine, but the build system is broken, then you might need
-to login to darcs.haskell.org and do some fixing by hand.
-
-[
-  There are various other Makefile rules; for example 'make release' at
-  the top level was supposed to build a complete release of the "Revised
-  Haskell 98 Report", although it doesn't work out of the box.  For
-  Haskell', we'll want to modify these Makefiles to do what we want in
-  due course.
-]
+   - PDF version: report/haskell.pdf
+   
+   - HTML version: report/ht/haskell.html
+     (NB. requires report/ht/*.{html,png,css})
 
 
 Roadmap
@@ -46,21 +66,13 @@ SOURCE FILES
     report/		The Language and Libraries Reports (now together
 			in a single document)
     
-    libraries/		OUT OF DATE (from Dec 2002): ignore this directory
-    
     tools/		Tools needed to build the Reports
 		    	(cd into here and type make)
     
     Makefile		Build a distribution of the Reports
 
-    report/haskell-prime-draft.html	A summary page to glue all the outputs together
 
-    report/h98.gif	A GIF for a Haskell 98 logo
-    report/hprime.png	A PNG for a Haskell Prime logo
-
-
-OUTPUT FILES
-    haskell-prime-draft/	A directory containing the distribution
-    haskell-report-html/	A directory containing the HTML
+.verb files
+~~~~~~~~~~~
 
 
