@@ -455,8 +455,6 @@ that it does not claim to be a definition of the language Haskell 2010.
 \input{libs/Data-Maybe}
 \input{libs/Data-Ratio}
 \input{libs/Data-Word}
-\input{libs/System-Environment}
-\input{libs/System-Exit}
 \input{libs/Foreign}
 \input{libs/Foreign-C}
 \input{libs/Foreign-C-Error}
@@ -471,6 +469,8 @@ that it does not claim to be a definition of the language Haskell 2010.
 \input{libs/Foreign-Ptr}
 \input{libs/Foreign-StablePtr}
 \input{libs/Foreign-Storable}
+\input{libs/System-Environment}
+\input{libs/System-Exit}
 \input{libs/System-IO}
 \input{libs/System-IO-Error}
 
