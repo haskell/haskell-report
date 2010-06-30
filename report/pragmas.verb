@@ -70,23 +70,24 @@ precede the module keyword in a source file. There can be as many
 file-header pragmas as you please, and they can be preceded or
 followed by comments. An individual language pragma begins with the
 keyword @LANGUAGE@ and is followed by a comma-separated list of named
-language extensions.
+language features.
 
-For example, to enable the FFI and preprocessing with CPP:
+For example, to enable scoped type variables and preprocessing with
+CPP, if your Haskell implementation supports these extensions:
 \bprog
 @
-{-# LANGUAGE ForeignFunctionInterface, CPP #-}
+{-# LANGUAGE ScopedTypeVariables, CPP #-}
 @
 \eprog
 If a Haskell implementation does not recognize or support a particular
-language extension that a source file requests (or cannot support the
-combination of language extensions requested), any attempt to compile
+language feature that a source file requests (or cannot support the
+combination of language features requested), any attempt to compile
 or otherwise use that file with that Haskell implementation must fail
 with an error.
 
 In the interests of portability, multiple attempts to enable the same,
 supported language features (e.g. via command-line arguments,
-implementation-specific extension dependencies or non-standard
+implementation-specific features dependencies or non-standard
 pragmas) are specifically permitted.  Haskell 2010 implementations that
 support the @LANGUAGE@ pragma are required to support
 \bprog
@@ -95,9 +96,9 @@ support the @LANGUAGE@ pragma are required to support
 @
 \eprog
 Those implementations are also encouraged to support the following
-named language extensions: @PatternGuards@, @NoNPlusKPatterns@,
-@RelaxedPolyRec@, @EmptyDataDecls@, @ForeignFunctionInterface@. These
-are the named language extensions, supported by some pre-Haskell 2010
+named language features: @PatternGuards@, @NoNPlusKPatterns@, @RelaxedPolyRec@,
+@EmptyDataDecls@, @ForeignFunctionInterface@. These are the named
+language extensions supported by some pre-Haskell 2010
 implementations, that have been integrated into this report.
 
 \end{haskellprime}
