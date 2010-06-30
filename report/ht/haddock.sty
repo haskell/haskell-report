@@ -1,4 +1,13 @@
-% Haddock style sheet
+% Modified version of the Haddock style sheet
+
+\usepackage{tabulary} % see below
+
+\newenvironment{haddocktitle}
+  {\begin{center}\bgroup\large\bfseries}
+  {\egroup\end{center}}
+\newenvironment{haddockprologue}{\vspace{1in}}{}
+
+\newcommand{\haddockmoduleheading}[1]{\chapter{\texttt{#1}}}
 
 \newcommand{\haddockbeginheader}{\begin{quote}}
 \newcommand{\haddockendheader}{\end{quote}}
@@ -9,15 +18,16 @@
 % inserted before \\begin{verbatim}
 \newcommand{\haddockverb}{}
 
-% an identifier: we add an index entry
-\newcommand{\haddockid}[1]{\haddocktt{#1}\indextt{#1}}
+% an identifier: add an index entry
+\newcommand{\haddockid}[1]{\haddocktt{#1}\index{#1@\texttt{#1}}}
 
-% \newcommand{\haddockbeginconstrs}{\vspace{-2ex}\begin{tabular}{llp{4in}}}
-\newcommand{\haddockbeginconstrs}{\begin{tabular}{@{}llp{4in}}}
-\newcommand{\haddockendconstrs}{\end{tabular}}
-
-\newcommand{\haddockbeginargs}{\begin{tabular}{@{}llp{4in}}}
-\newcommand{\haddockendargs}{\end{tabular}}
+% The tabulary environment lets us have a column that takes up ``the
+% rest of the space''.  Unfortunately it doesn't allow
+% the \end{tabulary} to be in the expansion of a macro, it must appear
+% literally in the document text, so Haddock inserts
+% the \end{tabulary} itself.
+\newcommand{\haddockbeginconstrs}{\begin{tabulary}{\linewidth}{llL}}
+\newcommand{\haddockbeginargs}{\begin{tabulary}{\linewidth}{llL}}
 
 \newcommand{\haddocktt}[1]{{\texttt{#1}}}
 \newcommand{\haddockdecltt}[1]{{\bfseries \texttt{#1}}}
@@ -37,3 +47,7 @@
 % couldn't get that to work reliably (the space seemed to stretch
 % sometimes).
 \newcommand{\haddockbegindoc}{}
+
+% spacing between paragraphs and no \parindent looks better
+\parskip=10pt plus2pt minus2pt
+\setlength{\parindent}{0cm}

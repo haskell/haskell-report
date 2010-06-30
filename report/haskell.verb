@@ -348,7 +348,7 @@
 \hyphenation{Has-kell}
 
 % Macros for Haddock output
-\input{haddock-style}
+\usepackage{haddock}
 
 \begin{document}
 

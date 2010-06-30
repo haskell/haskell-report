@@ -120,7 +120,7 @@ haskell.tex: haskell.verb
 # 	cp index.html *.png *.gif haskell-report-html
 
 haskell.dvi: haskell.tex haskell.ind ${PARTS}
-haskell.pdf: haskell.tex haskell.ind haddock-style.tex ${PARTS}
+haskell.pdf: haskell.tex haskell.ind haddock.sty ${PARTS}
 
 haskell.ps : haskell.dvi
 	dvips haskell.dvi -o haskell.ps
@@ -150,7 +150,7 @@ ht/classes.eps : classes.eps
 	$(CP) $< $@
 
 .PHONY: html
-html: $(HT_TEXS) ht/classes.eps ht/haddock-style.tex
+html: $(HT_TEXS) ht/classes.eps ht/haddock.sty
 	cd ht && htlatex haskell.tex "haskell,2"
 
 #########################################
@@ -167,8 +167,7 @@ clean:
 		ht/*.4ct ht/*.4tc
 	$(RM) *.dvi *.log *.aux *.ilg *.blg *.toc *.bbl *.idx *.tmp *.out \
 		${PARTS} \
-		haskell.tex haskell.ps haskell.pdf *.o lex.yy.c haskell-report-html/* \
-		haddock-style.tex
+		haskell.tex haskell.ps haskell.pdf *.o lex.yy.c haskell-report-html/*
 
 
 #########################################
