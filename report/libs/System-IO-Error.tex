@@ -1,4 +1,4 @@
-\chapter{\texttt{System.IO.Error}}
+\haddockmoduleheading{System.IO.Error}
 \label{module:System.IO.Error}
 \haddockbeginheader
 {\haddockverb\begin{verbatim}
@@ -146,9 +146,15 @@ A programmer-defined error value constructed using \haddockid{userError}.
 \subsection{Attributes of I/O errors
 }
 \begin{haddockdesc}
-\item[\begin{tabular}{@{}l}
-ioeGetErrorString\ ::\ IOError\ ->\ String\\ioeGetHandle\ ::\ IOError\ ->\ Maybe\ Handle\\ioeGetFileName\ ::\ IOError\ ->\ Maybe\ FilePath
-\end{tabular}]
+\item[
+ioeGetErrorString\ ::\ IOError\ ->\ String
+]
+\item[
+ioeGetHandle\ ::\ IOError\ ->\ Maybe\ Handle
+]
+\item[
+ioeGetFileName\ ::\ IOError\ ->\ Maybe\ FilePath
+]
 \end{haddockdesc}
 \section{Types of I/O error
 }

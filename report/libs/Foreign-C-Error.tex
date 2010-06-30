@@ -1,4 +1,4 @@
-\chapter{\texttt{Foreign.C.Error}}
+\haddockmoduleheading{Foreign.C.Error}
 \label{module:Foreign.C.Error}
 \haddockbeginheader
 {\haddockverb\begin{verbatim}
@@ -41,7 +41,7 @@ newtype\ Errno
 \end{tabular}]\haddockbegindoc
 \haddockbeginconstrs
 \haddockdecltt{=} & \haddockdecltt{Errno CInt} & \\
-\haddockendconstrs\par
+\end{tabulary}\par
 Haskell representation for \haddocktt{errno} values.
  The implementation is deliberately exposed, to allow users to add
  their own definitions of \haddockid{Errno} values.
@@ -62,9 +62,303 @@ Different operating systems and/or C libraries often support
 \par
 
 \begin{haddockdesc}
-\item[\begin{tabular}{@{}l}
-eOK\ ::\ Errno\\e2BIG\ ::\ Errno\\eACCES\ ::\ Errno\\eADDRINUSE\ ::\ Errno\\eADDRNOTAVAIL\ ::\ Errno\\eADV\ ::\ Errno\\eAFNOSUPPORT\ ::\ Errno\\eAGAIN\ ::\ Errno\\eALREADY\ ::\ Errno\\eBADF\ ::\ Errno\\eBADMSG\ ::\ Errno\\eBADRPC\ ::\ Errno\\eBUSY\ ::\ Errno\\eCHILD\ ::\ Errno\\eCOMM\ ::\ Errno\\eCONNABORTED\ ::\ Errno\\eCONNREFUSED\ ::\ Errno\\eCONNRESET\ ::\ Errno\\eDEADLK\ ::\ Errno\\eDESTADDRREQ\ ::\ Errno\\eDIRTY\ ::\ Errno\\eDOM\ ::\ Errno\\eDQUOT\ ::\ Errno\\eEXIST\ ::\ Errno\\eFAULT\ ::\ Errno\\eFBIG\ ::\ Errno\\eFTYPE\ ::\ Errno\\eHOSTDOWN\ ::\ Errno\\eHOSTUNREACH\ ::\ Errno\\eIDRM\ ::\ Errno\\eILSEQ\ ::\ Errno\\eINPROGRESS\ ::\ Errno\\eINTR\ ::\ Errno\\eINVAL\ ::\ Errno\\eIO\ ::\ Errno\\eISCONN\ ::\ Errno\\eISDIR\ ::\ Errno\\eLOOP\ ::\ Errno\\eMFILE\ ::\ Errno\\eMLINK\ ::\ Errno\\eMSGSIZE\ ::\ Errno\\eMULTIHOP\ ::\ Errno\\eNAMETOOLONG\ ::\ Errno\\eNETDOWN\ ::\ Errno\\eNETRESET\ ::\ Errno\\eNETUNREACH\ ::\ Errno\\eNFILE\ ::\ Errno\\eNOBUFS\ ::\ Errno\\eNODATA\ ::\ Errno\\eNODEV\ ::\ Errno\\eNOENT\ ::\ Errno\\eNOEXEC\ ::\ Errno\\eNOLCK\ ::\ Errno\\eNOLINK\ ::\ Errno\\eNOMEM\ ::\ Errno\\eNOMSG\ ::\ Errno\\eNONET\ ::\ Errno\\eNOPROTOOPT\ ::\ Errno\\eNOSPC\ ::\ Errno\\eNOSR\ ::\ Errno\\eNOSTR\ ::\ Errno\\eNOSYS\ ::\ Errno\\eNOTBLK\ ::\ Errno\\eNOTCONN\ ::\ Errno\\eNOTDIR\ ::\ Errno\\eNOTEMPTY\ ::\ Errno\\eNOTSOCK\ ::\ Errno\\eNOTTY\ ::\ Errno\\eNXIO\ ::\ Errno\\eOPNOTSUPP\ ::\ Errno\\ePERM\ ::\ Errno\\ePFNOSUPPORT\ ::\ Errno\\ePIPE\ ::\ Errno\\ePROCLIM\ ::\ Errno\\ePROCUNAVAIL\ ::\ Errno\\ePROGMISMATCH\ ::\ Errno\\ePROGUNAVAIL\ ::\ Errno\\ePROTO\ ::\ Errno\\ePROTONOSUPPORT\ ::\ Errno\\ePROTOTYPE\ ::\ Errno\\eRANGE\ ::\ Errno\\eREMCHG\ ::\ Errno\\eREMOTE\ ::\ Errno\\eROFS\ ::\ Errno\\eRPCMISMATCH\ ::\ Errno\\eRREMOTE\ ::\ Errno\\eSHUTDOWN\ ::\ Errno\\eSOCKTNOSUPPORT\ ::\ Errno\\eSPIPE\ ::\ Errno\\eSRCH\ ::\ Errno\\eSRMNT\ ::\ Errno\\eSTALE\ ::\ Errno\\eTIME\ ::\ Errno\\eTIMEDOUT\ ::\ Errno\\eTOOMANYREFS\ ::\ Errno\\eTXTBSY\ ::\ Errno\\eUSERS\ ::\ Errno\\eWOULDBLOCK\ ::\ Errno\\eXDEV\ ::\ Errno
-\end{tabular}]
+\item[
+eOK\ ::\ Errno
+]
+\item[
+e2BIG\ ::\ Errno
+]
+\item[
+eACCES\ ::\ Errno
+]
+\item[
+eADDRINUSE\ ::\ Errno
+]
+\item[
+eADDRNOTAVAIL\ ::\ Errno
+]
+\item[
+eADV\ ::\ Errno
+]
+\item[
+eAFNOSUPPORT\ ::\ Errno
+]
+\item[
+eAGAIN\ ::\ Errno
+]
+\item[
+eALREADY\ ::\ Errno
+]
+\item[
+eBADF\ ::\ Errno
+]
+\item[
+eBADMSG\ ::\ Errno
+]
+\item[
+eBADRPC\ ::\ Errno
+]
+\item[
+eBUSY\ ::\ Errno
+]
+\item[
+eCHILD\ ::\ Errno
+]
+\item[
+eCOMM\ ::\ Errno
+]
+\item[
+eCONNABORTED\ ::\ Errno
+]
+\item[
+eCONNREFUSED\ ::\ Errno
+]
+\item[
+eCONNRESET\ ::\ Errno
+]
+\item[
+eDEADLK\ ::\ Errno
+]
+\item[
+eDESTADDRREQ\ ::\ Errno
+]
+\item[
+eDIRTY\ ::\ Errno
+]
+\item[
+eDOM\ ::\ Errno
+]
+\item[
+eDQUOT\ ::\ Errno
+]
+\item[
+eEXIST\ ::\ Errno
+]
+\item[
+eFAULT\ ::\ Errno
+]
+\item[
+eFBIG\ ::\ Errno
+]
+\item[
+eFTYPE\ ::\ Errno
+]
+\item[
+eHOSTDOWN\ ::\ Errno
+]
+\item[
+eHOSTUNREACH\ ::\ Errno
+]
+\item[
+eIDRM\ ::\ Errno
+]
+\item[
+eILSEQ\ ::\ Errno
+]
+\item[
+eINPROGRESS\ ::\ Errno
+]
+\item[
+eINTR\ ::\ Errno
+]
+\item[
+eINVAL\ ::\ Errno
+]
+\item[
+eIO\ ::\ Errno
+]
+\item[
+eISCONN\ ::\ Errno
+]
+\item[
+eISDIR\ ::\ Errno
+]
+\item[
+eLOOP\ ::\ Errno
+]
+\item[
+eMFILE\ ::\ Errno
+]
+\item[
+eMLINK\ ::\ Errno
+]
+\item[
+eMSGSIZE\ ::\ Errno
+]
+\item[
+eMULTIHOP\ ::\ Errno
+]
+\item[
+eNAMETOOLONG\ ::\ Errno
+]
+\item[
+eNETDOWN\ ::\ Errno
+]
+\item[
+eNETRESET\ ::\ Errno
+]
+\item[
+eNETUNREACH\ ::\ Errno
+]
+\item[
+eNFILE\ ::\ Errno
+]
+\item[
+eNOBUFS\ ::\ Errno
+]
+\item[
+eNODATA\ ::\ Errno
+]
+\item[
+eNODEV\ ::\ Errno
+]
+\item[
+eNOENT\ ::\ Errno
+]
+\item[
+eNOEXEC\ ::\ Errno
+]
+\item[
+eNOLCK\ ::\ Errno
+]
+\item[
+eNOLINK\ ::\ Errno
+]
+\item[
+eNOMEM\ ::\ Errno
+]
+\item[
+eNOMSG\ ::\ Errno
+]
+\item[
+eNONET\ ::\ Errno
+]
+\item[
+eNOPROTOOPT\ ::\ Errno
+]
+\item[
+eNOSPC\ ::\ Errno
+]
+\item[
+eNOSR\ ::\ Errno
+]
+\item[
+eNOSTR\ ::\ Errno
+]
+\item[
+eNOSYS\ ::\ Errno
+]
+\item[
+eNOTBLK\ ::\ Errno
+]
+\item[
+eNOTCONN\ ::\ Errno
+]
+\item[
+eNOTDIR\ ::\ Errno
+]
+\item[
+eNOTEMPTY\ ::\ Errno
+]
+\item[
+eNOTSOCK\ ::\ Errno
+]
+\item[
+eNOTTY\ ::\ Errno
+]
+\item[
+eNXIO\ ::\ Errno
+]
+\item[
+eOPNOTSUPP\ ::\ Errno
+]
+\item[
+ePERM\ ::\ Errno
+]
+\item[
+ePFNOSUPPORT\ ::\ Errno
+]
+\item[
+ePIPE\ ::\ Errno
+]
+\item[
+ePROCLIM\ ::\ Errno
+]
+\item[
+ePROCUNAVAIL\ ::\ Errno
+]
+\item[
+ePROGMISMATCH\ ::\ Errno
+]
+\item[
+ePROGUNAVAIL\ ::\ Errno
+]
+\item[
+ePROTO\ ::\ Errno
+]
+\item[
+ePROTONOSUPPORT\ ::\ Errno
+]
+\item[
+ePROTOTYPE\ ::\ Errno
+]
+\item[
+eRANGE\ ::\ Errno
+]
+\item[
+eREMCHG\ ::\ Errno
+]
+\item[
+eREMOTE\ ::\ Errno
+]
+\item[
+eROFS\ ::\ Errno
+]
+\item[
+eRPCMISMATCH\ ::\ Errno
+]
+\item[
+eRREMOTE\ ::\ Errno
+]
+\item[
+eSHUTDOWN\ ::\ Errno
+]
+\item[
+eSOCKTNOSUPPORT\ ::\ Errno
+]
+\item[
+eSPIPE\ ::\ Errno
+]
+\item[
+eSRCH\ ::\ Errno
+]
+\item[
+eSRMNT\ ::\ Errno
+]
+\item[
+eSTALE\ ::\ Errno
+]
+\item[
+eTIME\ ::\ Errno
+]
+\item[
+eTIMEDOUT\ ::\ Errno
+]
+\item[
+eTOOMANYREFS\ ::\ Errno
+]
+\item[
+eTXTBSY\ ::\ Errno
+]
+\item[
+eUSERS\ ::\ Errno
+]
+\item[
+eWOULDBLOCK\ ::\ Errno
+]
+\item[
+eXDEV\ ::\ Errno
+]
 \end{haddockdesc}
 \subsection{\haddockid{Errno} functions
 }
@@ -108,7 +402,7 @@ errnoToIOError
                                                                                                                                                \haddockdecltt{->} & \haddockdecltt{Maybe String} & optional filename associated with the error
  \\
                                                                                                                                                                                                    \haddockdecltt{->} & \haddockdecltt{IOError} & \\
-\haddockendargs\par
+\end{tabulary}\par
 Construct a Haskell 98 I/O error based on the given \haddockid{Errno} value.
  The optional information can be used to improve the accuracy of
  error messages.
@@ -123,7 +417,7 @@ throwErrno
 \haddockdecltt{::} & \haddockdecltt{String} & textual description of the error location
  \\
                                               \haddockdecltt{->} & \haddockdecltt{IO a} & \\
-\haddockendargs\par
+\end{tabulary}\par
 Throw an \haddockid{IOError} corresponding to the current value of \haddockid{getErrno}.
 \par
 
@@ -144,7 +438,7 @@ throwErrnoIf
                                                                                                \haddockdecltt{->} & \haddockdecltt{IO a} & the \haddockid{IO} operation to be executed
  \\
                                                                                                                                            \haddockdecltt{->} & \haddockdecltt{IO a} & \\
-\haddockendargs\par
+\end{tabulary}\par
 Throw an \haddockid{IOError} corresponding to the current value of \haddockid{getErrno}
  if the result value of the \haddockid{IO} action meets the given predicate.
 \par
@@ -248,7 +542,7 @@ throwErrnoIfRetryMayBlock
  an immediate retry would block
  \\
                                                                                                                                                                                        \haddockdecltt{->} & \haddockdecltt{IO a} & \\
-\haddockendargs\par
+\end{tabulary}\par
 as \haddockid{throwErrnoIfRetry}, but additionlly if the operation 
  yields the error code \haddockid{eAGAIN} or \haddockid{eWOULDBLOCK}, an alternative
  action is executed before retrying.

@@ -1,4 +1,4 @@
-\chapter{\texttt{System.IO}}
+\haddockmoduleheading{System.IO}
 \label{module:System.IO}
 \haddockbeginheader
 {\haddockverb\begin{verbatim}
@@ -43,9 +43,9 @@ instance\ Monad\ IO\\instance\ Functor\ IO
 \end{tabular}]
 \end{haddockdesc}
 \begin{haddockdesc}
-\item[\begin{tabular}{@{}l}
+\item[
 fixIO\ ::\ (a\ ->\ IO\ a)\ ->\ IO\ a
-\end{tabular}]
+]
 \end{haddockdesc}
 \section{Files and handles
 }
@@ -202,7 +202,7 @@ data\ IOMode
 \haddockdecltt{|} & \haddockdecltt{WriteMode} & \\
 \haddockdecltt{|} & \haddockdecltt{AppendMode} & \\
 \haddockdecltt{|} & \haddockdecltt{ReadWriteMode} & \\
-\haddockendconstrs\par
+\end{tabulary}\par
 See \haddocktt{System.IO.openFile}
 \par
 
@@ -352,7 +352,7 @@ data\ BufferMode
  The size of the buffer is \haddocktt{n} items if the argument
  is \haddockid{Just} \haddocktt{n} and is otherwise implementation-dependent.
  \\
-\haddockendconstrs\par
+\end{tabulary}\par
 Three kinds of buffering are supported: line-buffering, 
  block-buffering or no-buffering.  These modes have the following
  effects. For output, items are written out, or \emph{flushed},
@@ -562,7 +562,7 @@ data\ SeekMode
 \haddockdecltt{|} & \haddockdecltt{SeekFromEnd} & the position of \haddocktt{hdl} is set to offset \haddocktt{i}
  from the end of the file.
  \\
-\haddockendconstrs\par
+\end{tabulary}\par
 A mode that determines the effect of \haddocktt{hSeek} \haddocktt{hdl\ mode\ i}.
 \par
 
@@ -598,9 +598,21 @@ Each of these operations returns \haddockid{True} if the handle has the
 \par
 
 \begin{haddockdesc}
-\item[\begin{tabular}{@{}l}
-hIsOpen\ ::\ Handle\ ->\ IO\ Bool\\hIsClosed\ ::\ Handle\ ->\ IO\ Bool\\hIsReadable\ ::\ Handle\ ->\ IO\ Bool\\hIsWritable\ ::\ Handle\ ->\ IO\ Bool\\hIsSeekable\ ::\ Handle\ ->\ IO\ Bool
-\end{tabular}]
+\item[
+hIsOpen\ ::\ Handle\ ->\ IO\ Bool
+]
+\item[
+hIsClosed\ ::\ Handle\ ->\ IO\ Bool
+]
+\item[
+hIsReadable\ ::\ Handle\ ->\ IO\ Bool
+]
+\item[
+hIsWritable\ ::\ Handle\ ->\ IO\ Bool
+]
+\item[
+hIsSeekable\ ::\ Handle\ ->\ IO\ Bool
+]
 \end{haddockdesc}
 \subsection{Terminal operations
 }
