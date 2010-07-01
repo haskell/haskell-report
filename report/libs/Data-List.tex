@@ -1101,7 +1101,7 @@ unwords\ ::\ {\char 91}String{\char 93}\ ->\ String
 \item[\begin{tabular}{@{}l}
 nub\ ::\ Eq\ a\ =>\ {\char 91}a{\char 93}\ ->\ {\char 91}a{\char 93}
 \end{tabular}]\haddockbegindoc
-The \haddockid{nub} function removes duplicate elements from a list.
+\emph{O(n{\char '136}2)}. The \haddockid{nub} function removes duplicate elements from a list.
  In particular, it keeps only the first occurrence of each element.
  (The name \haddockid{nub} means `essence'.)
  It is a special case of \haddockid{nubBy}, which allows the programmer to supply
