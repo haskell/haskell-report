@@ -218,13 +218,6 @@ although it may be implemented differently internally: you may not
  assume that the memory returned by \haddockid{mallocForeignPtr} has been
  allocated with \haddocktt{Foreign.Marshal.Alloc.malloc}.
 \par
-GHC notes: \haddockid{mallocForeignPtr} has a heavily optimised
- implementation in GHC.  It uses pinned memory in the garbage
- collected heap, so the \haddockid{ForeignPtr} does not require a finalizer to
- free the memory.  Use of \haddockid{mallocForeignPtr} and associated
- functions is strongly recommended in preference to \haddocktt{newForeignPtr}
- with a finalizer.
-\par
 
 \end{haddockdesc}
 \begin{haddockdesc}
