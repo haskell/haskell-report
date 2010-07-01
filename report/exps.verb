@@ -147,7 +147,7 @@ the fixities of the operators.
 
 \subsection{Errors}
 \label{basic-errors}\index{error}
-Errors during expression evaluation, denoted by "\bot"\index{"\bot"},
+Errors during expression evaluation, denoted by "\bot"\index{"\bot"} (``bottom''\index{bottom}),
 are indistinguishable by a Haskell program from non-termination.  Since \Haskell{} is a
 non-strict language, all \Haskell{} types include "\bot".  That is, a value
 of any type may be bound to a computation that, when demanded, results
