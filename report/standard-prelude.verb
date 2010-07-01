@@ -27,7 +27,7 @@ this organisation for the Prelude,
 nor are these three modules available for import separately.
 Only the exports of module @Prelude@ are significant.
 
-Some of these modules import Library modules, such as @Char@, @Monad@, @IO@,
+Some of these modules import Library modules, such as @Data.Char@, @Control.Monad@, @System.IO@,
 and @Numeric@.  These modules are described fully in Part~\ref{libraries}.
 These imports are not, of course, part of the specification
 of the @Prelude@.  That is, an implementation is free to import more, or less,
@@ -50,7 +50,7 @@ improve efficiency, a number of commonly-used functions over lists use
 the @Int@ type rather than using a more general numeric type, such as
 @Integral a@ or @Num a@.  These functions are: @take@, @drop@,
 @!!@, @length@, @splitAt@, and @replicate@.  The more general
-versions are given in the @List@ library, with the prefix
+versions are given in the @Data.List@ library, with the prefix
 ``@generic@''; for example @genericLength@.
 
 \clearpage

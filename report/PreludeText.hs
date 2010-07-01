@@ -9,8 +9,8 @@ module PreludeText (
 --      Bool, Maybe, Either, Ordering
 -- are done via "deriving" clauses in Prelude.hs
 
-import Char(isSpace, isAlpha, isDigit, isAlphaNum,
-            showLitChar, readLitChar, lexLitChar)
+import Data.Char(isSpace, isAlpha, isDigit, isAlphaNum,
+                 showLitChar, readLitChar, lexLitChar)
 
 import Numeric(showSigned, showInt, readSigned, readDec, showFloat,
                readFloat, lexDigits)

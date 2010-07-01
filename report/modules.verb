@@ -194,7 +194,7 @@ legal
 \bprog
 @
   module A( Mb.Maybe( Nothing, Just ) ) where
-    import qualified Maybe as Mb
+    import qualified Data.Maybe as Mb
 @
 \eprog
 Data constructors cannot be named in export lists except as subordinate names, because
@@ -403,7 +403,7 @@ name as a qualified import:
 @
   module Ring where
   import qualified Prelude    -- All Prelude names must be qualified
-  import List( nub )
+  import Data.List( nub )
 
   l1 + l2 = l1 Prelude.++ l2  -- This + differs from the one in the Prelude
   l1 * l2 = nub (l1 + l2)     -- This * differs from the one in the Prelude

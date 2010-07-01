@@ -46,7 +46,7 @@ import UnicodePrims( primUnicodeMaxChar )  -- Unicode primitives
 import PreludeList
 import PreludeText
 import PreludeIO
-import Ratio( Rational )
+import Data.Ratio( Rational )
 
 infixr 9  .
 infixr 8  ^, ^^, **

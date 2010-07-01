@@ -12,7 +12,7 @@ module PreludeList (
     zip, zip3, zipWith, zipWith3, unzip, unzip3)
   where
 
-import qualified Char(isSpace)
+import qualified Data.Char(isSpace)
 
 infixl 9  !!
 infixr 5  ++
