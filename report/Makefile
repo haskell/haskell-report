@@ -307,3 +307,16 @@ haddock :
 	   --read-interface=../base-4.3.0.0,$(LIBDIR)/base/dist-install/doc/html/base/base.haddock \
 	   --optghc=-package-name --optghc=haskell2010-1.0.0.0 --optghc=-hide-all-packages --optghc=-i --optghc=-i$(LIBDIR)/haskell2010/. --optghc=-i$(LIBDIR)/haskell2010/dist-install/build --optghc=-i$(LIBDIR)/haskell2010/dist-install/build/autogen --optghc=-i$(LIBDIR)/haskell2010/dist-install/build --optghc=-i$(LIBDIR)/haskell2010/dist-install/build/autogen --optghc=-i$(LIBDIR)/haskell2010/. --optghc=-optP-include --optghc=-optP$(LIBDIR)/haskell2010/dist-install/build/autogen/cabal_macros.h --optghc=-package --optghc=array-0.3.0.0 --optghc=-package --optghc=base-4.3.0.0 --optghc=-package-name --optghc=haskell2010 --optghc=-XPackageImports --optghc=-XCPP --optghc=-no-user-package-conf --optghc=-rtsopts --optghc=-O --optghc=-fasm --optghc=-dcore-lint --optghc=-fno-warn-deprecated-flags --optghc=-odir --optghc=libraries/haskell2010/dist-install/build --optghc=-hidir --optghc=$(LIBDIR)/haskell2010/dist-install/build --optghc=-stubdir --optghc=$(LIBDIR)/haskell2010/dist-install/build --optghc=-hisuf --optghc=hi --optghc=-osuf --optghc=o --optghc=-hcsuf --optghc=hc \
 	   $(patsubst %, $(LIBDIR)/haskell2010/%, $(addsuffix .hs, $(subst .,/,$(LIB_MODULES))))
+	for i in $(LIB_TEX); do \
+	   sed 's/instance\(\\ [^\]*\)*\\ ReadP\($$\|\\\\\)//g' $$i | \
+	   sed 's/instance\(\\ [^\]*\)*\\ P\($$\|\\\\\)//g' | \
+	   sed 's/instance\\ Typeable\(1\|\)\(\\ [^\]*\)*\($$\|\\\\\)//g' | \
+	   sed 's/instance\\ Exception\(\\ [^\]*\)*\($$\|\\\\\)//g' |  \
+	   sed 's/instance\(\\ [^\]*\)*\\ \(WordPtr\|IntPtr\)\($$\|\\\\\)//g' |  \
+	   sed 's/instance\\ (Data\(\\ [^\]*\)*\($$\|\\\\\)//g' >$$i.tmp \
+	   && mv $$i.tmp $$i; done
+
+# NB. Haddock accumulates all instances including some for types and
+# classes that are not part of the Haskell standard, hence we remove
+# them manually here.  This seemed easier than trying to modify
+# Haddock to avoid generating them somehow.

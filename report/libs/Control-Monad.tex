@@ -11,7 +11,7 @@ module Control.Monad (
   ) where\end{verbatim}}
 \haddockendheader
 
-The \haddocktt{Control.Monad} module provide the \haddockid{Functor}, \haddockid{Monad} and
+The \haddocktt{Control.Monad} module provides the \haddockid{Functor}, \haddockid{Monad} and
  \haddockid{MonadPlus} classes, together with some useful operations on monads.
 \par
 
@@ -31,7 +31,7 @@ Instances of \haddockid{Functor} should satisfy the following laws:
 \end{verbatim}}
 \end{quote}
 The instances of \haddockid{Functor} for lists, \haddocktt{Data.Maybe.Maybe} and \haddocktt{System.IO.IO}
-defined in the \haddocktt{Prelude} satisfy these laws.
+satisfy these laws.
 \par
 
 \haddockpremethods{}\textbf{Methods}
@@ -43,7 +43,7 @@ fmap\ ::\ (a\ ->\ b)\ ->\ f\ a\ ->\ f\ b
 \end{haddockdesc}
 \begin{haddockdesc}
 \item[\begin{tabular}{@{}l}
-instance\ Functor\ {\char 91}{\char 93}\\instance\ Functor\ IO\\instance\ Functor\ ReadP\\instance\ Functor\ Maybe\\instance\ Ix\ i\ =>\ Functor\ (Array\ i)
+instance\ Functor\ {\char 91}{\char 93}\\instance\ Functor\ IO\\instance\ Functor\ Maybe\\instance\ Ix\ i\ =>\ Functor\ (Array\ i)
 \end{tabular}]
 \end{haddockdesc}
 \begin{haddockdesc}
@@ -120,7 +120,7 @@ Fail with a message.  This operation is not part of the
 \end{haddockdesc}
 \begin{haddockdesc}
 \item[\begin{tabular}{@{}l}
-instance\ Monad\ {\char 91}{\char 93}\\instance\ Monad\ IO\\instance\ Monad\ P\\instance\ Monad\ ReadP\\instance\ Monad\ Maybe
+instance\ Monad\ {\char 91}{\char 93}\\instance\ Monad\ IO\\instance\ Monad\ Maybe
 \end{tabular}]
 \end{haddockdesc}
 \begin{haddockdesc}
@@ -159,7 +159,7 @@ an associative operation
 \end{haddockdesc}
 \begin{haddockdesc}
 \item[\begin{tabular}{@{}l}
-instance\ MonadPlus\ {\char 91}{\char 93}\\instance\ MonadPlus\ P\\instance\ MonadPlus\ ReadP\\instance\ MonadPlus\ Maybe
+instance\ MonadPlus\ {\char 91}{\char 93}\\instance\ MonadPlus\ Maybe
 \end{tabular}]
 \end{haddockdesc}
 \section{Functions
