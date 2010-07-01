@@ -760,12 +760,12 @@ Given the declarations
   n (N i) = 42
 @
 \eprog
-the expressions "@(@ @d1@ \bot @)@", "@(@ @d2@ \bot @)@" and 
-"@(d2 (D2@ \bot @) )@" are all
-equivalent to "\bot", whereas "@(@ @n@ \bot @)@", "@(@ @n@ @(@ @N @
-\bot @) )@", "@(@ @d1@ @(@ @D1@ \bot @) )@" and "@(@ @s@ \bot @)@"
-are all equivalent to @42@.  In particular, "@(@ @N@ \bot @)@" is equivalent to
-"\bot" while "@(@ @D1@ \bot @)@" is not equivalent to "\bot".
+the expressions "@(d1@ \bot@)@", "@(d2@ \bot@)@" and 
+"@(d2 (D2@ \bot@))@" are all
+equivalent to "\bot", whereas "@(n@ \bot@)@", "@(n (N@ \bot@))@",
+"@(d1 (D1@ \bot@))@" and "@(s@ \bot@)@"
+are all equivalent to @42@.  In particular, "@(N@ \bot@)@" is equivalent to
+"\bot" while "@(D1@ \bot@)@" is not equivalent to "\bot".
 
 The optional deriving part of a @newtype@ declaration is treated in
 the same way as the deriving component of a @data@ declaration; see
