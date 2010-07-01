@@ -44,7 +44,7 @@ instance\ Eq\ (ForeignPtr\ a)\\instance\ Ord\ (ForeignPtr\ a)\\instance\ Show\ (
 \item[\begin{tabular}{@{}l}
 type\ FinalizerPtr\ a\ =\ FunPtr\ (Ptr\ a\ ->\ IO\ ())
 \end{tabular}]\haddockbegindoc
-A Finalizer is represented as a pointer to a foreign function that, at
+A finalizer is represented as a pointer to a foreign function that, at
  finalisation time, gets as an argument a plain pointer variant of the
  foreign pointer that the finalizer is associated with.
 \par
@@ -103,7 +103,7 @@ This variant of \haddockid{newForeignPtr} adds a finalizer that expects an
 \item[\begin{tabular}{@{}l}
 addForeignPtrFinalizerEnv\ ::\ FinalizerEnvPtr\ env\ a\\\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ->\ Ptr\ env\ ->\ ForeignPtr\ a\ ->\ IO\ ()
 \end{tabular}]\haddockbegindoc
-like \haddockid{addForeignPtrFinalizerEnv} but allows the finalizer to be
+Like \haddockid{addForeignPtrFinalizerEnv} but allows the finalizer to be
  passed an additional environment parameter to be passed to the
  finalizer.  The environment passed to the finalizer is fixed by the
  second argument to \haddockid{addForeignPtrFinalizerEnv}
@@ -165,7 +165,7 @@ touchForeignPtr\ ::\ ForeignPtr\ a\ ->\ IO\ ()
 \end{tabular}]\haddockbegindoc
 This function ensures that the foreign object in
  question is alive at the given place in the sequence of IO
- actions. In particular \haddocktt{Foreign.ForeignPtr.withForeignPtr}
+ actions. In particular \haddockid{withForeignPtr}
  does a \haddockid{touchForeignPtr} after it
  executes the user action.
 \par
@@ -175,17 +175,12 @@ Note that this function should not be used to express dependencies
  \haddockid{ForeignPtr} \haddocktt{F2}, then the only guarantee is that the finalizer
  for \haddocktt{F2} is never started before the finalizer for \haddocktt{F1}.  They
  might be started together if for example both \haddocktt{F1} and \haddocktt{F2} are
- otherwise unreachable, and in that case the scheduler might end up
- running the finalizer for \haddocktt{F2} first.
+ otherwise unreachable.
 \par
 In general, it is not recommended to use finalizers on separate
  objects with ordering constraints between them.  To express the
- ordering robustly requires explicit synchronisation using \haddocktt{MVar}s
- between the finalizers, but even then the runtime sometimes runs
- multiple finalizers sequentially in a single thread (for
- performance reasons), so synchronisation between finalizers could
- result in artificial deadlock.  Another alternative is to use
- explicit reference counting.
+ ordering robustly requires explicit synchronisation between
+ finalizers.
 \par
 
 \end{haddockdesc}

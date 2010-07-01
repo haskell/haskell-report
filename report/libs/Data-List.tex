@@ -666,10 +666,10 @@ The \haddockid{stripPrefix} function drops the given prefix from a list.
 \par
 \begin{quote}
 {\haddockverb\begin{verbatim}
- stripPrefix "foo" "foobar" -> Just "bar"
- stripPrefix "foo" "foo" -> Just ""
- stripPrefix "foo" "barfoo" -> Nothing
- stripPrefix "foo" "barfoobaz" -> Nothing
+ stripPrefix "foo" "foobar" == Just "bar"
+ stripPrefix "foo" "foo" == Just ""
+ stripPrefix "foo" "barfoo" == Nothing
+ stripPrefix "foo" "barfoobaz" == Nothing
 \end{verbatim}}
 \end{quote}
 
@@ -753,8 +753,8 @@ Example:
 \par
 \begin{quote}
 {\haddockverb\begin{verbatim}
-isInfixOf "Haskell" "I really like Haskell." -> True
-isInfixOf "Ial" "I really like Haskell." -> False
+isInfixOf "Haskell" "I really like Haskell." == True
+isInfixOf "Ial" "I really like Haskell." == False
 \end{verbatim}}
 \end{quote}
 

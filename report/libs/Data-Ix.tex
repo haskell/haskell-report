@@ -25,26 +25,20 @@ An implementation is entitled to assume the following laws about these
 \par
 \begin{itemize}
 \item
-\begin{quote}
-{\haddockverb\begin{verbatim}
-inRange (l,u) i == elem i (range (l,u))\end{verbatim}}
-\end{quote}
+ \haddocktt{inRange\ (l,u)\ i\ ==\ elem\ i\ (range\ (l,u))} \haddocktt{\ }
+\par
 
 \item
  \haddocktt{range\ (l,u)\ !!\ index\ (l,u)\ i\ ==\ i}, when \haddocktt{inRange\ (l,u)\ i}
 \par
 
 \item
-\begin{quote}
-{\haddockverb\begin{verbatim}
-map (index (l,u)) (range (l,u))) == [0..rangeSize (l,u)-1]\end{verbatim}}
-\end{quote}
+ \haddocktt{map\ (index\ (l,u))\ (range\ (l,u)))\ ==\ {\char 91}0..rangeSize\ (l,u)-1{\char 93}} \haddocktt{\ }
+\par
 
 \item
-\begin{quote}
-{\haddockverb\begin{verbatim}
-rangeSize (l,u) == length (range (l,u))\end{verbatim}}
-\end{quote}
+ \haddocktt{rangeSize\ (l,u)\ ==\ length\ (range\ (l,u))} \haddocktt{\ }
+\par
 
 \end{itemize}
 Minimal complete instance: \haddockid{range}, \haddockid{index} and \haddockid{inRange}.

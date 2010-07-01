@@ -85,7 +85,7 @@ Any real interval contains a unique simplest rational;
 }
 \begin{quote}
 {\haddockverb\begin{verbatim}
- module  Ratio (
+ module  Data.Ratio (
      Ratio, Rational, (%), numerator, denominator, approxRational ) where
  
  infixl 7  %
@@ -107,7 +107,7 @@ Any real interval contains a unique simplest rational;
  -- E.g., 12 `reduce` 8    ==  3 :%   2
  --       12 `reduce` (-8) ==  3 :% (-2)
  
- reduce _ 0              =  error "Ratio.% : zero denominator"
+ reduce _ 0              =  error "Data.Ratio.% : zero denominator"
  reduce x y              =  (x `quot` d) :% (y `quot` d)
                             where d = gcd x y
  
@@ -146,10 +146,10 @@ Any real interval contains a unique simplest rational;
      succ x           =  x+1
      pred x           =  x-1
      toEnum           =  fromIntegral
-     fromEnum         =  fromInteger . truncate	-- May overflow
-     enumFrom         =  numericEnumFrom		-- These numericEnumXXX functions
-     enumFromThen     =  numericEnumFromThen	-- are as defined in Prelude.hs
-     enumFromTo       =  numericEnumFromTo	-- but not exported from it!
+     fromEnum         =  fromInteger . truncate        -- May overflow
+     enumFrom         =  numericEnumFrom               -- These numericEnumXXX functions
+     enumFromThen     =  numericEnumFromThen   -- are as defined in Prelude.hs
+     enumFromTo       =  numericEnumFromTo     -- but not exported from it!
      enumFromThenTo   =  numericEnumFromThenTo
  
  instance  (Read a, Integral a)  => Read (Ratio a)  where
@@ -160,9 +160,9 @@ Any real interval contains a unique simplest rational;
  
  instance  (Integral a)  => Show (Ratio a)  where
      showsPrec p (x:%y)  =  showParen (p > ratPrec)
-                                (showsPrec (ratPrec+1) x . 
- 			        showString " % " . 
- 				showsPrec (ratPrec+1) y)
+                               showsPrec (ratPrec+1) x . 
+                               showString " % " . 
+                               showsPrec (ratPrec+1) y)
  
  
  

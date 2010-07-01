@@ -102,7 +102,7 @@ A value of type \haddocktt{FunPtr\ a} is a pointer to a function callable
 \begin{itemize}
 \item
  the argument types are \emph{marshallable foreign types},
-   i.e. \haddockid{Char}, \haddockid{Int}, \haddocktt{Prelude.Double}, \haddocktt{Prelude.Float},
+   i.e. \haddockid{Char}, \haddockid{Int}, \haddockid{Double}, \haddockid{Float},
    \haddockid{Bool}, \haddocktt{Data.Int.Int8}, \haddocktt{Data.Int.Int16}, \haddocktt{Data.Int.Int32},
    \haddocktt{Data.Int.Int64}, \haddocktt{Data.Word.Word8}, \haddocktt{Data.Word.Word16},
    \haddocktt{Data.Word.Word32}, \haddocktt{Data.Word.Word64}, \haddocktt{Ptr\ a}, \haddocktt{FunPtr\ a},
@@ -112,7 +112,7 @@ A value of type \haddocktt{FunPtr\ a} is a pointer to a function callable
 
 \item
  the return type is either a marshallable foreign type or has the form
-   \haddocktt{\haddocktt{Prelude.IO}\ t} where \haddocktt{t} is a marshallable foreign type or \haddocktt{()}.
+   \haddocktt{IO\ t} where \haddocktt{t} is a marshallable foreign type or \haddocktt{()}.
 \par
 
 \end{itemize}

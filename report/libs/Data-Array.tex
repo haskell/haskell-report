@@ -17,9 +17,8 @@ in particular, a programmer may reasonably expect rapid access to
 the components.  To ensure the possibility of such an implementation,
 arrays are treated as data, not as general functions.
 \par
-Since most array functions involve the class \haddockid{Ix}, this module is exported
-from \haddocktt{Data.Array} so that modules need not import both \haddocktt{Data.Array} and
-\haddocktt{Data.Ix}.
+Since most array functions involve the class \haddockid{Ix}, the contents of the
+module \haddocktt{Data.Ix} are re-exported from \haddocktt{Data.Array} for convenience:
 \par
 
 \begin{haddockdesc}
@@ -68,15 +67,13 @@ Construct an array with the specified bounds and containing values
  for given indices within these bounds.
 \par
 The array is undefined (i.e. bottom) if any index in the list is
- out of bounds.  The Haskell 98 Report further specifies that if any
+ out of bounds.  If any
  two associations in the list have the same index, the value at that
- index is undefined (i.e. bottom).  However in GHC's implementation,
- the value at such an index is the value part of the last association
- with that index in the list.
+ index is undefined (i.e. bottom).
 \par
 Because the indices must be checked for these errors, \haddockid{array} is
  strict in the bounds argument and in the indices of the association
- list, but nonstrict in the values.  Thus, recurrences such as the
+ list, but non-strict in the values.  Thus, recurrences such as the
  following are possible:
 \par
 \begin{quote}
@@ -202,8 +199,7 @@ Constructs an array identical to the first argument except that it has
 is the same matrix, except with the diagonal zeroed.
 \par
 Repeated indices in the association list are handled as for \haddockid{array}:
- Haskell 98 specifies that the resulting array is undefined (i.e. bottom),
- but GHC's implementation uses the last association for each index.
+ the resulting array is undefined (i.e. bottom),
 \par
 
 \end{haddockdesc}
@@ -242,34 +238,28 @@ A similar transformation of array values may be achieved using \haddockid{fmap}
 \begin{quote}
 {\haddockverb\begin{verbatim}
  module  Array ( 
-     module Ix,  -- export all of Ix 
+     module Data.Ix,  -- export all of Data.Ix
      Array, array, listArray, (!), bounds, indices, elems, assocs, 
      accumArray, (//), accum, ixmap ) where
  
- import Ix
- import List( (\\) )
+ import Data.Ix
+ import Data.List( (\\) )
  
  infixl 9  !, //
  
  data (Ix a) => Array a b = MkArray (a,a) (a -> b) deriving ()
  
  array       :: (Ix a) => (a,a) -> [(a,b)] -> Array a b
- array b ivs =
-     if and [inRange b i | (i,_) <- ivs]
-         then MkArray b
-                      (\j -> case [v | (i,v) <- ivs, i == j] of
-                             [v]   -> v
-                             []    -> error "Array.!: >                                            \undefined array element"
-\end{verbatim}}
-\end{quote}
-\begin{quote}
-{\haddockverb\begin{verbatim}
-                             _     -> error "Array.!: >                                            \multiply defined array element")
-\end{verbatim}}
-\end{quote}
-\begin{quote}
-{\haddockverb\begin{verbatim}
-         else error "Array.array: out-of-range array association"
+ array b ivs
+   | any (not . inRange b. fst) ivs
+      = error "Data.Array.array: out-of-range array association"
+   | otherwise
+      = MkArray b arr
+   where
+     arr j = case [ v | (i,v) <- ivs, i == j ] of
+               [v]   -> v
+               []    -> error "Data.Array.!: undefined array element"
+               _     -> error "Data.Array.!: multiply defined array element"
  
  listArray             :: (Ix a) => (a,a) -> [b] -> Array a b
  listArray b vs        =  array b (zipWith (\ a b -> (a,b)) (range b) vs)
@@ -292,9 +282,9 @@ A similar transformation of array values may be achieved using \haddockid{fmap}
  (//)                  :: (Ix a) => Array a b -> [(a,b)] -> Array a b
  a // new_ivs          = array (bounds a) (old_ivs ++ new_ivs)
                        where
-                   	old_ivs = [(i,a!i) | i <- indices a,
+                         old_ivs = [(i,a!i) | i <- indices a,
                                               i `notElem` new_is]
-                   	new_is  = [i | (i,_) <- new_ivs]
+                         new_is  = [i | (i,_) <- new_ivs]
  
  accum                 :: (Ix a) => (b -> c -> b) -> Array a b -> [(a,c)]
                                     -> Array a b

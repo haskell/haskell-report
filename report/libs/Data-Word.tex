@@ -12,8 +12,7 @@ module Data.Word (
 This module provides unsigned integer types of unspecified width (\haddockid{Word})
 and fixed widths (\haddockid{Word8}, \haddockid{Word16}, \haddockid{Word32} and \haddockid{Word64}).  All
 arithmetic is performed modulo 2{\char '136}n, where \haddocktt{n} is the number of bits in
-the type.  One non-obvious consequence of this is that \haddockid{negate}
-  should \emph{not} raise an error on negative arguments.
+the type.
 \par
 For coercing between any two integer types, use
 \haddockid{fromIntegral}.  Coercing word types to and from integer

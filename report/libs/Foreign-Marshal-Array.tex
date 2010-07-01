@@ -86,10 +86,7 @@ Adjust the size of an array including an extra position for the end marker.
 \item[\begin{tabular}{@{}l}
 peekArray\ ::\ Storable\ a\ =>\ Int\ ->\ Ptr\ a\ ->\ IO\ {\char 91}a{\char 93}
 \end{tabular}]\haddockbegindoc
-Convert an array of given length into a Haskell list.  This version
- traverses the array backwards using an accumulating parameter,
- which uses constant stack space.  The previous version using mapM
- needed linear stack space.
+Convert an array of given length into a Haskell list.
 \par
 
 \end{haddockdesc}

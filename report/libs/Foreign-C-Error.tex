@@ -403,7 +403,7 @@ errnoToIOError
  \\
                                                                                                                                                                                                    \haddockdecltt{->} & \haddockdecltt{IOError} & \\
 \end{tabulary}\par
-Construct a Haskell 98 I/O error based on the given \haddockid{Errno} value.
+Construct an \haddockid{IOError} based on the given \haddockid{Errno} value.
  The optional information can be used to improve the accuracy of
  error messages.
 \par
@@ -543,7 +543,7 @@ throwErrnoIfRetryMayBlock
  \\
                                                                                                                                                                                        \haddockdecltt{->} & \haddockdecltt{IO a} & \\
 \end{tabulary}\par
-as \haddockid{throwErrnoIfRetry}, but additionlly if the operation 
+as \haddockid{throwErrnoIfRetry}, but additionally if the operation 
  yields the error code \haddockid{eAGAIN} or \haddockid{eWOULDBLOCK}, an alternative
  action is executed before retrying.
 \par
