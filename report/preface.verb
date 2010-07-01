@@ -83,7 +83,7 @@ quo.
 The \Haskell{} Prime effort was thus conceived as a relatively
 conservative extension of \Haskell{} 98, taking on board new features
 only where they were well understood and widely agreed upon.  It too
-is intended to be a ``stable'' language, yet reflecting the
+was intended to be a ``stable'' language, yet reflecting the
 considerable progress in research on language design in recent years.
 
 After several years exploring the design space, it was decided that a
