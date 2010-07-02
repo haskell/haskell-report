@@ -9,7 +9,7 @@ module System.IO.Error (
     ioeGetHandle,  ioeGetFileName,  IOErrorType,  alreadyExistsErrorType, 
     doesNotExistErrorType,  alreadyInUseErrorType,  fullErrorType, 
     eofErrorType,  illegalOperationErrorType,  permissionErrorType, 
-    userErrorType
+    userErrorType,  ioError,  catch,  try
   ) where\end{verbatim}}
 \haddockendheader
 
@@ -237,6 +237,50 @@ I/O error where the operation failed because the user does not
 userErrorType\ ::\ IOErrorType
 \end{tabular}]\haddockbegindoc
 I/O error that is programmer-defined.
+\par
+
+\end{haddockdesc}
+\section{Throwing and catching I/O errors
+}
+\begin{haddockdesc}
+\item[\begin{tabular}{@{}l}
+ioError\ ::\ IOError\ ->\ IO\ a
+\end{tabular}]\haddockbegindoc
+Raise an \haddockid{IOError} in the \haddockid{IO} monad.
+\par
+
+\end{haddockdesc}
+\begin{haddockdesc}
+\item[\begin{tabular}{@{}l}
+catch\ ::\ IO\ a\ ->\ (IOError\ ->\ IO\ a)\ ->\ IO\ a
+\end{tabular}]\haddockbegindoc
+The \haddockid{catch} function establishes a handler that receives any \haddockid{IOError}
+ raised in the action protected by \haddockid{catch}.  An \haddockid{IOError} is caught by
+ the most recent handler established by \haddockid{catch}.  These handlers are
+ not selective: all \haddockid{IOError}s are caught.  Exception propagation
+ must be explicitly provided in a handler by re-raising any unwanted
+ exceptions.  For example, in
+\par
+\begin{quote}
+{\haddockverb\begin{verbatim}
+ f = catch g (\e -> if IO.isEOFError e then return [] else ioError e)
+\end{verbatim}}
+\end{quote}
+the function \haddocktt{f} returns \haddocktt{{\char 91}{\char 93}} when an end-of-file exception
+ (cf. \haddockid{isEOFError}) occurs in \haddocktt{g}; otherwise, the
+ exception is propagated to the next outer handler.
+\par
+When an exception propagates outside the main program, the Haskell
+ system prints the associated \haddockid{IOError} value and exits the program.
+\par
+
+\end{haddockdesc}
+\begin{haddockdesc}
+\item[\begin{tabular}{@{}l}
+try\ ::\ IO\ a\ ->\ IO\ (Either\ IOError\ a)
+\end{tabular}]\haddockbegindoc
+The construct \haddockid{try} \haddocktt{comp} exposes IO errors which occur within a
+ computation, and which are not fully handled.
 \par
 
 \end{haddockdesc}
