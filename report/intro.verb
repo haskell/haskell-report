@@ -159,7 +159,7 @@ also {\em ad hoc} polymorphism, or {\em overloading} (using
 {\em type classes}).\index{type class}
 
 Errors in \Haskell{} are semantically equivalent to
-$\bot$.  Technically, they are not distinguishable
+$\bot$ (``bottom''\index{bottom}).  Technically, they are indistinguishable
 from nontermination, so the language includes no mechanism
 for detecting or acting upon errors.  However, implementations
 will probably try to provide useful information about
