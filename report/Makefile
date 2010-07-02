@@ -72,6 +72,7 @@ LIB_MODULES = Data.Array \
 	Data.Maybe \
 	Control.Monad \
 	Data.Ratio \
+	Numeric \
 	System.Environment \
 	System.Exit \
 	Data.Int \

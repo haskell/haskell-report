@@ -469,6 +469,7 @@ that it does not claim to be a definition of the language Haskell 2010.
 \input{libs/Foreign-Ptr}
 \input{libs/Foreign-StablePtr}
 \input{libs/Foreign-Storable}
+\input{libs/Numeric}
 \input{libs/System-Environment}
 \input{libs/System-Exit}
 \input{libs/System-IO}
