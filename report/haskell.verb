@@ -97,7 +97,7 @@
 \def\theindex{\@@restonecoltrue\if@@twocolumn\@@restonecolfalse\fi
 \columnseprule \z@@
 \columnsep 35pt\twocolumn[\section*{Index}
-	\addcontentsline{toc}{section}{Index}
+	\addcontentsline{toc}{part}{Index}
 	\input{index-intro}\vskip 20pt]
  \@@mkboth{INDEX}{INDEX}\thispagestyle{plain}\parindent\z@@
  \parskip\z@@ plus .3pt\relax\let\item\@@idxitem
@@ -367,6 +367,7 @@
 
 % ------------------------- Title page -----------------------------------
 
+\pdfbookmark{Title page}{title}
 \begin{titlepage}
 
 \setcounter{page}{0}
@@ -406,6 +407,7 @@ that it does not claim to be a definition of the language Haskell 2010.
 
 \clearpage
 \clearpage
+\pdfbookmark{Contents}{contents}
 \tableofcontents
 \startnewstuff
 
@@ -482,7 +484,7 @@ that it does not claim to be a definition of the language Haskell 2010.
 \input{index-extra}
 
 % Add a contents line for the References -- may be off by one page
-\addcontentsline{toc}{section}{References}
+\addcontentsline{toc}{part}{References}
 \bibliographystyle{plain}
 \bibliography{haskell}
 %
