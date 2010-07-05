@@ -65,14 +65,14 @@ versions are given in the @Data.List@ library, with the prefix
 %\input{PreludeBuiltin}\clearpage
 
 
-\subsection{Prelude {\tt PreludeList}}
+\subsection{Prelude \texorpdfstring{{\tt PreludeList}}{PreludeList}}
 \label{preludelist}
 \inputHS{PreludeList}\clearpage
-\subsection{Prelude {\tt PreludeText}}
+\subsection{Prelude \texorpdfstring{{\tt PreludeText}}{PreludeText}}
 \label{preludetext}
 \inputHS{PreludeText}\cleardoublepage
 
-\subsection{Prelude {\tt PreludeIO}}
+\subsection{Prelude \texorpdfstring{{\tt PreludeIO}}{PreludeIO}}
 \label{preludeio}
 \inputHS{PreludeIO}
 %**~footer

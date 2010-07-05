@@ -684,7 +684,7 @@ This means, for example, that a compiler may optimize calls to
 functions in the Prelude without consulting the source code
 of the Prelude.
 
-\subsubsection{The @Prelude@ Module}
+\subsubsection{The \texorpdfstring{@Prelude@}{Prelude} Module}
 \indexmodule{Prelude}
 \index{Prelude!implicit import of}
 

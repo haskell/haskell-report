@@ -130,7 +130,7 @@ instances for each of the derivable Prelude classes are now given.
 Free variables and constructors used in these translations
 always refer to entities defined by the @Prelude@.
 
-\subsection{Derived instances of @Eq@ and @Ord@}
+\subsection{Derived instances of \texorpdfstring{@Eq@}{Eq} and \texorpdfstring{@Ord@}{Ord}}
 \indexdi{Eq}
 \indexdi{Ord}
 The class methods automatically introduced by derived instances
@@ -166,7 +166,7 @@ All derived operations of class @Eq@ and @Ord@ are strict in both arguments.
 For example, "@False <= @\bot" is "\bot", even though @False@ is the first constructor
 of the @Bool@ type.
 
-\subsection{Derived instances of @Enum@}
+\subsection{Derived instances of \texorpdfstring{@Enum@}{Enum}}
 \indexdi{Enum}
 Derived instance declarations for the class @Enum@ are only
 possible for enumerations (data types with only nullary constructors).
@@ -214,7 +214,7 @@ we would have:
 @
 \eprog
 
-\subsection{Derived instances of @Bounded@}
+\subsection{Derived instances of \texorpdfstring{@Bounded@}{Bounded}}
 \indexdi{Bounded}
 The @Bounded@ class introduces the class
 methods 
@@ -239,7 +239,7 @@ would generate the following @Bounded@ instance:
 @
 \eprog
 
-\subsection{Derived instances of @Read@ and @Show@}
+\subsection{Derived instances of \texorpdfstring{@Read@}{Read} and \texorpdfstring{@Show@}{Show}}
 \label{derived-text}
 \indexdi{Read}
 \indexdi{Show}
