@@ -96,10 +96,15 @@ support the @LANGUAGE@ pragma are required to support
 @
 \eprog
 Those implementations are also encouraged to support the following
-named language features: @PatternGuards@, @NoNPlusKPatterns@, @RelaxedPolyRec@,
-@EmptyDataDecls@, @ForeignFunctionInterface@. These are the named
-language extensions supported by some pre-Haskell 2010
-implementations, that have been integrated into this report.
+named language features:
+\bprog
+@
+PatternGuards, NoNPlusKPatterns, RelaxedPolyRec,
+EmptyDataDecls, ForeignFunctionInterface
+@
+\eprog
+These are the named language extensions supported by some pre-Haskell
+2010 implementations, that have been integrated into this report.
 
 \end{haskellprime}
 
