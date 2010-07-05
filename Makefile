@@ -5,6 +5,10 @@ default:
 	cd tools && make
 	cd report && make
 
+clean:
+	cd report && make clean
+	cd tools && make clean
+
 release:
 	(cd tools; make)
 	(cd report; make release)
