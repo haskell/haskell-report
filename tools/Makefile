@@ -11,7 +11,7 @@ GHC = ghc
 LEX = flex
 LEX_OPTS = -t -8
 
-all : verbatim verb-tex4ht run_tex run_index
+all : verbatim verb-tex4ht run_index
 
 %.c : %.lex
 	$(LEX) $(LEX_OPTS) $< > $@ || ( rm -f verbatim.c && exit 1 )
@@ -25,12 +25,8 @@ verbatim: verbatim.o
 verb-tex4ht: verb-tex4ht.o
 	$(CC) -o $@ $^
 
-run_tex: tex.hs
-	$(GHC) -o run_tex tex.hs -fglasgow-exts
-
 run_index: index.hs
 	$(GHC) -o run_index index.hs -fglasgow-exts
-
 
 clean:
 	rm -f verbatim verb-tex4ht run_tex run_index *.o *.hi

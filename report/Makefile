@@ -20,7 +20,6 @@ pdf : haskell.pdf
 #########################################
 
 # Stuf from the tools/directory
-RUN_TEX   = ../tools/run_tex
 RUN_INDEX = ../tools/run_index
 VERBATIM  = ../tools/verbatim
 VERB_TEX4HT  = ../tools/verb-tex4ht
@@ -112,14 +111,6 @@ show:
 
 haskell.tex: haskell.verb
 	$(EXPAND) < $< | $(VERBATIM) >$@
-
-# I have no idea why run_tex is run twice.  SLPJ
-# html: index.html ${PARTS}
-# 	-mkdir haskell-report-html
-# 	$(RUN_TEX)
-# 	$(RUN_TEX)
-# 	$(RUN_INDEX)
-# 	cp index.html *.png *.gif haskell-report-html
 
 haskell.dvi: haskell.tex haskell.ind ${PARTS}
 haskell.pdf: haskell.tex haskell.ind haddock.sty ${PARTS}
