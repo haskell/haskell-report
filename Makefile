@@ -2,8 +2,8 @@ RELEASE_DIR = haskell-prime-draft
 JFP_DIR = jfp-release
 
 default:
-	(cd tools; make)
-	(cd report; make)
+	cd tools && make
+	cd report && make
 
 release:
 	(cd tools; make)
