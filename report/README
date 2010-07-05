@@ -19,6 +19,48 @@ make targets
    haddock   re-generate the library documentation using Haddock
              (see Makefile for instructions)
 
+
+Re-generating the library documentation using Haddock
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The documentation for library modules is generated automatically by
+Haddock (http://www.haskell.org/haddock) from the library source code.
+You don't need Haddock to build the report though - the generated .tex
+files have been checked into the repository.
+
+The library specifications generated for the Haskell 2010 report were
+generated using libraries from these repositories:
+
+  base        (http://darcs.haskell.org/packages/base)
+  ghc-prim    (http://darcs.haskell.org/packages/ghc-prim)
+  integer-gmp (http://darcs.haskell.org/packages/integer-gmp)
+  array       (http://darcs.haskell.org/packages/array)
+  haskell2010 (http://darcs.haskell.org/packages/haskell2010)
+
+each of the repositories was tagged with
+
+  "Haskell 2010 report generated"
+
+at the point the libray module documentation was generated, so you
+should be able to reproduce exactly what is checked into the
+repository.
+
+Right now, the only practical way to re-generate the library module
+documentation is to have a GHC build.  Fortunately building GHC isn't
+that hard these days: go to 
+
+  http://hackage.haskell.org/trac/ghc/wiki/Building
+
+and follow the instructions.  Make sure you don't disable
+documentation building, i.e. don't set HADDOCK_DOCS=NO in your
+mk/build.mk configuration file.
+
+When you have built GHC
+
+To update the library documentation see the Makefile, in the section
+"Haddock-generated library docs".
+
+
 Roadmap
 ~~~~~~~
 

@@ -261,13 +261,7 @@ haskell-librariesx.dvi : sigplan_haskell-libraries.dvi
 # changing anything.
 
 # To generate the library docs, we need to run Haddock against the
-# modules of the haskell2010 package.  The package is here:
-#
-#   http://darcs.haskell.org/packages/haskell2010
-#
-# I generated the documentation using a GHC build, but you could
-# probably do it using just the package sources, as long as you have
-# GHC and all the package documentation installed.
+# modules of the haskell2010 package.
 #
 # Basically the plan is to run Haddock in the same way as for
 # generating the HTML documentation, except that we
@@ -276,30 +270,37 @@ haskell-librariesx.dvi : sigplan_haskell-libraries.dvi
 #    * Add --latex-style=NONE to prevent Haddock dumping its haddock.sty
 #    * Add --odir=$(HADDOCK_DIR)
 #
-# So to get started, in a GHC build, you could run 
-#
-#    $ cd libraries/haskell2010
-#    $ make html stage=0 FAST=YES
-#
-# And grab the Haddock command line that the build system emits.
-#
-# The following rules will probably need a lot of manual modification,
-# sorry about that.
+# Hopefully you should be able to modify the variables below to set
+# the location of your GHC build and the versions of the relevant
+# packages, and then say 'make haddock' to build the docs.  Then you
+# can use 'darcs whatsnew' to see the differences between what you
+# just generated and what is checked into the repository.
 
-# Set this to Haddock (version 2.8 or later with the LaTeX back-end)
-HADDOCK = /home/simonmar/builds/testing/inplace/bin/haddock
+GHC_BUILD = /home/simonmar/builds/testing
 
-# Set this to the location of the libraries in a GHC build
-LIBDIR = /home/simonmar/builds/testing/libraries
+# Change these to match the current versions.  Use
+#
+#    $(GHC_BUILD)/inplace/bin/ghc-pkg list 
+#
+# to find out what they should be.
+#
+HASKELL2010_PKG = haskell2010-1.0.0.0
+BASE_PKG        = base-4.3.0.0
+ARRAY_PKG       = array-0.3.0.0
+
+GHC_PRIM_PKG = ghc-prim
+
+HADDOCK = $(GHC_BUILD)/inplace/bin/haddock
+LIBDIR =  $(GHC_BUILD)libraries
 
 haddock :
 	$(HADDOCK) --odir=$(HADDOCK_ODIR) --no-tmp-comp-dir \
 	   --latex --latex-style=NONE \
 	   --title="haskell2010-1.0.0.0: Compatibility with Haskell 2010" \
-	   --read-interface=../ghc-prim,$(LIBDIR)/ghc-prim/dist-install/doc/html/ghc-prim/ghc-prim.haddock \
-	   --read-interface=../array-0.3.0.0,$(LIBDIR)/array/dist-install/doc/html/array/array.haddock \
-	   --read-interface=../base-4.3.0.0,$(LIBDIR)/base/dist-install/doc/html/base/base.haddock \
-	   --optghc=-package-name --optghc=haskell2010-1.0.0.0 --optghc=-hide-all-packages --optghc=-i --optghc=-i$(LIBDIR)/haskell2010/. --optghc=-i$(LIBDIR)/haskell2010/dist-install/build --optghc=-i$(LIBDIR)/haskell2010/dist-install/build/autogen --optghc=-i$(LIBDIR)/haskell2010/dist-install/build --optghc=-i$(LIBDIR)/haskell2010/dist-install/build/autogen --optghc=-i$(LIBDIR)/haskell2010/. --optghc=-optP-include --optghc=-optP$(LIBDIR)/haskell2010/dist-install/build/autogen/cabal_macros.h --optghc=-package --optghc=array-0.3.0.0 --optghc=-package --optghc=base-4.3.0.0 --optghc=-package-name --optghc=haskell2010 --optghc=-XPackageImports --optghc=-XCPP --optghc=-no-user-package-conf --optghc=-rtsopts --optghc=-O --optghc=-fasm --optghc=-dcore-lint --optghc=-fno-warn-deprecated-flags --optghc=-odir --optghc=libraries/haskell2010/dist-install/build --optghc=-hidir --optghc=$(LIBDIR)/haskell2010/dist-install/build --optghc=-stubdir --optghc=$(LIBDIR)/haskell2010/dist-install/build --optghc=-hisuf --optghc=hi --optghc=-osuf --optghc=o --optghc=-hcsuf --optghc=hc \
+	   --read-interface=../$(GHC_PRIM_PKG),$(LIBDIR)/ghc-prim/dist-install/doc/html/ghc-prim/ghc-prim.haddock \
+	   --read-interface=../$(ARRAY_PKG),$(LIBDIR)/array/dist-install/doc/html/array/array.haddock \
+	   --read-interface=../$(BASE_PKG),$(LIBDIR)/base/dist-install/doc/html/base/base.haddock \
+	   --optghc=-package-name --optghc=$(HASKELL2010_PKG) --optghc=-hide-all-packages --optghc=-i --optghc=-i$(LIBDIR)/haskell2010/. --optghc=-i$(LIBDIR)/haskell2010/dist-install/build --optghc=-i$(LIBDIR)/haskell2010/dist-install/build/autogen --optghc=-i$(LIBDIR)/haskell2010/dist-install/build --optghc=-i$(LIBDIR)/haskell2010/dist-install/build/autogen --optghc=-i$(LIBDIR)/haskell2010/. --optghc=-optP-include --optghc=-optP$(LIBDIR)/haskell2010/dist-install/build/autogen/cabal_macros.h --optghc=-package --optghc=$(ARRAY_PKG) --optghc=-package --optghc=$(BASE_PKG) --optghc=-XPackageImports --optghc=-XCPP --optghc=-no-user-package-conf  --optghc=-fno-warn-deprecated-flags --optghc=-odir --optghc=libraries/haskell2010/dist-install/build --optghc=-hidir --optghc=$(LIBDIR)/haskell2010/dist-install/build --optghc=-stubdir --optghc=$(LIBDIR)/haskell2010/dist-install/build --optghc=-hisuf --optghc=hi --optghc=-osuf --optghc=o --optghc=-hcsuf --optghc=hc \
 	   $(patsubst %, $(LIBDIR)/haskell2010/%, $(addsuffix .hs, $(subst .,/,$(LIB_MODULES))))
 	for i in $(LIB_TEX); do \
 	   sed 's/instance\(\\ [^\]*\)*\\ ReadP\($$\|\\\\\)//g' $$i | \
