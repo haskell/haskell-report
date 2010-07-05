@@ -33,4 +33,4 @@ run_index: index.hs
 
 
 clean:
-	rm -f verbatim run_tex run_index *.o *.hi
+	rm -f verbatim verb-tex4ht run_tex run_index *.o *.hi

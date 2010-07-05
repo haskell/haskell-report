@@ -169,7 +169,9 @@ clean:
 		ht/*.4ct ht/*.4tc
 	$(RM) *.dvi *.log *.aux *.ilg *.blg *.toc *.bbl *.idx *.tmp *.out \
 		haskell.tex preface.tex $(PARTS_NO_PREFACE) \
-		haskell.tex haskell.ps haskell.pdf *.o lex.yy.c haskell-report-html/*
+		haskell.tex haskell.ps haskell.pdf *.o lex.yy.c haskell-report-html/* \
+		libs/haddock.sty libs/Prelude.tex libs/haskell*.tex
+
 # NB. don't clean $(LIB_TEX) here
 
 
