@@ -1,5 +1,4 @@
-RELEASE_DIR = haskell-prime-draft
-JFP_DIR = jfp-release
+VERSION = 2010
 
 default:
 	cd tools && make
@@ -10,22 +9,19 @@ clean:
 	cd tools && make clean
 
 release:
-	(cd tools; make)
-	(cd report; make release)
-	(cd libraries; make release)
-	(cd jfp-release; make)
-	cp report/haskell-prime-draft.html $(RELEASE_DIR)/index.html
-	cp hprime.png $(RELEASE_DIR)
-	gzip < jfp-release/h98-book.ps > $(RELEASE_DIR)/h98-book.ps.gz
-	gzip < jfp-release/h98-book.pdf > $(RELEASE_DIR)/h98-book.pdf.gz
+	cd tools && make
+	cd report && make
+	mkdir haskell$(VERSION)
+	cp report/ht/*.html report/ht/*.png report/ht/*.css haskell$(VERSION)
+	tar cvzf haskell$(VERSION)-html.tar.gz haskell$(VERSION)
 
-jfp:
-	-mkdir $(JFP_DIR)
-	(cd report; make jfp)
-	(cd libraries; make jfp)
+# If you have an account on www.haskell.org, the following rules will upload
+# the finished report to the correct places.
+UPLOAD_HOST = www.haskell.org
+UPLOAD_DIR = /home/haskell/onlinereport/haskell$(VERSION)
 
-# Places to change when you change the date of the Report
-# 	h98-revised.html
-#	report/index.html   libraries/index.html
-#	report/html.config  libraries/html.config
-#	report/haskell.verb libraries/library.verb
+upload:
+	ssh $(UPLOAD_HOST) "mkdir $(UPLOAD_DIR) || true"
+	scp report/haskell.pdf $(UPLOAD_HOST):$(UPLOAD_DIR)
+	scp haskell$(VERSION)-html.tar.gz $(UPLOAD_HOST):$(UPLOAD_DIR)
+	ssh $(UPLOAD_HOST) "cd $(UPLOAD_DIR); tar xvzf haskell$(VERSION)-html.tar.gz; mv haskell$(VERSION)/* .; rmdir haskell$(VERSION); rm -f index.html; ln -s haskell.html index.html"
