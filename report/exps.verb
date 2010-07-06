@@ -306,7 +306,7 @@ it may legally be written as @\(x:xs)->x@.
 The set of patterns must be {\em linear}\index{linearity}%
 \index{linear pattern}---no variable may appear more than once in the set.
 
-\outline{\small
+\outline{\ifhtml{}{\small}
 \paragraph*{Translation:}
 The following identity holds:
 \begin{center}
@@ -728,7 +728,7 @@ let (x,y) = undefined in @"e"@
 \eprog
 does not cause an execution-time error until @x@ or @y@ is evaluated.
 
-\outline{\small
+\outline{\ifhtml{}{\small}
 \paragraph*{Translation:} The dynamic semantics of the expression 
 "@let {@ d_1 @;@ ...  @;@ d_n @} in@ e_0" are captured by this
 translation: After removing all type signatures, each
