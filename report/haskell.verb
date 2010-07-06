@@ -25,6 +25,15 @@
 \makeatother
 %---------------------------------------------------------------------
 
+% conditional compilation for HTML/typeset
+\newcommand{\ifhtml}[2]{%
+\ifx \HCode\Undef
+#2
+\else
+#1
+\fi
+}
+
 % the major sections have \cleardoublepages between them
 % if you want those between EVERY section, change the
 % following defn:
@@ -484,12 +493,12 @@ that it does not claim to be a definition of the language Haskell 2010.
 \input{index-extra}
 
 % Add a contents line for the References -- may be off by one page
-\addcontentsline{toc}{part}{References}
+\ifhtml{}{\addcontentsline{toc}{part}{References}}
 \bibliographystyle{plain}
 \bibliography{haskell}
 %
 \startnewstuff
-\printindex
+\ifhtml{}{\printindex}
 
 \end{document}
 
