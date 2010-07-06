@@ -381,6 +381,14 @@
 
 \setcounter{page}{0}
 
+% tex4ht wants to use display:table with fbox, which seems to interact
+% badly with centering.  Hence dropping the box around the title in HTML:
+\ifhtml{%
+\begin{center}
+{\LARGE\bf Haskell 2010} \\[.1in]
+{\LARGE\bf Language Report} \\[.3in]
+\end{center}
+}{%
 \outline{
 \vspace{.3in}
 \begin{center}
@@ -389,6 +397,8 @@
 \end{center}
 \vspace{.3in}
 }
+}
+
 \vspace{.15in}
 \begin{center} \large
 Simon Marlow\\
