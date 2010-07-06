@@ -143,8 +143,15 @@ ht/classes.eps : classes.eps
 	$(CP) $< $@
 
 .PHONY: html
-html: $(HT_TEXS) ht/classes.eps ht/haddock.sty
+html: $(HT_TEXS) ht/classes.eps ht/haddock.sty ht/haskell.bbl
 	cd ht && htlatex haskell.tex "haskell,2"
+
+# Grab the .bbl file from building the PDF version, so we get a bibliography
+# in the tex4ht version too.
+ht/haskell.bbl : haskell.bbl
+	$(CP) $< $@
+
+haskell.bbl : haskell.pdf
 
 #########################################
 #	Generic stuff
@@ -157,7 +164,7 @@ veryclean: clean
 clean:
 	$(RM) ${HT_TEXS} ht/*.html ht/html/* ht/*.htm ht/hask*.png ht/*.log ht/*.tmp \
 	 	ht/*.xref ht/classes.eps ht/*.css ht/*.idx ht/*.aux ht/*.dvi \
-		ht/*.4ct ht/*.4tc
+		ht/*.4ct ht/*.4tc ht/*.bbl ht/*.blg
 	$(RM) *.dvi *.log *.aux *.ilg *.blg *.toc *.bbl *.idx *.tmp *.out \
 		haskell.tex preface.tex $(PARTS_NO_PREFACE) \
 		haskell.tex haskell.ps haskell.pdf *.o lex.yy.c haskell-report-html/* \
