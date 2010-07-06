@@ -51,7 +51,7 @@ int yywrap (void) { return 1; }
 <MATH>@			{ printf ("\\makebox{\\tt ");
 			  PUSH MATH;  BEGIN INVERB; }
 <NORM>{synt}{sp}	{ printf ("\n\\begin{flushleft}");
-			  printf ("\\it\\begin{tabular}{lcl@{~~~~}l}\n$\\it ");
+			  printf ("\\it\\begin{tabular}{lcll}\n$\\it ");
 			  BEGIN SYNTAX; }
 <SYNTAX>{sp}{synt}	{ printf ("$\n\\end{tabular}\\end{flushleft}\n"); 
 			  BEGIN NORM; }
@@ -60,7 +60,7 @@ int yywrap (void) { return 1; }
 			  printf ("$\\it "); }
 <SYNTAX>{nl}"|"{sp}	{ printf ("$\\\\ \n$\\it "); 
 			  printf ("$ & \\makebox[3.5em]{$|$} & $\\it "); }
-<SYNTAX>{sp}&{sp}	{ printf ("$ & \\makebox[3em]{}$\\it "); }
+<SYNTAX>{sp}&{sp}	{ printf ("$ & ~~~~$\\it "); }
 <SYNTAX>{nl}$     	{ 
    /* this is for the HTML output: to get a blank row in a table, it
       needs to contain something, so we add a non-breaking space */
