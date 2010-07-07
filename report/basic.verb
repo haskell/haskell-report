@@ -890,10 +890,12 @@ section~\ref{operators}) apply to all numbers.  The class methods
 \indextt{/}
 applies only to fractional ones.  The @quot@, @rem@,
 @div@, and @mod@ class methods satisfy these laws if @y@ is non-zero:
-\[\ba{c}
-@(x @\bkqB@quot@\bkqA@ y)*y + (x @\bkqB@rem@\bkqA@ y) == x@\\
-@(x @\bkqB@div@\bkqA@  y)*y + (x @\bkqB@mod@\bkqA@ y) == x@
-\ea\]
+\bprog
+@
+(x `quot` y)*y + (x `rem` y) == x
+(x `div`  y)*y + (x `mod` y) == x
+@
+\eprog
 @`quot`@ is integer division truncated toward zero,
 while the result of @`div`@ is truncated toward
 negative infinity. 
@@ -904,14 +906,14 @@ and returns a (quotient, remainder) pair; @divMod@ is defined
 similarly:
 \bprog
 @
-quotRem x y  =  (x @\bkqB@quot@\bkqA@ y, x @\bkqB@rem@\bkqA@ y)
-divMod  x y  =  (x @\bkqB@div@\bkqA@ y, x @\bkqB@mod@\bkqA@ y)
+quotRem x y  =  (x `quot` y, x `rem` y)
+divMod  x y  =  (x `div`  y, x `mod` y)
 @
 \eprog
 Also available on integral numbers are the even and odd predicates:
 \bprog
 @
-even x =  x @\bkqB@rem@\bkqA@ 2 == 0
+even x =  x `rem` 2 == 0
 odd    =  not . even
 @
 \eprog\indextt{even}\indextt{odd}
