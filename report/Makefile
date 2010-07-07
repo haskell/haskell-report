@@ -112,8 +112,8 @@ show:
 haskell.tex: haskell.verb
 	$(EXPAND) < $< | $(VERBATIM) >$@
 
-haskell.dvi: haskell.tex haskell.ind ${PARTS}
-haskell.pdf: haskell.tex haskell.ind haddock.sty ${PARTS}
+haskell.dvi: haskell.tex ${PARTS}
+haskell.pdf: haskell.tex haddock.sty ${PARTS}
 
 haskell.ps : haskell.dvi
 	dvips haskell.dvi -o haskell.ps
