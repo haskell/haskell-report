@@ -721,11 +721,11 @@ described in Chapter~\ref{declarations}.  Pattern bindings are matched
 lazily; an implicit @~@ makes these patterns
 irrefutable.\index{irrefutable pattern}
 For example, 
-\bprog
-@
-let (x,y) = undefined in @"e"@
-@
-\eprog
+
+\bt{l}
+@let (x,y) = undefined in @"e"
+\et
+
 does not cause an execution-time error until @x@ or @y@ is evaluated.
 
 \outline{\ifhtml{}{\small}

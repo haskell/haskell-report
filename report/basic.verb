@@ -225,7 +225,7 @@ The function @seq@ is defined by the equations:
 \[\ba{l}
 "@seq@ \bot b = \bot" \\
 "@seq@  a b =  b,  if a \ne \bot" \\
-\ea\]
+\ea\]\ifhtml{\\}{}
 @seq@ is usually introduced to improve performance by
 avoiding unneeded laziness.  Strict datatypes (see
 \index{strictness flags}
@@ -570,7 +570,7 @@ Instances of @Functor@ should satisfy the following laws:
 \[\ba{lcl}
 @fmap id@&=&@id@\\
 @fmap (f . g)@&=&@fmap f . fmap g@\\
-\ea\]
+\ea\]\ifhtml{\\}{}
 All instances of @Functor@ defined in the Prelude satisfy these laws.
 
 
@@ -613,11 +613,11 @@ Instances of @Monad@ should satisfy the following laws:
 @return a >>= k@&=&@k a@ \\
 @m >>= return@&=&@m@ \\
 @m >>= (\x -> k x >>= h)@&=&@(m >>= k) >>= h@\\
-\ea\]
+\ea\]\ifhtml{\\}{}
 Instances of both @Monad@ and @Functor@ should additionally satisfy the law:
 \[\ba{lcl}
 @fmap f xs@&=&@xs >>= return . f@\\
-\ea\]
+\ea\]\ifhtml{\\}{}
 All instances of @Monad@ defined in the Prelude satisfy these laws.
 
 The Prelude provides the following auxiliary functions: 
