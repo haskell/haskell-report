@@ -298,7 +298,7 @@ ARRAY_PKG       = array-0.3.0.0
 GHC_PRIM_PKG = ghc-prim
 
 HADDOCK = $(GHC_BUILD)/inplace/bin/haddock
-LIBDIR =  $(GHC_BUILD)libraries
+LIBDIR =  $(GHC_BUILD)/libraries
 
 haddock :
 	$(HADDOCK) --odir=$(HADDOCK_ODIR) --no-tmp-comp-dir \
