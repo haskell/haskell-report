@@ -410,21 +410,68 @@ fatype -> qtycon atype_1 \ldots atype_k & (k \geq 0)
 A foreign type is the Haskell type of an external entity.  Only a subset of
 Haskell's types are permissible as foreign types, as only a restricted set of
 types can be canonically transferred between the Haskell context and an
-external context.  A foreign type generally has the form
+external context.  A foreign type has the form
 \[
 \textit{at}_1@ -> @\cdots@ -> @\textit{at}_n@ -> @\textit{rt}
 \]
 where \(n\geq0\).  It implies that the arity of the external entity is $n$.
 
-The argument types \(\textit{at}_i\) produced by "fatype" must be
-\emph{marshallable foreign types;} that is, each \(\textit{at}_i\) is either
-(1) a basic foreign type or (2) a type synonym or renamed datatype of a
-marshallable foreign type.  Moreover, the result type \textit{rt} produced by
-"frtype" must be a \emph{marshallable foreign result type;} that is, it
-is either a marshallable foreign type, the type @()@, or a type matching
-@Prelude.IO @$t$, where $t$ is a marshallable foreign type or @()@.
+External functions are strict in all arguments.
 
-External functions are generally strict in all arguments.
+\paragraph{Marshallable foreign types.}
+
+The argument types \(\textit{at}_i\) produced by "fatype" must be
+\emph{marshallable foreign types;} that is, either
+
+\begin{itemize}
+\item a basic foreign type,
+
+\item a type synonym of a marshallable foreign type,
+
+\item a type "T t'_1 ... t'_n" where "T" is defined by a @newtype@ declaration
+
+\begin{quote}
+@newtype @"T a_1 ... a_n"@ = @"N t"
+\end{quote}
+
+and
+
+\begin{itemize}
+\item the constructor "N" is visible where "T" is used,
+
+\item "t[t'_1/a_1..t'_n/a_n]" is a marshallable foreign type
+\end{itemize}
+\end{itemize}
+
+Consequently, in order for a type defined by @newtype@ to be used in a
+@foreign@ declaration outside of the module that defines it, the type
+must not be exported abstractliy.  The module @Foreign.C.Types@ that
+defines the Haskell equivalents for C types follows this convention;
+see Chapter~\ref{module:Foreign.C.Types}.
+
+\paragraph{Marshallable foreign result types.}
+
+The result type \textit{rt} produced by "frtype" must be a
+\emph{marshallable foreign result type;} that is, either
+
+\begin{itemize}
+\item a marshallable foreign type,
+\item the type @()@,
+\item a type matching @Prelude.IO @$t$, where $t$ is a marshallable foreign type or @()@,
+\item a type "T t'_1 ... t'_n" where "T" is defined by a @newtype@ declaration
+
+\begin{quote}
+@newtype @"T a_1 ... a_n"@ = @"N t"
+\end{quote}
+
+and
+
+\begin{itemize}
+\item the constructor "N" is visible where "T" is used,
+
+\item "t[t'_1/a_1..t'_n/a_n]" is a marshallable foreign result type
+\end{itemize}
+\end{itemize}
 
 \subsubsection{Import Declarations}
 \label{sec:import}
