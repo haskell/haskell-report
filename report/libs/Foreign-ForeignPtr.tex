@@ -5,9 +5,10 @@
 module Foreign.ForeignPtr (
     ForeignPtr,  FinalizerPtr,  FinalizerEnvPtr,  newForeignPtr, 
     newForeignPtr_,  addForeignPtrFinalizer,  newForeignPtrEnv, 
-    addForeignPtrFinalizerEnv,  withForeignPtr,  unsafeForeignPtrToPtr, 
-    touchForeignPtr,  castForeignPtr,  mallocForeignPtr, 
-    mallocForeignPtrBytes,  mallocForeignPtrArray,  mallocForeignPtrArray0
+    addForeignPtrFinalizerEnv,  withForeignPtr,  finalizeForeignPtr, 
+    unsafeForeignPtrToPtr,  touchForeignPtr,  castForeignPtr, 
+    mallocForeignPtr,  mallocForeignPtrBytes,  mallocForeignPtrArray, 
+    mallocForeignPtrArray0
   ) where\end{verbatim}}
 \haddockendheader
 
@@ -133,6 +134,15 @@ This function is normally used for marshalling data to
  or from the object pointed to by the
  \haddockid{ForeignPtr}, using the operations from the
  \haddockid{Storable} class.
+\par
+
+\end{haddockdesc}
+\begin{haddockdesc}
+\item[\begin{tabular}{@{}l}
+finalizeForeignPtr\ ::\ ForeignPtr\ a\ ->\ IO\ ()
+\end{tabular}]\haddockbegindoc
+Causes the finalizers associated with a foreign pointer to be run
+ immediately.
 \par
 
 \end{haddockdesc}

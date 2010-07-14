@@ -314,7 +314,6 @@ haddock :
 	   sed 's/instance\(\\ [^\]*\)*\\ P\($$\|\\\\\)//g' | \
 	   sed 's/instance\\ Typeable\(1\|\)\(\\ [^\]*\)*\($$\|\\\\\)//g' | \
 	   sed 's/instance\\ Exception\(\\ [^\]*\)*\($$\|\\\\\)//g' |  \
-	   sed 's/instance\(\\ [^\]*\)*\\ \(WordPtr\|IntPtr\)\($$\|\\\\\)//g' |  \
 	   sed 's/instance\\ (Data\(\\ [^\]*\)*\($$\|\\\\\)//g' >$$i.tmp \
 	   && mv $$i.tmp $$i; done
 
