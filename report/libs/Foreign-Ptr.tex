@@ -5,7 +5,8 @@
 module Foreign.Ptr (
     Ptr,  nullPtr,  castPtr,  plusPtr,  alignPtr,  minusPtr,  FunPtr, 
     nullFunPtr,  castFunPtr,  castFunPtrToPtr,  castPtrToFunPtr, 
-    freeHaskellFunPtr
+    freeHaskellFunPtr,  IntPtr,  ptrToIntPtr,  intPtrToPtr,  WordPtr, 
+    ptrToWordPtr,  wordPtrToPtr
   ) where\end{verbatim}}
 \haddockendheader
 
@@ -209,6 +210,70 @@ Release the storage associated with the given \haddockid{FunPtr}, which
  must have been obtained from a wrapper stub.  This should be called
  whenever the return value from a foreign import wrapper function is
  no longer required; otherwise, the storage it uses will leak.
+\par
+
+\end{haddockdesc}
+\section{Integral types with lossless conversion to and from pointers
+}
+\begin{haddockdesc}
+\item[\begin{tabular}{@{}l}
+data\ IntPtr
+\end{tabular}]\haddockbegindoc
+A signed integral type that can be losslessly converted to and from
+ \haddocktt{Ptr}.  This type is also compatible with the C99 type \haddocktt{intptr{\char '137}t}, and
+ can be marshalled to and from that type safely.
+\par
+
+\end{haddockdesc}
+\begin{haddockdesc}
+\item[\begin{tabular}{@{}l}
+instance\ Bounded\ IntPtr\\instance\ Enum\ IntPtr\\instance\ Eq\ IntPtr\\instance\ Integral\ IntPtr\\instance\ Num\ IntPtr\\instance\ Ord\ IntPtr\\instance\ Read\ IntPtr\\instance\ Real\ IntPtr\\instance\ Show\ IntPtr\\instance\ Storable\ IntPtr\\instance\ Bits\ IntPtr
+\end{tabular}]
+\end{haddockdesc}
+\begin{haddockdesc}
+\item[\begin{tabular}{@{}l}
+ptrToIntPtr\ ::\ Ptr\ a\ ->\ IntPtr
+\end{tabular}]\haddockbegindoc
+casts a \haddocktt{Ptr} to an \haddocktt{IntPtr}
+\par
+
+\end{haddockdesc}
+\begin{haddockdesc}
+\item[\begin{tabular}{@{}l}
+intPtrToPtr\ ::\ IntPtr\ ->\ Ptr\ a
+\end{tabular}]\haddockbegindoc
+casts an \haddocktt{IntPtr} to a \haddocktt{Ptr}
+\par
+
+\end{haddockdesc}
+\begin{haddockdesc}
+\item[\begin{tabular}{@{}l}
+data\ WordPtr
+\end{tabular}]\haddockbegindoc
+An unsigned integral type that can be losslessly converted to and from
+ \haddocktt{Ptr}. This type is also compatible with the C99 type \haddocktt{uintptr{\char '137}t}, and
+ can be marshalled to and from that type safely.
+\par
+
+\end{haddockdesc}
+\begin{haddockdesc}
+\item[\begin{tabular}{@{}l}
+instance\ Bounded\ WordPtr\\instance\ Enum\ WordPtr\\instance\ Eq\ WordPtr\\instance\ Integral\ WordPtr\\instance\ Num\ WordPtr\\instance\ Ord\ WordPtr\\instance\ Read\ WordPtr\\instance\ Real\ WordPtr\\instance\ Show\ WordPtr\\instance\ Storable\ WordPtr\\instance\ Bits\ WordPtr
+\end{tabular}]
+\end{haddockdesc}
+\begin{haddockdesc}
+\item[\begin{tabular}{@{}l}
+ptrToWordPtr\ ::\ Ptr\ a\ ->\ WordPtr
+\end{tabular}]\haddockbegindoc
+casts a \haddocktt{Ptr} to a \haddocktt{WordPtr}
+\par
+
+\end{haddockdesc}
+\begin{haddockdesc}
+\item[\begin{tabular}{@{}l}
+wordPtrToPtr\ ::\ WordPtr\ ->\ Ptr\ a
+\end{tabular}]\haddockbegindoc
+casts a \haddocktt{WordPtr} to a \haddocktt{Ptr}
 \par
 
 \end{haddockdesc}
