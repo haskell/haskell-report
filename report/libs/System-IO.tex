@@ -151,7 +151,9 @@ withFile\ ::\ FilePath\ ->\ IOMode\ ->\ (Handle\ ->\ IO\ r)\ ->\ IO\ r
 \haddocktt{withFile\ name\ mode\ act} opens a file using \haddockid{openFile} and passes
  the resulting handle to the computation \haddocktt{act}.  The handle will be
  closed on exit from \haddockid{withFile}, whether by normal termination or by
- raising an exception.
+ raising an exception.  If closing the handle raises an exception, then
+ this exception will be raised by \haddockid{withFile} rather than any exception
+ raised by \haddocktt{act}.
 \par
 
 \end{haddockdesc}
