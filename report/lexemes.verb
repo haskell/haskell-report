@@ -158,14 +158,14 @@ reservedid -> @case@ | @class@ | @data@ | @default@ | @deriving@ | @do@ | @else@
 
 An identifier consists of a letter followed by zero or more letters,
 digits, underscores, and single quotes.  Identifiers are lexically
-distinguished into two namespaces (Section~\ref{namespaces}): those that begin with a lower-case letter
+distinguished into two namespaces (Section~\ref{namespaces}): those that begin with a lowercase letter
 (variable identifiers) and those that begin with an upper-case letter
 (constructor identifiers).  Identifiers are case sensitive: @name@,
 @naMe@, and @Name@ are three distinct identifiers (the first two are
 variable identifiers, the last is a constructor identifier).
 
-Underscore, ``@_@'', is treated as a lower-case letter, and can occur
-wherever a lower-case letter can.  However, ``@_@'' all by itself is a
+Underscore, ``@_@'', is treated as a lowercase letter, and can occur
+wherever a lowercase letter can.  However, ``@_@'' all by itself is a
 reserved identifier, used as wild card in patterns.  Compilers that offer
 warnings for unused identifiers are encouraged to suppress such warnings for
 identifiers beginning with underscore.  This allows programmers to use
