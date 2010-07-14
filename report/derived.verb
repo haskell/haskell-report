@@ -156,12 +156,10 @@ declaration counting as smaller than later ones.  For example, for the
 
 Derived comparisons always traverse constructors from left to right.
 These examples illustrate this property:
-\bprog
-@
-  (1,undefined) == (2,undefined) @"\Rightarrow"@    False
-  (undefined,1) == (undefined,2) @"\Rightarrow"@    @"\bot"@
-@
-\eprog
+\begin{quote}
+@(1,undefined) == (2,undefined) @"\Rightarrow"@    False@\\
+@(undefined,1) == (undefined,2) @"\Rightarrow"@    @"\bot"
+\end{quote}
 All derived operations of class @Eq@ and @Ord@ are strict in both arguments.
 For example, "@False <= @\bot" is "\bot", even though @False@ is the first constructor
 of the @Bool@ type.
