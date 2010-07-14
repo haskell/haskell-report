@@ -506,7 +506,7 @@ The following @Prelude@ types are instances of @Enum@:
 \begin{itemize}
 \item Enumeration types: @()@, @Bool@, and @Ordering@. The
 semantics of these instances is given by Chapter~\ref{derived-appendix}.
-For example, @[LT..]@ is the list @[LT,EQ,GT]@.
+For example, @[LT ..]@ is the list @[LT,EQ,GT]@.
 
 \item @Char@: the instance is given in Chapter~\ref{stdprelude}, based
 on the primitive functions that convert between a @Char@ and an @Int@.
