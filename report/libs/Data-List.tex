@@ -292,7 +292,9 @@ or\ ::\ {\char 91}Bool{\char 93}\ ->\ Bool
 any\ ::\ (a\ ->\ Bool)\ ->\ {\char 91}a{\char 93}\ ->\ Bool
 \end{tabular}]\haddockbegindoc
 Applied to a predicate and a list, \haddockid{any} determines if any element
- of the list satisfies the predicate.
+ of the list satisfies the predicate.  For the result to be
+ \haddockid{False}, the list must be finite; \haddockid{True}, however, results from a \haddockid{True}
+ value for the predicate applied to an element at a finite index of a finite or infinite list.
 \par
 
 \end{haddockdesc}
@@ -301,7 +303,9 @@ Applied to a predicate and a list, \haddockid{any} determines if any element
 all\ ::\ (a\ ->\ Bool)\ ->\ {\char 91}a{\char 93}\ ->\ Bool
 \end{tabular}]\haddockbegindoc
 Applied to a predicate and a list, \haddockid{all} determines if all elements
- of the list satisfy the predicate.
+ of the list satisfy the predicate. For the result to be
+ \haddockid{True}, the list must be finite; \haddockid{False}, however, results from a \haddockid{False}
+ value for the predicate applied to an element at a finite index of a finite or infinite list.
 \par
 
 \end{haddockdesc}
@@ -768,7 +772,8 @@ isInfixOf "Ial" "I really like Haskell." == False
 elem\ ::\ Eq\ a\ =>\ a\ ->\ {\char 91}a{\char 93}\ ->\ Bool
 \end{tabular}]\haddockbegindoc
 \haddockid{elem} is the list membership predicate, usually written in infix form,
- e.g., \haddocktt{x\ `elem`\ xs}.
+ e.g., \haddocktt{x\ `elem`\ xs}.  For the result to be
+ \haddockid{False}, the list must be finite; \haddockid{True}, however, results from an element equal to \haddocktt{x} found at a finite index of a finite or infinite list.
 \par
 
 \end{haddockdesc}
