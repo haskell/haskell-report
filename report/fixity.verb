@@ -115,7 +115,7 @@ There are three cases to consider:
 \end{enumerate}
 
 To initialise the algorithm, we set @op1@ to be an imaginary operator
-with precedence lower than anyything else.  Hence @parse@ will consume
+with precedence lower than anything else.  Hence @parse@ will consume
 the whole input, and return the resulting expression.
 
 The handling of the prefix negation operator, @-@, complicates matters
