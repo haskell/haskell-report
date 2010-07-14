@@ -939,7 +939,8 @@ number to a nonnegative integer power,
 fractional number to any integer power, and @(**)@
 \indextt{**}
 takes two floating-point arguments.  The value of "x"@^0@ or "x"@^^0@
-is @1@ for any "x", including zero; @0**@"y" is undefined.
+is @1@ for any "x", including zero; @0**@"y" is @1@ if "y" is @1@, and
+@0@ otherwise.
   
 \subsubsection{Magnitude and Sign}
 \label{magnitude-sign}
