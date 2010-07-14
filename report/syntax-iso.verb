@@ -491,7 +491,7 @@ impdecls     -> impdecl_1 @;@ ... @;@ impdecl_n 	&  (n>=1)\indexsyn{impdecls}
 	|  @[@ tyvar @]@
 	|  @(@ tyvar_1 @->@ tyvar_2 @)@		& tyvar_1 \tr{and} tyvar_2 \tr{distinct}
 
-\indexsyn{fdecl}fdecl    -> @import@ callconv [safety] impent var @::@ ftype & (\tr{define varibale})
+\indexsyn{fdecl}fdecl    -> @import@ callconv [safety] impent var @::@ ftype & (\tr{define variable})
          |  @export@ callconv expent var @::@ ftype & (\tr{expose variable})
 callconv -> @ccall@ | @stdcall@ | @cplusplus@  & (\tr{calling convention})
          | @jvm@ | @dotnet@

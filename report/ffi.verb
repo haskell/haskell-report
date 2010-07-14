@@ -289,7 +289,7 @@ The syntax of foreign declarations is as follows:
 %
 @@@
 topdecl  -> @foreign@ fdecl
-fdecl    -> @import@ callconv [safety] impent var @::@ ftype & (\tr{define varibale})
+fdecl    -> @import@ callconv [safety] impent var @::@ ftype & (\tr{define variable})
          |  @export@ callconv expent var @::@ ftype & (\tr{expose variable})
 callconv -> @ccall@ | @stdcall@ | @cplusplus@  & (\tr{calling convention})
          | @jvm@ | @dotnet@
