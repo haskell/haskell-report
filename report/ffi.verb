@@ -767,7 +767,7 @@ A C header specified in an import declaration is always included by
 standard guarantees that any search path that would be used for a
 @#include <@"chname"@>@ is also used for @#include "@"chname"@"@ and it is guaranteed that these paths are searched after
 all paths that are unique to @#include "@"chname"@"@.  Furthermore,
-we require that "chname" ends on @.h@ to make parsing of the
+we require that "chname" ends in @.h@ to make parsing of the
 specification of external entities unambiguous.
   
 The specification of include files has been kept to a minimum on purpose.
@@ -846,10 +846,10 @@ matching the signature provided in the @foreign export@ declaration must
 be in scope; otherwise, the C compiler will erroneously apply the promotion
 rules to all function arguments.
 
-Note that for a C function defined to a accept a variable number of arguments,
+Note that for a C function defined to accept a variable number of arguments,
 all arguments beyond the explicitly typed arguments suffer argument promotion.
 However, because C permits the calling convention to be different for such
-functions; a Haskell system will, in general, not be able to make use of
+functions, a Haskell system will, in general, not be able to make use of
 variable argument functions.  Hence, their use is deprecated in portable code.
 
 
