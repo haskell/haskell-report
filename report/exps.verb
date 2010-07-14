@@ -1030,7 +1030,7 @@ construction.  Strict fields are discussed in Section~\ref{strictness-flags}.
 \end{itemize}
 The expression @F {}@, where @F@ is a data constructor, is legal 
 {\em whether or not @F@ was declared with record syntax} (provided @F@ has no strict
-fields --- see the third bullet above); 
+fields --- see the fourth bullet above); 
 it denotes "@F@ \bot_1 ... \bot_n", where "n" is the arity of @F@.
 
 \outline{
