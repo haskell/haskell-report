@@ -34,7 +34,6 @@ while ($ARGV[0] =~ /^-/) {
 print "\\noindent\\bprogB\n\@\n";
 while (<>) {
     $currState = &newState();
-    s/@/@@/g; # for verbatim...
 
     if ($prevState eq 'blankLine' &&
     	($currState =~ /^toplev/)) { # a break OK here
