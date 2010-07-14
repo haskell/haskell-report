@@ -5,7 +5,8 @@
 module Foreign.C.String (
     CString,  CStringLen,  peekCString,  peekCStringLen,  newCString, 
     newCStringLen,  withCString,  withCStringLen,  charIsRepresentable, 
-    castCharToCChar,  castCCharToChar,  peekCAString,  peekCAStringLen, 
+    castCharToCChar,  castCCharToChar,  castCharToCUChar,  castCUCharToChar, 
+    castCharToCSChar,  castCSCharToChar,  peekCAString,  peekCAStringLen, 
     newCAString,  newCAStringLen,  withCAString,  withCAStringLen,  CWString, 
     CWStringLen,  peekCWString,  peekCWStringLen,  newCWString, 
     newCWStringLen,  withCWString,  withCWStringLen
@@ -172,6 +173,42 @@ castCCharToChar\ ::\ CChar\ ->\ Char
 \end{tabular}]\haddockbegindoc
 Convert a C byte, representing a Latin-1 character, to the corresponding
  Haskell character.
+\par
+
+\end{haddockdesc}
+\begin{haddockdesc}
+\item[\begin{tabular}{@{}l}
+castCharToCUChar\ ::\ Char\ ->\ CUChar
+\end{tabular}]\haddockbegindoc
+Convert a Haskell character to a C \haddocktt{unsigned\ char}.
+ This function is only safe on the first 256 characters.
+\par
+
+\end{haddockdesc}
+\begin{haddockdesc}
+\item[\begin{tabular}{@{}l}
+castCUCharToChar\ ::\ CUChar\ ->\ Char
+\end{tabular}]\haddockbegindoc
+Convert a C \haddocktt{unsigned\ char}, representing a Latin-1 character, to
+ the corresponding Haskell character.
+\par
+
+\end{haddockdesc}
+\begin{haddockdesc}
+\item[\begin{tabular}{@{}l}
+castCharToCSChar\ ::\ Char\ ->\ CSChar
+\end{tabular}]\haddockbegindoc
+Convert a Haskell character to a C \haddocktt{signed\ char}.
+ This function is only safe on the first 256 characters.
+\par
+
+\end{haddockdesc}
+\begin{haddockdesc}
+\item[\begin{tabular}{@{}l}
+castCSCharToChar\ ::\ CSChar\ ->\ Char
+\end{tabular}]\haddockbegindoc
+Convert a C \haddocktt{signed\ char}, representing a Latin-1 character, to the
+ corresponding Haskell character.
 \par
 
 \end{haddockdesc}
