@@ -785,7 +785,7 @@ portable FFI code must include suitable header files.
 
 \paragraph{C Argument Promotion}
 
-The argument passing conventions of C are dependant on whether a function
+The argument passing conventions of C are dependent on whether a function
 prototype for the called functions is in scope at a call site.  In particular,
 if no function prototype is in scope, \emph{default argument promotion} is
 applied to integral and floating types.  In general, it cannot be expected
