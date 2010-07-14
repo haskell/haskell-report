@@ -1049,7 +1049,7 @@ expressed as an @Integer@ and an appropriately scaled exponent (an
 @Int@).  If \mbox{@decodeFloat x@} yields \mbox{@(@"m"@,@"n"@)@}, then @x@ is
 equal in value to "mb^n", where "b" is the floating-point radix, and
 furthermore, either "m" and "n" are both zero or else
-"b^{d-1}<=m<b^d", where "d" is the value of \mbox{@floatDigits x@}.
+"b^{d-1}<=|m|<b^d", where "d" is the value of \mbox{@floatDigits x@}.
 @encodeFloat@\indextt{encodeFloat} performs the inverse of this
 transformation.  The functions @significand@\indextt{significand}
 and @exponent@\indextt{exponent} together provide the same
