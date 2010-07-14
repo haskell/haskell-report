@@ -166,7 +166,7 @@ a complete lexeme; nor before the "@,@", because it is not preceded only by whit
 \item A stack of ``layout contexts'', in which each element is either:
 \begin{itemize}
 \item Zero, indicating that the enclosing context is explicit (i.e. the programmer 
-supplied the opening brace. 
+supplied the opening brace). 
 If the innermost context is 0, then no layout tokens will be inserted 
 until either the enclosing context ends or a new context is pushed. 
 \item A positive integer, which is the indentation column of the enclosing layout context. 
@@ -319,7 +319,7 @@ programming'', is an alternative style for encoding \Haskell{} source
 code. 
 The literate style encourages comments by making them the default.  A
 line in which ``@>@'' is the first character is treated as part of the
-program; all other lines are comment.
+program; all other lines are comments.
 
 The program text is recovered
 by taking only those lines beginning with ``@>@'', 
@@ -360,7 +360,7 @@ An alternative style of literate programming is particularly
 suitable for use with the LaTeX text processing system.
 In this convention, only those parts of the literate program that are
 entirely enclosed between @\begin{code}@$\ldots$@\end{code}@ delimiters are
-treated as program text; all other lines are comment.  More precisely:
+treated as program text; all other lines are comments.  More precisely:
 \begin{itemize}
 \item Program code begins on the first line following a line that begins @\begin{code}@.
 \item Program code ends just before a subsequent line that begins @\end{code}@ (ignoring
