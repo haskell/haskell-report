@@ -659,7 +659,7 @@ match fails then that element of the list is simply skipped over.  Thus:\nopageb
       (3,x) <- xs ]
 @
 \eprog
-yields the list @[4,2]@.  If a qualifier is a boolen guard, it must evaluate
+yields the list @[4,2]@.  If a qualifier is a boolean guard, it must evaluate
 to @True@ for the previous pattern match to succeed.  
 As usual, bindings in list comprehensions can shadow those in outer
 scopes; for example:
