@@ -426,7 +426,7 @@ The argument types \(\textit{at}_i\) produced by "fatype" must be
 \begin{itemize}
 \item a basic foreign type,
 
-\item a type synonym of a marshallable foreign type,
+\item a type synonym that expands to a marshallable foreign type,
 
 \item a type "T t'_1 ... t'_n" where "T" is defined by a @newtype@ declaration
 
@@ -455,9 +455,10 @@ The result type \textit{rt} produced by "frtype" must be a
 \emph{marshallable foreign result type;} that is, either
 
 \begin{itemize}
-\item a marshallable foreign type,
 \item the type @()@,
 \item a type matching @Prelude.IO @$t$, where $t$ is a marshallable foreign type or @()@,
+\item a basic foreign type,
+\item a type synonym that expands to marshallable foreign result type,
 \item a type "T t'_1 ... t'_n" where "T" is defined by a @newtype@ declaration
 
 \begin{quote}
