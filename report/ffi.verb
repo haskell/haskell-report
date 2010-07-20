@@ -445,7 +445,7 @@ and
 
 Consequently, in order for a type defined by @newtype@ to be used in a
 @foreign@ declaration outside of the module that defines it, the type
-must not be exported abstractliy.  The module @Foreign.C.Types@ that
+must not be exported abstractly.  The module @Foreign.C.Types@ that
 defines the Haskell equivalents for C types follows this convention;
 see Chapter~\ref{module:Foreign.C.Types}.
 
