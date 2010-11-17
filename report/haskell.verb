@@ -8,6 +8,12 @@
 \usepackage[dvipsnames,usenames]{color}
 \usepackage[pdftex,bookmarks=true]{hyperref}
 
+% allegedly produces nicer spacing, see
+%     http://stackoverflow.com/questions/414179/what-are-the-relative-merits-of-pdflatex
+% However, it didn't seem to make any difference for me other than 
+% make pdflatex slower:
+%\usepackage{microtype}
+
 \evensidemargin=0in
 \oddsidemargin=.5in
 \sloppy
