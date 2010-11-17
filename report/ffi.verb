@@ -401,7 +401,7 @@ Foreign types are produced according to the following grammar:
 %
 @@@
 ftype -> frtype
-      |  fatype \rightarrow ftype
+      |  fatype @->@ ftype
 frtype -> fatype
        | @()@
 fatype -> qtycon atype_1 \ldots atype_k & (k \geq 0)
