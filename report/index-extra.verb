@@ -76,7 +76,6 @@
 \index{pattern!integer|see{integer literal pattern}}
 \index{pattern!floating|see{floating literal pattern}}
 \index{pattern!linear|see{linear pattern}}
-\index{pattern!n+k@@"n@+@k"|see{"n@+@k" pattern}}
 \index{pattern!irrefutable|see{irrefutable pattern}}
 \index{pattern!refutable|see{refutable pattern}}
 \index{semantics!formal|see{formal semantics}}
@@ -95,7 +94,6 @@
 %
 \index{(aaa)@@{\tt ()}|see{trivial type and unit expression}}%
 \index{-@@{\tt  -}|hseealso{negation}}
-\index{+@@{\tt  +}|hseealso{"n@+@k" pattern}}
 \index{\\@@{\tt {\char'134}}|see{lambda abstraction}}
 \index{~@@{\tt {\char'176}}|see{irrefutable pattern}}
 \index{derived instance|hseealso{instance declaration}}
