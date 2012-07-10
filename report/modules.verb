@@ -707,7 +707,7 @@ implementation only gives a scheme.
 
 Chapter~\ref{stdprelude} defines the module @Prelude@ using
 several other modules: @PreludeList@, @PreludeIO@, and so on.
-These modules are {\em not} part of Haskell 98, and they cannot be imported
+These modules are {\em not} part of Haskell, and they cannot be imported
 separately.  They are simply 
 there to help explain the structure of the @Prelude@ module; they
 should be considered part of its implementation, not part of the language
