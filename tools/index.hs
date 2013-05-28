@@ -6,21 +6,23 @@
 
 module Main where
 
-import IO
-import Char
+import Data.Char
+import System.IO
+import System.IO.Error
 
 main = do refs <- readRefFile "reportrefs"
           doFiles refs ["prelude-index"]
 
-doFiles r files = do sequence (map (doFile r) files)
-                     putStr "Done.\n"
+doFiles r files = do mapM (doFile r) files
+                     putStrLn "Done."
 
-doFile r f = catch
-               (do putStr ("Reading " ++ f ++ ".idx\n")
-                   ls <-readFile (f ++ ".idx")
+doFile r f = catchIOError
+               (do putStrLn ("Reading " ++ f ++ ".idx")
+                   ls <- readFile (f ++ ".idx")
                    let output = expandAllRefs r (lines ls)
-                   writeFile ("haskell-report-html/" ++ f ++ ".html") (unlines output))
-               (\err -> putStr ("Error: " ++ show err ++ "\n"))
+                   writeFile ("haskell-report-html/" ++ f ++ ".html")
+                             (unlines output))
+               (\err -> putStrLn ("Error: " ++ show err))
 
 -- This sets up the parts of the state that need to be reset at the start of
 -- each file.
@@ -127,9 +129,11 @@ mangleType t = mangleName (case t of
 
 
 readRefFile :: String -> IO [(String, String)]
-readRefFile f = catch (do l <- readFile f
+readRefFile f = catchIOError
+                      (do l <- readFile f
                           return (map parseKV (lines l)))
-                      (\e -> do putStr ("Can't read ref file: " ++ f ++ "\n")
+                      (\e -> do putStrLn ("Can't read ref file: " ++ f)
+                                print e
                                 return [])
 
 parseKV l = let (k,l1) = span (/= '=') l
