@@ -7,6 +7,7 @@
 module Main where
 
 import Data.Char
+import Data.List
 import System.IO.Error
 
 main :: IO ()
@@ -174,9 +175,9 @@ trimr :: String -> String
 trimr s = reverse (dropWhile isSpace (reverse s))
 
 skip :: String -> String -> String
-skip val s = if val `isPrefixOf` (trim s) then
-                drop (length val) (trim s)
-             else s
+skip val s = case stripPrefix val (trim s) of
+             Just s' -> s'
+             Nothing -> s
 
 htmlEncode :: Char -> String
 htmlEncode '>' = "&gt;"
