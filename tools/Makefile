@@ -26,7 +26,7 @@ verb-tex4ht: verb-tex4ht.o
 	$(CC) -o $@ $^
 
 run_index: index.hs
-	$(GHC) -o run_index index.hs
+	$(GHC) -o run_index index.hs -Wall
 
 clean:
 	rm -f verbatim verb-tex4ht run_tex run_index *.o *.hi
