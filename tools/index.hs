@@ -31,16 +31,16 @@ type Refs = [(String,String)]
 
 expandAllRefs r ls = expandAll1 r False ls
 expandAll1 r table [] = []
-expandAll1 r table (l:ls) | l == "#table" = expandAll1 r True ls   
-                          | l == "#endtable" = expandAll1 r False ls   
+expandAll1 r table (l:ls) | l == "#table" = expandAll1 r True ls
+                          | l == "#endtable" = expandAll1 r False ls
                           | table = ("<tr><td><tt>" ++ nbspaces (expandRefs r l)
                                      ++ "</tt></td></tr>") : rest
                           | otherwise = (expandRefs r l) : rest
- where rest = expandAll1 r table ls 
+ where rest = expandAll1 r table ls
 
 expandRefs :: Refs -> String -> String
 expandRefs r "" = ""
-expandRefs r ('#':l) = expandRef r "" l 
+expandRefs r ('#':l) = expandRef r "" l
 expandRefs r (c:cs) = c : expandRefs r cs
 
 expandRef r txt ('V':l) = expandVar r txt (parseRef l)
@@ -79,8 +79,8 @@ expandSect r txt (s,rest) = let n = mangleSect s
 expandLink r _ (t,'#':l') = expandRef r t l'
 expandLink r _ (l,l') = error ("Bad link: " ++ l ++ l' ++ "\n")
 
-trySig r txt v rest n = 
-   let c = parseClass rest 
+trySig r txt v rest n =
+   let c = parseClass rest
        n = mangleTycon c
        f = lookup n r in
      anchor v f n txt ++ expandRefs r rest
@@ -102,7 +102,7 @@ mangleInstance c t = "$i" ++ mangleName c ++ "$$" ++ mangleName t
 mangleSect s = "sect" ++ s
 
 
-mangleName r = concat $ 
+mangleName r = concat $
                map (\c -> case c of '(' -> "$P"
                                     ')' -> "$C"
                                     '-' -> "$D"
@@ -144,7 +144,7 @@ parseKV l = let (k,l1) = span (/= '=') l
 
 parseClass s = let s1 = (skip "(" . skip "::") s
                    (c,_) = span isAlpha (trim s1) in
-                 c 
+                 c
 
 trim s = dropWhile isSpace s
 trimr s = reverse (dropWhile isSpace (reverse s))
@@ -157,7 +157,7 @@ skip val s = if val `starts` (trim s) then
                 drop (length val) (trim s)
              else s
 
- 
+
 htmlEncode '>' = "&gt;"
 htmlEncode '<' = "&lt;"
 htmlEncode '&' = "&amp;"
