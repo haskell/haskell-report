@@ -173,14 +173,8 @@ trim s = dropWhile isSpace s
 trimr :: String -> String
 trimr s = reverse (dropWhile isSpace (reverse s))
 
-starts :: String -> String -> Bool
-starts [] _ = True
-starts _ [] = False
-starts (a:as) (b:bs) | a == b = starts as bs
-                     | otherwise = False
-
 skip :: String -> String -> String
-skip val s = if val `starts` (trim s) then
+skip val s = if val `isPrefixOf` (trim s) then
                 drop (length val) (trim s)
              else s
 
