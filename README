@@ -31,7 +31,7 @@ The following are also required for building the tools:
   - flex
   - GHC
 
-The HTML version additionall requires
+The HTML version additionally requires
 
   - tex4ht (e.g. install 'tex4ht' on a Debian or Ubuntu system, or 
             'tetex-tex4ht' on a Fedora system)
