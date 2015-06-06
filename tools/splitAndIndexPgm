@@ -114,10 +114,10 @@ sub printIndexEntries { # also re-sets $indexentries, specialentries
 	    #
 	    # there are a few "raw" chars that need fiddling, too...
 	    #
-	    $raw =~ s/\|/""\|/g;
 	    $raw =~ s/!/""!/g;
 	    $raw =~ s/\@/""\@\@/g;
 	    $raw =~ s/\\/\\\\/g;
+	    $raw =~ s/\|/\\vert/g;
 
     	    print "\\index\{$raw\@\@$processed\}%\n";
 	} else {

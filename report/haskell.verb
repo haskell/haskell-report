@@ -1,6 +1,7 @@
 % Formatting for double-sided
 \documentclass[twoside,10pt]{book}
 
+\usepackage[T1]{fontenc}
 \usepackage{times}
 \usepackage{makeidx}
 \usepackage{graphicx}

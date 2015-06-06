@@ -40,7 +40,7 @@ more readable.
 \label{prelude-bool}
 \indextycon{Bool}
 \indextt{False}\indextt{True}
-\index{""|""|@@{\tt  {\char'174}{\char'174}}}
+\index{\vert\vert@@{\tt  {\char'174}{\char'174}}}
 \index{&&@@{\tt  \&\&}}
 \indextt{not}
 \indextt{otherwise}
