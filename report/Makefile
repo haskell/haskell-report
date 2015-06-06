@@ -162,10 +162,10 @@ veryclean: clean
 	$(RM) *~ $(LIB_TEX)
 
 clean:
-	$(RM) ${HT_TEXS} ht/*.html ht/html/* ht/*.htm ht/hask*.png ht/*.log ht/*.tmp \
-	 	ht/*.xref ht/classes.eps ht/*.css ht/*.idx ht/*.aux ht/*.dvi \
+	$(RM) ${HT_TEXS} ht/*.html ht/html/* ht/*.htm ht/hask*.png ht/*.lg ht/*.log ht/*.tmp \
+	 	ht/*.xref ht/classes.eps ht/*.css ht/*.idx ht/*.aux ht/*.idv ht/*.dvi \
 		ht/*.4ct ht/*.4tc ht/*.bbl ht/*.blg
-	$(RM) *.dvi *.log *.aux *.ilg *.blg *.toc *.bbl *.idx *.tmp *.out \
+	$(RM) *.dvi *.log *.aux *.ilg *.blg *.toc *.bbl *.idx *.ind *.tmp *.out \
 		haskell.tex preface.tex $(PARTS_NO_PREFACE) \
 		haskell.tex haskell.ps haskell.pdf *.o lex.yy.c haskell-report-html/* \
 		libs/haddock.sty libs/Prelude.tex libs/haskell*.tex
@@ -204,6 +204,7 @@ ht/%.tex: %.verb
 	$(EXPAND) < $< | $(VERB_TEX4HT) | sh ../tools/subsection >$@
 
 ht/libs/%.tex: libs/%.tex
+	-mkdir ht/libs
 	$(CP) $< $@
 
 jfp: h98-book.tex preface-jfp.tex ${PARTS_NO_PREFACE}
