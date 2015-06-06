@@ -6,7 +6,7 @@
 \usepackage{graphicx}
 \usepackage{url}
 \usepackage[dvipsnames,usenames]{color}
-\usepackage[pdftex,bookmarks=true]{hyperref}
+\usepackage[bookmarks=true]{hyperref}
 
 % allegedly produces nicer spacing, see
 %     http://stackoverflow.com/questions/414179/what-are-the-relative-merits-of-pdflatex
