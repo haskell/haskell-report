@@ -1464,7 +1464,7 @@ edence & operators		& operators     	& operators \\ \hline\hline
 \indextt{elem}
 \indextt{notElem}
 \index{&&@@{\tt  \&\&}}
-\index{""|""|@@{\tt  {\char'174}{\char'174}}}
+\index{\vert\vert@@{\tt  {\char'174}{\char'174}}}
 \indextt{>>}
 \indextt{>>=}
 \index{$@@{\tt  {\char'044}}}
