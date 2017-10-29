@@ -574,6 +574,14 @@ Instances of @Functor@ should satisfy the following laws:
 All instances of @Functor@ defined in the Prelude satisfy these laws.
 
 
+\subsection{The Applicative Class}
+@
+class  Functor f => Applicative f  where
+    pure  :: a -> f a
+    (<*>) :: f (a -> b) -> f a -> f b
+@
+
+
 \subsubsection{The Monad Class}
 \label{monad-class}
 \indexclass{Monad}
@@ -584,7 +592,7 @@ All instances of @Functor@ defined in the Prelude satisfy these laws.
 \index{monad}
 \bprog
 @
-class  Monad m  where
+class  Applicative f => Monad m  where
     (>>=)   :: m a -> (a -> m b) -> m b
     (>>)    :: m a -> m b -> m b
     return  :: a -> m a
@@ -742,7 +750,7 @@ built-in types that are instances of the numeric classes.
 \begin{figure}[tb]
 \begin{outlineenv}
 @
-class  (Eq a, Show a) => Num a  where
+class  Num a  where
     (+), (-), (*)  :: a -> a -> a
     negate         :: a -> a
     abs, signum    :: a -> a
