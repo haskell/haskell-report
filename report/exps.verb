@@ -1599,7 +1599,7 @@ $e'$ @ }@ \\
 
 In Figures~\ref{simple-case-expr-1}--\ref{simple-case-expr-3}:
 "e", "e'" and "e_i" are expressions; 
-"g_i" and "gs_i" are guards and sequences of guards respecively;
+"g_i" and "gs_i" are guards and sequences of guards respectively;
 "p" and "p_i" are patterns; 
 "v", "x", and "x_i" are variables; 
 "K" and "K'" are algebraic datatype (@data@) constructors (including
